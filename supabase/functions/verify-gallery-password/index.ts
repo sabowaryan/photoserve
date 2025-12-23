@@ -71,13 +71,12 @@ serve(async (req) => {
     // Hash the provided password and compare
     const hashedPassword = await hashPassword(password);
     
-    // Support both plain text (legacy) and hashed passwords
-    const isValidPassword = 
-      gallery.password_hash === password || // Legacy plain text
-      gallery.password_hash === hashedPassword; // Hashed
+    // Only compare hashed passwords (no plaintext fallback for security)
+    const isValidPassword = gallery.password_hash === hashedPassword;
 
     if (!isValidPassword) {
-      console.log('Invalid password attempt for gallery:', slug);
+      // Log without exposing gallery identifier
+      console.log('Invalid password attempt detected');
       return new Response(JSON.stringify({ error: 'Invalid password' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
