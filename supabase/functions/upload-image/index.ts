@@ -2,10 +2,26 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Dynamic CORS with origin validation
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
+  
+  // Allowed origins: localhost for dev, lovable preview URLs, custom domains
+  const isAllowed = 
+    origin.includes('localhost') ||
+    origin.includes('127.0.0.1') ||
+    origin.includes('.lovable.app') ||
+    origin.includes('.lovableproject.com') ||
+    origin.includes(`${projectRef}.supabase.co`);
+  
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : '',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 // Allowed image MIME types
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -32,6 +48,8 @@ function validateImageMagicNumbers(bytes: Uint8Array): boolean {
 }
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -39,6 +57,7 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const cloudinaryCloudName = Deno.env.get('CLOUDINARY_CLOUD_NAME')!;
     const cloudinaryApiKey = Deno.env.get('CLOUDINARY_API_KEY')!;
     const cloudinaryApiSecret = Deno.env.get('CLOUDINARY_API_SECRET')!;
@@ -53,12 +72,19 @@ serve(async (req) => {
       });
     }
 
-    // Initialize Supabase client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Verify user
+    // Create two clients: one with user's JWT (RLS enforced), one with service role
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    // User client - RLS enforced, for ownership verification
+    const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    // Service client - for storage operations that need elevated permissions
+    const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Verify user via service client (more reliable for token validation)
+    const { data: { user }, error: userError } = await serviceSupabase.auth.getUser(token);
     
     if (userError || !user) {
       console.error('Auth error:', userError);
@@ -70,8 +96,8 @@ serve(async (req) => {
 
     console.log(`User ${user.id} uploading image...`);
 
-    // Get user profile for plan limits
-    const { data: profile, error: profileError } = await supabase
+    // Use USER client for profile fetch (RLS enforced - user can only see own profile)
+    const { data: profile, error: profileError } = await userSupabase
       .from('profiles')
       .select('subscription_plan, storage_used_mb, storage_limit_mb, max_image_size_mb')
       .eq('id', user.id)
@@ -138,18 +164,18 @@ serve(async (req) => {
       });
     }
 
-    // Verify gallery belongs to user
-    const { data: gallery, error: galleryError } = await supabase
+    // Verify gallery belongs to user using USER client (RLS enforced)
+    // User can only access their own galleries via RLS policy
+    const { data: gallery, error: galleryError } = await userSupabase
       .from('galleries')
-      .select('id, user_id')
+      .select('id')
       .eq('id', galleryId)
-      .eq('user_id', user.id)
       .single();
 
     if (galleryError || !gallery) {
-      console.error('Gallery error:', galleryError);
-      return new Response(JSON.stringify({ error: 'Gallery not found' }), {
-        status: 404,
+      console.error('Gallery access denied or not found:', galleryError);
+      return new Response(JSON.stringify({ error: 'Gallery not found or access denied' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -225,8 +251,8 @@ serve(async (req) => {
     // Thumbnail URL for grid display
     const thumbnailUrl = `${baseUrl}/c_fill,w_400,h_400,f_auto,q_auto/${publicId}`;
 
-    // Save image record to database
-    const { data: image, error: imageError } = await supabase
+    // Save image record to database using service client (needs to insert into images table)
+    const { data: image, error: imageError } = await serviceSupabase
       .from('images')
       .insert({
         gallery_id: galleryId,
@@ -270,8 +296,8 @@ serve(async (req) => {
       });
     }
 
-    // Update user's storage usage
-    await supabase.rpc('increment_storage', { user_id: user.id, size_mb: fileSizeMb });
+    // Update user's storage usage using service client (needs elevated permissions)
+    await serviceSupabase.rpc('increment_storage', { user_id: user.id, size_mb: fileSizeMb });
 
     console.log('Image saved successfully:', image.id);
     return new Response(JSON.stringify({ 
