@@ -7,20 +7,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Plan configuration matching Landing page pricing
 const PLANS = {
   premium: {
-    product_id: "prod_TejtVkGpfeTzg3",
-    storage_limit_mb: 100,
-    max_galleries: 10,
-    max_images_per_gallery: 50,
-    max_image_size_mb: 5,
+    product_id: "prod_TekDZmc5kiGli8",
+    storage_limit_mb: 5120, // 5 Go
+    max_galleries: 50,
+    max_images_per_gallery: 500,
+    max_image_size_mb: 50, // Illimité en pratique
   },
   pro: {
-    product_id: "prod_TejtajZYi6STNV",
-    storage_limit_mb: 500,
-    max_galleries: 100,
-    max_images_per_gallery: 100,
-    max_image_size_mb: 10,
+    product_id: "prod_TekDzBLoGEfWhH",
+    storage_limit_mb: 51200, // 50 Go
+    max_galleries: 500,
+    max_images_per_gallery: 5000,
+    max_image_size_mb: 100, // Illimité en pratique
   },
 };
 
