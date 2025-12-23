@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.delete-image]
 verify_jwt = false
 
+[functions.delete-gallery]
+verify_jwt = false
+
 [functions.create-checkout]
 verify_jwt = false
 

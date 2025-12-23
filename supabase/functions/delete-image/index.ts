@@ -21,6 +21,7 @@ serve(async (req) => {
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('Missing authorization header');
       return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -32,6 +33,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
+      console.error('Auth error:', userError);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -47,12 +49,15 @@ serve(async (req) => {
       });
     }
 
+    console.log(`User ${user.id} deleting image ${imageId}...`);
+
     // Get image with gallery info to verify ownership
     const { data: image, error: imageError } = await supabase
       .from('images')
       .select(`
         id,
         cloudinary_public_id,
+        cloudinary_url,
         file_size_mb,
         gallery:galleries!inner(user_id)
       `)
@@ -60,6 +65,7 @@ serve(async (req) => {
       .single();
 
     if (imageError || !image) {
+      console.error('Image not found:', imageError);
       return new Response(JSON.stringify({ error: 'Image not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -67,6 +73,7 @@ serve(async (req) => {
     }
 
     if ((image.gallery as any).user_id !== user.id) {
+      console.error('Unauthorized: user does not own gallery');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -74,25 +81,39 @@ serve(async (req) => {
     }
 
     // Delete from Cloudinary
+    let cloudinaryDeleted = false;
     if (image.cloudinary_public_id) {
-      const timestamp = Math.floor(Date.now() / 1000);
-      const signatureString = `public_id=${image.cloudinary_public_id}&timestamp=${timestamp}${cloudinaryApiSecret}`;
-      const encoder = new TextEncoder();
-      const data = encoder.encode(signatureString);
-      const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const signatureString = `public_id=${image.cloudinary_public_id}&timestamp=${timestamp}${cloudinaryApiSecret}`;
+        const encoder = new TextEncoder();
+        const data = encoder.encode(signatureString);
+        const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-      const cloudinaryFormData = new FormData();
-      cloudinaryFormData.append('public_id', image.cloudinary_public_id);
-      cloudinaryFormData.append('api_key', cloudinaryApiKey);
-      cloudinaryFormData.append('timestamp', timestamp.toString());
-      cloudinaryFormData.append('signature', signature);
+        const cloudinaryFormData = new FormData();
+        cloudinaryFormData.append('public_id', image.cloudinary_public_id);
+        cloudinaryFormData.append('api_key', cloudinaryApiKey);
+        cloudinaryFormData.append('timestamp', timestamp.toString());
+        cloudinaryFormData.append('signature', signature);
 
-      await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/destroy`,
-        { method: 'POST', body: cloudinaryFormData }
-      );
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/destroy`,
+          { method: 'POST', body: cloudinaryFormData }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          cloudinaryDeleted = result.result === 'ok';
+          console.log(`Cloudinary delete result: ${result.result}`);
+        } else {
+          console.error('Cloudinary delete failed:', await response.text());
+        }
+      } catch (cloudinaryError) {
+        console.error('Cloudinary delete error:', cloudinaryError);
+        // Continue with DB deletion even if Cloudinary fails
+      }
     }
 
     // Delete from database
@@ -102,16 +123,26 @@ serve(async (req) => {
       .eq('id', imageId);
 
     if (deleteError) {
+      console.error('Database delete error:', deleteError);
       throw deleteError;
     }
 
     // Update user's storage usage
-    await supabase.rpc('decrement_storage', { 
-      user_id: user.id, 
-      size_mb: image.file_size_mb || 0 
-    });
+    const fileSizeMb = image.file_size_mb || 0;
+    if (fileSizeMb > 0) {
+      await supabase.rpc('decrement_storage', { 
+        user_id: user.id, 
+        size_mb: fileSizeMb 
+      });
+      console.log(`Freed ${fileSizeMb.toFixed(2)}MB of storage`);
+    }
 
-    return new Response(JSON.stringify({ success: true }), {
+    console.log(`Image ${imageId} deleted successfully`);
+    return new Response(JSON.stringify({ 
+      success: true,
+      cloudinaryDeleted,
+      freedStorageMb: fileSizeMb,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
