@@ -1,23 +1,28 @@
 project_id = "gcosmlxwccfyjxwguzqi"
 
+# Authenticated endpoints - require valid JWT
 [functions.upload-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.delete-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.delete-gallery]
-verify_jwt = false
+verify_jwt = true
+
+[functions.hash-gallery-password]
+verify_jwt = true
 
 [functions.create-checkout]
-verify_jwt = false
+verify_jwt = true
 
 [functions.check-subscription]
-verify_jwt = false
+verify_jwt = true
 
 [functions.customer-portal]
-verify_jwt = false
+verify_jwt = true
 
+# Public endpoints - no JWT required (webhooks, cleanup jobs, public access)
 [functions.stripe-webhook]
 verify_jwt = false
 
@@ -28,9 +33,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.verify-gallery-password]
-verify_jwt = false
-
-[functions.hash-gallery-password]
 verify_jwt = false
 
 [functions.cleanup-rate-limits]

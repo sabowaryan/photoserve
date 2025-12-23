@@ -5,18 +5,27 @@ import { compare as bcryptCompare, hash as bcryptHash } from "https://deno.land/
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
-// Dynamic CORS with origin validation - more permissive for public password verification
+// Secure CORS validation using regex patterns (prevents subdomain spoofing)
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || '';
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
   const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
   
-  const isAllowed = 
-    origin.includes('localhost') ||
-    origin.includes('127.0.0.1') ||
-    origin.includes('.lovable.app') ||
-    origin.includes('.lovableproject.com') ||
-    origin.includes(`${projectRef}.supabase.co`);
+  // Allowed origin patterns with strict regex matching
+  const allowedPatterns: (RegExp | string)[] = [
+    /^https?:\/\/localhost(:\d+)?$/,
+    /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+    /^https:\/\/[a-zA-Z0-9-]+\.lovable\.app$/,
+    /^https:\/\/[a-zA-Z0-9-]+\.lovableproject\.com$/,
+  ];
+  
+  if (projectRef) {
+    allowedPatterns.push(`https://${projectRef}.supabase.co`);
+  }
+  
+  const isAllowed = allowedPatterns.some(pattern => 
+    typeof pattern === 'string' ? origin === pattern : pattern.test(origin)
+  );
   
   return {
     'Access-Control-Allow-Origin': isAllowed ? origin : '',
