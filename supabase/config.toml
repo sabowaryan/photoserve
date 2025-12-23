@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.cleanup-expired-galleries]
 verify_jwt = false
+
+[functions.notify-expiring-galleries]
+verify_jwt = false
