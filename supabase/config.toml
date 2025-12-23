@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.notify-expiring-galleries]
 verify_jwt = false
+
+[functions.verify-gallery-password]
+verify_jwt = false
+
+[functions.hash-gallery-password]
+verify_jwt = false

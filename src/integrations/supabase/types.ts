@@ -220,7 +220,6 @@ export type Database = {
           title: string | null
           unique_slug: string | null
           updated_at: string | null
-          user_id: string | null
           views_count: number | null
         }
         Insert: {
@@ -232,7 +231,6 @@ export type Database = {
           title?: string | null
           unique_slug?: string | null
           updated_at?: string | null
-          user_id?: string | null
           views_count?: number | null
         }
         Update: {
@@ -244,18 +242,9 @@ export type Database = {
           title?: string | null
           unique_slug?: string | null
           updated_at?: string | null
-          user_id?: string | null
           views_count?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "galleries_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
