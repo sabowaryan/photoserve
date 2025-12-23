@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.hash-gallery-password]
 verify_jwt = false
+
+[functions.cleanup-rate-limits]
+verify_jwt = false
