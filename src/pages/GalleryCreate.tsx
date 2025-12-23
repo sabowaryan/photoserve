@@ -39,30 +39,18 @@ interface UploadedImage {
   sizeMb: number;
 }
 
-// Duration options by plan
-const DURATION_OPTIONS = {
-  free: [
-    { value: 7, label: '7 jours' },
-    { value: 14, label: '14 jours' },
-    { value: 30, label: '30 jours' },
-  ],
-  premium: [
-    { value: 7, label: '7 jours' },
-    { value: 14, label: '14 jours' },
-    { value: 30, label: '30 jours' },
-    { value: 60, label: '60 jours' },
-    { value: 90, label: '90 jours' },
-  ],
-  pro: [
-    { value: 7, label: '7 jours' },
-    { value: 14, label: '14 jours' },
-    { value: 30, label: '30 jours' },
-    { value: 60, label: '60 jours' },
-    { value: 90, label: '90 jours' },
-    { value: 180, label: '180 jours' },
-    { value: 365, label: '1 an' },
-  ],
-};
+// All possible duration options
+const ALL_DURATION_OPTIONS = [
+  { value: 1, label: '1 jour' },
+  { value: 3, label: '3 jours' },
+  { value: 7, label: '7 jours' },
+  { value: 14, label: '14 jours' },
+  { value: 30, label: '30 jours' },
+  { value: 60, label: '60 jours' },
+  { value: 90, label: '90 jours' },
+  { value: 180, label: '180 jours' },
+  { value: 365, label: '1 an' },
+];
 
 export default function GalleryCreate() {
   const { user, session } = useAuth();
@@ -89,6 +77,21 @@ export default function GalleryCreate() {
       return data;
     },
     enabled: !!user,
+  });
+
+  // Fetch subscription plan details for max expiration days
+  const { data: planDetails } = useQuery({
+    queryKey: ['planDetails', profile?.subscription_plan],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subscription_plans')
+        .select('max_expiration_days')
+        .eq('name', profile?.subscription_plan || 'free')
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile?.subscription_plan,
   });
 
   // Fetch current gallery count
@@ -120,9 +123,18 @@ export default function GalleryCreate() {
   const storagePercentage = (projectedStorageUsed / storageLimit) * 100;
   const isStorageExceeded = projectedStorageUsed > storageLimit;
 
-  // Get duration options based on plan
-  const plan = (profile?.subscription_plan || 'free') as keyof typeof DURATION_OPTIONS;
-  const durationOptions = DURATION_OPTIONS[plan] || DURATION_OPTIONS.free;
+  // Get duration options based on plan's max_expiration_days
+  const maxExpirationDays = planDetails?.max_expiration_days || 7;
+  const durationOptions = useMemo(() => {
+    return ALL_DURATION_OPTIONS.filter(option => option.value <= maxExpirationDays);
+  }, [maxExpirationDays]);
+
+  // Reset expiration days if current value exceeds max
+  useMemo(() => {
+    if (expirationDays > maxExpirationDays) {
+      setExpirationDays(maxExpirationDays);
+    }
+  }, [maxExpirationDays, expirationDays]);
 
   const validateAndAddFiles = useCallback((files: File[]) => {
     const maxImagesPerGallery = profile?.max_images_per_gallery || 30;
@@ -486,7 +498,7 @@ export default function GalleryCreate() {
                     ))}
                   </SelectContent>
                 </Select>
-                {plan === 'free' && (
+                {profile?.subscription_plan === 'free' && (
                   <p className="text-xs text-muted-foreground">
                     Passez à Premium ou Pro pour des durées plus longues.
                   </p>
