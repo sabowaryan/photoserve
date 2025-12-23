@@ -55,8 +55,9 @@ interface Gallery {
   expiration_days: number;
   views_count: number;
   is_active: boolean;
-  password_hash: string;
   created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
 interface GalleryImage {
@@ -120,9 +121,10 @@ export default function GalleryDetail() {
   const { data: gallery, isLoading: galleryLoading, refetch: refetchGallery } = useQuery({
     queryKey: ['gallery', id],
     queryFn: async () => {
+      // Exclude password_hash for security - it should never be sent to the client
       const { data, error } = await supabase
         .from('galleries')
-        .select('*')
+        .select('id, title, unique_slug, expires_at, expiration_days, views_count, is_active, created_at, updated_at, user_id')
         .eq('id', id)
         .single();
       if (error) throw error;
@@ -165,7 +167,8 @@ export default function GalleryDetail() {
   useEffect(() => {
     if (gallery) {
       setEditTitle(gallery.title);
-      setEditPassword(gallery.password_hash);
+      // Password is not fetched from server for security - only allow setting new passwords
+      setEditPassword('');
     }
   }, [gallery]);
 
@@ -595,20 +598,22 @@ export default function GalleryDetail() {
                 {isEditingPassword ? (
                   <div className="flex items-center gap-2 mt-1">
                     <Input
+                      type="text"
                       value={editPassword}
                       onChange={(e) => setEditPassword(e.target.value)}
                       className="h-8 text-sm"
+                      placeholder="Nouveau mot de passe"
                     />
-                    <Button size="sm" variant="ghost" onClick={handleSavePassword} disabled={isSaving}>
+                    <Button size="sm" variant="ghost" onClick={handleSavePassword} disabled={isSaving || !editPassword.trim()}>
                       {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => { setIsEditingPassword(false); setEditPassword(gallery.password_hash); }}>
+                    <Button size="sm" variant="ghost" onClick={() => { setIsEditingPassword(false); setEditPassword(''); }}>
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="font-mono text-sm">{gallery.password_hash}</p>
+                    <p className="font-mono text-sm text-muted-foreground">••••••••</p>
                     <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setIsEditingPassword(true)}>
                       <Edit3 className="h-3 w-3" />
                     </Button>
