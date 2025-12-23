@@ -8,6 +8,9 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import GalleryCreate from "./pages/GalleryCreate";
+import GalleryDetail from "./pages/GalleryDetail";
+import GalleryView from "./pages/GalleryView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +26,10 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/gallery/new" element={<GalleryCreate />} />
+            <Route path="/dashboard/gallery/:id" element={<GalleryDetail />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/g/:slug" element={<GalleryView />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
