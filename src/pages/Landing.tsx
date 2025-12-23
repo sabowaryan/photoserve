@@ -504,7 +504,7 @@ export default function Landing() {
               © 2025 PhotoServe. Tous droits réservés.
             </p>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">Fait avec ❤️ en France</span>
+              <span className="text-xs text-muted-foreground">By Akollad Group</span>
             </div>
           </div>
         </div>
