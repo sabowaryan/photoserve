@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { compare as bcryptCompare, hash as bcryptHash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -150,6 +150,24 @@ function isBcryptHash(hash: string): boolean {
   return hash.startsWith('$2a$') || hash.startsWith('$2b$') || hash.startsWith('$2y$');
 }
 
+// Generate a bcrypt-compatible salt (22 characters from the bcrypt alphabet)
+function generateBcryptSalt(): string {
+  const bcryptAlphabet = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const saltBytes = new Uint8Array(22);
+  crypto.getRandomValues(saltBytes);
+  let salt = "";
+  for (let i = 0; i < 22; i++) {
+    salt += bcryptAlphabet[saltBytes[i] % bcryptAlphabet.length];
+  }
+  return salt;
+}
+
+// Hash password using bcrypt with synchronous salt generation (compatible with Deno Deploy)
+async function hashPasswordBcrypt(password: string): Promise<string> {
+  const salt = "$2a$12$" + generateBcryptSalt();
+  return await bcryptHash(password, salt);
+}
+
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   
@@ -231,8 +249,8 @@ serve(async (req) => {
     let isValidPassword = false;
     
     if (isBcryptHash(gallery.password_hash)) {
-      // New bcrypt hash
-      isValidPassword = await bcrypt.compare(password, gallery.password_hash);
+      // New bcrypt hash - use compare function directly
+      isValidPassword = await bcryptCompare(password, gallery.password_hash);
     } else {
       // Legacy SHA-256 hash - verify and optionally upgrade
       const legacyHash = await hashPasswordLegacy(password);
@@ -241,8 +259,7 @@ serve(async (req) => {
       // If password is valid, upgrade to bcrypt hash
       if (isValidPassword) {
         console.log(`[VERIFY-PASSWORD] Upgrading legacy SHA-256 hash to bcrypt for gallery ${slug}`);
-        const salt = await bcrypt.genSalt(12);
-        const newBcryptHash = await bcrypt.hash(password, salt);
+        const newBcryptHash = await hashPasswordBcrypt(password);
         
         await supabase
           .from('galleries')
