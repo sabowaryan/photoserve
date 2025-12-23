@@ -166,6 +166,33 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_attempts: {
+        Row: {
+          attempts: number
+          created_at: string
+          expires_at: string
+          first_attempt_at: string
+          id: string
+          key: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          expires_at: string
+          first_attempt_at?: string
+          id?: string
+          key: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          first_attempt_at?: string
+          id?: string
+          key?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           created_at: string | null
@@ -248,6 +275,7 @@ export type Database = {
       }
     }
     Functions: {
+      cleanup_expired_rate_limits: { Args: never; Returns: number }
       decrement_storage: {
         Args: { size_mb: number; user_id: string }
         Returns: undefined

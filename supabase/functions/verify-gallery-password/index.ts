@@ -2,10 +2,6 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
-// Rate limiting storage (in-memory, resets on function cold start)
-// For production, consider using Supabase or Redis for persistence
-const rateLimitStore = new Map<string, { attempts: number; resetTime: number }>();
-
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
@@ -37,34 +33,107 @@ function getClientIP(req: Request): string {
          'unknown';
 }
 
-// Check and update rate limit
-function checkRateLimit(key: string): { allowed: boolean; remainingAttempts: number; retryAfterSeconds?: number } {
-  const now = Date.now();
-  const record = rateLimitStore.get(key);
+// Check rate limit using database (persistent across instances)
+async function checkRateLimit(
+  supabase: any, 
+  key: string
+): Promise<{ allowed: boolean; remainingAttempts: number; retryAfterSeconds?: number }> {
+  const now = new Date();
   
-  // Clean up expired entries
-  if (record && now > record.resetTime) {
-    rateLimitStore.delete(key);
+  // First, try to get existing rate limit record
+  const { data: existing, error: fetchError } = await supabase
+    .from('rate_limit_attempts')
+    .select('id, attempts, expires_at')
+    .eq('key', key)
+    .maybeSingle();
+  
+  if (fetchError) {
+    console.error('[RATE-LIMIT] Error fetching rate limit:', fetchError);
+    // On error, allow the request but log it
+    return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS };
   }
   
-  const currentRecord = rateLimitStore.get(key);
-  
-  if (!currentRecord) {
-    // First attempt
-    rateLimitStore.set(key, { attempts: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - 1 };
+  // If record exists and hasn't expired
+  if (existing) {
+    const expiresAt = new Date(existing.expires_at);
+    
+    // Check if expired - delete and allow
+    if (expiresAt <= now) {
+      await supabase
+        .from('rate_limit_attempts')
+        .delete()
+        .eq('id', existing.id);
+      
+      // Create new record with first attempt
+      const newExpiresAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
+      await supabase
+        .from('rate_limit_attempts')
+        .insert({
+          key,
+          attempts: 1,
+          first_attempt_at: now.toISOString(),
+          expires_at: newExpiresAt.toISOString()
+        });
+      
+      return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - 1 };
+    }
+    
+    // Check if max attempts exceeded
+    if (existing.attempts >= RATE_LIMIT_MAX_ATTEMPTS) {
+      const retryAfterSeconds = Math.ceil((expiresAt.getTime() - now.getTime()) / 1000);
+      return { allowed: false, remainingAttempts: 0, retryAfterSeconds };
+    }
+    
+    // Increment attempts
+    const newAttempts = existing.attempts + 1;
+    await supabase
+      .from('rate_limit_attempts')
+      .update({ attempts: newAttempts })
+      .eq('id', existing.id);
+    
+    return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - newAttempts };
   }
   
-  if (currentRecord.attempts >= RATE_LIMIT_MAX_ATTEMPTS) {
-    const retryAfterSeconds = Math.ceil((currentRecord.resetTime - now) / 1000);
-    return { allowed: false, remainingAttempts: 0, retryAfterSeconds };
+  // No existing record - create new one
+  const expiresAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
+  const { error: insertError } = await supabase
+    .from('rate_limit_attempts')
+    .insert({
+      key,
+      attempts: 1,
+      first_attempt_at: now.toISOString(),
+      expires_at: expiresAt.toISOString()
+    });
+  
+  if (insertError) {
+    // Could be a race condition - another instance created it
+    // Try to fetch and increment instead
+    const { data: raceRecord } = await supabase
+      .from('rate_limit_attempts')
+      .select('id, attempts, expires_at')
+      .eq('key', key)
+      .maybeSingle();
+    
+    if (raceRecord) {
+      const newAttempts = raceRecord.attempts + 1;
+      await supabase
+        .from('rate_limit_attempts')
+        .update({ attempts: newAttempts })
+        .eq('id', raceRecord.id);
+      
+      return { allowed: newAttempts <= RATE_LIMIT_MAX_ATTEMPTS, remainingAttempts: Math.max(0, RATE_LIMIT_MAX_ATTEMPTS - newAttempts) };
+    }
   }
   
-  // Increment attempts
-  currentRecord.attempts += 1;
-  rateLimitStore.set(key, currentRecord);
-  
-  return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - currentRecord.attempts };
+  return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - 1 };
+}
+
+// Reset rate limit on successful authentication
+async function resetRateLimit(supabase: any, key: string): Promise<void> {
+  await supabase
+    .from('rate_limit_attempts')
+    .delete()
+    .eq('key', key);
 }
 
 // Legacy SHA-256 hash function for backward compatibility with existing passwords
@@ -92,6 +161,8 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     const { slug, password } = await req.json();
 
     if (!slug || !password) {
@@ -105,8 +176,8 @@ serve(async (req) => {
     const clientIP = getClientIP(req);
     const rateLimitKey = `${clientIP}:${slug}`;
     
-    // Check rate limit
-    const rateLimitResult = checkRateLimit(rateLimitKey);
+    // Check rate limit using database
+    const rateLimitResult = await checkRateLimit(supabase, rateLimitKey);
     
     if (!rateLimitResult.allowed) {
       console.log(`[VERIFY-PASSWORD] Rate limit exceeded for IP ${clientIP} on gallery ${slug}`);
@@ -124,8 +195,6 @@ serve(async (req) => {
     }
 
     console.log(`[VERIFY-PASSWORD] Verifying password for gallery: ${slug} (${rateLimitResult.remainingAttempts} attempts remaining)`);
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Fetch gallery with password_hash (only accessible via service role)
     const { data: gallery, error: galleryError } = await supabase
@@ -194,7 +263,7 @@ serve(async (req) => {
     }
 
     // Reset rate limit on successful authentication
-    rateLimitStore.delete(rateLimitKey);
+    await resetRateLimit(supabase, rateLimitKey);
 
     // Increment view count
     await supabase
