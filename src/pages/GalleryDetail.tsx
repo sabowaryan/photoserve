@@ -210,18 +210,33 @@ export default function GalleryDetail() {
     
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('galleries')
-        .update({ password_hash: editPassword.trim() })
-        .eq('id', gallery.id);
-      
-      if (error) throw error;
+      // Hash password via edge function
+      const hashResponse = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            password: editPassword.trim(),
+            galleryId: gallery.id,
+            action: 'update'
+          }),
+        }
+      );
+
+      if (!hashResponse.ok) {
+        const error = await hashResponse.json();
+        throw new Error(error.error || 'Failed to update password');
+      }
       
       toast({ title: 'Mot de passe mis à jour' });
       setIsEditingPassword(false);
       refetchGallery();
-    } catch (error) {
-      toast({ title: 'Erreur', description: 'Impossible de modifier le mot de passe.', variant: 'destructive' });
+    } catch (error: any) {
+      toast({ title: 'Erreur', description: error.message || 'Impossible de modifier le mot de passe.', variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }

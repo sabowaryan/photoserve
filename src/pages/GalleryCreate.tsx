@@ -260,6 +260,26 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
+      // Hash password via edge function
+      const hashResponse = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ password: password.trim() }),
+        }
+      );
+
+      if (!hashResponse.ok) {
+        const error = await hashResponse.json();
+        throw new Error(error.error || 'Failed to secure password');
+      }
+
+      const { hashedPassword } = await hashResponse.json();
+
       // Generate unique slug
       const { data: slugData, error: slugError } = await supabase.rpc('generate_unique_slug');
       if (slugError) throw slugError;
@@ -268,12 +288,12 @@ export default function GalleryCreate() {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + expirationDays);
 
-      // Create gallery
+      // Create gallery with hashed password
       const { data: gallery, error: galleryError } = await supabase
         .from('galleries')
         .insert({
           title: title.trim(),
-          password_hash: password,
+          password_hash: hashedPassword,
           unique_slug: uniqueSlug,
           user_id: user?.id,
           expiration_days: expirationDays,
