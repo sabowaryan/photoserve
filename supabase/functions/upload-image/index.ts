@@ -7,8 +7,17 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Allowed image MIME types
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+// Plan-based limits (in MB)
+const PLAN_LIMITS = {
+  free: { maxImageSize: 1, maxStorageTotal: 20 },
+  premium: { maxImageSize: 5, maxStorageTotal: 200 },
+  pro: { maxImageSize: 10, maxStorageTotal: 500 },
+};
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,13 +32,14 @@ serve(async (req) => {
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('Missing authorization header');
       return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Initialize Supabase client with user's token
+    // Initialize Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Verify user
@@ -44,6 +54,30 @@ serve(async (req) => {
       });
     }
 
+    console.log(`User ${user.id} uploading image...`);
+
+    // Get user profile for plan limits
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('subscription_plan, storage_used_mb, storage_limit_mb, max_image_size_mb')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
+      console.error('Profile error:', profileError);
+      return new Response(JSON.stringify({ error: 'User profile not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const plan = profile.subscription_plan || 'free';
+    const maxImageSizeMb = profile.max_image_size_mb || PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].maxImageSize;
+    const storageLimitMb = profile.storage_limit_mb || PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].maxStorageTotal;
+    const storageUsedMb = profile.storage_used_mb || 0;
+
+    console.log(`User plan: ${plan}, max image size: ${maxImageSizeMb}MB, storage: ${storageUsedMb}/${storageLimitMb}MB`);
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const galleryId = formData.get('galleryId') as string;
@@ -51,6 +85,43 @@ serve(async (req) => {
 
     if (!file || !galleryId) {
       return new Response(JSON.stringify({ error: 'Missing file or galleryId' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      console.error(`Invalid file type: ${file.type}`);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid file type',
+        details: `Allowed types: ${ALLOWED_TYPES.join(', ')}` 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate file size
+    const fileSizeMb = file.size / (1024 * 1024);
+    if (fileSizeMb > maxImageSizeMb) {
+      console.error(`File too large: ${fileSizeMb.toFixed(2)}MB > ${maxImageSizeMb}MB limit`);
+      return new Response(JSON.stringify({ 
+        error: 'File too large',
+        details: `Maximum file size for ${plan} plan is ${maxImageSizeMb}MB. Your file is ${fileSizeMb.toFixed(2)}MB.`
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Check storage limit
+    if (storageUsedMb + fileSizeMb > storageLimitMb) {
+      console.error(`Storage limit exceeded: ${storageUsedMb + fileSizeMb}MB > ${storageLimitMb}MB`);
+      return new Response(JSON.stringify({ 
+        error: 'Storage limit exceeded',
+        details: `You have ${(storageLimitMb - storageUsedMb).toFixed(2)}MB remaining. Upgrade your plan for more storage.`
+      }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -77,7 +148,7 @@ serve(async (req) => {
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     const dataUri = `data:${file.type};base64,${base64}`;
 
-    // Upload to Cloudinary
+    // Upload to Cloudinary with transformations
     const timestamp = Math.floor(Date.now() / 1000);
     const folder = `photoserve/${user.id}/${galleryId}`;
     
@@ -117,16 +188,26 @@ serve(async (req) => {
     const cloudinaryData = await cloudinaryResponse.json();
     console.log('Cloudinary upload success:', cloudinaryData.public_id);
 
-    // Calculate file size in MB
-    const fileSizeMb = file.size / (1024 * 1024);
+    // Generate optimized URLs using Cloudinary transformations
+    const publicId = cloudinaryData.public_id;
+    const baseUrl = `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload`;
+    
+    // Original quality URL (for downloads)
+    const originalUrl = cloudinaryData.secure_url;
+    
+    // Optimized URL for gallery display (auto format, quality, responsive)
+    const optimizedUrl = `${baseUrl}/f_auto,q_auto/${publicId}`;
+    
+    // Thumbnail URL for grid display
+    const thumbnailUrl = `${baseUrl}/c_fill,w_400,h_400,f_auto,q_auto/${publicId}`;
 
     // Save image record to database
     const { data: image, error: imageError } = await supabase
       .from('images')
       .insert({
         gallery_id: galleryId,
-        cloudinary_url: cloudinaryData.secure_url,
-        cloudinary_public_id: cloudinaryData.public_id,
+        cloudinary_url: originalUrl,
+        cloudinary_public_id: publicId,
         file_size_mb: fileSizeMb,
         order_index: orderIndex,
       })
@@ -135,6 +216,30 @@ serve(async (req) => {
 
     if (imageError) {
       console.error('Database error:', imageError);
+      // Try to delete from Cloudinary since DB save failed
+      try {
+        const deleteTimestamp = Math.floor(Date.now() / 1000);
+        const deleteSignatureString = `public_id=${publicId}&timestamp=${deleteTimestamp}${cloudinaryApiSecret}`;
+        const deleteData = encoder.encode(deleteSignatureString);
+        const deleteHashBuffer = await crypto.subtle.digest('SHA-1', deleteData);
+        const deleteHashArray = Array.from(new Uint8Array(deleteHashBuffer));
+        const deleteSignature = deleteHashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        const deleteFormData = new FormData();
+        deleteFormData.append('public_id', publicId);
+        deleteFormData.append('api_key', cloudinaryApiKey);
+        deleteFormData.append('timestamp', deleteTimestamp.toString());
+        deleteFormData.append('signature', deleteSignature);
+
+        await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/destroy`, {
+          method: 'POST',
+          body: deleteFormData,
+        });
+        console.log('Cleaned up Cloudinary image after DB error');
+      } catch (cleanupError) {
+        console.error('Failed to cleanup Cloudinary image:', cleanupError);
+      }
+      
       return new Response(JSON.stringify({ error: 'Failed to save image record' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -149,8 +254,11 @@ serve(async (req) => {
       success: true, 
       image: {
         id: image.id,
-        url: cloudinaryData.secure_url,
-        publicId: cloudinaryData.public_id,
+        url: originalUrl,
+        optimizedUrl,
+        thumbnailUrl,
+        publicId,
+        sizeMb: fileSizeMb,
       }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
