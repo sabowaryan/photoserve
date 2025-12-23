@@ -1,5 +1,6 @@
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -89,6 +90,8 @@ export default function Upgrade() {
   const [searchParams] = useSearchParams();
   const { user, session } = useAuth();
   const [subscribingTo, setSubscribingTo] = useState<string | null>(null);
+  
+  useDocumentTitle('Passer à un plan supérieur');
 
   const limitType = searchParams.get('limit') as keyof typeof LIMITS_INFO | null;
   const limitInfo = limitType ? LIMITS_INFO[limitType] : null;

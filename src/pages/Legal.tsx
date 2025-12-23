@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Camera, ArrowLeft } from 'lucide-react';
@@ -141,6 +142,8 @@ const legalContent = {
 export default function Legal() {
   const { page } = useParams<{ page: string }>();
   const content = legalContent[page as keyof typeof legalContent];
+  
+  useDocumentTitle(content?.title || 'Page légale');
 
   if (!content) {
     return (

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,6 +57,8 @@ export default function GalleryCreate() {
   const { user, session } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  useDocumentTitle('Nouvelle galerie');
   
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');

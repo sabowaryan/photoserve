@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -85,6 +86,8 @@ export default function Pricing() {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const [subscribingTo, setSubscribingTo] = useState<string | null>(null);
+  
+  useDocumentTitle('Tarifs');
 
   const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],

@@ -1,8 +1,11 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const NotFound = () => {
   const location = useLocation();
+  
+  useDocumentTitle('Page non trouvée');
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
