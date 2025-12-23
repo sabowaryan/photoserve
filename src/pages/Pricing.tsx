@@ -22,7 +22,7 @@ const PLANS = [
   {
     key: 'free',
     name: 'Gratuit',
-    price: '0',
+    price: '$0',
     period: '/mois',
     description: 'Parfait pour découvrir PhotoServe',
     features: [
@@ -42,7 +42,7 @@ const PLANS = [
   {
     key: 'premium',
     name: 'Premium',
-    price: '9,99',
+    price: '$9.99',
     period: '/mois',
     description: 'Pour les photographes actifs',
     features: [
@@ -62,7 +62,7 @@ const PLANS = [
   {
     key: 'pro',
     name: 'Pro',
-    price: '25,99',
+    price: '$25.99',
     period: '/mois',
     description: 'Pour les professionnels exigeants',
     features: [
@@ -253,7 +253,7 @@ export default function Pricing() {
                     <CardTitle className="font-display text-2xl">{plan.name}</CardTitle>
                     <CardDescription className="text-sm">{plan.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold">{plan.price}€</span>
+                      <span className="text-4xl font-bold">{plan.price}</span>
                       <span className="text-muted-foreground">{plan.period}</span>
                     </div>
                   </CardHeader>
@@ -301,7 +301,7 @@ export default function Pricing() {
               Besoin d'aide pour choisir ? <Link to="/auth" className="text-primary hover:underline">Contactez-nous</Link>
             </p>
             <p className="text-muted-foreground text-xs mt-2">
-              Tous les prix sont en euros et hors taxes. Vous pouvez annuler à tout moment.
+              Tous les prix sont en dollars américains (USD). Vous pouvez annuler à tout moment.
             </p>
           </div>
         </div>
