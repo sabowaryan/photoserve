@@ -206,7 +206,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrement_storage: {
+        Args: { size_mb: number; user_id: string }
+        Returns: undefined
+      }
+      generate_unique_slug: { Args: never; Returns: string }
+      increment_storage: {
+        Args: { size_mb: number; user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       subscription_plan: "free" | "premium" | "pro"
