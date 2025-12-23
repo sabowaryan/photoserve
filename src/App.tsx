@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Upgrade from "./pages/Upgrade";
+import Legal from "./pages/Legal";
 import GalleryCreate from "./pages/GalleryCreate";
 import GalleryDetail from "./pages/GalleryDetail";
 import GalleryView from "./pages/GalleryView";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/upgrade" element={<Upgrade />} />
+            <Route path="/legal/:page" element={<Legal />} />
             <Route path="/g/:slug" element={<GalleryView />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
