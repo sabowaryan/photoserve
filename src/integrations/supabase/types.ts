@@ -100,6 +100,13 @@ export type Database = {
             referencedRelation: "galleries"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "images_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -203,7 +210,53 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      galleries_public: {
+        Row: {
+          created_at: string | null
+          expiration_days: number | null
+          expires_at: string | null
+          id: string | null
+          is_active: boolean | null
+          title: string | null
+          unique_slug: string | null
+          updated_at: string | null
+          user_id: string | null
+          views_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          title?: string | null
+          unique_slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          title?: string | null
+          unique_slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galleries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       decrement_storage: {
