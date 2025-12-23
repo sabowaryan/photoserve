@@ -9,12 +9,12 @@ const corsHeaders = {
 
 const PLANS = {
   premium: {
-    price_id: "price_1ShQPyAmXOVRZkyiDq1XYqug",
-    product_id: "prod_TejtVkGpfeTzg3",
+    price_id: "price_1ShQj1AmXOVRZkyiiRMQrBEC",
+    product_id: "prod_TekDZmc5kiGli8",
   },
   pro: {
-    price_id: "price_1ShQQ9AmXOVRZkyinAXxoO3t",
-    product_id: "prod_TejtajZYi6STNV",
+    price_id: "price_1ShQjDAmXOVRZkyi3xzzjgvU",
+    product_id: "prod_TekDzBLoGEfWhH",
   },
 };
 
