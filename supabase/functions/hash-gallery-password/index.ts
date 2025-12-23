@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 // Dynamic CORS with origin validation
 function getCorsHeaders(req: Request) {
@@ -21,13 +22,11 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Hash password using SHA-256
+// Hash password using bcrypt (secure, slow hash designed for passwords)
 async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  // Work factor of 12 = 2^12 iterations, provides good security/performance balance
+  const salt = await bcrypt.genSalt(12);
+  return await bcrypt.hash(password, salt);
 }
 
 serve(async (req) => {
@@ -72,7 +71,17 @@ serve(async (req) => {
       });
     }
 
-    // Hash the password
+    // Validate password length
+    if (password.length < 4 || password.length > 100) {
+      return new Response(JSON.stringify({ error: 'Password must be between 4 and 100 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('[HASH-PASSWORD] Hashing password with bcrypt');
+    
+    // Hash the password using bcrypt
     const hashedPassword = await hashPassword(password);
 
     // If galleryId is provided, update the gallery's password
@@ -99,20 +108,21 @@ serve(async (req) => {
         .eq('id', galleryId);
 
       if (updateError) {
-        console.error('Error updating password:', updateError);
+        console.error('[HASH-PASSWORD] Error updating password:', updateError);
         return new Response(JSON.stringify({ error: 'Failed to update password' }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      console.log(`Password updated for gallery ${galleryId}`);
+      console.log(`[HASH-PASSWORD] Password updated for gallery ${galleryId}`);
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Otherwise just return the hashed password for use in gallery creation
+    console.log('[HASH-PASSWORD] Returning bcrypt hash for new gallery');
     return new Response(JSON.stringify({ 
       success: true,
       hashedPassword 
@@ -121,7 +131,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in hash-gallery-password:', error);
+    console.error('[HASH-PASSWORD] Error:', error);
     return new Response(JSON.stringify({ error: 'An error occurred. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
