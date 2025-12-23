@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { SEO, createFAQStructuredData } from '@/components/SEO';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -23,7 +23,12 @@ import {
 
 export default function Landing() {
   const { user } = useAuth();
-  useDocumentTitle('Partagez vos photos en toute sécurité', false);
+
+  const faqData = [
+    { question: 'Comment partager mes photos avec mes clients ?', answer: "Uploadez vos photos, définissez un mot de passe et une date d'expiration, puis partagez le lien unique avec vos clients." },
+    { question: 'Les galeries sont-elles sécurisées ?', answer: 'Oui, chaque galerie est protégée par un mot de passe unique et les données sont chiffrées avec SSL.' },
+    { question: 'Combien de temps les galeries restent-elles accessibles ?', answer: 'Vous définissez la durée de vie. Elle peut aller de quelques jours à 180 jours selon votre abonnement.' },
+  ];
 
   const features = [
     {
@@ -145,6 +150,12 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
+      <SEO 
+        title="Partagez vos photos en toute sécurité"
+        description="Créez des galeries photo temporaires et sécurisées par mot de passe. Partagez vos photos avec vos clients en toute confidentialité. Qualité originale garantie."
+        keywords="galerie photo, partage photos, photographe professionnel, livraison photos client, portfolio sécurisé"
+        structuredData={createFAQStructuredData(faqData)}
+      />
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">

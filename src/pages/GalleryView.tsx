@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { SEO, createGalleryStructuredData } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,8 +41,13 @@ export default function GalleryView() {
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
   
-  // Dynamic title based on gallery
-  useDocumentTitle(gallery?.title || 'Galerie photo');
+  // SEO structured data for gallery
+  const galleryStructuredData = gallery ? createGalleryStructuredData({
+    title: gallery.title,
+    createdAt: new Date().toISOString(),
+    expiresAt: gallery.expires_at,
+    imageCount: images.length,
+  }) : undefined;
 
   useEffect(() => {
     fetchGallery();
@@ -360,6 +365,12 @@ export default function GalleryView() {
   // Main gallery view
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title={gallery?.title || 'Galerie photo'}
+        description={`Galerie photo sécurisée - ${images.length} photo${images.length > 1 ? 's' : ''} disponible${images.length > 1 ? 's' : ''} au téléchargement`}
+        noIndex={true}
+        structuredData={galleryStructuredData}
+      />
       {/* Header */}
       <header className="border-b border-border/50 bg-card/80 backdrop-blur-xl sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
