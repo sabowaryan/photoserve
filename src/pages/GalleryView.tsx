@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Lock, Eye, Calendar, Download, ChevronLeft, ChevronRight, X, Image as ImageIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { Camera, Lock, Eye, Calendar, Download, ChevronLeft, ChevronRight, X, ImageOff, Loader2 } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 interface Gallery {
@@ -17,6 +16,7 @@ interface Gallery {
   expires_at: string;
   views_count: number;
   password_hash: string;
+  is_active: boolean;
 }
 
 interface GalleryImage {
@@ -35,32 +35,56 @@ export default function GalleryView() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expiredMessage, setExpiredMessage] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
 
   useEffect(() => {
     fetchGallery();
   }, [slug]);
 
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+      
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowLeft' && lightboxIndex > 0) setLightboxIndex(lightboxIndex - 1);
+      if (e.key === 'ArrowRight' && lightboxIndex < images.length - 1) setLightboxIndex(lightboxIndex + 1);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex, images.length]);
+
   const fetchGallery = async () => {
     try {
       const { data, error: fetchError } = await supabase
         .from('galleries')
-        .select('id, title, expires_at, views_count, password_hash')
+        .select('id, title, expires_at, views_count, password_hash, is_active')
         .eq('unique_slug', slug)
-        .eq('is_active', true)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
 
       if (!data) {
-        setError('Galerie introuvable ou expirée');
+        setError('Galerie introuvable');
         setLoading(false);
         return;
       }
 
-      // Check if expired
-      if (new Date(data.expires_at) < new Date()) {
-        setError('Cette galerie a expiré');
+      // Check if expired or inactive
+      const isExpired = new Date(data.expires_at) < new Date();
+      const isInactive = !data.is_active;
+
+      if (isExpired || isInactive) {
+        setExpiredMessage(
+          isExpired 
+            ? `Cette galerie a expiré le ${format(new Date(data.expires_at), 'dd MMMM yyyy', { locale: fr })}`
+            : 'Cette galerie n\'est plus disponible'
+        );
         setLoading(false);
         return;
       }
@@ -76,8 +100,9 @@ export default function GalleryView() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!gallery) return;
+    if (!gallery || isSubmitting) return;
+
+    setIsSubmitting(true);
 
     // Simple password check (in production, use proper hashing)
     if (password === gallery.password_hash) {
@@ -103,6 +128,7 @@ export default function GalleryView() {
           description: 'Impossible de charger les images.',
           variant: 'destructive',
         });
+        setIsSubmitting(false);
         return;
       }
 
@@ -114,214 +140,381 @@ export default function GalleryView() {
         variant: 'destructive',
       });
     }
+    setIsSubmitting(false);
   };
 
-  const downloadImage = async (url: string, index: number) => {
+  const downloadImage = useCallback(async (url: string, index: number, showToast = true) => {
     try {
+      setDownloadingIndex(index);
       const response = await fetch(url);
       const blob = await response.blob();
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `photo-${index + 1}.jpg`;
+      link.download = `${gallery?.title || 'photo'}-${index + 1}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     } catch (err) {
-      toast({
-        title: 'Erreur',
-        description: 'Impossible de télécharger l\'image.',
-        variant: 'destructive',
-      });
+      if (showToast) {
+        toast({
+          title: 'Erreur',
+          description: 'Impossible de télécharger l\'image.',
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setDownloadingIndex(null);
     }
-  };
+  }, [gallery?.title, toast]);
 
   const downloadAll = async () => {
+    if (downloadingAll) return;
+    
+    setDownloadingAll(true);
     toast({
       title: 'Téléchargement en cours...',
-      description: 'Vos images sont en cours de téléchargement.',
+      description: `${images.length} photos vont être téléchargées.`,
     });
     
     for (let i = 0; i < images.length; i++) {
-      await downloadImage(images[i].cloudinary_url, i);
-      // Small delay between downloads
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await downloadImage(images[i].cloudinary_url, i, false);
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
+    
+    setDownloadingAll(false);
+    toast({
+      title: 'Téléchargement terminé',
+      description: `${images.length} photos téléchargées avec succès.`,
+    });
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="space-y-4 w-full max-w-md px-4">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-32 w-full" />
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full border-2 border-primary/20 animate-pulse" />
+            <Camera className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-primary animate-pulse" />
+          </div>
+          <p className="text-muted-foreground text-sm">Chargement de la galerie...</p>
         </div>
       </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="glass-card max-w-md w-full mx-4">
-          <CardContent className="pt-6 text-center">
-            <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="font-display text-xl font-semibold mb-2">{error}</h2>
-            <p className="text-muted-foreground mb-6">
-              Le lien que vous avez suivi n'est plus valide.
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 rounded-full bg-muted/50 mx-auto flex items-center justify-center mb-6">
+              <ImageOff className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h1 className="font-display text-2xl font-bold mb-3">{error}</h1>
+            <p className="text-muted-foreground">
+              Le lien que vous avez suivi n'est pas valide ou la galerie n'existe pas.
             </p>
-            <Button asChild>
-              <Link to="/">Retour à l'accueil</Link>
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+          <Button asChild variant="outline" className="gap-2">
+            <Link to="/">
+              <Camera className="h-4 w-4" />
+              Retour à l'accueil
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
 
+  // Expired state
+  if (expiredMessage) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 rounded-full bg-destructive/10 mx-auto flex items-center justify-center mb-6">
+              <Calendar className="h-10 w-10 text-destructive" />
+            </div>
+            <h1 className="font-display text-2xl font-bold mb-3">Galerie expirée</h1>
+            <p className="text-muted-foreground">{expiredMessage}</p>
+          </div>
+          <div className="p-4 rounded-lg bg-muted/30 border border-border mb-6">
+            <p className="text-sm text-muted-foreground">
+              Contactez le photographe pour obtenir un nouveau lien d'accès à vos photos.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="gap-2">
+            <Link to="/">
+              <Camera className="h-4 w-4" />
+              Retour à l'accueil
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Password form
   if (!isAuthenticated && gallery) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="glass-card max-w-md w-full">
-          <CardHeader className="text-center">
-            <div className="mx-auto p-3 rounded-full bg-primary/20 w-fit mb-4">
-              <Lock className="h-8 w-8 text-primary" />
-            </div>
-            <CardTitle className="font-display text-2xl">{gallery.title}</CardTitle>
-            <CardDescription>
-              Cette galerie est protégée par un mot de passe.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Entrez le mot de passe"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              <Button type="submit" className="w-full btn-primary">
-                Accéder à la galerie
-              </Button>
-            </form>
-
-            <div className="mt-6 pt-6 border-t border-border text-center text-sm text-muted-foreground">
-              <div className="flex items-center justify-center gap-4">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Expire le {format(new Date(gallery.expires_at), 'dd MMM yyyy', { locale: fr })}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-primary/20">
-                <Camera className="h-5 w-5 text-primary" />
+        <div className="w-full max-w-sm">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-primary/20">
+                <Camera className="h-6 w-6 text-primary" />
               </div>
               <span className="font-display text-xl font-bold gradient-text">PhotoServe</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
+          {/* Card */}
+          <div className="glass-card rounded-2xl p-8 space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 mx-auto flex items-center justify-center mb-4">
+                <Lock className="h-7 w-7 text-primary" />
+              </div>
+              <h1 className="font-display text-2xl font-bold mb-2">{gallery.title}</h1>
+              <p className="text-muted-foreground text-sm">
+                Entrez le mot de passe pour accéder aux photos
+              </p>
+            </div>
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="password" className="sr-only">Mot de passe</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Mot de passe"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="text-center h-12 text-lg"
+                  autoFocus
+                  disabled={isSubmitting}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full h-12 btn-primary text-base font-medium"
+                disabled={isSubmitting || !password}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Vérification...
+                  </>
+                ) : (
+                  'Accéder aux photos'
+                )}
+              </Button>
+            </form>
+
+            <div className="pt-4 border-t border-border/50">
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                <span>
+                  Expire {formatDistanceToNow(new Date(gallery.expires_at), { addSuffix: true, locale: fr })}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            Lien privé • Partagé par le photographe
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Main gallery view
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border/50 bg-card/80 backdrop-blur-xl sticky top-0 z-40">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="p-1.5 rounded-lg bg-primary/20">
+                <Camera className="h-4 w-4 text-primary" />
+              </div>
+              <span className="font-display text-lg font-bold gradient-text hidden sm:inline">PhotoServe</span>
+            </Link>
+            <span className="text-border">/</span>
+            <h1 className="font-display font-semibold truncate max-w-[200px] sm:max-w-none">{gallery?.title}</h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground hidden sm:flex items-center gap-1.5">
               <Eye className="h-4 w-4" />
-              {gallery?.views_count} vues
+              {gallery?.views_count}
             </span>
-            <Button onClick={downloadAll} size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Tout télécharger
+            <Button 
+              onClick={downloadAll} 
+              size="sm"
+              disabled={downloadingAll}
+              className="gap-2"
+            >
+              {downloadingAll ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="hidden sm:inline">Téléchargement...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Tout télécharger</span>
+                </>
+              )}
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold mb-2">{gallery?.title}</h1>
+      <main className="container mx-auto px-4 py-6 sm:py-8">
+        {/* Gallery info */}
+        <div className="mb-6">
           <p className="text-muted-foreground">
-            {images.length} photo{images.length > 1 ? 's' : ''}
+            {images.length} photo{images.length > 1 ? 's' : ''} • 
+            Expire le {format(new Date(gallery!.expires_at), 'dd MMMM yyyy', { locale: fr })}
           </p>
         </div>
 
-        {/* Image Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {/* Masonry Grid */}
+        <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 sm:gap-4">
           {images.map((image, index) => (
             <div
               key={image.id}
-              className="aspect-square rounded-lg overflow-hidden cursor-pointer group relative"
+              className="break-inside-avoid mb-3 sm:mb-4 group relative rounded-lg overflow-hidden cursor-pointer"
               onClick={() => setLightboxIndex(index)}
             >
               <img
                 src={image.cloudinary_url}
                 alt={`Photo ${index + 1}`}
-                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-background/0 group-hover:bg-background/20 transition-colors" />
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground/90">
+                    Photo {index + 1}
+                  </span>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="h-8 w-8 bg-background/80 hover:bg-background"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      downloadImage(image.cloudinary_url, index);
+                    }}
+                    disabled={downloadingIndex === index}
+                  >
+                    {downloadingIndex === index ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
+
+        {images.length === 0 && (
+          <div className="text-center py-16">
+            <ImageOff className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">Aucune photo dans cette galerie</p>
+          </div>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 py-6 mt-8">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p>Photos partagées via <span className="font-medium text-foreground">PhotoServe</span></p>
+        </div>
+      </footer>
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
-        <div className="fixed inset-0 z-50 bg-background/95 flex items-center justify-center">
+        <div 
+          className="fixed inset-0 z-50 bg-background/98 backdrop-blur-xl flex items-center justify-center"
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close button */}
           <button
             onClick={() => setLightboxIndex(null)}
-            className="absolute top-4 right-4 p-2 hover:bg-muted rounded-lg transition-colors"
+            className="absolute top-4 right-4 p-3 hover:bg-muted rounded-full transition-colors z-10"
+            aria-label="Fermer"
           >
             <X className="h-6 w-6" />
           </button>
 
+          {/* Navigation */}
           <button
-            onClick={() => setLightboxIndex(Math.max(0, lightboxIndex - 1))}
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex(Math.max(0, lightboxIndex - 1));
+            }}
             disabled={lightboxIndex === 0}
-            className="absolute left-4 p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+            className="absolute left-2 sm:left-6 p-3 hover:bg-muted rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed z-10"
+            aria-label="Photo précédente"
           >
             <ChevronLeft className="h-8 w-8" />
           </button>
 
           <button
-            onClick={() => setLightboxIndex(Math.min(images.length - 1, lightboxIndex + 1))}
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex(Math.min(images.length - 1, lightboxIndex + 1));
+            }}
             disabled={lightboxIndex === images.length - 1}
-            className="absolute right-4 p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+            className="absolute right-2 sm:right-6 p-3 hover:bg-muted rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed z-10"
+            aria-label="Photo suivante"
           >
             <ChevronRight className="h-8 w-8" />
           </button>
 
-          <div className="max-w-5xl max-h-[80vh] w-full h-full flex items-center justify-center p-4">
+          {/* Image container */}
+          <div 
+            className="max-w-6xl max-h-[85vh] w-full h-full flex items-center justify-center p-4 sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={images[lightboxIndex].cloudinary_url}
               alt={`Photo ${lightboxIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
             />
           </div>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {lightboxIndex + 1} / {images.length}
+          {/* Bottom bar */}
+          <div 
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 rounded-full bg-card/90 backdrop-blur border border-border/50 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="text-sm font-medium">
+              {lightboxIndex + 1} <span className="text-muted-foreground">/ {images.length}</span>
             </span>
+            <div className="w-px h-5 bg-border" />
             <Button
               size="sm"
-              variant="secondary"
+              variant="ghost"
+              className="gap-2"
               onClick={() => downloadImage(images[lightboxIndex].cloudinary_url, lightboxIndex)}
+              disabled={downloadingIndex === lightboxIndex}
             >
-              <Download className="h-4 w-4 mr-2" />
+              {downloadingIndex === lightboxIndex ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
               Télécharger
             </Button>
           </div>
