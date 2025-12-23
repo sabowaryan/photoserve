@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { hash as bcryptHash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 // Dynamic CORS with origin validation
 function getCorsHeaders(req: Request) {
@@ -22,11 +22,24 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Hash password using bcrypt (secure, slow hash designed for passwords)
+// Hash password using bcrypt with synchronous salt generation (compatible with Deno Deploy)
 async function hashPassword(password: string): Promise<string> {
-  // Work factor of 12 = 2^12 iterations, provides good security/performance balance
-  const salt = await bcrypt.genSalt(12);
-  return await bcrypt.hash(password, salt);
+  // Use the hash function directly with a pre-generated salt string
+  // bcrypt salts are 22 characters from the bcrypt alphabet + prefix
+  const salt = "$2a$12$" + generateBcryptSalt();
+  return await bcryptHash(password, salt);
+}
+
+// Generate a bcrypt-compatible salt (22 characters from the bcrypt alphabet)
+function generateBcryptSalt(): string {
+  const bcryptAlphabet = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const saltBytes = new Uint8Array(22);
+  crypto.getRandomValues(saltBytes);
+  let salt = "";
+  for (let i = 0; i < 22; i++) {
+    salt += bcryptAlphabet[saltBytes[i] % bcryptAlphabet.length];
+  }
+  return salt;
 }
 
 serve(async (req) => {
