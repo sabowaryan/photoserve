@@ -94,9 +94,9 @@ export default function Landing() {
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Fonctionnalités
             </a>
-            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Tarifs
-            </a>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
