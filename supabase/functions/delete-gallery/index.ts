@@ -2,12 +2,29 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Dynamic CORS with origin validation
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
+  
+  const isAllowed = 
+    origin.includes('localhost') ||
+    origin.includes('127.0.0.1') ||
+    origin.includes('.lovable.app') ||
+    origin.includes('.lovableproject.com') ||
+    origin.includes(`${projectRef}.supabase.co`);
+  
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : '',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,6 +32,7 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const cloudinaryCloudName = Deno.env.get('CLOUDINARY_CLOUD_NAME')!;
     const cloudinaryApiKey = Deno.env.get('CLOUDINARY_API_KEY')!;
     const cloudinaryApiSecret = Deno.env.get('CLOUDINARY_API_SECRET')!;
@@ -28,9 +46,17 @@ serve(async (req) => {
       });
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    // User client - RLS enforced
+    const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    // Service client - for Cloudinary operations
+    const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    const { data: { user }, error: userError } = await serviceSupabase.auth.getUser(token);
     
     if (userError || !user) {
       console.error('Auth error:', userError);
@@ -51,24 +77,23 @@ serve(async (req) => {
 
     console.log(`User ${user.id} deleting gallery ${galleryId}...`);
 
-    // Verify gallery belongs to user
-    const { data: gallery, error: galleryError } = await supabase
+    // Verify gallery belongs to user using USER client (RLS enforced)
+    const { data: gallery, error: galleryError } = await userSupabase
       .from('galleries')
-      .select('id, user_id')
+      .select('id')
       .eq('id', galleryId)
-      .eq('user_id', user.id)
       .single();
 
     if (galleryError || !gallery) {
-      console.error('Gallery not found or unauthorized:', galleryError);
-      return new Response(JSON.stringify({ error: 'Gallery not found' }), {
-        status: 404,
+      console.error('Gallery not found or access denied:', galleryError);
+      return new Response(JSON.stringify({ error: 'Gallery not found or access denied' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Get all images in the gallery
-    const { data: images, error: imagesError } = await supabase
+    // Get all images in the gallery using USER client (RLS enforced)
+    const { data: images, error: imagesError } = await userSupabase
       .from('images')
       .select('id, cloudinary_public_id, file_size_mb')
       .eq('gallery_id', galleryId);
@@ -120,8 +145,8 @@ serve(async (req) => {
       }
     }
 
-    // Delete all images from database
-    const { error: deleteImagesError } = await supabase
+    // Delete all images from database using service client
+    const { error: deleteImagesError } = await serviceSupabase
       .from('images')
       .delete()
       .eq('gallery_id', galleryId);
@@ -130,8 +155,8 @@ serve(async (req) => {
       console.error('Error deleting images from DB:', deleteImagesError);
     }
 
-    // Delete the gallery
-    const { error: deleteGalleryError } = await supabase
+    // Delete the gallery using service client
+    const { error: deleteGalleryError } = await serviceSupabase
       .from('galleries')
       .delete()
       .eq('id', galleryId);
@@ -144,9 +169,9 @@ serve(async (req) => {
       });
     }
 
-    // Update user's storage usage
+    // Update user's storage usage using service client
     if (totalSizeDeleted > 0) {
-      await supabase.rpc('decrement_storage', { 
+      await serviceSupabase.rpc('decrement_storage', { 
         user_id: user.id, 
         size_mb: totalSizeDeleted 
       });
@@ -164,6 +189,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in delete-gallery function:', error);
+    const corsHeaders = getCorsHeaders(req);
     return new Response(JSON.stringify({ error: 'An error occurred. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
