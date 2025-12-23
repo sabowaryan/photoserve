@@ -72,10 +72,10 @@ export default function Dashboard() {
       if (profileError) throw profileError;
       setProfile(profileData as Profile);
 
-      // Fetch galleries
+      // Fetch galleries (excluding password_hash for security)
       const { data: galleriesData, error: galleriesError } = await supabase
         .from('galleries')
-        .select('*')
+        .select('id, title, unique_slug, expires_at, expiration_days, views_count, is_active, created_at, updated_at, user_id')
         .order('created_at', { ascending: false });
 
       if (galleriesError) throw galleriesError;
