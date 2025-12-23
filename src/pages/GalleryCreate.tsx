@@ -91,6 +91,23 @@ export default function GalleryCreate() {
     enabled: !!user,
   });
 
+  // Fetch current gallery count
+  const { data: galleryCount = 0 } = useQuery({
+    queryKey: ['galleryCount', user?.id],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('galleries')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user?.id);
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user,
+  });
+
+  const maxGalleries = profile?.max_galleries || 3;
+  const isGalleryLimitReached = galleryCount >= maxGalleries;
+
   // Calculate pending upload size
   const pendingUploadSize = useMemo(() => {
     return images.reduce((acc, img) => acc + img.sizeMb, 0);
@@ -226,6 +243,15 @@ export default function GalleryCreate() {
       toast({
         title: 'Espace insuffisant',
         description: 'Supprimez des images ou passez à un plan supérieur.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (isGalleryLimitReached) {
+      toast({
+        title: 'Limite de galeries atteinte',
+        description: `Vous avez atteint votre limite de ${maxGalleries} galeries. Passez à un plan supérieur pour en créer plus.`,
         variant: 'destructive',
       });
       return;
@@ -367,6 +393,12 @@ export default function GalleryCreate() {
                 <div className="flex items-center gap-2 mt-2 text-destructive text-sm">
                   <AlertTriangle className="h-4 w-4" />
                   Espace insuffisant. Supprimez des images ou passez à un plan supérieur.
+                </div>
+              )}
+              {isGalleryLimitReached && (
+                <div className="flex items-center gap-2 mt-2 text-destructive text-sm">
+                  <AlertTriangle className="h-4 w-4" />
+                  Limite de galeries atteinte ({galleryCount}/{maxGalleries}). Passez à un plan supérieur.
                 </div>
               )}
             </CardContent>
@@ -534,7 +566,7 @@ export default function GalleryCreate() {
               {/* Create Button */}
               <Button
                 onClick={handleCreate}
-                disabled={isCreating || !title.trim() || !password.trim() || images.length === 0 || isStorageExceeded}
+                disabled={isCreating || !title.trim() || !password.trim() || images.length === 0 || isStorageExceeded || isGalleryLimitReached}
                 className="w-full btn-primary"
               >
                 {isCreating ? (
