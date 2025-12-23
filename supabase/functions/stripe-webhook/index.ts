@@ -63,27 +63,38 @@ serve(async (req) => {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
+    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    if (!webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
     // Get the raw body for signature verification
     const body = await req.text();
     const signature = req.headers.get("stripe-signature");
     
-    // Note: In production, you should verify the webhook signature
-    // For now, we'll parse the event directly
-    let event: Stripe.Event;
-    
-    try {
-      event = JSON.parse(body) as Stripe.Event;
-    } catch (err) {
-      logStep("Error parsing webhook body", { error: err });
-      return new Response(JSON.stringify({ error: "Invalid payload" }), {
+    if (!signature) {
+      logStep("Missing stripe-signature header");
+      return new Response(JSON.stringify({ error: "Missing signature" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    logStep("Event received", { type: event.type, id: event.id });
+    // Verify webhook signature
+    let event: Stripe.Event;
+    
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      logStep("Webhook signature verification failed", { error: errorMessage });
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    logStep("Event verified", { type: event.type, id: event.id });
 
     // Handle different event types
     switch (event.type) {
@@ -163,7 +174,8 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    // Return generic error to client, details are logged
+    return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

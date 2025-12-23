@@ -22,7 +22,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('Missing authorization header');
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -34,7 +34,7 @@ serve(async (req) => {
     
     if (userError || !user) {
       console.error('Auth error:', userError);
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -43,7 +43,7 @@ serve(async (req) => {
     const { galleryId } = await req.json();
 
     if (!galleryId) {
-      return new Response(JSON.stringify({ error: 'Missing galleryId' }), {
+      return new Response(JSON.stringify({ error: 'Missing gallery information' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -61,7 +61,7 @@ serve(async (req) => {
 
     if (galleryError || !gallery) {
       console.error('Gallery not found or unauthorized:', galleryError);
-      return new Response(JSON.stringify({ error: 'Gallery not found or unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Gallery not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -75,7 +75,7 @@ serve(async (req) => {
 
     if (imagesError) {
       console.error('Error fetching images:', imagesError);
-      return new Response(JSON.stringify({ error: 'Failed to fetch gallery images' }), {
+      return new Response(JSON.stringify({ error: 'Failed to process gallery' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -164,8 +164,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in delete-gallery function:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: 'An error occurred. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

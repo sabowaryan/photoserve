@@ -17,6 +17,20 @@ const PLAN_LIMITS = {
   pro: { maxImageSize: 10, maxStorageTotal: 500 },
 };
 
+// Magic numbers for image validation
+function validateImageMagicNumbers(bytes: Uint8Array): boolean {
+  // JPEG: starts with FF D8 FF
+  const isJPEG = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+  // PNG: starts with 89 50 4E 47 (‰PNG)
+  const isPNG = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
+  // GIF: starts with GIF
+  const isGIF = bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46;
+  // WEBP: bytes 8-11 are WEBP
+  const isWEBP = bytes.length >= 12 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
+  
+  return isJPEG || isPNG || isGIF || isWEBP;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -33,7 +47,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('Missing authorization header');
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -48,7 +62,7 @@ serve(async (req) => {
     
     if (userError || !user) {
       console.error('Auth error:', userError);
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -84,18 +98,17 @@ serve(async (req) => {
     const orderIndex = parseInt(formData.get('orderIndex') as string || '0');
 
     if (!file || !galleryId) {
-      return new Response(JSON.stringify({ error: 'Missing file or galleryId' }), {
+      return new Response(JSON.stringify({ error: 'Missing file or gallery information' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Validate file type
+    // Validate file type (MIME)
     if (!ALLOWED_TYPES.includes(file.type)) {
       console.error(`Invalid file type: ${file.type}`);
       return new Response(JSON.stringify({ 
-        error: 'Invalid file type',
-        details: `Allowed types: ${ALLOWED_TYPES.join(', ')}` 
+        error: 'Invalid file type. Please upload JPEG, PNG, WebP, or GIF images.' 
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -107,8 +120,7 @@ serve(async (req) => {
     if (fileSizeMb > maxImageSizeMb) {
       console.error(`File too large: ${fileSizeMb.toFixed(2)}MB > ${maxImageSizeMb}MB limit`);
       return new Response(JSON.stringify({ 
-        error: 'File too large',
-        details: `Maximum file size for ${plan} plan is ${maxImageSizeMb}MB. Your file is ${fileSizeMb.toFixed(2)}MB.`
+        error: `File too large. Maximum size is ${maxImageSizeMb}MB.`
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -119,8 +131,7 @@ serve(async (req) => {
     if (storageUsedMb + fileSizeMb > storageLimitMb) {
       console.error(`Storage limit exceeded: ${storageUsedMb + fileSizeMb}MB > ${storageLimitMb}MB`);
       return new Response(JSON.stringify({ 
-        error: 'Storage limit exceeded',
-        details: `You have ${(storageLimitMb - storageUsedMb).toFixed(2)}MB remaining. Upgrade your plan for more storage.`
+        error: 'Storage limit exceeded. Upgrade your plan for more storage.'
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -137,15 +148,28 @@ serve(async (req) => {
 
     if (galleryError || !gallery) {
       console.error('Gallery error:', galleryError);
-      return new Response(JSON.stringify({ error: 'Gallery not found or unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Gallery not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Convert file to base64 for Cloudinary upload
+    // Convert file to base64 and validate magic numbers
     const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const bytes = new Uint8Array(arrayBuffer);
+    
+    // Validate actual file content (magic numbers)
+    if (!validateImageMagicNumbers(bytes.slice(0, 12))) {
+      console.error('File content validation failed - not a valid image');
+      return new Response(JSON.stringify({ 
+        error: 'Invalid image file. The file does not appear to be a valid image.'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const base64 = btoa(String.fromCharCode(...bytes));
     const dataUri = `data:${file.type};base64,${base64}`;
 
     // Upload to Cloudinary with transformations
@@ -179,7 +203,7 @@ serve(async (req) => {
     if (!cloudinaryResponse.ok) {
       const errorText = await cloudinaryResponse.text();
       console.error('Cloudinary error:', errorText);
-      return new Response(JSON.stringify({ error: 'Failed to upload to Cloudinary', details: errorText }), {
+      return new Response(JSON.stringify({ error: 'Failed to upload image. Please try again.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -240,7 +264,7 @@ serve(async (req) => {
         console.error('Failed to cleanup Cloudinary image:', cleanupError);
       }
       
-      return new Response(JSON.stringify({ error: 'Failed to save image record' }), {
+      return new Response(JSON.stringify({ error: 'Failed to save image. Please try again.' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -266,8 +290,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in upload-image function:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: 'An error occurred. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -22,7 +22,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('Missing authorization header');
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -34,7 +34,7 @@ serve(async (req) => {
     
     if (userError || !user) {
       console.error('Auth error:', userError);
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -43,7 +43,7 @@ serve(async (req) => {
     const { imageId } = await req.json();
 
     if (!imageId) {
-      return new Response(JSON.stringify({ error: 'Missing imageId' }), {
+      return new Response(JSON.stringify({ error: 'Missing image information' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -74,7 +74,7 @@ serve(async (req) => {
 
     if ((image.gallery as any).user_id !== user.id) {
       console.error('Unauthorized: user does not own gallery');
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Access denied' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -108,7 +108,7 @@ serve(async (req) => {
           cloudinaryDeleted = result.result === 'ok';
           console.log(`Cloudinary delete result: ${result.result}`);
         } else {
-          console.error('Cloudinary delete failed:', await response.text());
+          console.error('Cloudinary delete failed');
         }
       } catch (cloudinaryError) {
         console.error('Cloudinary delete error:', cloudinaryError);
@@ -148,8 +148,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in delete-image function:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: 'An error occurred. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

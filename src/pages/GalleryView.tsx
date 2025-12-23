@@ -15,7 +15,6 @@ interface Gallery {
   title: string;
   expires_at: string;
   views_count: number;
-  password_hash: string;
   is_active: boolean;
 }
 
@@ -61,9 +60,10 @@ export default function GalleryView() {
 
   const fetchGallery = async () => {
     try {
+      // Use the public view that doesn't expose password_hash
       const { data, error: fetchError } = await supabase
-        .from('galleries')
-        .select('id, title, expires_at, views_count, password_hash, is_active')
+        .from('galleries_public')
+        .select('id, title, expires_at, views_count, is_active')
         .eq('unique_slug', slug)
         .maybeSingle();
 
@@ -100,43 +100,44 @@ export default function GalleryView() {
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!gallery || isSubmitting) return;
+    if (!slug || isSubmitting) return;
 
     setIsSubmitting(true);
 
-    // Simple password check (in production, use proper hashing)
-    if (password === gallery.password_hash) {
-      setIsAuthenticated(true);
-      
-      // Increment view count
-      await supabase
-        .from('galleries')
-        .update({ views_count: gallery.views_count + 1 })
-        .eq('id', gallery.id);
+    try {
+      // Use server-side password verification
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-gallery-password`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, password }),
+        }
+      );
 
-      // Fetch images
-      const { data: imagesData, error: imagesError } = await supabase
-        .from('images')
-        .select('id, cloudinary_url, order_index')
-        .eq('gallery_id', gallery.id)
-        .order('order_index');
+      const result = await response.json();
 
-      if (imagesError) {
-        console.error('Error fetching images:', imagesError);
+      if (!response.ok) {
         toast({
-          title: 'Erreur',
-          description: 'Impossible de charger les images.',
+          title: response.status === 401 ? 'Mot de passe incorrect' : 'Erreur',
+          description: response.status === 401 
+            ? 'Veuillez vérifier le mot de passe et réessayer.'
+            : result.error || 'Impossible d\'accéder à la galerie.',
           variant: 'destructive',
         });
         setIsSubmitting(false);
         return;
       }
 
-      setImages(imagesData || []);
-    } else {
+      // Success - update state with data from server
+      setIsAuthenticated(true);
+      setGallery(prev => prev ? { ...prev, views_count: result.gallery.views_count } : null);
+      setImages(result.images || []);
+    } catch (err) {
+      console.error('Error verifying password:', err);
       toast({
-        title: 'Mot de passe incorrect',
-        description: 'Veuillez vérifier le mot de passe et réessayer.',
+        title: 'Erreur',
+        description: 'Une erreur est survenue. Veuillez réessayer.',
         variant: 'destructive',
       });
     }
