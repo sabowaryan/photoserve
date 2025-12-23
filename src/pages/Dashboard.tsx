@@ -222,12 +222,21 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-4 w-full" />
               ) : (
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">{galleries.length}</span>
-                  <span className="text-muted-foreground">/ {profile?.max_galleries || 3}</span>
-                </div>
+                <>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-2xl font-bold">{galleries.length}</span>
+                    <span className="text-muted-foreground">/ {profile?.max_galleries || 3}</span>
+                    <span className="text-xs text-muted-foreground ml-2">
+                      ({(profile?.max_galleries || 3) - galleries.length} restantes)
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(galleries.length / (profile?.max_galleries || 3)) * 100} 
+                    className={`h-2 ${galleries.length >= (profile?.max_galleries || 3) ? '[&>div]:bg-destructive' : ''}`}
+                  />
+                </>
               )}
             </CardContent>
           </Card>
