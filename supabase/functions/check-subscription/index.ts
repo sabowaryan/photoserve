@@ -8,21 +8,36 @@ const corsHeaders = {
 };
 
 // Plan configuration matching Landing page pricing
-const PLANS = {
+const PLAN_LIMITS = {
   premium: {
-    product_id: "prod_TekDZmc5kiGli8",
     storage_limit_mb: 5120, // 5 Go
     max_galleries: 50,
     max_images_per_gallery: 500,
     max_image_size_mb: 50, // Illimité en pratique
   },
   pro: {
-    product_id: "prod_TekDzBLoGEfWhH",
     storage_limit_mb: 51200, // 50 Go
     max_galleries: 500,
     max_images_per_gallery: 5000,
     max_image_size_mb: 100, // Illimité en pratique
   },
+};
+
+// Map product IDs to plan names (supports both EUR and USD products)
+const PRODUCT_TO_PLAN: Record<string, keyof typeof PLAN_LIMITS> = {
+  // USD products
+  "prod_TelxXCo2qqYN1y": "premium",
+  "prod_TelxqbQvbBMKPx": "pro",
+  // EUR products (legacy)
+  "prod_TekDZmc5kiGli8": "premium",
+  "prod_TekDzBLoGEfWhH": "pro",
+};
+
+const FREE_LIMITS = {
+  storage_limit_mb: 20,
+  max_galleries: 3,
+  max_images_per_gallery: 30,
+  max_image_size_mb: 1,
 };
 
 const logStep = (step: string, details?: any) => {
@@ -121,34 +136,16 @@ serve(async (req) => {
     logStep("Active subscription found", { subscriptionId: subscription.id, productId, endDate: subscriptionEnd });
 
     // Determine plan from product ID
-    let planName = "free";
-    let planLimits = {
-      storage_limit_mb: 20,
-      max_galleries: 3,
-      max_images_per_gallery: 30,
-      max_image_size_mb: 1,
-    };
+    const planName = PRODUCT_TO_PLAN[productId] || null;
+    const planLimits = planName ? PLAN_LIMITS[planName] : FREE_LIMITS;
 
-    for (const [name, config] of Object.entries(PLANS)) {
-      if (config.product_id === productId) {
-        planName = name;
-        planLimits = {
-          storage_limit_mb: config.storage_limit_mb,
-          max_galleries: config.max_galleries,
-          max_images_per_gallery: config.max_images_per_gallery,
-          max_image_size_mb: config.max_image_size_mb,
-        };
-        break;
-      }
-    }
-
-    logStep("Determined plan", { planName, planLimits });
+    logStep("Determined plan", { planName: planName || "free", planLimits });
 
     // Update profile with subscription info
     await supabaseClient
       .from("profiles")
       .update({
-        subscription_plan: planName,
+        subscription_plan: planName || "free",
         stripe_subscription_id: subscription.id,
         ...planLimits,
       })
@@ -156,7 +153,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       subscribed: true,
-      plan: planName,
+      plan: planName || "free",
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

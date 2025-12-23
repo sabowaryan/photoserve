@@ -8,21 +8,30 @@ const corsHeaders = {
 };
 
 // Plan configuration matching the app pricing
-const PLANS = {
+// Supports both EUR and USD product IDs
+const PLAN_LIMITS = {
   premium: {
-    product_id: "prod_TekDZmc5kiGli8",
     storage_limit_mb: 5120, // 5 Go
     max_galleries: 50,
     max_images_per_gallery: 500,
     max_image_size_mb: 50,
   },
   pro: {
-    product_id: "prod_TekDzBLoGEfWhH",
     storage_limit_mb: 51200, // 50 Go
     max_galleries: 500,
     max_images_per_gallery: 5000,
     max_image_size_mb: 100,
   },
+};
+
+// Map product IDs to plan names (supports both EUR and USD products)
+const PRODUCT_TO_PLAN: Record<string, keyof typeof PLAN_LIMITS> = {
+  // USD products
+  "prod_TelxXCo2qqYN1y": "premium",
+  "prod_TelxqbQvbBMKPx": "pro",
+  // EUR products (legacy)
+  "prod_TekDZmc5kiGli8": "premium",
+  "prod_TekDzBLoGEfWhH": "pro",
 };
 
 const FREE_LIMITS = {
@@ -267,21 +276,8 @@ async function updateProfileFromSubscription(
 
   // Determine plan from product ID
   const productId = subscription.items.data[0]?.price?.product as string;
-  let planName = "free";
-  let planLimits = FREE_LIMITS;
-
-  for (const [name, config] of Object.entries(PLANS)) {
-    if (config.product_id === productId) {
-      planName = name;
-      planLimits = {
-        storage_limit_mb: config.storage_limit_mb,
-        max_galleries: config.max_galleries,
-        max_images_per_gallery: config.max_images_per_gallery,
-        max_image_size_mb: config.max_image_size_mb,
-      };
-      break;
-    }
-  }
+  const planName = PRODUCT_TO_PLAN[productId] || null;
+  const planLimits = planName ? PLAN_LIMITS[planName] : FREE_LIMITS;
 
   logStep("Updating profile", { 
     userId: profile.id, 
@@ -298,7 +294,7 @@ async function updateProfileFromSubscription(
     stripe_subscription_id: subscription.id,
   };
 
-  if (isActive) {
+  if (isActive && planName) {
     updateData.subscription_plan = planName;
     updateData.storage_limit_mb = planLimits.storage_limit_mb;
     updateData.max_galleries = planLimits.max_galleries;
