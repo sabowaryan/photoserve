@@ -1,9 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -20,8 +22,11 @@ import {
   ExternalLink,
   Loader2,
   Image as ImageIcon,
+  Lock,
+  Save,
+  Edit3,
 } from 'lucide-react';
-import { formatDistanceToNow, format, isPast } from 'date-fns';
+import { formatDistanceToNow, format, isPast, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
   AlertDialog,
@@ -34,12 +39,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Gallery {
   id: string;
   title: string;
   unique_slug: string;
   expires_at: string;
+  expiration_days: number;
   views_count: number;
   is_active: boolean;
   password_hash: string;
@@ -61,6 +74,31 @@ interface UploadingImage {
   status: 'uploading' | 'done' | 'error';
 }
 
+// Duration options by plan
+const DURATION_OPTIONS = {
+  free: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+  ],
+  premium: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+    { value: 60, label: '60 jours' },
+    { value: 90, label: '90 jours' },
+  ],
+  pro: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+    { value: 60, label: '60 jours' },
+    { value: 90, label: '90 jours' },
+    { value: 180, label: '180 jours' },
+    { value: 365, label: '1 an' },
+  ],
+};
+
 export default function GalleryDetail() {
   const { id } = useParams<{ id: string }>();
   const { user, session } = useAuth();
@@ -70,9 +108,16 @@ export default function GalleryDetail() {
 
   const [uploadingImages, setUploadingImages] = useState<UploadingImage[]>([]);
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  
+  // Edit states
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Fetch gallery
-  const { data: gallery, isLoading: galleryLoading } = useQuery({
+  const { data: gallery, isLoading: galleryLoading, refetch: refetchGallery } = useQuery({
     queryKey: ['gallery', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -116,6 +161,18 @@ export default function GalleryDetail() {
     enabled: !!user,
   });
 
+  // Initialize edit values when gallery loads
+  useEffect(() => {
+    if (gallery) {
+      setEditTitle(gallery.title);
+      setEditPassword(gallery.password_hash);
+    }
+  }, [gallery]);
+
+  const plan = (profile?.subscription_plan || 'free') as keyof typeof DURATION_OPTIONS;
+  const durationOptions = DURATION_OPTIONS[plan] || DURATION_OPTIONS.free;
+  const canChangeDuration = plan !== 'free';
+
   const copyLink = () => {
     if (!gallery) return;
     const url = `${window.location.origin}/g/${gallery.unique_slug}`;
@@ -124,6 +181,74 @@ export default function GalleryDetail() {
       title: 'Lien copié !',
       description: 'Le lien de la galerie a été copié dans le presse-papiers.',
     });
+  };
+
+  const handleSaveTitle = async () => {
+    if (!editTitle.trim() || !gallery) return;
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('galleries')
+        .update({ title: editTitle.trim() })
+        .eq('id', gallery.id);
+      
+      if (error) throw error;
+      
+      toast({ title: 'Titre mis à jour' });
+      setIsEditingTitle(false);
+      refetchGallery();
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de modifier le titre.', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSavePassword = async () => {
+    if (!editPassword.trim() || !gallery) return;
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('galleries')
+        .update({ password_hash: editPassword.trim() })
+        .eq('id', gallery.id);
+      
+      if (error) throw error;
+      
+      toast({ title: 'Mot de passe mis à jour' });
+      setIsEditingPassword(false);
+      refetchGallery();
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de modifier le mot de passe.', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleChangeDuration = async (days: string) => {
+    if (!gallery || !canChangeDuration) return;
+    
+    const daysNum = parseInt(days);
+    const newExpiresAt = addDays(new Date(gallery.created_at), daysNum);
+    
+    try {
+      const { error } = await supabase
+        .from('galleries')
+        .update({ 
+          expiration_days: daysNum,
+          expires_at: newExpiresAt.toISOString(),
+        })
+        .eq('id', gallery.id);
+      
+      if (error) throw error;
+      
+      toast({ title: 'Durée mise à jour' });
+      refetchGallery();
+    } catch (error) {
+      toast({ title: 'Erreur', description: 'Impossible de modifier la durée.', variant: 'destructive' });
+    }
   };
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,8 +320,8 @@ export default function GalleryDetail() {
           img.id === uploadId ? { ...img, status: 'done' } : img
         ));
 
-        // Refresh images list
         queryClient.invalidateQueries({ queryKey: ['gallery-images', id] });
+        queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
 
         setTimeout(() => {
           setUploadingImages(prev => prev.filter(img => img.id !== uploadId));
@@ -213,7 +338,7 @@ export default function GalleryDetail() {
         });
       }
     }
-  }, [id, images.length, uploadingImages.length, profile, session, queryClient, toast]);
+  }, [id, images.length, uploadingImages.length, profile, session, queryClient, toast, user?.id]);
 
   const deleteImage = async (imageId: string) => {
     setDeletingImageId(imageId);
@@ -236,6 +361,7 @@ export default function GalleryDetail() {
       }
 
       queryClient.invalidateQueries({ queryKey: ['gallery-images', id] });
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       toast({
         title: 'Image supprimée',
         description: 'L\'image a été supprimée avec succès.',
@@ -293,6 +419,7 @@ export default function GalleryDetail() {
   }
 
   const isExpired = gallery ? isPast(new Date(gallery.expires_at)) : false;
+  const totalImageSize = images.reduce((acc, img) => acc + (img.file_size_mb || 0), 0);
 
   if (galleryLoading) {
     return (
@@ -349,11 +476,33 @@ export default function GalleryDetail() {
           </Link>
         </Button>
 
-        {/* Gallery Info */}
+        {/* Gallery Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="font-display text-2xl font-bold">{gallery.title}</h1>
+              {isEditingTitle ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="font-display text-xl font-bold"
+                    autoFocus
+                  />
+                  <Button size="sm" onClick={handleSaveTitle} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => { setIsEditingTitle(false); setEditTitle(gallery.title); }}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <h1 className="font-display text-2xl font-bold">{gallery.title}</h1>
+                  <Button size="sm" variant="ghost" onClick={() => setIsEditingTitle(true)}>
+                    <Edit3 className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
               <Badge variant={isExpired ? 'destructive' : 'secondary'}>
                 {isExpired ? 'Expirée' : 'Active'}
               </Badge>
@@ -372,7 +521,7 @@ export default function GalleryDetail() {
               </span>
               <span className="flex items-center gap-1">
                 <ImageIcon className="h-4 w-4" />
-                {images.length} image{images.length !== 1 ? 's' : ''}
+                {images.length} image{images.length !== 1 ? 's' : ''} ({totalImageSize.toFixed(1)} Mo)
               </span>
             </div>
           </div>
@@ -412,21 +561,80 @@ export default function GalleryDetail() {
           </div>
         </div>
 
-        {/* Gallery Info Card */}
+        {/* Gallery Settings Card */}
         <Card className="glass-card mb-8">
           <CardContent className="pt-6">
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Public Link */}
               <div>
-                <span className="text-muted-foreground">Lien public</span>
-                <p className="font-mono mt-1">{window.location.origin}/g/{gallery.unique_slug}</p>
+                <Label className="text-muted-foreground text-xs">Lien public</Label>
+                <p className="font-mono text-sm mt-1 truncate">{window.location.origin}/g/{gallery.unique_slug}</p>
               </div>
+
+              {/* Password */}
               <div>
-                <span className="text-muted-foreground">Mot de passe</span>
-                <p className="font-mono mt-1">{gallery.password_hash}</p>
+                <Label className="text-muted-foreground text-xs flex items-center gap-1">
+                  <Lock className="h-3 w-3" />
+                  Mot de passe
+                </Label>
+                {isEditingPassword ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <Input
+                      value={editPassword}
+                      onChange={(e) => setEditPassword(e.target.value)}
+                      className="h-8 text-sm"
+                    />
+                    <Button size="sm" variant="ghost" onClick={handleSavePassword} disabled={isSaving}>
+                      {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setIsEditingPassword(false); setEditPassword(gallery.password_hash); }}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="font-mono text-sm">{gallery.password_hash}</p>
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setIsEditingPassword(true)}>
+                      <Edit3 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
+
+              {/* Expiration Date */}
               <div>
-                <span className="text-muted-foreground">Date d'expiration</span>
-                <p className="mt-1">{format(new Date(gallery.expires_at), 'dd MMMM yyyy', { locale: fr })}</p>
+                <Label className="text-muted-foreground text-xs flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Date d'expiration
+                </Label>
+                <p className="text-sm mt-1">{format(new Date(gallery.expires_at), 'dd MMMM yyyy', { locale: fr })}</p>
+              </div>
+
+              {/* Duration Selector (paid plans only) */}
+              <div>
+                <Label className="text-muted-foreground text-xs">Durée de vie</Label>
+                {canChangeDuration ? (
+                  <Select
+                    value={gallery.expiration_days?.toString() || '30'}
+                    onValueChange={handleChangeDuration}
+                  >
+                    <SelectTrigger className="h-8 mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {durationOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value.toString()}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <p className="text-sm mt-1 text-muted-foreground">
+                    {gallery.expiration_days || 30} jours
+                    <span className="text-xs block">Passez à Premium pour modifier</span>
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -437,7 +645,10 @@ export default function GalleryDetail() {
           <label className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
             <Upload className="h-8 w-8 text-muted-foreground mb-2" />
             <span className="text-sm text-muted-foreground">
-              Ajouter des images
+              Ajouter des images ({images.length}/{profile?.max_images_per_gallery || 30})
+            </span>
+            <span className="text-xs text-muted-foreground mt-1">
+              Max {profile?.max_image_size_mb || 1} Mo par image
             </span>
             <input
               type="file"
@@ -477,6 +688,9 @@ export default function GalleryDetail() {
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-2">
+                  <span className="text-xs text-foreground">{(image.file_size_mb || 0).toFixed(1)} Mo</span>
+                </div>
                 <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-colors flex items-center justify-center">
                   <Button
                     variant="destructive"
