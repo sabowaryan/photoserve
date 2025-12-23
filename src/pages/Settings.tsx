@@ -427,7 +427,7 @@ export default function Settings() {
                               <div>
                                 <h4 className="font-display font-semibold">{plan.name}</h4>
                                 <p className="text-sm text-muted-foreground">
-                                  <span className="text-lg font-bold text-foreground">{plan.price}€</span>/mois
+                                  <span className="text-lg font-bold text-foreground">${plan.price}</span>/mois
                                 </p>
                               </div>
                             </div>
@@ -472,7 +472,7 @@ export default function Settings() {
                       <div>
                         <h4 className="font-display font-semibold">Passer à Pro</h4>
                         <p className="text-sm text-muted-foreground">
-                          <span className="text-lg font-bold text-foreground">25,99€</span>/mois
+                          <span className="text-lg font-bold text-foreground">$25.99</span>/mois
                         </p>
                       </div>
                     </div>
