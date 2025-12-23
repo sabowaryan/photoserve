@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,14 +18,41 @@ import {
   Camera,
   Save,
   ExternalLink,
-  Check
+  Check,
+  Loader2,
+  Crown,
+  Zap
 } from 'lucide-react';
+
+const STRIPE_PLANS = {
+  premium: {
+    name: 'Premium',
+    price: 9.90,
+    features: ['100 Mo de stockage', '10 galeries', '50 images par galerie', 'Images jusqu\'à 5 Mo', '90 jours d\'expiration'],
+    icon: Crown,
+    color: 'text-amber-500',
+    bgColor: 'bg-amber-500/10',
+  },
+  pro: {
+    name: 'Pro',
+    price: 24.90,
+    features: ['500 Mo de stockage', '100 galeries', '100 images par galerie', 'Images jusqu\'à 10 Mo', '365 jours d\'expiration', 'Support prioritaire'],
+    icon: Zap,
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+  },
+};
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryClient = useQueryClient();
+  const { user, session, signOut } = useAuth();
   const [name, setName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
+  const [subscribingTo, setSubscribingTo] = useState<string | null>(null);
+  const [isManaging, setIsManaging] = useState(false);
 
   const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['profile', user?.id],
@@ -46,20 +73,70 @@ export default function Settings() {
     enabled: !!user?.id,
   });
 
-  const { data: plans } = useQuery({
-    queryKey: ['subscription-plans'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .order('price_monthly', { ascending: true });
-      
-      if (error) throw error;
-      return data;
-    },
-  });
+  // Check subscription status on mount and after checkout
+  const checkSubscription = async () => {
+    if (!session?.access_token) return;
+    
+    setIsCheckingSubscription(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-  const currentPlan = plans?.find(p => p.name === profile?.subscription_plan) || plans?.[0];
+      if (!response.ok) {
+        throw new Error('Failed to check subscription');
+      }
+
+      const data = await response.json();
+      console.log('Subscription status:', data);
+      
+      // Refresh profile data
+      await refetch();
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      
+      return data;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    } finally {
+      setIsCheckingSubscription(false);
+    }
+  };
+
+  // Check subscription on mount and after success
+  useEffect(() => {
+    if (session?.access_token) {
+      checkSubscription();
+    }
+  }, [session?.access_token]);
+
+  // Handle success/cancel from Stripe
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+
+    if (success === 'true') {
+      toast.success('Abonnement activé !', {
+        description: 'Merci pour votre abonnement. Votre compte a été mis à jour.',
+      });
+      checkSubscription();
+      // Clean URL
+      navigate('/settings', { replace: true });
+    }
+
+    if (canceled === 'true') {
+      toast.info('Paiement annulé', {
+        description: 'Vous pouvez réessayer à tout moment.',
+      });
+      navigate('/settings', { replace: true });
+    }
+  }, [searchParams]);
 
   const handleSaveProfile = async () => {
     if (!user?.id) return;
@@ -82,21 +159,92 @@ export default function Settings() {
     }
   };
 
+  const handleSubscribe = async (plan: 'premium' | 'pro') => {
+    if (!session?.access_token) {
+      toast.error('Vous devez être connecté');
+      return;
+    }
+
+    setSubscribingTo(plan);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ plan }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error: any) {
+      toast.error('Erreur', {
+        description: error.message || 'Impossible de créer la session de paiement.',
+      });
+    } finally {
+      setSubscribingTo(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (!session?.access_token) {
+      toast.error('Vous devez être connecté');
+      return;
+    }
+
+    setIsManaging(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/customer-portal`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create portal session');
+      }
+
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error: any) {
+      toast.error('Erreur', {
+        description: error.message || 'Impossible d\'accéder au portail.',
+      });
+    } finally {
+      setIsManaging(false);
+    }
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
-  const planFeatures = {
-    free: ['3 galeries max', '30 images par galerie', '20 MB de stockage', 'Images jusqu\'à 1 MB'],
-    premium: ['15 galeries max', '100 images par galerie', '1 GB de stockage', 'Images jusqu\'à 5 MB', 'Durée personnalisée'],
-    pro: ['Galeries illimitées', 'Images illimitées', '10 GB de stockage', 'Taille illimitée', 'Durée personnalisée', 'Support prioritaire'],
-  };
+  const currentPlan = profile?.subscription_plan || 'free';
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -161,7 +309,11 @@ export default function Settings() {
                 disabled={isSaving}
                 className="gap-2"
               >
-                <Save className="h-4 w-4" />
+                {isSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
                 {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
               </Button>
             </CardContent>
@@ -170,76 +322,181 @@ export default function Settings() {
           {/* Subscription Section */}
           <Card className="bg-card/50 border-border/40">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <CreditCard className="h-5 w-5 text-primary" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>Abonnement</CardTitle>
+                    <CardDescription>Gérez votre plan et facturation</CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle>Abonnement</CardTitle>
-                  <CardDescription>Gérez votre plan et facturation</CardDescription>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={checkSubscription}
+                  disabled={isCheckingSubscription}
+                >
+                  {isCheckingSubscription ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Actualiser'
+                  )}
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Current Plan */}
+              {/* Current Plan Display */}
               <div className="p-4 rounded-xl bg-gradient-subtle border border-border/40">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Plan actuel</p>
                     <p className="text-2xl font-display font-bold capitalize">
-                      {profile?.subscription_plan || 'Free'}
+                      {currentPlan === 'free' ? 'Gratuit' : currentPlan}
                     </p>
                   </div>
                   <Badge 
-                    variant={profile?.subscription_plan === 'pro' ? 'default' : 'secondary'}
+                    variant={currentPlan !== 'free' ? 'default' : 'secondary'}
                     className="text-sm"
                   >
-                    {profile?.subscription_plan === 'free' ? 'Gratuit' : 'Actif'}
+                    {currentPlan === 'free' ? 'Gratuit' : 'Actif'}
                   </Badge>
                 </div>
                 
-                <div className="space-y-2">
-                  {planFeatures[profile?.subscription_plan as keyof typeof planFeatures || 'free']?.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </div>
-                  ))}
+                {/* Usage Stats */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <p className="text-xs text-muted-foreground">Stockage</p>
+                    <p className="text-lg font-semibold">
+                      {profile?.storage_used_mb?.toFixed(1) || '0'} 
+                      <span className="text-sm text-muted-foreground font-normal">
+                        {' '}/ {profile?.storage_limit_mb || 20} Mo
+                      </span>
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <p className="text-xs text-muted-foreground">Galeries max</p>
+                    <p className="text-lg font-semibold">{profile?.max_galleries || 3}</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Usage Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
-                  <p className="text-sm text-muted-foreground">Stockage utilisé</p>
-                  <p className="text-xl font-semibold">
-                    {profile?.storage_used_mb?.toFixed(1) || '0'} MB
-                    <span className="text-sm text-muted-foreground font-normal">
-                      {' '}/ {profile?.storage_limit_mb || 20} MB
-                    </span>
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
-                  <p className="text-sm text-muted-foreground">Galeries max</p>
-                  <p className="text-xl font-semibold">{profile?.max_galleries || 3}</p>
-                </div>
-              </div>
-
-              {/* Upgrade/Manage Buttons */}
-              <div className="flex flex-wrap gap-3">
-                {profile?.subscription_plan === 'free' && (
-                  <Button onClick={() => navigate('/')} className="gap-2">
-                    Passer à Premium
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                )}
                 {profile?.stripe_subscription_id && (
-                  <Button variant="outline" className="gap-2">
-                    Gérer l'abonnement
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+                  <div className="mt-4 pt-4 border-t border-border/40">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleManageSubscription}
+                      disabled={isManaging}
+                      className="gap-2"
+                    >
+                      {isManaging ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <ExternalLink className="h-4 w-4" />
+                      )}
+                      Gérer l'abonnement
+                    </Button>
+                  </div>
                 )}
               </div>
+
+              {/* Available Plans */}
+              {currentPlan === 'free' && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="font-display font-semibold mb-4">Passer à un plan supérieur</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {Object.entries(STRIPE_PLANS).map(([key, plan]) => {
+                        const Icon = plan.icon;
+                        const isCurrentPlan = currentPlan === key;
+                        
+                        return (
+                          <div
+                            key={key}
+                            className={`p-4 rounded-xl border ${
+                              isCurrentPlan 
+                                ? 'border-primary bg-primary/5' 
+                                : 'border-border/40 bg-card/30'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className={`p-2 rounded-lg ${plan.bgColor}`}>
+                                <Icon className={`h-5 w-5 ${plan.color}`} />
+                              </div>
+                              <div>
+                                <h4 className="font-display font-semibold">{plan.name}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  <span className="text-lg font-bold text-foreground">{plan.price}€</span>/mois
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <ul className="space-y-2 mb-4">
+                              {plan.features.map((feature, i) => (
+                                <li key={i} className="flex items-center gap-2 text-sm">
+                                  <Check className={`h-4 w-4 ${plan.color}`} />
+                                  <span className="text-muted-foreground">{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+
+                            <Button
+                              onClick={() => handleSubscribe(key as 'premium' | 'pro')}
+                              disabled={subscribingTo === key || isCurrentPlan}
+                              className="w-full"
+                              variant={key === 'pro' ? 'default' : 'outline'}
+                            >
+                              {subscribingTo === key ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                              ) : null}
+                              {isCurrentPlan ? 'Plan actuel' : 'Choisir ce plan'}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Upgrade option for premium users */}
+              {currentPlan === 'premium' && (
+                <>
+                  <Separator />
+                  <div className="p-4 rounded-xl border border-primary/30 bg-primary/5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Zap className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-display font-semibold">Passer à Pro</h4>
+                        <p className="text-sm text-muted-foreground">
+                          <span className="text-lg font-bold text-foreground">24.90€</span>/mois
+                        </p>
+                      </div>
+                    </div>
+                    <ul className="space-y-2 mb-4">
+                      {STRIPE_PLANS.pro.features.map((feature, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm">
+                          <Check className="h-4 w-4 text-primary" />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      onClick={() => handleSubscribe('pro')}
+                      disabled={subscribingTo === 'pro'}
+                      className="w-full"
+                    >
+                      {subscribingTo === 'pro' && (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      )}
+                      Passer à Pro
+                    </Button>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
