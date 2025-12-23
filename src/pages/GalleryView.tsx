@@ -153,9 +153,29 @@ export default function GalleryView() {
       setDownloadingIndex(index);
       const response = await fetch(url);
       const blob = await response.blob();
+      const fileName = `${gallery?.title || 'photo'}-${index + 1}.jpg`;
+      
+      // Try Web Share API for mobile (saves to gallery)
+      if (navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: blob.type })] })) {
+        const file = new File([blob], fileName, { type: blob.type });
+        try {
+          await navigator.share({
+            files: [file],
+            title: fileName,
+          });
+          return;
+        } catch (shareErr) {
+          // User cancelled or share failed, fall back to download
+          if ((shareErr as Error).name === 'AbortError') {
+            return; // User cancelled, don't show error
+          }
+        }
+      }
+      
+      // Fallback: standard download
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `${gallery?.title || 'photo'}-${index + 1}.jpg`;
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
