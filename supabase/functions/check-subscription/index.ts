@@ -25,9 +25,9 @@ const PLAN_LIMITS = {
 
 // Map product IDs to plan names (supports both EUR and USD products)
 const PRODUCT_TO_PLAN: Record<string, keyof typeof PLAN_LIMITS> = {
-  // USD products
-  "prod_TelxXCo2qqYN1y": "premium",
-  "prod_TelxqbQvbBMKPx": "pro",
+  // USD products (current)
+  "prod_TeoloHfEgmqI5Z": "premium",
+  "prod_TeoltbJQw5IZv5": "pro",
   // EUR products (legacy)
   "prod_TekDZmc5kiGli8": "premium",
   "prod_TekDzBLoGEfWhH": "pro",
