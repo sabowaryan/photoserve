@@ -236,6 +236,11 @@ export default function Dashboard() {
                     value={(galleries.length / (profile?.max_galleries || 3)) * 100} 
                     className={`h-2 ${galleries.length >= (profile?.max_galleries || 3) ? '[&>div]:bg-destructive' : ''}`}
                   />
+                  {galleries.length >= (profile?.max_galleries || 3) && (
+                    <Link to="/upgrade?limit=galleries" className="text-xs text-destructive hover:underline mt-2 block">
+                      Limite atteinte → Passer à un plan supérieur
+                    </Link>
+                  )}
                 </>
               )}
             </CardContent>

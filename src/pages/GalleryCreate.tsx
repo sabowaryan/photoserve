@@ -390,16 +390,16 @@ export default function GalleryCreate() {
                 className={`h-2 ${isStorageExceeded ? '[&>div]:bg-destructive' : ''}`}
               />
               {isStorageExceeded && (
-                <div className="flex items-center gap-2 mt-2 text-destructive text-sm">
+                <Link to="/upgrade?limit=storage" className="flex items-center gap-2 mt-2 text-destructive text-sm hover:underline">
                   <AlertTriangle className="h-4 w-4" />
-                  Espace insuffisant. Supprimez des images ou passez à un plan supérieur.
-                </div>
+                  Espace insuffisant. Passez à un plan supérieur →
+                </Link>
               )}
               {isGalleryLimitReached && (
-                <div className="flex items-center gap-2 mt-2 text-destructive text-sm">
+                <Link to="/upgrade?limit=galleries" className="flex items-center gap-2 mt-2 text-destructive text-sm hover:underline">
                   <AlertTriangle className="h-4 w-4" />
-                  Limite de galeries atteinte ({galleryCount}/{maxGalleries}). Passez à un plan supérieur.
-                </div>
+                  Limite de galeries atteinte ({galleryCount}/{maxGalleries}). Passez à un plan supérieur →
+                </Link>
               )}
             </CardContent>
           </Card>
