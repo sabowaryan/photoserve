@@ -1,1 +1,7 @@
 project_id = "gcosmlxwccfyjxwguzqi"
+
+[functions.upload-image]
+verify_jwt = false
+
+[functions.delete-image]
+verify_jwt = false
