@@ -59,8 +59,8 @@ export default function Landing() {
   const plans = [
     {
       name: 'Gratuit',
-      price: '0',
-      period: '€/mois',
+      price: '$0',
+      period: '/mois',
       description: 'Pour découvrir PhotoServe',
       features: [
         '20 Mo de stockage',
@@ -77,8 +77,8 @@ export default function Landing() {
     },
     {
       name: 'Premium',
-      price: '9,99',
-      period: '€/mois',
+      price: '$9.99',
+      period: '/mois',
       description: 'Pour les photographes actifs',
       features: [
         '5 Go de stockage',
@@ -95,8 +95,8 @@ export default function Landing() {
     },
     {
       name: 'Pro',
-      price: '25,99',
-      period: '€/mois',
+      price: '$25.99',
+      period: '/mois',
       description: 'Pour les professionnels',
       features: [
         '50 Go de stockage',
