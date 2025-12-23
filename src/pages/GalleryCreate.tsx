@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,9 +7,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, ArrowLeft, Upload, X, Lock, Calendar, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { 
+  Camera, 
+  ArrowLeft, 
+  Upload, 
+  X, 
+  Lock, 
+  Calendar, 
+  Image as ImageIcon, 
+  Loader2,
+  HardDrive,
+  AlertTriangle
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface UploadedImage {
   id: string;
@@ -17,7 +36,33 @@ interface UploadedImage {
   file: File;
   status: 'pending' | 'uploading' | 'done' | 'error';
   progress: number;
+  sizeMb: number;
 }
+
+// Duration options by plan
+const DURATION_OPTIONS = {
+  free: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+  ],
+  premium: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+    { value: 60, label: '60 jours' },
+    { value: 90, label: '90 jours' },
+  ],
+  pro: [
+    { value: 7, label: '7 jours' },
+    { value: 14, label: '14 jours' },
+    { value: 30, label: '30 jours' },
+    { value: 60, label: '60 jours' },
+    { value: 90, label: '90 jours' },
+    { value: 180, label: '180 jours' },
+    { value: 365, label: '1 an' },
+  ],
+};
 
 export default function GalleryCreate() {
   const { user, session } = useAuth();
@@ -29,6 +74,7 @@ export default function GalleryCreate() {
   const [expirationDays, setExpirationDays] = useState(30);
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Fetch user profile for limits
   const { data: profile } = useQuery({
@@ -45,8 +91,23 @@ export default function GalleryCreate() {
     enabled: !!user,
   });
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  // Calculate pending upload size
+  const pendingUploadSize = useMemo(() => {
+    return images.reduce((acc, img) => acc + img.sizeMb, 0);
+  }, [images]);
+
+  // Current and projected storage usage
+  const currentStorageUsed = profile?.storage_used_mb || 0;
+  const storageLimit = profile?.storage_limit_mb || 20;
+  const projectedStorageUsed = currentStorageUsed + pendingUploadSize;
+  const storagePercentage = (projectedStorageUsed / storageLimit) * 100;
+  const isStorageExceeded = projectedStorageUsed > storageLimit;
+
+  // Get duration options based on plan
+  const plan = (profile?.subscription_plan || 'free') as keyof typeof DURATION_OPTIONS;
+  const durationOptions = DURATION_OPTIONS[plan] || DURATION_OPTIONS.free;
+
+  const validateAndAddFiles = useCallback((files: File[]) => {
     const maxImagesPerGallery = profile?.max_images_per_gallery || 30;
     const maxImageSizeMb = profile?.max_image_size_mb || 1;
 
@@ -59,7 +120,8 @@ export default function GalleryCreate() {
         });
         return false;
       }
-      if (file.size > maxImageSizeMb * 1024 * 1024) {
+      const fileSizeMb = file.size / (1024 * 1024);
+      if (fileSizeMb > maxImageSizeMb) {
         toast({
           title: 'Fichier trop volumineux',
           description: `${file.name} dépasse la limite de ${maxImageSizeMb} Mo.`,
@@ -79,16 +141,50 @@ export default function GalleryCreate() {
       return;
     }
 
+    // Check storage limit
+    const newFilesSize = validFiles.reduce((acc, f) => acc + f.size / (1024 * 1024), 0);
+    if (currentStorageUsed + pendingUploadSize + newFilesSize > storageLimit) {
+      toast({
+        title: 'Espace insuffisant',
+        description: `Ces fichiers dépasseraient votre limite de stockage de ${storageLimit} Mo.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const newImages: UploadedImage[] = validFiles.map(file => ({
       id: crypto.randomUUID(),
       url: URL.createObjectURL(file),
       file,
       status: 'pending',
       progress: 0,
+      sizeMb: file.size / (1024 * 1024),
     }));
 
     setImages(prev => [...prev, ...newImages]);
-  }, [images.length, profile, toast]);
+  }, [images.length, profile, toast, currentStorageUsed, pendingUploadSize, storageLimit]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    validateAndAddFiles(files);
+  }, [validateAndAddFiles]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    validateAndAddFiles(files);
+  }, [validateAndAddFiles]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
 
   const removeImage = (id: string) => {
     setImages(prev => {
@@ -126,6 +222,15 @@ export default function GalleryCreate() {
       return;
     }
 
+    if (isStorageExceeded) {
+      toast({
+        title: 'Espace insuffisant',
+        description: 'Supprimez des images ou passez à un plan supérieur.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsCreating(true);
 
     try {
@@ -142,7 +247,7 @@ export default function GalleryCreate() {
         .from('galleries')
         .insert({
           title: title.trim(),
-          password_hash: password, // Note: In production, hash this on the server
+          password_hash: password,
           unique_slug: uniqueSlug,
           user_id: user?.id,
           expiration_days: expirationDays,
@@ -232,148 +337,221 @@ export default function GalleryCreate() {
           </Link>
         </Button>
 
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl">Nouvelle galerie</CardTitle>
-            <CardDescription>
-              Créez une galerie photo sécurisée à partager avec vos clients.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Titre de la galerie</Label>
-              <Input
-                id="title"
-                placeholder="Ex: Mariage de Marie & Jean"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                disabled={isCreating}
-              />
-            </div>
-
-            {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
-                Mot de passe
-              </Label>
-              <Input
-                id="password"
-                type="text"
-                placeholder="Mot de passe pour accéder à la galerie"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isCreating}
-              />
-              <p className="text-xs text-muted-foreground">
-                Ce mot de passe sera demandé aux visiteurs pour accéder à la galerie.
-              </p>
-            </div>
-
-            {/* Expiration */}
-            <div className="space-y-2">
-              <Label htmlFor="expiration" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Durée de validité
-              </Label>
-              <div className="flex items-center gap-3">
-                <Input
-                  id="expiration"
-                  type="number"
-                  min={1}
-                  max={365}
-                  value={expirationDays}
-                  onChange={(e) => setExpirationDays(parseInt(e.target.value) || 30)}
-                  disabled={isCreating}
-                  className="w-24"
-                />
-                <span className="text-muted-foreground">jours</span>
+        <div className="grid gap-6">
+          {/* Storage Indicator */}
+          <Card className={`glass-card ${isStorageExceeded ? 'border-destructive' : ''}`}>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <HardDrive className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Espace de stockage</span>
+                </div>
+                <Badge variant={profile?.subscription_plan === 'free' ? 'secondary' : 'default'}>
+                  {profile?.subscription_plan?.toUpperCase() || 'FREE'}
+                </Badge>
               </div>
-            </div>
-
-            {/* Image Upload */}
-            <div className="space-y-4">
-              <Label className="flex items-center gap-2">
-                <ImageIcon className="h-4 w-4" />
-                Images ({images.length}/{profile?.max_images_per_gallery || 30})
-              </Label>
-
-              {/* Upload Zone */}
-              <label className="border-2 border-dashed border-border rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-                <Upload className="h-10 w-10 text-muted-foreground mb-4" />
-                <span className="text-sm text-muted-foreground text-center">
-                  Cliquez ou glissez vos images ici<br />
-                  <span className="text-xs">Max {profile?.max_image_size_mb || 1} Mo par image</span>
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileSelect}
-                  disabled={isCreating}
-                />
-              </label>
-
-              {/* Image Grid */}
-              {images.length > 0 && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                  {images.map((img) => (
-                    <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden group">
-                      <img
-                        src={img.url}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                      {img.status === 'uploading' && (
-                        <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                        </div>
-                      )}
-                      {img.status === 'done' && (
-                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                          <div className="bg-primary rounded-full p-1">
-                            <svg className="h-4 w-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        </div>
-                      )}
-                      {img.status === 'pending' && (
-                        <button
-                          onClick={() => removeImage(img.id)}
-                          className="absolute top-2 right-2 p-1 bg-destructive rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="h-4 w-4 text-destructive-foreground" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-2xl font-bold">{projectedStorageUsed.toFixed(1)}</span>
+                <span className="text-muted-foreground">/ {storageLimit} Mo</span>
+                {pendingUploadSize > 0 && (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    (+{pendingUploadSize.toFixed(1)} Mo à uploader)
+                  </span>
+                )}
+              </div>
+              <Progress 
+                value={Math.min(storagePercentage, 100)} 
+                className={`h-2 ${isStorageExceeded ? '[&>div]:bg-destructive' : ''}`}
+              />
+              {isStorageExceeded && (
+                <div className="flex items-center gap-2 mt-2 text-destructive text-sm">
+                  <AlertTriangle className="h-4 w-4" />
+                  Espace insuffisant. Supprimez des images ou passez à un plan supérieur.
                 </div>
               )}
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Create Button */}
-            <Button
-              onClick={handleCreate}
-              disabled={isCreating || !title.trim() || !password.trim() || images.length === 0}
-              className="w-full btn-primary"
-            >
-              {isCreating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Création en cours...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Créer la galerie
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+          {/* Main Form */}
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle className="font-display text-2xl">Nouvelle galerie</CardTitle>
+              <CardDescription>
+                Créez une galerie photo sécurisée à partager avec vos clients.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Titre de la galerie</Label>
+                <Input
+                  id="title"
+                  placeholder="Ex: Mariage de Marie & Jean"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  disabled={isCreating}
+                />
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  Mot de passe
+                </Label>
+                <Input
+                  id="password"
+                  type="text"
+                  placeholder="Mot de passe pour accéder à la galerie"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isCreating}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Ce mot de passe sera demandé aux visiteurs pour accéder à la galerie.
+                </p>
+              </div>
+
+              {/* Expiration - Select based on plan */}
+              <div className="space-y-2">
+                <Label htmlFor="expiration" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Durée de validité
+                </Label>
+                <Select
+                  value={expirationDays.toString()}
+                  onValueChange={(value) => setExpirationDays(parseInt(value))}
+                  disabled={isCreating}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionnez une durée" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {durationOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value.toString()}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {plan === 'free' && (
+                  <p className="text-xs text-muted-foreground">
+                    Passez à Premium ou Pro pour des durées plus longues.
+                  </p>
+                )}
+              </div>
+
+              {/* Image Upload */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-2">
+                    <ImageIcon className="h-4 w-4" />
+                    Images ({images.length}/{profile?.max_images_per_gallery || 30})
+                  </Label>
+                  <span className="text-xs text-muted-foreground">
+                    Max {profile?.max_image_size_mb || 1} Mo par image
+                  </span>
+                </div>
+
+                {/* Upload Zone with Drag & Drop */}
+                <label
+                  className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                    isDragging 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                >
+                  <Upload className={`h-10 w-10 mb-4 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className="text-sm text-muted-foreground text-center">
+                    {isDragging ? (
+                      <span className="text-primary font-medium">Déposez vos images ici</span>
+                    ) : (
+                      <>
+                        Cliquez ou glissez vos images ici<br />
+                        <span className="text-xs">JPG, PNG, WebP acceptés</span>
+                      </>
+                    )}
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileSelect}
+                    disabled={isCreating}
+                  />
+                </label>
+
+                {/* Image Grid */}
+                {images.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                    {images.map((img) => (
+                      <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden group">
+                        <img
+                          src={img.url}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-1">
+                          <span className="text-xs text-foreground">{img.sizeMb.toFixed(1)} Mo</span>
+                        </div>
+                        {img.status === 'uploading' && (
+                          <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                          </div>
+                        )}
+                        {img.status === 'done' && (
+                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                            <div className="bg-primary rounded-full p-1">
+                              <svg className="h-4 w-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                        {img.status === 'error' && (
+                          <div className="absolute inset-0 bg-destructive/20 flex items-center justify-center">
+                            <AlertTriangle className="h-6 w-6 text-destructive" />
+                          </div>
+                        )}
+                        {img.status === 'pending' && (
+                          <button
+                            onClick={() => removeImage(img.id)}
+                            className="absolute top-2 right-2 p-1 bg-destructive rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4 text-destructive-foreground" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Create Button */}
+              <Button
+                onClick={handleCreate}
+                disabled={isCreating || !title.trim() || !password.trim() || images.length === 0 || isStorageExceeded}
+                className="w-full btn-primary"
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Création en cours...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Créer la galerie
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   );
