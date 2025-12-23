@@ -45,7 +45,7 @@ const PLANS = [
   {
     key: 'free',
     name: 'Gratuit',
-    price: '0',
+    price: '$0',
     storage: '20 Mo',
     galleries: 3,
     imagesPerGallery: 30,
@@ -58,7 +58,7 @@ const PLANS = [
   {
     key: 'premium',
     name: 'Premium',
-    price: '9,99',
+    price: '$9.99',
     storage: '5 Go',
     galleries: 50,
     imagesPerGallery: 500,
@@ -72,7 +72,7 @@ const PLANS = [
   {
     key: 'pro',
     name: 'Pro',
-    price: '25,99',
+    price: '$25.99',
     storage: '50 Go',
     galleries: 500,
     imagesPerGallery: 5000,
@@ -296,7 +296,7 @@ export default function Upgrade() {
                                 <Icon className={`h-5 w-5 ${plan.color}`} />
                               </div>
                               <span className="font-semibold">{plan.name}</span>
-                              <span className="text-lg font-bold">{plan.price}€<span className="text-xs font-normal text-muted-foreground">/mois</span></span>
+                              <span className="text-lg font-bold">{plan.price}<span className="text-xs font-normal text-muted-foreground">/mois</span></span>
                               {isCurrent && (
                                 <Badge variant="outline" className="text-xs">Actuel</Badge>
                               )}
