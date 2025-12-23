@@ -27,16 +27,16 @@ import {
 const STRIPE_PLANS = {
   premium: {
     name: 'Premium',
-    price: 9.90,
-    features: ['100 Mo de stockage', '10 galeries', '50 images par galerie', 'Images jusqu\'à 5 Mo', '90 jours d\'expiration'],
+    price: 9.99,
+    features: ['5 Go de stockage', '50 galeries', '500 images par galerie', 'Taille illimitée par image', 'Durée jusqu\'à 90 jours'],
     icon: Crown,
     color: 'text-amber-500',
     bgColor: 'bg-amber-500/10',
   },
   pro: {
     name: 'Pro',
-    price: 24.90,
-    features: ['500 Mo de stockage', '100 galeries', '100 images par galerie', 'Images jusqu\'à 10 Mo', '365 jours d\'expiration', 'Support prioritaire'],
+    price: 25.99,
+    features: ['50 Go de stockage', '500 galeries', '5000 images par galerie', 'Taille illimitée par image', 'Durée jusqu\'à 180 jours', 'Support prioritaire'],
     icon: Zap,
     color: 'text-primary',
     bgColor: 'bg-primary/10',
@@ -472,7 +472,7 @@ export default function Settings() {
                       <div>
                         <h4 className="font-display font-semibold">Passer à Pro</h4>
                         <p className="text-sm text-muted-foreground">
-                          <span className="text-lg font-bold text-foreground">24.90€</span>/mois
+                          <span className="text-lg font-bold text-foreground">25,99€</span>/mois
                         </p>
                       </div>
                     </div>
