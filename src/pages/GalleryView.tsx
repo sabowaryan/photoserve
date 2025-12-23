@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +40,9 @@ export default function GalleryView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
+  
+  // Dynamic title based on gallery
+  useDocumentTitle(gallery?.title || 'Galerie photo');
 
   useEffect(() => {
     fetchGallery();

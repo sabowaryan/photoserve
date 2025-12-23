@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -53,6 +54,8 @@ export default function Settings() {
   const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const [subscribingTo, setSubscribingTo] = useState<string | null>(null);
   const [isManaging, setIsManaging] = useState(false);
+  
+  useDocumentTitle('Paramètres');
 
   const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ['profile', user?.id],

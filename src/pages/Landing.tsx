@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -22,6 +23,7 @@ import {
 
 export default function Landing() {
   const { user } = useAuth();
+  useDocumentTitle('Partagez vos photos en toute sécurité', false);
 
   const features = [
     {
