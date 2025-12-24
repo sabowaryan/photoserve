@@ -275,13 +275,20 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
+      // Get fresh session token
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession?.access_token) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+
       // Hash password via edge function
       const hashResponse = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session?.access_token}`,
+            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ password: password.trim() }),
@@ -289,8 +296,9 @@ export default function GalleryCreate() {
       );
 
       if (!hashResponse.ok) {
-        const error = await hashResponse.json();
-        throw new Error(error.error || 'Failed to secure password');
+        const errorData = await hashResponse.json().catch(() => ({}));
+        console.error('[GalleryCreate] Hash password error:', errorData);
+        throw new Error(errorData.error || 'Échec de la sécurisation du mot de passe');
       }
 
       const { hashedPassword } = await hashResponse.json();
@@ -336,7 +344,7 @@ export default function GalleryCreate() {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${session?.access_token}`,
+              'Authorization': `Bearer ${currentSession.access_token}`,
             },
             body: formData,
           }
