@@ -25,6 +25,10 @@ export default function Auth() {
   
   useDocumentTitle('Connexion');
 
+  // Check for OAuth callback (hash contains tokens)
+  const hasOAuthCallback = window.location.hash.includes('access_token') || 
+                           window.location.hash.includes('error');
+
   // Redirect authenticated users to dashboard
   useEffect(() => {
     if (!loading && user) {
@@ -32,8 +36,8 @@ export default function Auth() {
     }
   }, [user, loading, navigate]);
 
-  // Show loading state while checking auth
-  if (loading) {
+  // Show loading state while checking auth or processing OAuth callback
+  if (loading || hasOAuthCallback) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
