@@ -12,6 +12,8 @@ function getCorsHeaders(req: Request) {
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
     /^https:\/\/[a-zA-Z0-9-]+\.lovable\.app$/,
     /^https:\/\/[a-zA-Z0-9-]+\.lovableproject\.com$/,
+    // Custom domain(s)
+    /^https:\/\/([a-zA-Z0-9-]+\.)?photoserve\.app$/,
   ];
   
   if (projectRef) {
