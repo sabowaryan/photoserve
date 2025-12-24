@@ -9,8 +9,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { LogoIcon } from '@/components/Logo';
 import {
-  Camera,
   Plus,
   FolderOpen,
   Eye,
@@ -146,9 +146,7 @@ export default function Dashboard() {
       <header className="border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-primary/20">
-              <Camera className="h-5 w-5 text-primary" />
-            </div>
+            <LogoIcon size={20} />
             <span className="font-display text-xl font-bold gradient-text">PhotoServe</span>
           </Link>
 
