@@ -214,15 +214,28 @@ export default function GalleryDetail() {
   const handleSavePassword = async () => {
     if (!editPassword.trim() || !gallery) return;
     
+    // Validate password length
+    if (editPassword.trim().length < 4) {
+      toast({ title: 'Erreur', description: 'Le mot de passe doit contenir au moins 4 caractères.', variant: 'destructive' });
+      return;
+    }
+    
     setIsSaving(true);
     try {
+      // Get fresh session token
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession?.access_token) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
+
       // Hash password via edge function
       const hashResponse = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session?.access_token}`,
+            'Authorization': `Bearer ${currentSession.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
@@ -234,14 +247,16 @@ export default function GalleryDetail() {
       );
 
       if (!hashResponse.ok) {
-        const error = await hashResponse.json();
-        throw new Error(error.error || 'Failed to update password');
+        const errorData = await hashResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Échec de la mise à jour du mot de passe');
       }
       
       toast({ title: 'Mot de passe mis à jour' });
       setIsEditingPassword(false);
+      setEditPassword('');
       refetchGallery();
     } catch (error: any) {
+      console.error('[GalleryDetail] Password update error:', error);
       toast({ title: 'Erreur', description: error.message || 'Impossible de modifier le mot de passe.', variant: 'destructive' });
     } finally {
       setIsSaving(false);
