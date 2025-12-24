@@ -1,15 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import { hash as bcryptHash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 // Dynamic CORS with origin validation
-// Secure CORS validation using regex patterns (prevents subdomain spoofing)
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || '';
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
   const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
   
-  // Allowed origin patterns with strict regex matching
   const allowedPatterns: (RegExp | string)[] = [
     /^https?:\/\/localhost(:\d+)?$/,
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
@@ -32,24 +29,42 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Hash password using bcrypt with synchronous salt generation (compatible with Deno Deploy)
+// Hash password using Web Crypto API (PBKDF2) - compatible with Deno Deploy
 async function hashPassword(password: string): Promise<string> {
-  // Use the hash function directly with a pre-generated salt string
-  // bcrypt salts are 22 characters from the bcrypt alphabet + prefix
-  const salt = "$2a$12$" + generateBcryptSalt();
-  return await bcryptHash(password, salt);
-}
-
-// Generate a bcrypt-compatible salt (22 characters from the bcrypt alphabet)
-function generateBcryptSalt(): string {
-  const bcryptAlphabet = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const saltBytes = new Uint8Array(22);
-  crypto.getRandomValues(saltBytes);
-  let salt = "";
-  for (let i = 0; i < 22; i++) {
-    salt += bcryptAlphabet[saltBytes[i] % bcryptAlphabet.length];
-  }
-  return salt;
+  const encoder = new TextEncoder();
+  const passwordData = encoder.encode(password);
+  
+  // Generate random salt
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  
+  // Import password as key
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    passwordData,
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  
+  // Derive key using PBKDF2
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  
+  // Convert to base64
+  const hashArray = new Uint8Array(derivedBits);
+  const saltBase64 = btoa(String.fromCharCode(...salt));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+  
+  // Return format: $pbkdf2$iterations$salt$hash
+  return `$pbkdf2$100000$${saltBase64}$${hashBase64}`;
 }
 
 serve(async (req) => {
@@ -66,6 +81,7 @@ serve(async (req) => {
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('[HASH-PASSWORD] No authorization header');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -79,6 +95,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
     if (userError || !user) {
+      console.error('[HASH-PASSWORD] User verification failed:', userError?.message);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -102,9 +119,9 @@ serve(async (req) => {
       });
     }
 
-    console.log('[HASH-PASSWORD] Hashing password with bcrypt');
+    console.log('[HASH-PASSWORD] Hashing password with PBKDF2');
     
-    // Hash the password using bcrypt
+    // Hash the password using PBKDF2
     const hashedPassword = await hashPassword(password);
 
     // If galleryId is provided, update the gallery's password
@@ -118,6 +135,7 @@ serve(async (req) => {
         .single();
 
       if (galleryError || !gallery) {
+        console.error('[HASH-PASSWORD] Gallery not found:', galleryError?.message);
         return new Response(JSON.stringify({ error: 'Gallery not found or unauthorized' }), {
           status: 404,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -145,7 +163,7 @@ serve(async (req) => {
     }
 
     // Otherwise just return the hashed password for use in gallery creation
-    console.log('[HASH-PASSWORD] Returning bcrypt hash for new gallery');
+    console.log('[HASH-PASSWORD] Returning PBKDF2 hash for new gallery');
     return new Response(JSON.stringify({ 
       success: true,
       hashedPassword 
