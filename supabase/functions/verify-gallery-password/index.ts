@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import { compare as bcryptCompare, hash as bcryptHash } from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -11,7 +10,6 @@ function getCorsHeaders(req: Request) {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
   const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
   
-  // Allowed origin patterns with strict regex matching
   const allowedPatterns: (RegExp | string)[] = [
     /^https?:\/\/localhost(:\d+)?$/,
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
@@ -49,7 +47,6 @@ async function checkRateLimit(
 ): Promise<{ allowed: boolean; remainingAttempts: number; retryAfterSeconds?: number }> {
   const now = new Date();
   
-  // First, try to get existing rate limit record
   const { data: existing, error: fetchError } = await supabase
     .from('rate_limit_attempts')
     .select('id, attempts, expires_at')
@@ -58,22 +55,18 @@ async function checkRateLimit(
   
   if (fetchError) {
     console.error('[RATE-LIMIT] Error fetching rate limit:', fetchError);
-    // On error, allow the request but log it
     return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS };
   }
   
-  // If record exists and hasn't expired
   if (existing) {
     const expiresAt = new Date(existing.expires_at);
     
-    // Check if expired - delete and allow
     if (expiresAt <= now) {
       await supabase
         .from('rate_limit_attempts')
         .delete()
         .eq('id', existing.id);
       
-      // Create new record with first attempt
       const newExpiresAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
       await supabase
         .from('rate_limit_attempts')
@@ -87,13 +80,11 @@ async function checkRateLimit(
       return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - 1 };
     }
     
-    // Check if max attempts exceeded
     if (existing.attempts >= RATE_LIMIT_MAX_ATTEMPTS) {
       const retryAfterSeconds = Math.ceil((expiresAt.getTime() - now.getTime()) / 1000);
       return { allowed: false, remainingAttempts: 0, retryAfterSeconds };
     }
     
-    // Increment attempts
     const newAttempts = existing.attempts + 1;
     await supabase
       .from('rate_limit_attempts')
@@ -103,7 +94,6 @@ async function checkRateLimit(
     return { allowed: true, remainingAttempts: RATE_LIMIT_MAX_ATTEMPTS - newAttempts };
   }
   
-  // No existing record - create new one
   const expiresAt = new Date(now.getTime() + RATE_LIMIT_WINDOW_MS);
   const { error: insertError } = await supabase
     .from('rate_limit_attempts')
@@ -115,8 +105,6 @@ async function checkRateLimit(
     });
   
   if (insertError) {
-    // Could be a race condition - another instance created it
-    // Try to fetch and increment instead
     const { data: raceRecord } = await supabase
       .from('rate_limit_attempts')
       .select('id, attempts, expires_at')
@@ -154,27 +142,92 @@ async function hashPasswordLegacy(password: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Check if a hash is a bcrypt hash (starts with $2a$, $2b$, or $2y$)
-function isBcryptHash(hash: string): boolean {
-  return hash.startsWith('$2a$') || hash.startsWith('$2b$') || hash.startsWith('$2y$');
+// Check if a hash is a PBKDF2 hash (starts with $pbkdf2$)
+function isPbkdf2Hash(hash: string): boolean {
+  return hash.startsWith('$pbkdf2$');
 }
 
-// Generate a bcrypt-compatible salt (22 characters from the bcrypt alphabet)
-function generateBcryptSalt(): string {
-  const bcryptAlphabet = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const saltBytes = new Uint8Array(22);
-  crypto.getRandomValues(saltBytes);
-  let salt = "";
-  for (let i = 0; i < 22; i++) {
-    salt += bcryptAlphabet[saltBytes[i] % bcryptAlphabet.length];
+// Verify PBKDF2 password
+async function verifyPbkdf2Password(password: string, storedHash: string): Promise<boolean> {
+  try {
+    // Parse stored hash: $pbkdf2$iterations$salt$hash
+    const parts = storedHash.split('$');
+    if (parts.length !== 5 || parts[1] !== 'pbkdf2') {
+      return false;
+    }
+    
+    const iterations = parseInt(parts[2], 10);
+    const saltBase64 = parts[3];
+    const hashBase64 = parts[4];
+    
+    // Decode salt from base64
+    const salt = new Uint8Array(atob(saltBase64).split('').map(c => c.charCodeAt(0)));
+    
+    // Hash the provided password
+    const encoder = new TextEncoder();
+    const passwordData = encoder.encode(password);
+    
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw",
+      passwordData,
+      "PBKDF2",
+      false,
+      ["deriveBits"]
+    );
+    
+    const derivedBits = await crypto.subtle.deriveBits(
+      {
+        name: "PBKDF2",
+        salt: salt,
+        iterations: iterations,
+        hash: "SHA-256"
+      },
+      keyMaterial,
+      256
+    );
+    
+    // Convert to base64 and compare
+    const computedHashArray = new Uint8Array(derivedBits);
+    const computedHashBase64 = btoa(String.fromCharCode(...computedHashArray));
+    
+    return computedHashBase64 === hashBase64;
+  } catch (error) {
+    console.error('[VERIFY-PASSWORD] PBKDF2 verification error:', error);
+    return false;
   }
-  return salt;
 }
 
-// Hash password using bcrypt with synchronous salt generation (compatible with Deno Deploy)
-async function hashPasswordBcrypt(password: string): Promise<string> {
-  const salt = "$2a$12$" + generateBcryptSalt();
-  return await bcryptHash(password, salt);
+// Hash password using PBKDF2 (for upgrading legacy passwords)
+async function hashPasswordPbkdf2(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const passwordData = encoder.encode(password);
+  
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    passwordData,
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  
+  const hashArray = new Uint8Array(derivedBits);
+  const saltBase64 = btoa(String.fromCharCode(...salt));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+  
+  return `$pbkdf2$100000$${saltBase64}$${hashBase64}`;
 }
 
 serve(async (req) => {
@@ -254,25 +307,25 @@ serve(async (req) => {
       });
     }
 
-    // Verify password - support both bcrypt (new) and SHA-256 (legacy) hashes
+    // Verify password - support PBKDF2 (new) and SHA-256 (legacy) hashes
     let isValidPassword = false;
     
-    if (isBcryptHash(gallery.password_hash)) {
-      // New bcrypt hash - use compare function directly
-      isValidPassword = await bcryptCompare(password, gallery.password_hash);
+    if (isPbkdf2Hash(gallery.password_hash)) {
+      // PBKDF2 hash - use verification function
+      isValidPassword = await verifyPbkdf2Password(password, gallery.password_hash);
     } else {
-      // Legacy SHA-256 hash - verify and optionally upgrade
+      // Legacy SHA-256 hash - verify and upgrade
       const legacyHash = await hashPasswordLegacy(password);
       isValidPassword = gallery.password_hash === legacyHash;
       
-      // If password is valid, upgrade to bcrypt hash
+      // If password is valid, upgrade to PBKDF2 hash
       if (isValidPassword) {
-        console.log(`[VERIFY-PASSWORD] Upgrading legacy SHA-256 hash to bcrypt for gallery ${slug}`);
-        const newBcryptHash = await hashPasswordBcrypt(password);
+        console.log(`[VERIFY-PASSWORD] Upgrading legacy SHA-256 hash to PBKDF2 for gallery ${slug}`);
+        const newPbkdf2Hash = await hashPasswordPbkdf2(password);
         
         await supabase
           .from('galleries')
-          .update({ password_hash: newBcryptHash })
+          .update({ password_hash: newPbkdf2Hash })
           .eq('id', gallery.id);
       }
     }
