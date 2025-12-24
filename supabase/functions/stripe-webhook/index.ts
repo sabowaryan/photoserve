@@ -2,10 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
-};
+// No CORS needed for webhooks - they are server-to-server from Stripe
+// Only stripe-signature header is relevant for webhook verification
 
 // Plan configuration matching the app pricing
 // Supports both EUR and USD product IDs
@@ -47,8 +45,9 @@ const logStep = (step: string, details?: any) => {
 };
 
 serve(async (req) => {
+  // Webhooks don't need CORS - they come from Stripe servers, not browsers
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { status: 204 });
   }
 
   const supabase = createClient(
@@ -74,9 +73,9 @@ serve(async (req) => {
     
     if (!signature) {
       logStep("Missing stripe-signature header");
-      return new Response(JSON.stringify({ error: "Missing signature" }), {
+      return new Response(JSON.stringify({ error: "Bad request" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -88,9 +87,9 @@ serve(async (req) => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       logStep("Webhook signature verification failed", { error: errorMessage });
-      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+      return new Response(JSON.stringify({ error: "Bad request" }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -168,15 +167,15 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ received: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
-    // Return generic error to client, details are logged
+    // Return generic error to client, details are logged server-side only
     return new Response(JSON.stringify({ error: "Webhook processing failed" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       status: 500,
     });
   }

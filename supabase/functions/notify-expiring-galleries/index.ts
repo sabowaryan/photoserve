@@ -193,8 +193,9 @@ serve(async (req) => {
     });
   } catch (error: any) {
     logStep("Error in notification job", { error: error.message });
+    // Return generic error to client, details are logged server-side only
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Notification job failed. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

@@ -180,7 +180,8 @@ serve(async (req) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     logStep('ERROR in cleanup job', { message });
-    return new Response(JSON.stringify({ error: message }), {
+    // Return generic error to client, details are logged server-side only
+    return new Response(JSON.stringify({ error: 'Cleanup job failed. Please try again.' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

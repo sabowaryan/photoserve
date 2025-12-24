@@ -111,7 +111,8 @@ serve(async (req) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("[CREATE-CHECKOUT] Error:", message);
-    return new Response(JSON.stringify({ error: message }), {
+    // Return generic error to client, details are logged server-side only
+    return new Response(JSON.stringify({ error: "Failed to create checkout session. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
