@@ -87,7 +87,8 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("[CUSTOMER-PORTAL] Error:", errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    // Return generic error to client, details are logged server-side only
+    return new Response(JSON.stringify({ error: "Failed to open subscription portal. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
