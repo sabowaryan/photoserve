@@ -24,11 +24,11 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
     const origin = req.headers.get('origin') || '';
 
-    // Get authorization header
+    // Get authorization header (function is protected, so this should be present)
     const authHeader = req.headers.get('Authorization');
     console.log('[HASH-PASSWORD] request received', {
       origin,
@@ -37,19 +37,18 @@ serve(async (req) => {
     });
 
     if (!authHeader) {
-      console.error('[HASH-PASSWORD] No authorization header');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Verify user
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    // Use the caller JWT (no service role) so RLS applies and auth is consistent
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
       console.error('[HASH-PASSWORD] User verification failed:', userError?.message);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
