@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -15,6 +16,8 @@ function getCorsHeaders(req: Request) {
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
     /^https:\/\/[a-zA-Z0-9-]+\.lovable\.app$/,
     /^https:\/\/[a-zA-Z0-9-]+\.lovableproject\.com$/,
+    // Custom domain(s)
+    /^https:\/\/([a-zA-Z0-9-]+\.)?photoserve\.app$/,
   ];
   
   if (projectRef) {
@@ -147,7 +150,27 @@ function isPbkdf2Hash(hash: string): boolean {
   return hash.startsWith('$pbkdf2$');
 }
 
+// Check if a hash is a bcrypt hash ($2a$, $2b$, $2y$)
+function isBcryptHash(hash: string): boolean {
+  return hash.startsWith('$2a$') || hash.startsWith('$2b$') || hash.startsWith('$2y$');
+}
+
+async function hashPasswordBcrypt(password: string): Promise<string> {
+  const salt = bcrypt.genSaltSync(12);
+  return bcrypt.hashSync(password, salt);
+}
+
+async function verifyBcryptPassword(password: string, storedHash: string): Promise<boolean> {
+  try {
+    return bcrypt.compareSync(password, storedHash);
+  } catch (error) {
+    console.error('[VERIFY-PASSWORD] bcrypt verification error:', error);
+    return false;
+  }
+}
+
 // Verify PBKDF2 password
+
 async function verifyPbkdf2Password(password: string, storedHash: string): Promise<boolean> {
   try {
     // Parse stored hash: $pbkdf2$iterations$salt$hash
@@ -322,25 +345,34 @@ serve(async (req) => {
       });
     }
 
-    // Verify password - support PBKDF2 (new) and SHA-256 (legacy) hashes
+    // Verify password - prefer bcrypt, but keep compatibility for existing PBKDF2 / legacy hashes
     let isValidPassword = false;
-    
-    if (isPbkdf2Hash(gallery.password_hash)) {
-      // PBKDF2 hash - use verification function
+
+    if (isBcryptHash(gallery.password_hash)) {
+      isValidPassword = await verifyBcryptPassword(password, gallery.password_hash);
+    } else if (isPbkdf2Hash(gallery.password_hash)) {
+      // PBKDF2 hash (existing data) - verify then upgrade to bcrypt
       isValidPassword = await verifyPbkdf2Password(password, gallery.password_hash);
-    } else {
-      // Legacy SHA-256 hash - verify and upgrade
-      const legacyHash = await hashPasswordLegacy(password);
-      isValidPassword = gallery.password_hash === legacyHash;
-      
-      // If password is valid, upgrade to PBKDF2 hash
+
       if (isValidPassword) {
-        console.log(`[VERIFY-PASSWORD] Upgrading legacy SHA-256 hash to PBKDF2 for gallery ${slug}`);
-        const newPbkdf2Hash = await hashPasswordPbkdf2(password);
-        
+        console.log(`[VERIFY-PASSWORD] Upgrading PBKDF2 hash to bcrypt for gallery ${slug}`);
+        const newBcryptHash = await hashPasswordBcrypt(password);
         await supabase
           .from('galleries')
-          .update({ password_hash: newPbkdf2Hash })
+          .update({ password_hash: newBcryptHash })
+          .eq('id', gallery.id);
+      }
+    } else {
+      // Legacy SHA-256 hash - verify and upgrade to bcrypt
+      const legacyHash = await hashPasswordLegacy(password);
+      isValidPassword = gallery.password_hash === legacyHash;
+
+      if (isValidPassword) {
+        console.log(`[VERIFY-PASSWORD] Upgrading legacy SHA-256 hash to bcrypt for gallery ${slug}`);
+        const newBcryptHash = await hashPasswordBcrypt(password);
+        await supabase
+          .from('galleries')
+          .update({ password_hash: newBcryptHash })
           .eq('id', gallery.id);
       }
     }
