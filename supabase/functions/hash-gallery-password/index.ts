@@ -2,35 +2,12 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
-// Dynamic CORS with origin validation
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get('origin') || '';
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || '';
-  
-  const allowedPatterns: (RegExp | string)[] = [
-    /^https?:\/\/localhost(:\d+)?$/,
-    /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
-    /^https:\/\/[a-zA-Z0-9-]+\.lovable\.app$/,
-    /^https:\/\/[a-zA-Z0-9-]+\.lovableproject\.com$/,
-    // Custom domain(s)
-    /^https:\/\/([a-zA-Z0-9-]+\.)?photoserve\.app$/,
-  ];
-  
-  if (projectRef) {
-    allowedPatterns.push(`https://${projectRef}.supabase.co`);
-  }
-  
-  const isAllowed = allowedPatterns.some(pattern => 
-    typeof pattern === 'string' ? origin === pattern : pattern.test(origin)
-  );
-  
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : '',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Credentials': 'true',
-  };
-}
+// CORS (web)
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 
 // Hash password using bcrypt (industry standard)
 async function hashPassword(password: string): Promise<string> {
@@ -41,8 +18,6 @@ async function hashPassword(password: string): Promise<string> {
 
 
 serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
-  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -51,8 +26,16 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+    const origin = req.headers.get('origin') || '';
+
     // Get authorization header
     const authHeader = req.headers.get('Authorization');
+    console.log('[HASH-PASSWORD] request received', {
+      origin,
+      method: req.method,
+      hasAuth: !!authHeader,
+    });
+
     if (!authHeader) {
       console.error('[HASH-PASSWORD] No authorization header');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -66,7 +49,7 @@ serve(async (req) => {
     // Verify user
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
+
     if (userError || !user) {
       console.error('[HASH-PASSWORD] User verification failed:', userError?.message);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -75,7 +58,15 @@ serve(async (req) => {
       });
     }
 
+    console.log('[HASH-PASSWORD] user verified', { userId: user.id });
+
     const { password, galleryId, action } = await req.json();
+
+    console.log('[HASH-PASSWORD] payload', {
+      action: action || 'create',
+      hasGalleryId: !!galleryId,
+      passwordLength: typeof password === 'string' ? password.length : null,
+    });
 
     if (!password) {
       return new Response(JSON.stringify({ error: 'Missing password' }), {
@@ -92,9 +83,8 @@ serve(async (req) => {
       });
     }
 
-    console.log('[HASH-PASSWORD] Hashing password with PBKDF2');
-    
-    // Hash the password using PBKDF2
+    console.log('[HASH-PASSWORD] hashing with bcrypt');
+
     const hashedPassword = await hashPassword(password);
 
     // If galleryId is provided, update the gallery's password
@@ -136,7 +126,7 @@ serve(async (req) => {
     }
 
     // Otherwise just return the hashed password for use in gallery creation
-    console.log('[HASH-PASSWORD] Returning PBKDF2 hash for new gallery');
+    console.log('[HASH-PASSWORD] returning bcrypt hash for new gallery');
     return new Response(JSON.stringify({ 
       success: true,
       hashedPassword 
