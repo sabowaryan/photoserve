@@ -281,7 +281,15 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    const origin = req.headers.get('origin') || '';
     const { slug, password } = await req.json();
+
+    console.log('[VERIFY-PASSWORD] request received', {
+      origin,
+      method: req.method,
+      hasSlug: !!slug,
+      passwordLength: typeof password === 'string' ? password.length : null,
+    });
 
     if (!slug || !password) {
       return new Response(JSON.stringify({ error: 'Missing slug or password' }), {
@@ -293,19 +301,21 @@ serve(async (req) => {
     // Get client IP and create rate limit key
     const clientIP = getClientIP(req);
     const rateLimitKey = `${clientIP}:${slug}`;
-    
+
+    console.log('[VERIFY-PASSWORD] rate-limit check', { clientIP, slug });
+
     // Check rate limit using database
     const rateLimitResult = await checkRateLimit(supabase, rateLimitKey);
-    
+
     if (!rateLimitResult.allowed) {
       console.log(`[VERIFY-PASSWORD] Rate limit exceeded for IP ${clientIP} on gallery ${slug}`);
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Too many password attempts. Please try again later.',
         retryAfterSeconds: rateLimitResult.retryAfterSeconds
       }), {
         status: 429,
-        headers: { 
-          ...corsHeaders, 
+        headers: {
+          ...corsHeaders,
           'Content-Type': 'application/json',
           'Retry-After': String(rateLimitResult.retryAfterSeconds)
         },
@@ -335,6 +345,21 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    const hashType = isBcryptHash(gallery.password_hash)
+      ? 'bcrypt'
+      : isPbkdf2Hash(gallery.password_hash)
+        ? 'pbkdf2'
+        : 'legacy_sha256';
+
+    console.log('[VERIFY-PASSWORD] gallery loaded', {
+      slug,
+      galleryId: gallery.id,
+      isActive: gallery.is_active,
+      expiresAt: gallery.expires_at,
+      hashType,
+    });
+
 
     // Check if expired or inactive
     const isExpired = new Date(gallery.expires_at) < new Date();
@@ -378,8 +403,12 @@ serve(async (req) => {
     }
 
     if (!isValidPassword) {
-      console.log(`[VERIFY-PASSWORD] Invalid password attempt for gallery ${slug} from IP ${clientIP}`);
-      return new Response(JSON.stringify({ 
+      console.log('[VERIFY-PASSWORD] invalid password', {
+        slug,
+        clientIP,
+        remainingAttempts: rateLimitResult.remainingAttempts - 1,
+      });
+      return new Response(JSON.stringify({
         error: 'Invalid password',
         remainingAttempts: rateLimitResult.remainingAttempts - 1
       }), {
@@ -387,6 +416,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    console.log('[VERIFY-PASSWORD] password OK', { slug, clientIP });
 
     // Reset rate limit on successful authentication
     await resetRateLimit(supabase, rateLimitKey);

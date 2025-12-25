@@ -275,9 +275,20 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
+      console.log('[GalleryCreate] hash-gallery-password invoke start', {
+        passwordLength: password?.trim()?.length,
+      });
+
       // Hash password via backend function (authenticated)
       const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
         body: { password: password.trim() },
+      });
+
+      console.log('[GalleryCreate] hash-gallery-password invoke response', {
+        hasError: !!hashError,
+        hashData,
+        hashError,
+        status: (hashError as any)?.context?.status,
       });
 
       if (hashError) {
