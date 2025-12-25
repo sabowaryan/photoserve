@@ -222,35 +222,18 @@ export default function GalleryDetail() {
     
     setIsSaving(true);
     try {
-      // Get fresh session token
-      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession?.access_token) {
-        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      const { error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
+        body: {
+          password: editPassword.trim(),
+          galleryId: gallery.id,
+          action: 'update',
+        },
+      });
+
+      if (hashError) {
+        throw new Error(hashError.message || 'Échec de la mise à jour du mot de passe');
       }
 
-      // Hash password via edge function
-      const hashResponse = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${currentSession.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            password: editPassword.trim(),
-            galleryId: gallery.id,
-            action: 'update'
-          }),
-        }
-      );
-
-      if (!hashResponse.ok) {
-        const errorData = await hashResponse.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Échec de la mise à jour du mot de passe');
-      }
-      
       toast({ title: 'Mot de passe mis à jour' });
       setIsEditingPassword(false);
       setEditPassword('');
