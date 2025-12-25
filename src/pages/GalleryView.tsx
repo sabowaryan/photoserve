@@ -114,9 +114,21 @@ export default function GalleryView() {
     setIsSubmitting(true);
 
     try {
+      console.log('[GalleryView] verify-gallery-password invoke start', {
+        slug,
+        passwordLength: password?.length,
+      });
+
       // Use server-side password verification
       const { data: result, error: invokeError } = await supabase.functions.invoke('verify-gallery-password', {
         body: { slug, password },
+      });
+
+      console.log('[GalleryView] verify-gallery-password invoke response', {
+        hasError: !!invokeError,
+        result,
+        invokeError,
+        status: (invokeError as any)?.context?.status,
       });
 
       if (invokeError) {
@@ -134,14 +146,13 @@ export default function GalleryView() {
         return;
       }
 
-
       // Success - update state with data from server
       setIsAuthenticated(true);
       setGallery(prev => prev ? { ...prev, views_count: (result as any).gallery.views_count } : null);
       setImages((result as any).images || []);
 
     } catch (err) {
-      console.error('Error verifying password:', err);
+      console.error('[GalleryView] Error verifying password:', err);
       toast({
         title: 'Erreur',
         description: 'Une erreur est survenue. Veuillez réessayer.',

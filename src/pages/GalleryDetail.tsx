@@ -222,12 +222,24 @@ export default function GalleryDetail() {
     
     setIsSaving(true);
     try {
-      const { error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
+      console.log('[GalleryDetail] hash-gallery-password (update) invoke start', {
+        galleryId: gallery.id,
+        passwordLength: editPassword?.trim()?.length,
+      });
+
+      const { data, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
         body: {
           password: editPassword.trim(),
           galleryId: gallery.id,
           action: 'update',
         },
+      });
+
+      console.log('[GalleryDetail] hash-gallery-password (update) invoke response', {
+        hasError: !!hashError,
+        data,
+        hashError,
+        status: (hashError as any)?.context?.status,
       });
 
       if (hashError) {
