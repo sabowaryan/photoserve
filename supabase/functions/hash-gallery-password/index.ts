@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 // Dynamic CORS with origin validation
 function getCorsHeaders(req: Request) {
@@ -31,44 +32,13 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Hash password using Web Crypto API (PBKDF2) - compatible with Deno Deploy
+// Hash password using bcrypt (industry standard)
 async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const passwordData = encoder.encode(password);
-  
-  // Generate random salt
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  
-  // Import password as key
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    passwordData,
-    "PBKDF2",
-    false,
-    ["deriveBits"]
-  );
-  
-  // Derive key using PBKDF2
-  const derivedBits = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: salt,
-      iterations: 100000,
-      hash: "SHA-256"
-    },
-    keyMaterial,
-    256
-  );
-  
-  // Convert to base64
-  const hashArray = new Uint8Array(derivedBits);
-  const saltBase64 = btoa(String.fromCharCode(...salt));
-  const hashBase64 = btoa(String.fromCharCode(...hashArray));
-  
-  // Return format: $pbkdf2$iterations$salt$hash
-  // IMPORTANT: avoid accidental double "$" in template strings.
-  return '$pbkdf2$100000$' + saltBase64 + '$' + hashBase64;
+  // bcrypt lib here is sync; we keep an async signature for drop-in compatibility.
+  const salt = bcrypt.genSaltSync(12);
+  return bcrypt.hashSync(password, salt);
 }
+
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
