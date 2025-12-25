@@ -275,33 +275,20 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
-      // Get fresh session token
-      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession?.access_token) {
-        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      // Hash password via backend function (authenticated)
+      const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
+        body: { password: password.trim() },
+      });
+
+      if (hashError) {
+        console.error('[GalleryCreate] Hash password error:', hashError);
+        throw new Error('Échec de la sécurisation du mot de passe');
       }
 
-      // Hash password via edge function
-      const hashResponse = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${currentSession.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ password: password.trim() }),
-        }
-      );
-
-      if (!hashResponse.ok) {
-        const errorData = await hashResponse.json().catch(() => ({}));
-        console.error('[GalleryCreate] Hash password error:', errorData);
-        throw new Error(errorData.error || 'Échec de la sécurisation du mot de passe');
+      const hashedPassword = (hashData as any)?.hashedPassword;
+      if (!hashedPassword) {
+        throw new Error('Échec de la sécurisation du mot de passe');
       }
-
-      const { hashedPassword } = await hashResponse.json();
 
       // Generate unique slug
       const { data: slugData, error: slugError } = await supabase.rpc('generate_unique_slug');
@@ -339,16 +326,16 @@ export default function GalleryCreate() {
         formData.append('galleryId', gallery.id);
         formData.append('orderIndex', i.toString());
 
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-image`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${currentSession.access_token}`,
-            },
-            body: formData,
-          }
-        );
+         const response = await fetch(
+           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-image`,
+           {
+             method: 'POST',
+             headers: {
+               'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+             },
+             body: formData,
+           }
+         );
 
         if (!response.ok) {
           const error = await response.json();

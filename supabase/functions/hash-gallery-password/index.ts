@@ -66,7 +66,8 @@ async function hashPassword(password: string): Promise<string> {
   const hashBase64 = btoa(String.fromCharCode(...hashArray));
   
   // Return format: $pbkdf2$iterations$salt$hash
-  return `$pbkdf2$100000$${saltBase64}$${hashBase64}`;
+  // IMPORTANT: avoid accidental double "$" in template strings.
+  return '$pbkdf2$100000$' + saltBase64 + '$' + hashBase64;
 }
 
 serve(async (req) => {

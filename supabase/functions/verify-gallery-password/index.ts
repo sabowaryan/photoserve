@@ -151,14 +151,29 @@ function isPbkdf2Hash(hash: string): boolean {
 async function verifyPbkdf2Password(password: string, storedHash: string): Promise<boolean> {
   try {
     // Parse stored hash: $pbkdf2$iterations$salt$hash
+    // Expected split result (leading $): ["", "pbkdf2", "100000", "<salt>", "<hash>"]
+    // We also tolerate a legacy-bug format that had double "$" separators:
+    // ["", "pbkdf2", "100000", "", "<salt>", "", "<hash>"]
     const parts = storedHash.split('$');
-    if (parts.length !== 5 || parts[1] !== 'pbkdf2') {
+
+    let iterationsStr: string | undefined;
+    let saltBase64: string | undefined;
+    let hashBase64: string | undefined;
+
+    if (parts.length === 5 && parts[1] === 'pbkdf2') {
+      iterationsStr = parts[2];
+      saltBase64 = parts[3];
+      hashBase64 = parts[4];
+    } else if (parts.length === 7 && parts[1] === 'pbkdf2' && parts[3] === '' && parts[5] === '') {
+      iterationsStr = parts[2];
+      saltBase64 = parts[4];
+      hashBase64 = parts[6];
+    } else {
       return false;
     }
-    
-    const iterations = parseInt(parts[2], 10);
-    const saltBase64 = parts[3];
-    const hashBase64 = parts[4];
+
+    const iterations = parseInt(iterationsStr, 10);
+    if (!Number.isFinite(iterations) || iterations <= 0) return false;
     
     // Decode salt from base64
     const salt = new Uint8Array(atob(saltBase64).split('').map(c => c.charCodeAt(0)));
@@ -227,7 +242,7 @@ async function hashPasswordPbkdf2(password: string): Promise<string> {
   const saltBase64 = btoa(String.fromCharCode(...salt));
   const hashBase64 = btoa(String.fromCharCode(...hashArray));
   
-  return `$pbkdf2$100000$${saltBase64}$${hashBase64}`;
+  return '$pbkdf2$100000$' + saltBase64 + '$' + hashBase64;
 }
 
 serve(async (req) => {

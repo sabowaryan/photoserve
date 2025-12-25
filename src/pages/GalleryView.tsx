@@ -115,33 +115,31 @@ export default function GalleryView() {
 
     try {
       // Use server-side password verification
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-gallery-password`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug, password }),
-        }
-      );
+      const { data: result, error: invokeError } = await supabase.functions.invoke('verify-gallery-password', {
+        body: { slug, password },
+      });
 
-      const result = await response.json();
+      if (invokeError) {
+        const status = (invokeError as any)?.context?.status;
+        const message = (result as any)?.error || invokeError.message;
 
-      if (!response.ok) {
         toast({
-          title: response.status === 401 ? 'Mot de passe incorrect' : 'Erreur',
-          description: response.status === 401 
+          title: status === 401 ? 'Mot de passe incorrect' : 'Erreur',
+          description: status === 401
             ? 'Veuillez vérifier le mot de passe et réessayer.'
-            : result.error || 'Impossible d\'accéder à la galerie.',
+            : message || "Impossible d'accéder à la galerie.",
           variant: 'destructive',
         });
         setIsSubmitting(false);
         return;
       }
 
+
       // Success - update state with data from server
       setIsAuthenticated(true);
-      setGallery(prev => prev ? { ...prev, views_count: result.gallery.views_count } : null);
-      setImages(result.images || []);
+      setGallery(prev => prev ? { ...prev, views_count: (result as any).gallery.views_count } : null);
+      setImages((result as any).images || []);
+
     } catch (err) {
       console.error('Error verifying password:', err);
       toast({
