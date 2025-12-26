@@ -222,8 +222,13 @@ export default function GalleryDetail() {
     
     setIsSaving(true);
     try {
+      const accessToken =
+        session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
+
       console.log('[GalleryDetail] hash-gallery-password (update) invoke start', {
         galleryId: gallery.id,
+        hasAccessToken: !!accessToken,
+        accessTokenLength: accessToken?.length,
         passwordLength: editPassword?.trim()?.length,
       });
 
@@ -233,6 +238,7 @@ export default function GalleryDetail() {
           galleryId: gallery.id,
           action: 'update',
         },
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
 
       console.log('[GalleryDetail] hash-gallery-password (update) invoke response', {

@@ -275,13 +275,19 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
+      const accessToken =
+        session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
+
       console.log('[GalleryCreate] hash-gallery-password invoke start', {
+        hasAccessToken: !!accessToken,
+        accessTokenLength: accessToken?.length,
         passwordLength: password?.trim()?.length,
       });
 
       // Hash password via backend function (authenticated)
       const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
         body: { password: password.trim() },
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
 
       console.log('[GalleryCreate] hash-gallery-password invoke response', {
@@ -342,7 +348,7 @@ export default function GalleryCreate() {
            {
              method: 'POST',
              headers: {
-               'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+               'Authorization': `Bearer ${accessToken}`,
              },
              body: formData,
            }
