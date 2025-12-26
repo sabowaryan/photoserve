@@ -278,31 +278,41 @@ export default function GalleryCreate() {
       const accessToken =
         session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
 
-      console.log('[GalleryCreate] hash-gallery-password invoke start', {
+      console.log('[GalleryCreate] hash-gallery-password fetch start', {
         hasAccessToken: !!accessToken,
         accessTokenLength: accessToken?.length,
         passwordLength: password?.trim()?.length,
       });
 
-      // Hash password via backend function (authenticated)
-      const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
-        body: { password: password.trim() },
-        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
-      });
-
-      console.log('[GalleryCreate] hash-gallery-password invoke response', {
-        hasError: !!hashError,
-        hashData,
-        hashError,
-        status: (hashError as any)?.context?.status,
-      });
-
-      if (hashError) {
-        console.error('[GalleryCreate] Hash password error:', hashError);
-        throw new Error('Échec de la sécurisation du mot de passe');
+      if (!accessToken) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
       }
 
-      const hashedPassword = (hashData as any)?.hashedPassword;
+      const hashRes = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ password: password.trim() }),
+        }
+      );
+
+      const hashJson = await hashRes.json().catch(() => ({}));
+
+      console.log('[GalleryCreate] hash-gallery-password fetch response', {
+        ok: hashRes.ok,
+        status: hashRes.status,
+        hashJson,
+      });
+
+      if (!hashRes.ok) {
+        throw new Error((hashJson as any)?.error || 'Échec de la sécurisation du mot de passe');
+      }
+
+      const hashedPassword = (hashJson as any)?.hashedPassword;
       if (!hashedPassword) {
         throw new Error('Échec de la sécurisation du mot de passe');
       }
