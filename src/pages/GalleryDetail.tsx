@@ -241,6 +241,7 @@ export default function GalleryDetail() {
         {
           method: 'POST',
           headers: {
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
@@ -354,7 +355,8 @@ export default function GalleryDetail() {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${session?.access_token}`,
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${session?.access_token}`,
             },
             body: formData,
           }
@@ -397,7 +399,8 @@ export default function GalleryDetail() {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${session?.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ imageId }),
@@ -435,7 +438,8 @@ export default function GalleryDetail() {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${session?.access_token}`,
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${session?.access_token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ imageId: image.id }),

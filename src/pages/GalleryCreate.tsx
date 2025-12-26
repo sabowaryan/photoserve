@@ -293,6 +293,7 @@ export default function GalleryCreate() {
         {
           method: 'POST',
           headers: {
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
@@ -358,7 +359,8 @@ export default function GalleryCreate() {
            {
              method: 'POST',
              headers: {
-               'Authorization': `Bearer ${accessToken}`,
+               apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+               Authorization: `Bearer ${accessToken}`,
              },
              body: formData,
            }
