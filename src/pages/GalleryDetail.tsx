@@ -222,47 +222,25 @@ export default function GalleryDetail() {
     
     setIsSaving(true);
     try {
-      const accessToken =
-        session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
-
-      console.log('[GalleryDetail] hash-gallery-password (update) fetch start', {
+      console.log('[GalleryDetail] hash-gallery-password (update) invoke start', {
         galleryId: gallery.id,
-        hasAccessToken: !!accessToken,
-        accessTokenLength: accessToken?.length,
-        passwordLength: editPassword?.trim()?.length,
       });
 
-      if (!accessToken) {
-        throw new Error('Session expirée. Veuillez vous reconnecter.');
-      }
-
-      const hashRes = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
-        {
-          method: 'POST',
-          headers: {
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            password: editPassword.trim(),
-            galleryId: gallery.id,
-            action: 'update',
-          }),
-        }
-      );
-
-      const hashJson = await hashRes.json().catch(() => ({}));
-
-      console.log('[GalleryDetail] hash-gallery-password (update) fetch response', {
-        ok: hashRes.ok,
-        status: hashRes.status,
-        hashJson,
+      const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
+        body: {
+          password: editPassword.trim(),
+          galleryId: gallery.id,
+          action: 'update',
+        },
       });
 
-      if (!hashRes.ok) {
-        throw new Error((hashJson as any)?.error || 'Échec de la mise à jour du mot de passe');
+      console.log('[GalleryDetail] hash-gallery-password (update) invoke response', {
+        hasData: !!hashData,
+        error: hashError,
+      });
+
+      if (hashError) {
+        throw new Error(hashError.message || 'Échec de la mise à jour du mot de passe');
       }
 
       toast({ title: 'Mot de passe mis à jour' });

@@ -275,45 +275,22 @@ export default function GalleryCreate() {
     setIsCreating(true);
 
     try {
-      const accessToken =
-        session?.access_token ?? (await supabase.auth.getSession()).data.session?.access_token;
+      console.log('[GalleryCreate] hash-gallery-password invoke start');
 
-      console.log('[GalleryCreate] hash-gallery-password fetch start', {
-        hasAccessToken: !!accessToken,
-        accessTokenLength: accessToken?.length,
-        passwordLength: password?.trim()?.length,
+      const { data: hashData, error: hashError } = await supabase.functions.invoke('hash-gallery-password', {
+        body: { password: password.trim() },
       });
 
-      if (!accessToken) {
-        throw new Error('Session expirée. Veuillez vous reconnecter.');
-      }
-
-      const hashRes = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/hash-gallery-password`,
-        {
-          method: 'POST',
-          headers: {
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ password: password.trim() }),
-        }
-      );
-
-      const hashJson = await hashRes.json().catch(() => ({}));
-
-      console.log('[GalleryCreate] hash-gallery-password fetch response', {
-        ok: hashRes.ok,
-        status: hashRes.status,
-        hashJson,
+      console.log('[GalleryCreate] hash-gallery-password invoke response', {
+        hasData: !!hashData,
+        error: hashError,
       });
 
-      if (!hashRes.ok) {
-        throw new Error((hashJson as any)?.error || 'Échec de la sécurisation du mot de passe');
+      if (hashError) {
+        throw new Error(hashError.message || 'Échec de la sécurisation du mot de passe');
       }
 
-      const hashedPassword = (hashJson as any)?.hashedPassword;
+      const hashedPassword = hashData?.hashedPassword;
       if (!hashedPassword) {
         throw new Error('Échec de la sécurisation du mot de passe');
       }
@@ -341,6 +318,14 @@ export default function GalleryCreate() {
         .single();
 
       if (galleryError) throw galleryError;
+
+      // Get access token for image uploads
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const accessToken = currentSession?.access_token;
+      
+      if (!accessToken) {
+        throw new Error('Session expirée. Veuillez vous reconnecter.');
+      }
 
       // Upload images
       for (let i = 0; i < images.length; i++) {

@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 // CORS (web)
 const corsHeaders = {
@@ -8,14 +7,44 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-
-// Hash password using bcrypt (industry standard)
+// Hash password using PBKDF2 (native Web Crypto API - works in Deno)
 async function hashPassword(password: string): Promise<string> {
-  // bcrypt lib here is sync; we keep an async signature for drop-in compatibility.
-  const salt = bcrypt.genSaltSync(12);
-  return bcrypt.hashSync(password, salt);
+  const encoder = new TextEncoder();
+  const passwordData = encoder.encode(password);
+  
+  // Generate random salt
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iterations = 100000;
+  
+  // Import password as key material
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    passwordData,
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  
+  // Derive bits using PBKDF2
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: iterations,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  
+  // Convert to base64
+  const hashArray = new Uint8Array(derivedBits);
+  const saltBase64 = btoa(String.fromCharCode(...salt));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+  
+  // Return in format: $pbkdf2$iterations$salt$hash
+  return `$pbkdf2$${iterations}$${saltBase64}$${hashBase64}`;
 }
-
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -82,7 +111,7 @@ serve(async (req) => {
       });
     }
 
-    console.log('[HASH-PASSWORD] hashing with bcrypt');
+    console.log('[HASH-PASSWORD] hashing with PBKDF2');
 
     const hashedPassword = await hashPassword(password);
 
@@ -104,8 +133,11 @@ serve(async (req) => {
         });
       }
 
-      // Update the password hash
-      const { error: updateError } = await supabase
+      // Update the password hash using service role for RLS bypass
+      const supabaseServiceRole = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRole);
+      
+      const { error: updateError } = await supabaseAdmin
         .from('galleries')
         .update({ password_hash: hashedPassword })
         .eq('id', galleryId);
@@ -125,7 +157,7 @@ serve(async (req) => {
     }
 
     // Otherwise just return the hashed password for use in gallery creation
-    console.log('[HASH-PASSWORD] returning bcrypt hash for new gallery');
+    console.log('[HASH-PASSWORD] returning PBKDF2 hash for new gallery');
     return new Response(JSON.stringify({ 
       success: true,
       hashedPassword 
