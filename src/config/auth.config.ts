@@ -115,6 +115,8 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
+      console.log('[Auth] signIn callback - provider:', account?.provider, 'user:', user.email);
+      
       if (account?.provider === 'google') {
         try {
           const supabase = createAdminClient();
@@ -125,6 +127,8 @@ export const authOptions: NextAuthOptions = {
             .select('id')
             .eq('email', user.email!.toLowerCase())
             .single();
+
+          console.log('[Auth] Existing profile:', existingProfile?.id);
 
           if (!existingProfile) {
             // Create Supabase auth user - le trigger crée automatiquement le profil
@@ -144,8 +148,10 @@ export const authOptions: NextAuthOptions = {
               return false;
             }
 
+            console.log('[Auth] Created new Supabase user:', authUser.user.id);
+
             // Attendre que le trigger crée le profil
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
 
             // Vérifier que le profil a été créé
             const { data: newProfile, error: profileError } = await supabase
@@ -162,18 +168,13 @@ export const authOptions: NextAuthOptions = {
 
             // Update user id to match Supabase user id
             user.id = authUser.user.id;
-
-            // Generate a session for the new user
-            // Note: Pour Google OAuth, on ne peut pas obtenir de session Supabase directement
-            // On utilisera le service role pour les opérations côté serveur
+            console.log('[Auth] New user created successfully:', user.id);
           } else {
             user.id = existingProfile.id;
+            console.log('[Auth] Existing user found:', user.id);
           }
 
-          // Pour les utilisateurs Google existants, essayer de créer une session Supabase
-          // en utilisant un token personnalisé (si configuré)
-          // Pour l'instant, on utilise le service role côté serveur
-          
+          return true;
         } catch (error) {
           console.error('[Auth] Google sign in error:', error);
           return false;
@@ -229,7 +230,9 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: process.env.NODE_ENV === 'production' 
+        ? `__Secure-next-auth.session-token`
+        : `next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -238,7 +241,9 @@ export const authOptions: NextAuthOptions = {
       },
     },
     callbackUrl: {
-      name: `next-auth.callback-url`,
+      name: process.env.NODE_ENV === 'production'
+        ? `__Secure-next-auth.callback-url`
+        : `next-auth.callback-url`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -247,7 +252,9 @@ export const authOptions: NextAuthOptions = {
       },
     },
     csrfToken: {
-      name: `next-auth.csrf-token`,
+      name: process.env.NODE_ENV === 'production'
+        ? `__Host-next-auth.csrf-token`
+        : `next-auth.csrf-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',

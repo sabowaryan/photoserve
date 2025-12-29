@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,7 +16,7 @@ import { z } from 'zod';
 const emailSchema = z.string().email({ message: 'Email invalide' });
 const passwordSchema = z.string().min(6, { message: 'Le mot de passe doit contenir au moins 6 caractères' });
 
-export default function AuthPage() {
+function AuthContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +24,30 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session, status } = useSession();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+      router.push(callbackUrl);
+    }
+  }, [session, status, router, searchParams]);
+
+  // Check for error in URL (from OAuth callback)
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      if (errorParam === 'OAuthAccountNotLinked') {
+        setError('Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.');
+      } else if (errorParam === 'OAuthCallback') {
+        setError('Erreur lors de la connexion avec Google. Veuillez réessayer.');
+      } else {
+        setError('Une erreur est survenue lors de la connexion.');
+      }
+    }
+  }, [searchParams]);
 
   const validateForm = () => {
     try {
@@ -326,5 +350,17 @@ export default function AuthPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <AuthContent />
+    </Suspense>
   );
 }
