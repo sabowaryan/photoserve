@@ -1,0 +1,108 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ExternalLink } from "lucide-react";
+
+interface SubscriptionManagerProps {
+  hasSubscription: boolean;
+  planKey?: "premium" | "pro";
+  isCurrentPlan?: boolean;
+  variant?: "default" | "outline";
+}
+
+export function SubscriptionManager({
+  hasSubscription,
+  planKey,
+  isCurrentPlan = false,
+  variant = "default",
+}: SubscriptionManagerProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    if (!planKey) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ plan: planKey }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+
+      if (data.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Impossible de créer la session de paiement.";
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/stripe/portal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create portal session");
+      }
+
+      if (data.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Impossible d'accéder au portail.";
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (hasSubscription) {
+    return (
+      <Button
+        variant="outline"
+        onClick={handleManageSubscription}
+        disabled={isLoading}
+        className="gap-2"
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <ExternalLink className="h-4 w-4" />
+        )}
+        Gérer l&apos;abonnement
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      onClick={handleSubscribe}
+      disabled={isLoading || isCurrentPlan}
+      className="w-full"
+      variant={variant}
+    >
+      {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+      {isCurrentPlan ? "Plan actuel" : "Choisir ce plan"}
+    </Button>
+  );
+}

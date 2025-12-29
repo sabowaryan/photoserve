@@ -1,0 +1,5 @@
+# Validators
+# This directory contains Zod validation schemas:
+# - auth.schema.ts - Authentication validation schemas
+# - gallery.schema.ts - Gallery validation schemas
+# - image.schema.ts - Image validation schemas

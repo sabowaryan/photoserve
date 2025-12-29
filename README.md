@@ -1,73 +1,217 @@
-# Welcome to your Lovable project
+# PhotoServe - Next.js 15+
 
-## Project info
+Application de partage de galeries photo sécurisées pour photographes professionnels.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Fonctionnalités
 
-## How can I edit this code?
+- **Galeries sécurisées** : Créez des galeries protégées par mot de passe avec date d'expiration
+- **Authentification** : Email/mot de passe et Google OAuth via NextAuth.js v5
+- **Plans d'abonnement** : Free, Premium et Pro avec Stripe
+- **Stockage cloud** : Upload et optimisation d'images via Cloudinary
+- **SEO optimisé** : Métadonnées dynamiques, sitemap, données structurées JSON-LD
+- **Interface française** : UI entièrement en français
 
-There are several ways of editing your application.
+## 📋 Prérequis
 
-**Use Lovable**
+- Node.js 18.17 ou supérieur
+- npm, yarn, pnpm ou bun
+- Compte Supabase (base de données PostgreSQL)
+- Compte Cloudinary (stockage d'images)
+- Compte Stripe (paiements)
+- Compte Google Cloud (OAuth - optionnel)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🛠️ Installation
 
-Changes made via Lovable will be committed automatically to this repo.
+### 1. Cloner le projet
 
-**Use your preferred IDE**
+```bash
+git clone <repository-url>
+cd photoserve-nextjs
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 2. Installer les dépendances
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+npm install
+# ou
+yarn install
+# ou
+pnpm install
+# ou
+bun install
+```
 
-Follow these steps:
+### 3. Configurer les variables d'environnement
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Copiez le fichier `.env.example` vers `.env.local` :
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+cp .env.example .env.local
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+Remplissez les variables d'environnement (voir section [Variables d'environnement](#-variables-denvironnement)).
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 4. Configurer Supabase
+
+1. Créez un projet sur [Supabase](https://supabase.com)
+2. Exécutez les migrations SQL depuis le dossier `supabase/migrations/`
+3. Configurez les Row Level Security (RLS) policies
+4. Déployez les Edge Functions depuis `supabase/functions/`
+
+### 5. Lancer le serveur de développement
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📁 Structure du projet
 
-**Use GitHub Codespaces**
+```
+photoserve-nextjs/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (auth)/             # Pages d'authentification
+│   │   ├── (dashboard)/        # Pages protégées (dashboard, settings)
+│   │   ├── (errors)/           # Pages d'erreur (401, 403, 500, 503)
+│   │   ├── (public)/           # Pages publiques (pricing, legal)
+│   │   ├── api/                # API Routes
+│   │   └── g/[slug]/           # Vue publique des galeries
+│   ├── components/
+│   │   ├── forms/              # Composants de formulaires
+│   │   ├── providers/          # Context providers
+│   │   ├── shared/             # Composants partagés
+│   │   └── ui/                 # Composants shadcn/ui
+│   ├── config/                 # Configuration (auth, plans)
+│   ├── lib/
+│   │   ├── api/                # Utilitaires API (CORS, error handler)
+│   │   ├── auth/               # Authentification NextAuth
+│   │   ├── cloudinary/         # Client Cloudinary
+│   │   ├── errors/             # Classes d'erreurs personnalisées
+│   │   ├── middleware/         # Middleware de protection des routes
+│   │   ├── repositories/       # Couche d'accès aux données
+│   │   ├── security/           # Sanitization, sécurité
+│   │   ├── services/           # Couche service (business logic)
+│   │   ├── stripe/             # Client Stripe
+│   │   ├── supabase/           # Clients Supabase (browser/server)
+│   │   └── validators/         # Schémas de validation Zod
+│   └── types/                  # Types TypeScript
+├── supabase/
+│   ├── functions/              # Edge Functions Supabase
+│   └── migrations/             # Migrations SQL
+└── public/                     # Assets statiques
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔧 Scripts disponibles
 
-## What technologies are used for this project?
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Lance le serveur de développement |
+| `npm run build` | Build de production |
+| `npm run start` | Lance le serveur de production |
+| `npm run lint` | Vérifie le code avec ESLint |
+| `npm run test` | Lance les tests (Vitest) |
+| `npm run test:watch` | Lance les tests en mode watch |
+| `npm run test:coverage` | Lance les tests avec couverture |
 
-This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🔐 Variables d'environnement
 
-## How can I deploy this project?
+### Variables requises
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_BASE_URL` | URL de base de l'application |
+| `NEXT_PUBLIC_APP_URL` | URL publique de l'application |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de votre projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé service role Supabase (serveur uniquement) |
+| `NEXTAUTH_URL` | URL pour NextAuth.js |
+| `NEXTAUTH_SECRET` | Secret pour NextAuth.js (générer avec `openssl rand -base64 32`) |
+| `STRIPE_SECRET_KEY` | Clé secrète Stripe |
+| `STRIPE_WEBHOOK_SECRET` | Secret webhook Stripe |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé publique Stripe |
+| `CLOUDINARY_CLOUD_NAME` | Nom du cloud Cloudinary |
+| `CLOUDINARY_API_KEY` | Clé API Cloudinary |
+| `CLOUDINARY_API_SECRET` | Secret API Cloudinary |
 
-## Can I connect a custom domain to my Lovable project?
+### Variables optionnelles
 
-Yes, you can!
+| Variable | Description |
+|----------|-------------|
+| `GOOGLE_CLIENT_ID` | Client ID Google OAuth |
+| `GOOGLE_CLIENT_SECRET` | Client Secret Google OAuth |
+| `STRIPE_PREMIUM_MONTHLY_PRICE_ID` | ID du prix Premium mensuel |
+| `STRIPE_PREMIUM_YEARLY_PRICE_ID` | ID du prix Premium annuel |
+| `STRIPE_PRO_MONTHLY_PRICE_ID` | ID du prix Pro mensuel |
+| `STRIPE_PRO_YEARLY_PRICE_ID` | ID du prix Pro annuel |
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🏗️ Architecture
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Couche Service (Business Logic)
+
+- `AuthService` : Authentification et gestion des sessions
+- `GalleryService` : CRUD galeries, vérification mot de passe
+- `ImageService` : Upload, suppression, optimisation d'images
+- `PaymentService` : Intégration Stripe (checkout, portal)
+- `SeoService` : Génération métadonnées et données structurées
+- `RateLimiterService` : Limitation des tentatives de connexion
+
+### Couche Repository (Data Access)
+
+- `ProfileRepository` : Gestion des profils utilisateurs
+- `GalleryRepository` : Accès aux données des galeries
+- `ImageRepository` : Accès aux données des images
+
+### Edge Functions Supabase
+
+- `stripe-webhook` : Gestion des webhooks Stripe
+- `cleanup-expired-galleries` : Nettoyage des galeries expirées (cron)
+- `cleanup-rate-limits` : Nettoyage des rate limits (cron)
+- `notify-expiring-galleries` : Notifications d'expiration (cron)
+
+## 📊 Plans d'abonnement
+
+| Fonctionnalité | Free | Premium | Pro |
+|----------------|------|---------|-----|
+| Stockage | 20 MB | 5 GB | 50 GB |
+| Galeries max | 3 | 50 | 500 |
+| Images/galerie | 30 | 500 | 5000 |
+| Taille image max | 1 MB | 50 MB | 100 MB |
+| Expiration max | 30 jours | 90 jours | 180 jours |
+
+## 🧪 Tests
+
+Le projet utilise Vitest avec fast-check pour les tests property-based :
+
+```bash
+# Lancer tous les tests
+npm run test
+
+# Lancer les tests en mode watch
+npm run test:watch
+
+# Générer le rapport de couverture
+npm run test:coverage
+```
+
+## 🚀 Déploiement
+
+### Vercel (recommandé)
+
+1. Connectez votre repository à [Vercel](https://vercel.com)
+2. Configurez les variables d'environnement
+3. Déployez
+
+### Autres plateformes
+
+Le projet peut être déployé sur toute plateforme supportant Next.js :
+- Netlify
+- AWS Amplify
+- Railway
+- Render
+
+## 📝 Licence
+
+Projet privé - Tous droits réservés.

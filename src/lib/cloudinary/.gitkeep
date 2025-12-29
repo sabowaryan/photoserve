@@ -1,0 +1,3 @@
+# Cloudinary Configuration
+# This directory contains Cloudinary client configuration:
+# - client.ts - Cloudinary SDK configuration and helper functions

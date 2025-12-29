@@ -1,0 +1,316 @@
+/**
+ * Supabase Database Types
+ * Generated from the existing Supabase schema
+ */
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  public: {
+    Tables: {
+      galleries: {
+        Row: {
+          created_at: string | null
+          expiration_days: number | null
+          expires_at: string
+          id: string
+          is_active: boolean | null
+          password_hash: string
+          title: string
+          unique_slug: string
+          updated_at: string | null
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at: string
+          id?: string
+          is_active?: boolean | null
+          password_hash: string
+          title: string
+          unique_slug: string
+          updated_at?: string | null
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          password_hash?: string
+          title?: string
+          unique_slug?: string
+          updated_at?: string | null
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galleries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      images: {
+        Row: {
+          cloudinary_public_id: string | null
+          cloudinary_url: string
+          created_at: string | null
+          file_size_mb: number | null
+          gallery_id: string
+          id: string
+          order_index: number | null
+        }
+        Insert: {
+          cloudinary_public_id?: string | null
+          cloudinary_url: string
+          created_at?: string | null
+          file_size_mb?: number | null
+          gallery_id: string
+          id?: string
+          order_index?: number | null
+        }
+        Update: {
+          cloudinary_public_id?: string | null
+          cloudinary_url?: string
+          created_at?: string | null
+          file_size_mb?: number | null
+          gallery_id?: string
+          id?: string
+          order_index?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "images_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "images_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          id: string
+          max_galleries: number | null
+          max_image_size_mb: number | null
+          max_images_per_gallery: number | null
+          name: string | null
+          storage_limit_mb: number | null
+          storage_used_mb: number | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_plan: Database["public"]["Enums"]["subscription_plan"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          id: string
+          max_galleries?: number | null
+          max_image_size_mb?: number | null
+          max_images_per_gallery?: number | null
+          name?: string | null
+          storage_limit_mb?: number | null
+          storage_used_mb?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          max_galleries?: number | null
+          max_image_size_mb?: number | null
+          max_images_per_gallery?: number | null
+          name?: string | null
+          storage_limit_mb?: number | null
+          storage_used_mb?: number | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_plan?: Database["public"]["Enums"]["subscription_plan"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rate_limit_attempts: {
+        Row: {
+          attempts: number
+          created_at: string
+          expires_at: string
+          first_attempt_at: string
+          id: string
+          key: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          expires_at: string
+          first_attempt_at?: string
+          id?: string
+          key: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          expires_at?: string
+          first_attempt_at?: string
+          id?: string
+          key?: string
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          created_at: string | null
+          custom_expiration: boolean | null
+          id: string
+          max_expiration_days: number
+          max_galleries: number
+          max_image_size_mb: number
+          max_images_per_gallery: number
+          name: Database["public"]["Enums"]["subscription_plan"]
+          price_monthly: number
+          price_yearly: number
+          storage_limit_mb: number
+        }
+        Insert: {
+          created_at?: string | null
+          custom_expiration?: boolean | null
+          id?: string
+          max_expiration_days: number
+          max_galleries: number
+          max_image_size_mb: number
+          max_images_per_gallery: number
+          name: Database["public"]["Enums"]["subscription_plan"]
+          price_monthly: number
+          price_yearly: number
+          storage_limit_mb: number
+        }
+        Update: {
+          created_at?: string | null
+          custom_expiration?: boolean | null
+          id?: string
+          max_expiration_days?: number
+          max_galleries?: number
+          max_image_size_mb?: number
+          max_images_per_gallery?: number
+          name?: Database["public"]["Enums"]["subscription_plan"]
+          price_monthly?: number
+          price_yearly?: number
+          storage_limit_mb?: number
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      galleries_public: {
+        Row: {
+          created_at: string | null
+          expiration_days: number | null
+          expires_at: string | null
+          id: string | null
+          is_active: boolean | null
+          title: string | null
+          unique_slug: string | null
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          title?: string | null
+          unique_slug?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          expiration_days?: number | null
+          expires_at?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          title?: string | null
+          unique_slug?: string | null
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+    }
+    Functions: {
+      cleanup_expired_rate_limits: { Args: Record<string, never>; Returns: number }
+      decrement_storage: {
+        Args: { size_mb: number; user_id: string }
+        Returns: undefined
+      }
+      generate_unique_slug: { Args: Record<string, never>; Returns: string }
+      increment_storage: {
+        Args: { size_mb: number; user_id: string }
+        Returns: undefined
+      }
+    }
+    Enums: {
+      subscription_plan: "free" | "premium" | "pro"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+// Helper types for easier usage
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
+export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
+export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
+
+// Convenience type aliases
+export type Profile = Tables<'profiles'>
+export type ProfileInsert = TablesInsert<'profiles'>
+export type ProfileUpdate = TablesUpdate<'profiles'>
+
+export type Gallery = Tables<'galleries'>
+export type GalleryInsert = TablesInsert<'galleries'>
+export type GalleryUpdate = TablesUpdate<'galleries'>
+
+export type Image = Tables<'images'>
+export type ImageInsert = TablesInsert<'images'>
+export type ImageUpdate = TablesUpdate<'images'>
+
+export type RateLimitAttempt = Tables<'rate_limit_attempts'>
+export type RateLimitAttemptInsert = TablesInsert<'rate_limit_attempts'>
+export type RateLimitAttemptUpdate = TablesUpdate<'rate_limit_attempts'>
+
+export type SubscriptionPlanRow = Tables<'subscription_plans'>
+export type SubscriptionPlan = Enums<'subscription_plan'>

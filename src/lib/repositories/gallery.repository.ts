@@ -1,0 +1,190 @@
+/**
+ * Gallery Repository
+ * Data access layer for galleries
+ */
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database, Gallery, GalleryInsert, GalleryUpdate } from '@/lib/supabase/types'
+import { NotFoundError } from '@/lib/errors'
+
+export interface IGalleryRepository {
+  create(data: GalleryInsert): Promise<Gallery>
+  findById(id: string): Promise<Gallery | null>
+  findBySlug(slug: string): Promise<Gallery | null>
+  findByUserId(userId: string): Promise<Gallery[]>
+  update(id: string, data: GalleryUpdate): Promise<Gallery>
+  delete(id: string): Promise<void>
+  countByUserId(userId: string): Promise<number>
+  incrementViewCount(id: string): Promise<void>
+  generateUniqueSlug(): Promise<string>
+}
+
+export class GalleryRepository implements IGalleryRepository {
+  constructor(private supabase: SupabaseClient<Database>) {}
+
+  /**
+   * Create a new gallery
+   */
+  async create(data: GalleryInsert): Promise<Gallery> {
+    const { data: gallery, error } = await this.supabase
+      .from('galleries')
+      .insert(data)
+      .select()
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    return gallery
+  }
+
+  /**
+   * Find a gallery by ID
+   */
+  async findById(id: string): Promise<Gallery | null> {
+    const { data, error } = await this.supabase
+      .from('galleries')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null
+      }
+      throw error
+    }
+
+    return data
+  }
+
+  /**
+   * Find a gallery by unique slug
+   */
+  async findBySlug(slug: string): Promise<Gallery | null> {
+    const { data, error } = await this.supabase
+      .from('galleries')
+      .select('*')
+      .eq('unique_slug', slug)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null
+      }
+      throw error
+    }
+
+    return data
+  }
+
+  /**
+   * Find all galleries for a user
+   */
+  async findByUserId(userId: string): Promise<Gallery[]> {
+    const { data, error } = await this.supabase
+      .from('galleries')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      throw error
+    }
+
+    return data || []
+  }
+
+  /**
+   * Update an existing gallery
+   */
+  async update(id: string, data: GalleryUpdate): Promise<Gallery> {
+    const { data: gallery, error } = await this.supabase
+      .from('galleries')
+      .update({
+        ...data,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new NotFoundError('Gallery')
+      }
+      throw error
+    }
+
+    return gallery
+  }
+
+  /**
+   * Delete a gallery by ID
+   */
+  async delete(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('galleries')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      throw error
+    }
+  }
+
+  /**
+   * Count galleries for a user
+   */
+  async countByUserId(userId: string): Promise<number> {
+    const { count, error } = await this.supabase
+      .from('galleries')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+
+    if (error) {
+      throw error
+    }
+
+    return count || 0
+  }
+
+  /**
+   * Increment the view count for a gallery
+   */
+  async incrementViewCount(id: string): Promise<void> {
+    const gallery = await this.findById(id)
+    if (!gallery) {
+      throw new NotFoundError('Gallery')
+    }
+
+    const { error } = await this.supabase
+      .from('galleries')
+      .update({ views_count: (gallery.views_count || 0) + 1 })
+      .eq('id', id)
+
+    if (error) {
+      throw error
+    }
+  }
+
+  /**
+   * Generate a unique slug using the database function
+   */
+  async generateUniqueSlug(): Promise<string> {
+    const { data, error } = await this.supabase.rpc('generate_unique_slug')
+
+    if (error) {
+      throw error
+    }
+
+    return data
+  }
+}
+
+/**
+ * Factory function to create a GalleryRepository instance
+ */
+export function createGalleryRepository(supabase: SupabaseClient<Database>): IGalleryRepository {
+  return new GalleryRepository(supabase)
+}

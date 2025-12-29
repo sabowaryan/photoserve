@@ -1,0 +1,7 @@
+# Service Layer
+# This directory contains business logic services:
+# - auth.service.ts - Authentication service (NextAuth.js)
+# - gallery.service.ts - Gallery CRUD operations
+# - image.service.ts - Image upload/delete via Cloudinary
+# - payment.service.ts - Stripe payment integration
+# - seo.service.ts - SEO metadata generation

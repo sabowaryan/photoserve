@@ -1,0 +1,3 @@
+# Stripe Configuration
+# This directory contains Stripe client configuration:
+# - client.ts - Stripe SDK configuration
