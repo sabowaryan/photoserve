@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 interface SubscriptionManagerProps {
   hasSubscription: boolean;
@@ -42,8 +43,8 @@ export function SubscriptionManager({
         window.open(data.url, "_blank");
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Impossible de créer la session de paiement.";
-      alert(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : "Impossible de créer la session de paiement";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -69,8 +70,8 @@ export function SubscriptionManager({
         window.open(data.url, "_blank");
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Impossible d'accéder au portail.";
-      alert(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : "Impossible d'accéder au portail";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

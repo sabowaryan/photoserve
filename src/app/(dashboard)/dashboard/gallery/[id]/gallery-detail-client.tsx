@@ -38,6 +38,7 @@ import {
   X,
 } from "lucide-react";
 import { formatDateFr } from "@/lib/date";
+import { toast } from "sonner";
 
 interface Gallery {
   id: string;
@@ -108,10 +109,13 @@ export function GalleryDetailClient({
   const [currentExpirationDays, setCurrentExpirationDays] = useState(
     gallery.expiration_days || 30
   );
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
+  const [isDeletingGallery, setIsDeletingGallery] = useState(false);
 
   const copyLink = () => {
     const url = `${window.location.origin}/g/${gallery.unique_slug}`;
     navigator.clipboard.writeText(url);
+    toast.success("Lien copié dans le presse-papier");
   };
 
   const handleSaveTitle = async () => {
@@ -128,10 +132,11 @@ export function GalleryDetailClient({
       if (!response.ok) throw new Error("Failed to update title");
 
       setIsEditingTitle(false);
+      toast.success("Titre modifié");
       router.refresh();
     } catch (error) {
       console.error("Error updating title:", error);
-      alert("Impossible de modifier le titre.");
+      toast.error("Impossible de modifier le titre");
     } finally {
       setIsSaving(false);
     }
@@ -139,7 +144,7 @@ export function GalleryDetailClient({
 
   const handleSavePassword = async () => {
     if (!editPassword.trim() || editPassword.trim().length < 4) {
-      alert("Le mot de passe doit contenir au moins 4 caractères.");
+      toast.error("Le mot de passe doit contenir au moins 4 caractères");
       return;
     }
 
@@ -155,10 +160,11 @@ export function GalleryDetailClient({
 
       setIsEditingPassword(false);
       setEditPassword("");
+      toast.success("Mot de passe modifié");
       router.refresh();
     } catch (error) {
       console.error("Error updating password:", error);
-      alert("Impossible de modifier le mot de passe.");
+      toast.error("Impossible de modifier le mot de passe");
     } finally {
       setIsSaving(false);
     }
@@ -179,10 +185,11 @@ export function GalleryDetailClient({
 
       if (!response.ok) throw new Error("Failed to update duration");
 
+      toast.success("Durée modifiée");
       router.refresh();
     } catch (error) {
       console.error("Error updating duration:", error);
-      alert("Impossible de modifier la durée.");
+      toast.error("Impossible de modifier la durée");
     }
   };
 
@@ -193,20 +200,18 @@ export function GalleryDetailClient({
       const maxImageSizeMb = profile?.max_image_size_mb || 1;
 
       if (images.length + files.length > maxImagesPerGallery) {
-        alert(
-          `Vous ne pouvez pas ajouter plus de ${maxImagesPerGallery} images.`
-        );
+        toast.error(`Vous ne pouvez pas ajouter plus de ${maxImagesPerGallery} images`);
         return;
       }
 
       for (const file of files) {
         if (!file.type.startsWith("image/")) {
-          alert(`${file.name} n'est pas une image.`);
+          toast.error(`${file.name} n'est pas une image`);
           continue;
         }
 
         if (file.size > maxImageSizeMb * 1024 * 1024) {
-          alert(`${file.name} dépasse la limite de ${maxImageSizeMb} Mo.`);
+          toast.error(`${file.name} dépasse la limite de ${maxImageSizeMb} Mo`);
           continue;
         }
 
@@ -266,7 +271,7 @@ export function GalleryDetailClient({
               img.id === uploadId ? { ...img, status: "error" } : img
             )
           );
-          alert("Impossible d'uploader l'image.");
+          toast.error("Impossible d'uploader l'image");
         }
       }
     },
@@ -286,16 +291,19 @@ export function GalleryDetailClient({
       }
 
       setImages((prev) => prev.filter((img) => img.id !== imageId));
+      setImageToDelete(null);
+      toast.success("Image supprimée");
       router.refresh();
     } catch (error) {
       console.error("Error deleting image:", error);
-      alert("Impossible de supprimer l'image.");
+      toast.error("Impossible de supprimer l'image");
     } finally {
       setDeletingImageId(null);
     }
   };
 
   const deleteGallery = async () => {
+    setIsDeletingGallery(true);
     try {
       const response = await fetch(`/api/galleries/${gallery.id}`, {
         method: "DELETE",
@@ -303,10 +311,13 @@ export function GalleryDetailClient({
 
       if (!response.ok) throw new Error("Failed to delete gallery");
 
+      toast.success("Galerie supprimée");
       router.push("/dashboard");
     } catch (error) {
       console.error("Error deleting gallery:", error);
-      alert("Impossible de supprimer la galerie.");
+      toast.error("Impossible de supprimer la galerie");
+    } finally {
+      setIsDeletingGallery(false);
     }
   };
 
@@ -330,24 +341,32 @@ export function GalleryDetailClient({
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm">
-              <Trash2 className="h-4 w-4" />
+            <Button variant="destructive" size="sm" disabled={isDeletingGallery}>
+              {isDeletingGallery ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Supprimer la galerie ?</AlertDialogTitle>
               <AlertDialogDescription>
+                Êtes-vous sûr de vouloir supprimer la galerie &quot;{gallery.title}&quot; ?
+                <br />
                 Cette action est irréversible. Toutes les images seront
                 définitivement supprimées.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeletingGallery}>Annuler</AlertDialogCancel>
               <AlertDialogAction
                 onClick={deleteGallery}
+                disabled={isDeletingGallery}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
+                {isDeletingGallery && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                 Supprimer
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -564,19 +583,42 @@ export function GalleryDetailClient({
                 </span>
               </div>
               <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-colors flex items-center justify-center">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => deleteImage(image.id)}
-                  disabled={deletingImageId === image.id}
-                >
-                  {deletingImageId === image.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
-                </Button>
+                <AlertDialog open={imageToDelete === image.id} onOpenChange={(open) => !open && setImageToDelete(null)}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => setImageToDelete(image.id)}
+                      disabled={deletingImageId === image.id}
+                    >
+                      {deletingImageId === image.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Supprimer cette image ?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Cette action est irréversible. L&apos;image sera définitivement supprimée.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={deletingImageId === image.id}>Annuler</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteImage(image.id)}
+                        disabled={deletingImageId === image.id}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {deletingImageId === image.id && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                        Supprimer
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))}
