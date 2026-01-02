@@ -114,6 +114,18 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Si l'URL est relative, la préfixer avec baseUrl
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      // Si l'URL est sur le même domaine, l'autoriser
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      // Par défaut, rediriger vers le dashboard
+      return `${baseUrl}/dashboard`;
+    },
     async signIn({ user, account }) {
       console.log('[Auth] signIn callback - provider:', account?.provider, 'user:', user.email);
       
@@ -223,6 +235,13 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth',
     error: '/auth',
+    // Ne pas définir de page de callback pour permettre la redirection vers callbackUrl
+  },
+  // Ajouter le callback redirect pour gérer correctement les redirections OAuth
+  events: {
+    async signIn({ user, account }) {
+      console.log('[Auth Event] User signed in:', user.email, 'via', account?.provider);
+    },
   },
   session: {
     strategy: 'jwt',

@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 
 const navLinks = [
@@ -15,6 +16,8 @@ const navLinks = [
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === 'authenticated' && !!session;
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -57,16 +60,27 @@ export function MobileNav() {
 
           {/* Actions */}
           <div className="p-4 border-t border-border space-y-3">
-            <Button variant="outline" asChild className="w-full">
-              <Link href="/auth" onClick={() => setOpen(false)}>
-                Connexion
-              </Link>
-            </Button>
-            <Button asChild className="w-full btn-primary">
-              <Link href="/auth" onClick={() => setOpen(false)}>
-                Créer une galerie
-              </Link>
-            </Button>
+            {isAuthenticated ? (
+              <Button asChild className="w-full btn-primary">
+                <Link href="/dashboard" onClick={() => setOpen(false)}>
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" asChild className="w-full">
+                  <Link href="/auth" onClick={() => setOpen(false)}>
+                    Connexion
+                  </Link>
+                </Button>
+                <Button asChild className="w-full btn-primary">
+                  <Link href="/auth" onClick={() => setOpen(false)}>
+                    Créer une galerie
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </SheetContent>

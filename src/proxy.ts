@@ -1,5 +1,5 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy (formerly Middleware)
  * Handles authentication and route protection
  */
 import { NextResponse } from 'next/server';
@@ -7,7 +7,7 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { getRouteProtectionAction, isAuthRoute } from '@/lib/middleware/route-protection';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   // Get the token from the request

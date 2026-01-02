@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { LogoIcon } from '@/components/shared/logo';
-import { ArrowLeft, Menu, X } from 'lucide-react';
+import { ArrowLeft, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [
@@ -20,6 +21,8 @@ interface PublicHeaderProps {
 export function Header({ showBackButton = false }: PublicHeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === 'authenticated' && !!session;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -54,12 +57,23 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" asChild className="hidden sm:inline-flex">
-            <Link href="/auth">Connexion</Link>
-          </Button>
-          <Button asChild className="btn-primary hidden sm:inline-flex">
-            <Link href="/auth">Commencer</Link>
-          </Button>
+          {isAuthenticated ? (
+            <Button asChild className="btn-primary hidden sm:inline-flex">
+              <Link href="/dashboard">
+                <LayoutDashboard className="h-4 w-4 mr-2" />
+                Dashboard
+              </Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" asChild className="hidden sm:inline-flex">
+                <Link href="/auth">Connexion</Link>
+              </Button>
+              <Button asChild className="btn-primary hidden sm:inline-flex">
+                <Link href="/auth">Commencer</Link>
+              </Button>
+            </>
+          )}
           
           {/* Mobile menu button */}
           <Button
@@ -92,12 +106,23 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
               </Link>
             ))}
             <div className="border-t border-border/50 mt-2 pt-4 flex flex-col gap-2">
-              <Button variant="outline" asChild className="w-full">
-                <Link href="/auth">Connexion</Link>
-              </Button>
-              <Button asChild className="w-full btn-primary">
-                <Link href="/auth">Commencer</Link>
-              </Button>
+              {isAuthenticated ? (
+                <Button asChild className="w-full btn-primary">
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" asChild className="w-full">
+                    <Link href="/auth">Connexion</Link>
+                  </Button>
+                  <Button asChild className="w-full btn-primary">
+                    <Link href="/auth">Commencer</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </nav>
         </div>
