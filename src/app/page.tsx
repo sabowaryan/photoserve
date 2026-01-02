@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LogoIcon } from '@/components/shared/logo';
-import { Footer } from '@/components/layouts';
+import { Footer, MobileNav } from '@/components/layouts';
 import { generateStructuredData } from '@/lib/services/seo.service';
 import { HeroSceneWrapper } from '@/components/three/hero-scene-wrapper';
 import { getLandingContent } from '@/lib/content/landing';
@@ -66,13 +66,14 @@ export default function LandingPage() {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild className="hidden sm:inline-flex">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button variant="ghost" asChild className="hidden md:inline-flex">
               <Link href="/auth">Connexion</Link>
             </Button>
-            <Button asChild className="btn-primary">
+            <Button asChild className="btn-primary hidden sm:inline-flex">
               <Link href="/auth">Créer une galerie</Link>
             </Button>
+            <MobileNav />
           </div>
         </div>
       </header>
@@ -99,14 +100,15 @@ export default function LandingPage() {
             <span className="text-foreground font-medium"> {content.hero.subtitleHighlight}</span>
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 animate-slide-up px-4">
-            <Button asChild size="lg" className="btn-primary text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto">
-              <Link href="/auth">
-                {content.hero.cta}
-                <ChevronRight className="ml-2 h-5 w-5" />
+          <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 animate-slide-up px-4 max-w-md sm:max-w-none mx-auto">
+            <Button asChild size="lg" className="btn-primary text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 w-full sm:w-auto whitespace-normal sm:whitespace-nowrap text-center leading-tight py-3 sm:py-4 h-auto">
+              <Link href="/auth" className="flex items-center justify-center gap-2">
+                <span className="hidden sm:inline">{content.hero.cta}</span>
+                <span className="sm:hidden">Créer ma galerie gratuite</span>
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
               </Link>
             </Button>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
               {content.hero.ctaSecondary}
             </p>
           </div>
