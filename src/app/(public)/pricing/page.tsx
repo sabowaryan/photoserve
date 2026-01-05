@@ -11,7 +11,7 @@ import { useSubscription } from '@/hooks/use-subscription';
 
 const PLANS = [
   {
-    key: 'free',
+    key: 'free' as const,
     name: 'Gratuit',
     monthlyPrice: 0,
     yearlyPrice: 0,
@@ -32,7 +32,7 @@ const PLANS = [
     cta: 'Commencer gratuitement',
   },
   {
-    key: 'premium',
+    key: 'premium' as const,
     name: 'Premium',
     monthlyPrice: 9.99,
     yearlyPrice: 95.90, // 9.99 * 12 * 0.8 = 95.90
@@ -53,7 +53,7 @@ const PLANS = [
     cta: 'Choisir Premium',
   },
   {
-    key: 'pro',
+    key: 'pro' as const,
     name: 'Pro',
     monthlyPrice: 25.99,
     yearlyPrice: 249.50, // 25.99 * 12 * 0.8 = 249.50
@@ -77,7 +77,7 @@ const PLANS = [
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
-  const { plan: currentPlan, isLoading: subscriptionLoading } = useSubscription();
+  const { plan: currentPlan } = useSubscription();
 
   const formatPrice = (plan: typeof PLANS[0]) => {
     if (plan.monthlyPrice === 0) return '$0';
