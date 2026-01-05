@@ -5,10 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Crown, Zap, Lock } from 'lucide-react';
 import { PricingButton } from './pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
-import { getLandingContent } from '@/lib/content/landing';
+import type { LandingContent } from '@/lib/content/landing';
 
-export function PricingSection() {
-  const content = getLandingContent();
+interface PricingSectionProps {
+  content: LandingContent;
+}
+
+export function PricingSection({ content }: PricingSectionProps) {
   const { plan: currentPlan } = useSubscription();
 
   return (

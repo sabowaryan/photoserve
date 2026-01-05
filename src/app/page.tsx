@@ -7,12 +7,11 @@ import { Footer, MobileNav } from '@/components/layouts';
 import { generateStructuredData } from '@/lib/services/seo.service';
 import { HeroSceneWrapper } from '@/components/three/hero-scene-wrapper';
 import { getLandingContent } from '@/lib/content/landing';
-import { PricingSection } from '@/components/pricing/pricing-section';
+import { PricingSection } from '@/components/pricing';
 import { 
   Shield, 
   Clock, 
   ChevronRight,
-  Check,
   Zap,
   Lock,
   Star,
@@ -274,7 +273,7 @@ export default function LandingPage() {
       </section>
 
       {/* SECTION TARIFS */}
-      <PricingSection />
+      <PricingSection content={content} />
 
       {/* SECTION FAQ */}
       <section className="py-16 sm:py-24 px-4 bg-card/30">
