@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Zap, Lock } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Check, Crown, Zap, Lock, Sparkles } from 'lucide-react';
 import { PricingButton } from './pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
 import type { LandingContent } from '@/lib/content/landing';
@@ -11,8 +13,63 @@ interface PricingSectionProps {
   content: LandingContent;
 }
 
+// Plans avec prix dynamiques
+const PRICING_PLANS = [
+  {
+    key: 'free' as const,
+    name: 'Gratuit',
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    description: 'Testez la livraison photos HD',
+    icon: Sparkles,
+    popular: false,
+  },
+  {
+    key: 'premium' as const,
+    name: 'Premium',
+    monthlyPrice: 9.99,
+    yearlyPrice: 95.90,
+    description: 'Pour photographes professionnels actifs',
+    icon: Crown,
+    popular: true,
+  },
+  {
+    key: 'pro' as const,
+    name: 'Pro',
+    monthlyPrice: 25.99,
+    yearlyPrice: 249.50,
+    description: 'Pour photographes professionnels exigeants',
+    icon: Zap,
+    popular: false,
+  },
+];
+
 export function PricingSection({ content }: PricingSectionProps) {
+  const [isYearly, setIsYearly] = useState(false);
   const { plan: currentPlan } = useSubscription();
+
+  const formatPrice = (plan: typeof PRICING_PLANS[0]) => {
+    if (plan.monthlyPrice === 0) return '$0';
+    const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
+    return `$${price.toFixed(2)}`;
+  };
+
+  const getPeriod = (plan: typeof PRICING_PLANS[0]) => {
+    if (plan.monthlyPrice === 0) return '/mois';
+    return isYearly ? '/an' : '/mois';
+  };
+
+  const getMonthlyEquivalent = (plan: typeof PRICING_PLANS[0]) => {
+    if (!isYearly || plan.monthlyPrice === 0) return null;
+    const monthlyEquivalent = plan.yearlyPrice / 12;
+    return `soit $${monthlyEquivalent.toFixed(2)}/mois`;
+  };
+
+  const getSavings = (plan: typeof PRICING_PLANS[0]) => {
+    if (!isYearly || plan.monthlyPrice === 0) return null;
+    const savings = (plan.monthlyPrice * 12) - plan.yearlyPrice;
+    return `Économisez $${savings.toFixed(2)}/an`;
+  };
 
   return (
     <section id="tarifs" className="py-16 sm:py-24 px-4 relative">
@@ -26,19 +83,44 @@ export function PricingSection({ content }: PricingSectionProps) {
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
             {content.pricing.title}<br />{content.pricing.titleLine2}
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
             {content.pricing.subtitle}
           </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4">
+            <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Mensuel
+            </span>
+            <Switch
+              checked={isYearly}
+              onCheckedChange={setIsYearly}
+              className="data-[state=checked]:bg-primary"
+            />
+            <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Annuel
+            </span>
+            {isYearly && (
+              <Badge variant="secondary" className="bg-green-500/10 text-green-500 border-green-500/20">
+                -20%
+              </Badge>
+            )}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
-          {content.plans.map((plan, index) => {
-            const Icon = plan.popular ? Crown : Zap;
-            const planKey = plan.name === 'Gratuit' ? 'free' : plan.name === 'Premium' ? 'premium' : 'pro';
+          {PRICING_PLANS.map((plan) => {
+            const Icon = plan.icon;
+            const contentPlan = content.plans.find(p => 
+              p.name === plan.name || 
+              (plan.name === 'Gratuit' && p.name === 'Gratuit')
+            );
+            const monthlyEquivalent = getMonthlyEquivalent(plan);
+            const savings = getSavings(plan);
             
             return (
               <Card 
-                key={index} 
+                key={plan.key} 
                 className={`glass-card relative flex flex-col transition-all duration-300 hover:-translate-y-1 ${
                   plan.popular ? 'border-primary glow-effect' : ''
                 }`}
@@ -57,13 +139,23 @@ export function PricingSection({ content }: PricingSectionProps) {
                   <CardTitle className="font-display text-xl sm:text-2xl">{plan.name}</CardTitle>
                   <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
                   <div className="mt-4">
-                    <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    <span className="text-3xl sm:text-4xl font-bold">{formatPrice(plan)}</span>
+                    <span className="text-muted-foreground text-sm">{getPeriod(plan)}</span>
                   </div>
+                  {monthlyEquivalent && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {monthlyEquivalent}
+                    </p>
+                  )}
+                  {savings && (
+                    <p className="text-xs text-green-500 mt-1">
+                      {savings}
+                    </p>
+                  )}
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
                   <ul className="space-y-3 flex-1 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
+                    {contentPlan?.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start gap-3">
                         <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                         <span className="text-sm text-muted-foreground">{feature}</span>
@@ -71,13 +163,13 @@ export function PricingSection({ content }: PricingSectionProps) {
                     ))}
                   </ul>
                   <PricingButton
-                    planKey={planKey}
-                    interval="monthly"
+                    planKey={plan.key}
+                    interval={isYearly ? 'yearly' : 'monthly'}
                     currentPlan={currentPlan}
                     variant={plan.popular ? 'default' : 'outline'}
                     className={`w-full ${plan.popular ? 'btn-primary' : ''}`}
                   >
-                    {plan.cta}
+                    {contentPlan?.cta || 'Choisir ce plan'}
                   </PricingButton>
                 </CardContent>
               </Card>
