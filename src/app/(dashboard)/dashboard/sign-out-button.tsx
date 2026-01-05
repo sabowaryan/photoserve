@@ -1,20 +1,23 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
 export function SignOutButton() {
-  const router = useRouter();
+  const handleLogout = async () => {
+    // 1️⃣ Logout Supabase
+    await fetch("/api/auth/logout", { method: "POST" });
 
-  const handleSignOut = async () => {
-    await signOut({ redirect: false });
-    router.push("/");
+    // 2️⃣ Logout NextAuth (supprime les cookies)
+    await signOut({
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return (
-    <Button variant="ghost" size="icon" onClick={handleSignOut}>
+    <Button variant="ghost" size="icon" onClick={handleLogout}>
       <LogOut className="h-5 w-5" />
     </Button>
   );
