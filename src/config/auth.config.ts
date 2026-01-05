@@ -255,7 +255,6 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: ".akollad.com",
     },
   },
   callbackUrl: {
@@ -265,7 +264,6 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: ".akollad.com",
     },
   },
   csrfToken: {
