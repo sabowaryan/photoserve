@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  try {
+    const supabase = createAdminClient();
 
-  await supabase.auth.signOut();
+    // Invalide la session Supabase
+    await supabase.auth.signOut();
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    return NextResponse.json({ success: false }, { status: 500 });
+  }
 }
