@@ -1,15 +1,14 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export function SignOutSection() {
-  const router = useRouter();
-
   const handleSignOut = async () => {
-    await signOut({ redirect: false });
-    router.push("/");
+    await signOut({
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return (
