@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Check, ChevronRight, Crown, Zap, Sparkles } from 'lucide-react';
+import { Check, Crown, Zap, Sparkles } from 'lucide-react';
+import { PricingButton } from '@/components/pricing/pricing-button';
+import { useSubscription } from '@/hooks/use-subscription';
 
 const PLANS = [
   {
@@ -76,6 +77,7 @@ const PLANS = [
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
+  const { plan: currentPlan, isLoading: subscriptionLoading } = useSubscription();
 
   const formatPrice = (plan: typeof PLANS[0]) => {
     if (plan.monthlyPrice === 0) return '$0';
@@ -182,16 +184,15 @@ export default function PricingPage() {
                         </li>
                       ))}
                     </ul>
-                    <Button
-                      asChild
-                      className={`w-full gap-2 ${plan.popular ? 'btn-primary' : ''}`}
+                    <PricingButton
+                      planKey={plan.key}
+                      interval={isYearly ? 'yearly' : 'monthly'}
+                      currentPlan={currentPlan}
                       variant={plan.popular ? 'default' : 'outline'}
+                      className={`w-full ${plan.popular ? 'btn-primary' : ''}`}
                     >
-                      <Link href="/auth">
-                        {plan.key !== 'free' && <ChevronRight className="h-4 w-4" />}
-                        {plan.cta}
-                      </Link>
-                    </Button>
+                      {plan.cta}
+                    </PricingButton>
                   </CardContent>
                 </Card>
               );

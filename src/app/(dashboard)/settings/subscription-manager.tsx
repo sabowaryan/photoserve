@@ -8,6 +8,7 @@ import { toast } from "sonner";
 interface SubscriptionManagerProps {
   hasSubscription: boolean;
   planKey?: "premium" | "pro";
+  interval?: "monthly" | "yearly";
   isCurrentPlan?: boolean;
   variant?: "default" | "outline";
 }
@@ -15,6 +16,7 @@ interface SubscriptionManagerProps {
 export function SubscriptionManager({
   hasSubscription,
   planKey,
+  interval = "monthly",
   isCurrentPlan = false,
   variant = "default",
 }: SubscriptionManagerProps) {
@@ -30,7 +32,10 @@ export function SubscriptionManager({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plan: planKey }),
+        body: JSON.stringify({ 
+          plan: planKey,
+          interval: interval,
+        }),
       });
 
       const data = await response.json();
@@ -40,7 +45,7 @@ export function SubscriptionManager({
       }
 
       if (data.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Impossible de créer la session de paiement";
@@ -67,7 +72,7 @@ export function SubscriptionManager({
       }
 
       if (data.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Impossible d'accéder au portail";
