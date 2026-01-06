@@ -266,7 +266,7 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: ".akollad.com",
+      domain: "photoserve.akollad.com",
     },
   },
   csrfToken: {
