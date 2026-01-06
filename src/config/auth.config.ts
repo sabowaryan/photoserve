@@ -248,6 +248,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   cookies: {
+  cookies: {
   sessionToken: {
     name: "__Secure-next-auth.session-token",
     options: {
@@ -255,6 +256,7 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
+      domain: "photoserve.akollad.com",
     },
   },
   callbackUrl: {
@@ -264,6 +266,7 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
+      domain: ".akollad.com",
     },
   },
   csrfToken: {
