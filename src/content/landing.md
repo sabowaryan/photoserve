@@ -37,7 +37,7 @@ problem:
       highlight: "La qualité perçue baisse."
     - text: "Et sans le vouloir, c’est votre travail qui semble moins professionnel."
       highlight: ""
-  comparison:
+comparison:
   original:
     label: "Photo qualité originale"
     value: "24 MP • 6000×4000px"
