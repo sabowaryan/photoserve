@@ -127,7 +127,7 @@ export const authOptions: NextAuthOptions = {
       return `${baseUrl}/dashboard`;
     },
     async signIn({ user, account }) {
-      console.log('[Auth] signIn callback - provider:', account?.provider, 'user:', user.email);
+      
       
       if (account?.provider === 'google') {
         try {
@@ -140,7 +140,7 @@ export const authOptions: NextAuthOptions = {
             .eq('email', user.email!.toLowerCase())
             .single();
 
-          console.log('[Auth] Existing profile:', existingProfile?.id);
+          
 
           if (!existingProfile) {
             // Create Supabase auth user - le trigger crée automatiquement le profil
@@ -160,7 +160,7 @@ export const authOptions: NextAuthOptions = {
               return false;
             }
 
-            console.log('[Auth] Created new Supabase user:', authUser.user.id);
+            
 
             // Attendre que le trigger crée le profil
             await new Promise(resolve => setTimeout(resolve, 200));
@@ -180,10 +180,10 @@ export const authOptions: NextAuthOptions = {
 
             // Update user id to match Supabase user id
             user.id = authUser.user.id;
-            console.log('[Auth] New user created successfully:', user.id);
+            
           } else {
             user.id = existingProfile.id;
-            console.log('[Auth] Existing user found:', user.id);
+            
           }
 
           return true;
@@ -255,7 +255,7 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: "photoserve.akollad.com",
+      domain: "piksend.com",
     },
   },
   callbackUrl: {
@@ -265,7 +265,7 @@ export const authOptions: NextAuthOptions = {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: "photoserve.akollad.com",
+      domain: "piksend.com",
     },
   },
   csrfToken: {
