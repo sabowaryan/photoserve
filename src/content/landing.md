@@ -26,8 +26,9 @@ stats:
 problem:
   badge: "Ce qui se passe réellement"
   title: "Lors de l’envoi, vos photos sont automatiquement réduites."
+  
   titleLine2: "Vos clients ne voient pas la vraie qualité."
-    paragraphs:
+  paragraphs:
     - text: "Vous passez des heures à retoucher chaque détail : lumière, couleurs, netteté. Vos photos sont prêtes à être livrées en haute résolution."
       highlight: "Puis vient le moment de l’envoi."
     - text: "La plupart des outils de messagerie compressent automatiquement les images. Une photo de 24 mégapixels est réduite à environ 1600px."
