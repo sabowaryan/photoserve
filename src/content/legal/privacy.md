@@ -52,7 +52,7 @@ Vous disposez des droits suivants concernant vos données :
 - **Portabilité** : recevoir vos données dans un format structuré
 - **Opposition** : vous opposer au traitement de vos données
 
-Pour exercer ces droits, contactez-nous à **privacy@photoserve.app**.
+Pour exercer ces droits, contactez-nous à **privacy@piksend.com**.
 
 ## 7. Conservation des données
 
@@ -78,7 +78,7 @@ Nous pouvons mettre à jour cette politique. Les modifications seront publiées 
 
 ## 12. Contact
 
-Pour toute question concernant cette politique, contactez notre Délégué à la Protection des Données à **privacy@photoserve.app**.
+Pour toute question concernant cette politique, contactez notre Délégué à la Protection des Données à **privacy@piksend.com**.
 
 ---
 

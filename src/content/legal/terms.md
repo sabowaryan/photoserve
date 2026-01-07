@@ -83,4 +83,4 @@ Les présentes CGU sont régies par le droit de la République Démocratique du 
 
 ## 12. Contact
 
-Pour toute question concernant ces CGU, contactez-nous à **legal@photoserve.app**.
+Pour toute question concernant ces CGU, contactez-nous à **legal@piksend.com**.

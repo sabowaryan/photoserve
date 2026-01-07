@@ -7,7 +7,7 @@
 
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://photoserve.app';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://piksend.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date();

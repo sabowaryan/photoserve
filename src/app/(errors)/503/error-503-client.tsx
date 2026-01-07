@@ -92,12 +92,12 @@ export default function Error503Client() {
         <p className="text-sm text-muted-foreground">
           Suivez l&apos;état de nos services sur{' '}
           <a 
-            href="https://status.photoserve.app" 
+            href="https://status.piksend.com" 
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"
           >
-            status.photoserve.app
+            status.piksend.com
           </a>
         </p>
       </div>

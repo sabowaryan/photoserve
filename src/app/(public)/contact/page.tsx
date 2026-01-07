@@ -9,8 +9,8 @@ import { Mail, MessageSquare, Clock, Send, MapPin, HelpCircle } from 'lucide-rea
 export const metadata: Metadata = generatePageMetadata('contact');
 
 const contactMethods = [
-  { icon: Mail, title: 'Email', description: 'Questions générales', value: 'contact@photoserve.app', href: 'mailto:contact@photoserve.app' },
-  { icon: MessageSquare, title: 'Support', description: 'Problèmes techniques', value: 'support@photoserve.app', href: 'mailto:support@photoserve.app' },
+  { icon: Mail, title: 'Email', description: 'Questions générales', value: 'contact@piksend.com', href: 'mailto:contact@piksend.com' },
+  { icon: MessageSquare, title: 'Support', description: 'Problèmes techniques', value: 'support@piksend.com', href: 'mailto:support@piksend.com' },
   { icon: HelpCircle, title: 'Aide', description: 'FAQ et guides', value: 'Centre d\'aide', href: '/help' },
 ];
 

@@ -16,9 +16,9 @@ République Démocratique du Congo
 
 ## 2. Contact
 
-- **Email général** : contact@photoserve.app
-- **Support technique** : support@photoserve.app
-- **Questions juridiques** : legal@photoserve.app
+- **Email général** : contact@piksend.com
+- **Support technique** : support@piksend.com
+- **Questions juridiques** : legal@piksend.com
 
 ## 3. Directeur de la publication
 
@@ -54,7 +54,7 @@ Les utilisateurs conservent la propriété de leurs photos. En utilisant PikSend
 
 Pour toute information concernant le traitement de vos données personnelles, consultez notre [Politique de Confidentialité](/legal/privacy).
 
-**Délégué à la Protection des Données** : privacy@photoserve.app
+**Délégué à la Protection des Données** : privacy@piksend.com
 
 ## 7. Cookies
 

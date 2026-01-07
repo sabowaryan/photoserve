@@ -187,7 +187,7 @@ Oui, nous prenons la sécurité très au sérieux :
 ### Je ne reçois pas l'email de confirmation
 
 - Vérifiez votre dossier **Spam** ou **Courrier indésirable**
-- Ajoutez `noreply@photoserve.app` à vos contacts
+- Ajoutez `noreply@piksend.com` à vos contacts
 - Attendez quelques minutes
 - Si le problème persiste, contactez le support
 
@@ -218,7 +218,7 @@ Oui, nous prenons la sécurité très au sérieux :
 
 Vous n'avez pas trouvé la réponse à votre question ?
 
-📧 **Email** : support@photoserve.app
+📧 **Email** : support@piksend.com
 
 Notre équipe répond généralement sous 24-48 heures.
 

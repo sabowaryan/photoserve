@@ -545,7 +545,7 @@ export class SeoService {
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://photoserve.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://piksend.com';
   
   return [
     {

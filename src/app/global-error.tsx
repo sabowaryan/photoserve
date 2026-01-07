@@ -78,7 +78,7 @@ export default function GlobalError({
                 Le problème persiste ?
               </p>
               <a 
-                href="mailto:support@photoserve.app"
+                href="mailto:support@piksend.com"
                 className="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
               >
                 <Mail className="w-4 h-4" />

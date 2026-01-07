@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 import type { PageType, StructuredDataType, FAQ, Gallery } from '@/types';
 
 // Base URL for the application
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://photoserve.app';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://piksend.com';
 
 // Default metadata values - aligned with landing page content
 const DEFAULT_TITLE = 'PikSend - Livrez vos photos en qualité originale, pas compressées';

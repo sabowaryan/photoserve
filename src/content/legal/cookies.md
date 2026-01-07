@@ -59,7 +59,7 @@ Nous pouvons mettre à jour cette politique des cookies. Toute modification sera
 
 ## 7. Contact
 
-Pour toute question concernant notre utilisation des cookies, contactez-nous à **privacy@photoserve.app**.
+Pour toute question concernant notre utilisation des cookies, contactez-nous à **privacy@piksend.com**.
 
 ---
 

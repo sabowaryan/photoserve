@@ -268,7 +268,7 @@ describe('Gallery Repository - Slug Format Validation', () => {
           const slug = await repository.generateUniqueSlug();
           
           // Construct a URL with the slug
-          const baseUrl = 'https://photoserve.app/g/';
+          const baseUrl = 'https://piksend.com/g/';
           const fullUrl = baseUrl + slug;
           
           // URL should be valid

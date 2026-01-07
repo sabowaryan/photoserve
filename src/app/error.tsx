@@ -74,7 +74,7 @@ export default function Error({
             Le problème persiste ?
           </p>
           <Button variant="ghost" size="sm" asChild className="gap-2">
-            <a href="mailto:support@photoserve.app">
+            <a href="mailto:support@piksend.com">
               <Mail className="w-4 h-4" />
               Contacter le support
             </a>
