@@ -1,4 +1,3 @@
-
 ---
 # ============================================
 # LANDING PAGE - PHOTOSERVE
@@ -167,6 +166,6 @@ cta:
   title: "Livrez vos photos en vraie qualité HD"
   subtitle: "Sans compression. Sans friction. Vos clients reçoivent exactement votre travail."
   button: "Créer ma galerie sécurisée gratuite"
-  footer: "Aucune carte requise • Prêt en 2 minutes • Annulez quand vous voulez""
+  footer: "Aucune carte requise • Prêt en 2 minutes • Annulez quand vous voulez"
 
 ---
