@@ -120,7 +120,7 @@ plans:
       - "3 galeries actives"
       - "30 photos par galerie"
       - "Protection par mot de passe"
-      - "Expiration automatique 30 jours"
+      - "Expiration automatique 14 jours"
       - "Qualité originale préservée"
 
   - name: "Premium"
