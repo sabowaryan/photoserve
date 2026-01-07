@@ -26,7 +26,6 @@ stats:
 problem:
   badge: "Ce qui se passe réellement"
   title: "Lors de l’envoi, vos photos sont automatiquement réduites."
-  
   titleLine2: "Vos clients ne voient pas la vraie qualité."
   paragraphs:
     - text: "Vous passez des heures à retoucher chaque détail : lumière, couleurs, netteté. Vos photos sont prêtes à être livrées en haute résolution."
@@ -37,16 +36,17 @@ problem:
       highlight: "La qualité perçue baisse."
     - text: "Et sans le vouloir, c’est votre travail qui semble moins professionnel."
       highlight: ""
-comparison:
-  original:
-    label: "Photo qualité originale"
-    value: "24 MP • 6000×4000px"
-    description: "Détails nets, couleurs fidèles, haute résolution"
-  compressed:
-    label: "Après messagerie classique"
-    value: "1600×1067px • jusqu’à -70%"
-    description: "Compression automatique"
-  footer: "Vos clients méritent exactement la qualité pour laquelle ils ont payé."
+
+  comparison:
+    original:
+      label: "Photo qualité originale"
+      value: "24 MP • 6000×4000px"
+      description: "Détails nets, couleurs fidèles, haute résolution"
+    compressed:
+      label: "Après messagerie classique"
+      value: "1600×1067px • jusqu’à -70%"
+      description: "Compression automatique"
+    footer: "Vos clients méritent exactement la qualité pour laquelle ils ont payé."
 
 solution:
   badge: "La solution"
@@ -54,7 +54,7 @@ solution:
   titleLine2: "Aussi simplement qu’un message."
   subtitle: "Vous uploadez vos photos HD. Vous partagez un lien. Vos clients téléchargent en pleine résolution."
   subtitleHighlight: "Zéro compression. Zéro perte."
-  
+
 benefits:
   - icon: "Shield"
     title: "Qualité originale préservée"
@@ -70,7 +70,7 @@ benefits:
     title: "Image professionnelle"
     description: "Vos clients accèdent à une galerie propre et sécurisée, pas à une conversation noyée dans les messages."
     highlight: "Galerie pro"
-    
+
 steps:
   title: "3 étapes simples. Livraison photo HD."
   items:
@@ -122,6 +122,7 @@ plans:
       - "Protection par mot de passe"
       - "Expiration automatique 30 jours"
       - "Qualité originale préservée"
+
   - name: "Premium"
     price: "$9.99"
     period: "/mois"
@@ -134,6 +135,7 @@ plans:
       - "5 Go de stockage"
       - "Expiration jusqu'à 90 jours"
       - "Aucune limite de taille"
+
   - name: "Pro"
     price: "$25.99"
     period: "/mois"
@@ -164,5 +166,5 @@ cta:
   title: "Livrez vos photos en vraie qualité HD"
   subtitle: "Sans compression. Sans friction. Vos clients reçoivent exactement votre travail."
   button: "Créer ma galerie sécurisée gratuite"
-  footer: "Aucune carte requise • Prêt en 2 minutes • Annulez quand vous voulez"
+  footer: "Aucune carte requise • Prêt en 2 minutes • Annulez quand vous voulez""
 ---
