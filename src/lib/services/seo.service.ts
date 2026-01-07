@@ -12,8 +12,11 @@ import type { PageType, StructuredDataType, FAQ, Gallery } from '@/types';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://piksend.com';
 
 // Default metadata values - aligned with landing page content
-const DEFAULT_TITLE = 'PikSend - Livrez vos photos en qualité originale, pas compressées';
-const DEFAULT_DESCRIPTION = 'Arrêtez de détruire vos photos avec WhatsApp. PikSend préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes professionnels.';
+const DEFAULT_TITLE =
+  'PikSend – Livraison de photos en qualité originale pour photographes';
+
+const DEFAULT_DESCRIPTION =
+  'PikSend permet aux photographes de livrer leurs photos en qualité originale via des galeries sécurisées. Aucune compression, téléchargement HD, simple pour vos clients.';
 
 // Core keywords aligned with landing page messaging
 const CORE_KEYWORDS = [
@@ -103,19 +106,22 @@ export class SeoService implements ISeoService {
    * Aligned with landing.md content - focus on WhatsApp compression problem
    */
   private generateLandingMetadata(): Metadata {
-    const title = 'PikSend - Arrêtez de détruire vos photos en les envoyant par WhatsApp';
-    const description = 'WhatsApp compresse vos photos à 70%. PikSend préserve 100% de la qualité originale. Vos clients reçoivent leurs photos en HD, pas en version floue. Aussi simple que WhatsApp, mais en qualité max.';
+  const title =
+    'PikSend – Livrez vos photos en qualité originale jusqu’à la livraison';
 
-    return {
-      title,
-      description,
-      keywords: [
-        ...CORE_KEYWORDS,
-        'compression WhatsApp photos',
-        'envoyer photos sans compression',
-        'photos floues WhatsApp',
-        'qualité photo préservée',
-      ],
+  const description =
+    'Vos photos sont exportées en haute résolution, mais vos clients ne reçoivent pas toujours cette qualité. PikSend permet une livraison photo HD, sans compression, via un simple lien sécurisé.';
+
+  return {
+    title,
+    description,
+    keywords: [
+      ...CORE_KEYWORDS,
+      'livraison photo qualité originale',
+      'galerie photo professionnelle',
+      'partage photos sans compression',
+      'livraison photos clients',
+    ],
       authors: [{ name: 'PikSend' }],
       creator: 'PikSend',
       publisher: 'PikSend',
@@ -127,28 +133,29 @@ export class SeoService implements ISeoService {
         },
       },
       openGraph: {
-        title: 'PikSend - Livrez vos photos en qualité originale',
-        description: 'Arrêtez de détruire vos photos avec WhatsApp. Vos clients reçoivent la vraie qualité de votre travail. Galeries sécurisées, expiration automatique.',
-        type: 'website',
-        locale: 'fr_FR',
-        url: this.baseUrl,
-        siteName: 'PikSend',
-        images: [
-          {
-            url: `${this.baseUrl}/og-image.png`,
-            width: 1200,
-            height: 630,
-            alt: 'PikSend - Livrez vos photos en qualité originale, pas compressées par WhatsApp',
-          },
-        ],
-      },
+  title: 'PikSend – Livraison photo HD sans perte de qualité',
+  description:
+    'Livrez vos photos exactement comme vous les avez exportées. Galeries sécurisées, téléchargement en qualité originale, simple pour vos clients.',
+  type: 'website',
+  locale: 'fr_FR',
+  url: this.baseUrl,
+  siteName: 'PikSend',
+  images: [
+    {
+      url: `${this.baseUrl}/og-image.png`,
+      width: 1200,
+      height: 630,
+      alt: 'PikSend – Livraison de photos en qualité originale',
+    },
+  ],
+},
       twitter: {
-        card: 'summary_large_image',
-        title: 'PikSend - Vos photos en qualité max, pas compressées',
-        description: 'WhatsApp détruit vos photos. PikSend les préserve. Galeries sécurisées pour photographes professionnels.',
-        images: [`${this.baseUrl}/og-image.png`],
-        creator: '@photoserve',
-      },
+  card: 'summary_large_image',
+  title: 'PikSend – Vos photos livrées en qualité originale',
+  description:
+    'Livraison photo HD pour photographes professionnels. Zéro compression, galeries sécurisées, simple pour vos clients.',
+  images: [`${this.baseUrl}/og-image.png`],
+},
       robots: {
         index: true,
         follow: true,
