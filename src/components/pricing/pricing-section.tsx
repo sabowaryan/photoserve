@@ -112,8 +112,8 @@ export function PricingSection({ content }: PricingSectionProps) {
           {PRICING_PLANS.map((plan) => {
             const Icon = plan.icon;
             const contentPlan = content.plans.find(p => 
-              p.name === plan.name || 
-              (plan.name === 'Gratuit' && p.name === 'Gratuit')
+              p.name.toLowerCase() === plan.name.toLowerCase() || 
+              (plan.key === 'free' && p.name === 'Free')
             );
             const monthlyEquivalent = getMonthlyEquivalent(plan);
             const savings = getSavings(plan);

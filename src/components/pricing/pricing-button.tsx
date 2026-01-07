@@ -29,7 +29,7 @@ export function PricingButton({
   const router = useRouter();
 
   const isAuthenticated = status === 'authenticated' && !!session;
-  const isCurrentPlan = currentPlan === planKey;
+  const isCurrentPlan = isAuthenticated && currentPlan === planKey;
   const isFree = planKey === 'free';
 
   const handleClick = async () => {
