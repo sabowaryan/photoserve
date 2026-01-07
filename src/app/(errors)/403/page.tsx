@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Error403Client from './error-403-client';
 
 export const metadata: Metadata = {
-  title: 'Accès refusé - 403 | PhotoServe',
+  title: 'Accès refusé - 403 | PikSend',
   description: 'Vous n\'avez pas les permissions nécessaires pour accéder à cette ressource.',
   robots: {
     index: false,

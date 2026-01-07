@@ -1,16 +1,16 @@
-# Centre d'aide PhotoServe
+# Centre d'aide PikSend
 
-Bienvenue dans le centre d'aide PhotoServe. La solution de partage photos en qualité originale pour photographes professionnels. Trouvez ici les réponses à vos questions les plus fréquentes.
+Bienvenue dans le centre d'aide PikSend. La solution de partage photos en qualité originale pour photographes professionnels. Trouvez ici les réponses à vos questions les plus fréquentes.
 
 ---
 
-## Pourquoi PhotoServe ?
+## Pourquoi PikSend ?
 
 ### Pourquoi ne pas simplement utiliser WhatsApp ?
 
 WhatsApp compresse automatiquement vos photos à environ 70%. Une photo haute résolution de 24 mégapixels (6000×4000px) devient une image de 1600×1067px. Les détails disparaissent, les couleurs s'aplatissent.
 
-PhotoServe est l'alternative WhatsApp pour photographes professionnels :
+PikSend est l'alternative WhatsApp pour photographes professionnels :
 - ✅ **Qualité originale préservée** - Zéro compression, photos haute résolution intactes
 - ✅ **Aussi simple que WhatsApp** - Un lien à partager pour la livraison photos HD
 - ✅ **Galeries photo professionnelles** - Pas une conversation chaotique
@@ -91,7 +91,7 @@ Lors de la création de votre galerie :
 
 ### Mes photos gardent-elles leur qualité originale ?
 
-**Oui, à 100%.** C'est la raison d'être de PhotoServe. Contrairement à WhatsApp qui compresse vos photos, PhotoServe préserve chaque pixel en haute résolution :
+**Oui, à 100%.** C'est la raison d'être de PikSend. Contrairement à WhatsApp qui compresse vos photos, PikSend préserve chaque pixel en haute résolution :
 - Qualité originale conservée (24MP, 36MP, etc.)
 - Aucune compression destructive
 - Couleurs et détails intacts
@@ -99,7 +99,7 @@ Lors de la création de votre galerie :
 
 ### Quels formats de photos sont acceptés ?
 
-PhotoServe accepte tous les formats courants pour photographes professionnels :
+PikSend accepte tous les formats courants pour photographes professionnels :
 - **JPEG / JPG** - Format le plus courant
 - **PNG** - Pour les images avec transparence
 - **WebP** - Format moderne optimisé

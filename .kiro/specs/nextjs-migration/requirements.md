@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Migration complète de l'application PhotoServe (actuellement React/Vite + Supabase Edge Functions) vers une architecture Next.js 15+ moderne avec approche microservices. L'objectif est de conserver le design existant tout en améliorant les performances, le SEO, la sécurité et la maintenabilité du code.
+Migration complète de l'application PikSend (actuellement React/Vite + Supabase Edge Functions) vers une architecture Next.js 15+ moderne avec approche microservices. L'objectif est de conserver le design existant tout en améliorant les performances, le SEO, la sécurité et la maintenabilité du code.
 
 ## Glossary
 
-- **PhotoServe**: Application de partage de galeries photo sécurisées pour photographes professionnels
+- **PikSend**: Application de partage de galeries photo sécurisées pour photographes professionnels
 - **Gallery**: Collection d'images protégée par mot de passe avec date d'expiration
 - **Profile**: Compte utilisateur avec limites de stockage et abonnement
 - **Subscription_Plan**: Plan d'abonnement (free, premium, pro) définissant les limites utilisateur

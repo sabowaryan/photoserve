@@ -163,7 +163,7 @@ function AuthContent() {
         <CardHeader className="text-center space-y-4">
           <Link href="/" className="inline-flex items-center justify-center gap-2">
             <LogoIcon size={32} />
-            <span className="font-display text-2xl font-bold gradient-text">PhotoServe</span>
+            <span className="font-display text-2xl font-bold gradient-text">PikSend</span>
           </Link>
           <CardDescription className="text-muted-foreground">
             Partagez vos galeries photo en toute sécurité

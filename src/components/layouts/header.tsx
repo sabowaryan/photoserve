@@ -35,7 +35,7 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
           )}
           <Link href="/" className="flex items-center gap-2">
             <LogoIcon size={20} />
-            <span className="font-display text-xl font-bold gradient-text">PhotoServe</span>
+            <span className="font-display text-xl font-bold gradient-text">PikSend</span>
           </Link>
         </div>
 

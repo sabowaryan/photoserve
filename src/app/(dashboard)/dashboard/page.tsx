@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           <Link href="/" className="flex items-center gap-2">
             <LogoIcon size={20} />
             <span className="font-display text-xl font-bold gradient-text">
-              PhotoServe
+              PikSend
             </span>
           </Link>
 

@@ -1,5 +1,5 @@
 /**
- * Input Sanitization Utilities for PhotoServe
+ * Input Sanitization Utilities for PikSend
  * Provides XSS protection by sanitizing user inputs
  * 
  * @module lib/security/sanitize

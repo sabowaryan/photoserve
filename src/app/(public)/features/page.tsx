@@ -80,7 +80,7 @@ export default function FeaturesPage() {
                     <th className="p-4 text-center">
                       <div className="flex items-center justify-center gap-2 text-primary">
                         <Check className="h-4 w-4" />
-                        PhotoServe
+                        PikSend
                       </div>
                     </th>
                   </tr>

@@ -1,5 +1,5 @@
 /**
- * API Error Handler for PhotoServe
+ * API Error Handler for PikSend
  * Provides consistent error response format across all API routes
  * 
  * @module lib/api/error-handler

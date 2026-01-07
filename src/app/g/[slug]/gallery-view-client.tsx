@@ -235,7 +235,7 @@ export function GalleryViewClient({
             <Link href="/" className="inline-flex items-center gap-2">
               <LogoIcon size={20} />
               <span className="font-display text-xl font-bold gradient-text">
-                PhotoServe
+                PikSend
               </span>
             </Link>
           </div>
@@ -333,7 +333,7 @@ export function GalleryViewClient({
             >
               <LogoIcon size={16} />
               <span className="font-display text-lg font-bold gradient-text hidden sm:inline">
-                PhotoServe
+                PikSend
               </span>
             </Link>
             <span className="text-border">/</span>
@@ -435,7 +435,7 @@ export function GalleryViewClient({
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>
             Photos partagées via{" "}
-            <span className="font-medium text-foreground">PhotoServe</span>
+            <span className="font-medium text-foreground">PikSend</span>
           </p>
         </div>
       </footer>

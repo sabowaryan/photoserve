@@ -15,7 +15,7 @@ import { formatDistanceFr, isDatePast } from "@/lib/date";
 import { GalleryDetailClient } from "./gallery-detail-client";
 
 export const metadata: Metadata = {
-  title: "Détails de la galerie | PhotoServe",
+  title: "Détails de la galerie | PikSend",
   description: "Gérez votre galerie photo",
 };
 
@@ -162,7 +162,7 @@ export default async function GalleryDetailPage({
           <Link href="/" className="flex items-center gap-2">
             <LogoIcon size={20} />
             <span className="font-display text-xl font-bold gradient-text">
-              PhotoServe
+              PikSend
             </span>
           </Link>
         </div>

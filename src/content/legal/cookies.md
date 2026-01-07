@@ -38,7 +38,7 @@ Vous pouvez configurer votre navigateur pour :
 - Supprimer les cookies existants
 
 ### 3.2 Conséquences du blocage
-Le blocage des cookies essentiels peut empêcher l'utilisation de certaines fonctionnalités de PhotoServe, notamment la connexion à votre compte.
+Le blocage des cookies essentiels peut empêcher l'utilisation de certaines fonctionnalités de PikSend, notamment la connexion à votre compte.
 
 ## 4. Cookies tiers
 

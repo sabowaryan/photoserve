@@ -12,8 +12,8 @@ import type { PageType, StructuredDataType, FAQ, Gallery } from '@/types';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://photoserve.app';
 
 // Default metadata values - aligned with landing page content
-const DEFAULT_TITLE = 'PhotoServe - Livrez vos photos en qualité originale, pas compressées';
-const DEFAULT_DESCRIPTION = 'Arrêtez de détruire vos photos avec WhatsApp. PhotoServe préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes professionnels.';
+const DEFAULT_TITLE = 'PikSend - Livrez vos photos en qualité originale, pas compressées';
+const DEFAULT_DESCRIPTION = 'Arrêtez de détruire vos photos avec WhatsApp. PikSend préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes professionnels.';
 
 // Core keywords aligned with landing page messaging
 const CORE_KEYWORDS = [
@@ -103,8 +103,8 @@ export class SeoService implements ISeoService {
    * Aligned with landing.md content - focus on WhatsApp compression problem
    */
   private generateLandingMetadata(): Metadata {
-    const title = 'PhotoServe - Arrêtez de détruire vos photos en les envoyant par WhatsApp';
-    const description = 'WhatsApp compresse vos photos à 70%. PhotoServe préserve 100% de la qualité originale. Vos clients reçoivent leurs photos en HD, pas en version floue. Aussi simple que WhatsApp, mais en qualité max.';
+    const title = 'PikSend - Arrêtez de détruire vos photos en les envoyant par WhatsApp';
+    const description = 'WhatsApp compresse vos photos à 70%. PikSend préserve 100% de la qualité originale. Vos clients reçoivent leurs photos en HD, pas en version floue. Aussi simple que WhatsApp, mais en qualité max.';
 
     return {
       title,
@@ -116,9 +116,9 @@ export class SeoService implements ISeoService {
         'photos floues WhatsApp',
         'qualité photo préservée',
       ],
-      authors: [{ name: 'PhotoServe' }],
-      creator: 'PhotoServe',
-      publisher: 'PhotoServe',
+      authors: [{ name: 'PikSend' }],
+      creator: 'PikSend',
+      publisher: 'PikSend',
       metadataBase: new URL(this.baseUrl),
       alternates: {
         canonical: this.baseUrl,
@@ -127,25 +127,25 @@ export class SeoService implements ISeoService {
         },
       },
       openGraph: {
-        title: 'PhotoServe - Livrez vos photos en qualité originale',
+        title: 'PikSend - Livrez vos photos en qualité originale',
         description: 'Arrêtez de détruire vos photos avec WhatsApp. Vos clients reçoivent la vraie qualité de votre travail. Galeries sécurisées, expiration automatique.',
         type: 'website',
         locale: 'fr_FR',
         url: this.baseUrl,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
         images: [
           {
             url: `${this.baseUrl}/og-image.png`,
             width: 1200,
             height: 630,
-            alt: 'PhotoServe - Livrez vos photos en qualité originale, pas compressées par WhatsApp',
+            alt: 'PikSend - Livrez vos photos en qualité originale, pas compressées par WhatsApp',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'PhotoServe - Vos photos en qualité max, pas compressées',
-        description: 'WhatsApp détruit vos photos. PhotoServe les préserve. Galeries sécurisées pour photographes professionnels.',
+        title: 'PikSend - Vos photos en qualité max, pas compressées',
+        description: 'WhatsApp détruit vos photos. PikSend les préserve. Galeries sécurisées pour photographes professionnels.',
         images: [`${this.baseUrl}/og-image.png`],
         creator: '@photoserve',
       },
@@ -172,7 +172,7 @@ export class SeoService implements ISeoService {
    * Aligned with landing page pricing section
    */
   private generatePricingMetadata(): Metadata {
-    const title = 'Tarifs PhotoServe - Commencez gratuitement, évoluez quand vous êtes prêt';
+    const title = 'Tarifs PikSend - Commencez gratuitement, évoluez quand vous êtes prêt';
     const description = 'Plans adaptés aux photographes : Gratuit pour tester, Premium à $9.99/mois, Pro à $25.99/mois. Livrez vos photos en qualité originale sans compression. Annulation en 1 clic.';
 
     return {
@@ -191,24 +191,24 @@ export class SeoService implements ISeoService {
         canonical: `${this.baseUrl}/pricing`,
       },
       openGraph: {
-        title: 'Tarifs PhotoServe - Du gratuit au Pro',
+        title: 'Tarifs PikSend - Du gratuit au Pro',
         description: 'Commencez gratuitement avec 3 galeries. Passez à Premium ou Pro pour plus de stockage et de fonctionnalités. Satisfait ou remboursé 30 jours.',
         type: 'website',
         locale: 'fr_FR',
         url: `${this.baseUrl}/pricing`,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
         images: [
           {
             url: `${this.baseUrl}/og-image.png`,
             width: 1200,
             height: 630,
-            alt: 'Tarifs PhotoServe - Plans pour photographes',
+            alt: 'Tarifs PikSend - Plans pour photographes',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'Tarifs PhotoServe - Commencez gratuitement',
+        title: 'Tarifs PikSend - Commencez gratuitement',
         description: 'Plans adaptés aux photographes. Gratuit, Premium $9.99/mois, Pro $25.99/mois.',
       },
       robots: {
@@ -222,7 +222,7 @@ export class SeoService implements ISeoService {
    * Generate features page metadata
    */
   private generateFeaturesMetadata(): Metadata {
-    const title = 'Fonctionnalités PhotoServe - Livrez vos photos en HD, pas compressées';
+    const title = 'Fonctionnalités PikSend - Livrez vos photos en HD, pas compressées';
     const description = 'Qualité 100% préservée, galeries sécurisées par mot de passe, expiration automatique, téléchargement HD. Tout ce dont un photographe a besoin pour livrer ses photos.';
 
     return {
@@ -241,24 +241,24 @@ export class SeoService implements ISeoService {
         canonical: `${this.baseUrl}/features`,
       },
       openGraph: {
-        title: 'Fonctionnalités PhotoServe - WhatsApp vs PhotoServe',
-        description: 'WhatsApp compresse à 70%. PhotoServe préserve 100%. Comparez et découvrez pourquoi les photographes choisissent PhotoServe.',
+        title: 'Fonctionnalités PikSend - WhatsApp vs PikSend',
+        description: 'WhatsApp compresse à 70%. PikSend préserve 100%. Comparez et découvrez pourquoi les photographes choisissent PikSend.',
         type: 'website',
         locale: 'fr_FR',
         url: `${this.baseUrl}/features`,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
         images: [
           {
             url: `${this.baseUrl}/og-image.png`,
             width: 1200,
             height: 630,
-            alt: 'Fonctionnalités PhotoServe',
+            alt: 'Fonctionnalités PikSend',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'Fonctionnalités PhotoServe',
+        title: 'Fonctionnalités PikSend',
         description: 'Qualité 100% préservée, galeries sécurisées, expiration automatique. Tout pour livrer vos photos en HD.',
       },
       robots: {
@@ -272,17 +272,17 @@ export class SeoService implements ISeoService {
    * Generate help page metadata
    */
   private generateHelpMetadata(): Metadata {
-    const title = 'Centre d\'aide PhotoServe - FAQ et guides';
-    const description = 'Trouvez les réponses à vos questions sur PhotoServe. Comment créer une galerie, partager vos photos, gérer votre abonnement et plus encore.';
+    const title = 'Centre d\'aide PikSend - FAQ et guides';
+    const description = 'Trouvez les réponses à vos questions sur PikSend. Comment créer une galerie, partager vos photos, gérer votre abonnement et plus encore.';
 
     return {
       title,
       description,
       keywords: [
-        'aide PhotoServe',
+        'aide PikSend',
         'FAQ galerie photo',
         'support photographe',
-        'guide utilisation PhotoServe',
+        'guide utilisation PikSend',
         'questions fréquentes',
       ],
       metadataBase: new URL(this.baseUrl),
@@ -290,17 +290,17 @@ export class SeoService implements ISeoService {
         canonical: `${this.baseUrl}/help`,
       },
       openGraph: {
-        title: 'Centre d\'aide PhotoServe',
-        description: 'Guides, FAQ et support technique pour utiliser PhotoServe.',
+        title: 'Centre d\'aide PikSend',
+        description: 'Guides, FAQ et support technique pour utiliser PikSend.',
         type: 'website',
         locale: 'fr_FR',
         url: `${this.baseUrl}/help`,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
-        title: 'Centre d\'aide PhotoServe',
-        description: 'Trouvez les réponses à vos questions sur PhotoServe.',
+        title: 'Centre d\'aide PikSend',
+        description: 'Trouvez les réponses à vos questions sur PikSend.',
       },
       robots: {
         index: true,
@@ -313,14 +313,14 @@ export class SeoService implements ISeoService {
    * Generate contact page metadata
    */
   private generateContactMetadata(): Metadata {
-    const title = 'Contact PhotoServe - Support et questions';
-    const description = 'Contactez l\'équipe PhotoServe. Support technique, questions commerciales ou partenariats. Réponse sous 24-48h.';
+    const title = 'Contact PikSend - Support et questions';
+    const description = 'Contactez l\'équipe PikSend. Support technique, questions commerciales ou partenariats. Réponse sous 24-48h.';
 
     return {
       title,
       description,
       keywords: [
-        'contact PhotoServe',
+        'contact PikSend',
         'support photographe',
         'aide technique galerie photo',
         'partenariat photographe',
@@ -330,16 +330,16 @@ export class SeoService implements ISeoService {
         canonical: `${this.baseUrl}/contact`,
       },
       openGraph: {
-        title: 'Contactez PhotoServe',
+        title: 'Contactez PikSend',
         description: 'Une question ? Notre équipe est là pour vous aider.',
         type: 'website',
         locale: 'fr_FR',
         url: `${this.baseUrl}/contact`,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
-        title: 'Contact PhotoServe',
+        title: 'Contact PikSend',
         description: 'Support technique et questions commerciales.',
       },
       robots: {
@@ -353,8 +353,8 @@ export class SeoService implements ISeoService {
    * Generate auth page metadata
    */
   private generateAuthMetadata(): Metadata {
-    const title = 'Connexion PhotoServe - Accédez à vos galeries';
-    const description = 'Connectez-vous ou créez un compte PhotoServe pour gérer vos galeries photo sécurisées et livrer vos photos en qualité originale.';
+    const title = 'Connexion PikSend - Accédez à vos galeries';
+    const description = 'Connectez-vous ou créez un compte PikSend pour gérer vos galeries photo sécurisées et livrer vos photos en qualité originale.';
 
     return {
       title,
@@ -364,16 +364,16 @@ export class SeoService implements ISeoService {
         canonical: `${this.baseUrl}/auth`,
       },
       openGraph: {
-        title: 'Connexion PhotoServe',
+        title: 'Connexion PikSend',
         description: 'Accédez à vos galeries photo sécurisées.',
         type: 'website',
         locale: 'fr_FR',
         url: `${this.baseUrl}/auth`,
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
-        title: 'Connexion PhotoServe',
+        title: 'Connexion PikSend',
         description: 'Accédez à vos galeries photo sécurisées.',
       },
       robots: {
@@ -388,7 +388,7 @@ export class SeoService implements ISeoService {
    * Generate dashboard page metadata
    */
   private generateDashboardMetadata(): Metadata {
-    const title = 'Tableau de bord - PhotoServe';
+    const title = 'Tableau de bord - PikSend';
     const description = 'Gérez vos galeries photo, consultez vos statistiques et créez de nouvelles galeries sécurisées.';
 
     return {
@@ -400,7 +400,7 @@ export class SeoService implements ISeoService {
         description,
         type: 'website',
         locale: 'fr_FR',
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
@@ -420,8 +420,8 @@ export class SeoService implements ISeoService {
    */
   private generateGalleryMetadata(gallery?: Gallery): Metadata {
     const title = gallery 
-      ? `${gallery.title} | PhotoServe`
-      : 'Galerie photo - PhotoServe';
+      ? `${gallery.title} | PikSend`
+      : 'Galerie photo - PikSend';
     const description = 'Galerie photo sécurisée par mot de passe.';
 
     return {
@@ -433,7 +433,7 @@ export class SeoService implements ISeoService {
         description,
         type: 'website',
         locale: 'fr_FR',
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
@@ -455,8 +455,8 @@ export class SeoService implements ISeoService {
    * Generate settings page metadata
    */
   private generateSettingsMetadata(): Metadata {
-    const title = 'Paramètres - PhotoServe';
-    const description = 'Gérez votre profil, votre abonnement et vos préférences PhotoServe.';
+    const title = 'Paramètres - PikSend';
+    const description = 'Gérez votre profil, votre abonnement et vos préférences PikSend.';
 
     return {
       title,
@@ -467,7 +467,7 @@ export class SeoService implements ISeoService {
         description,
         type: 'website',
         locale: 'fr_FR',
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
@@ -487,26 +487,26 @@ export class SeoService implements ISeoService {
   private generateLegalMetadata(page?: string): Metadata {
     const legalPages: Record<string, { title: string; description: string }> = {
       terms: {
-        title: 'Conditions d\'utilisation - PhotoServe',
-        description: 'Consultez les conditions générales d\'utilisation de PhotoServe.',
+        title: 'Conditions d\'utilisation - PikSend',
+        description: 'Consultez les conditions générales d\'utilisation de PikSend.',
       },
       privacy: {
-        title: 'Politique de confidentialité - PhotoServe',
-        description: 'Découvrez comment PhotoServe protège vos données personnelles.',
+        title: 'Politique de confidentialité - PikSend',
+        description: 'Découvrez comment PikSend protège vos données personnelles.',
       },
       cookies: {
-        title: 'Politique des cookies - PhotoServe',
-        description: 'Informations sur l\'utilisation des cookies par PhotoServe.',
+        title: 'Politique des cookies - PikSend',
+        description: 'Informations sur l\'utilisation des cookies par PikSend.',
       },
       mentions: {
-        title: 'Mentions légales - PhotoServe',
-        description: 'Mentions légales et informations sur l\'éditeur de PhotoServe.',
+        title: 'Mentions légales - PikSend',
+        description: 'Mentions légales et informations sur l\'éditeur de PikSend.',
       },
     };
 
     const pageInfo = page && legalPages[page] 
       ? legalPages[page] 
-      : { title: 'Informations légales - PhotoServe', description: 'Informations légales de PhotoServe.' };
+      : { title: 'Informations légales - PikSend', description: 'Informations légales de PikSend.' };
 
     return {
       title: pageInfo.title,
@@ -520,7 +520,7 @@ export class SeoService implements ISeoService {
         description: pageInfo.description,
         type: 'website',
         locale: 'fr_FR',
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
@@ -547,7 +547,7 @@ export class SeoService implements ISeoService {
         description: DEFAULT_DESCRIPTION,
         type: 'website',
         locale: 'fr_FR',
-        siteName: 'PhotoServe',
+        siteName: 'PikSend',
       },
       twitter: {
         card: 'summary',
@@ -582,7 +582,7 @@ export class SeoService implements ISeoService {
     return {
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      name: 'PhotoServe',
+      name: 'PikSend',
       url: this.baseUrl,
       logo: `${this.baseUrl}/logo.svg`,
       description: DEFAULT_DESCRIPTION,
@@ -666,8 +666,8 @@ export function generateStructuredData(type: StructuredDataType, data?: Structur
  */
 export const DEFAULT_FAQS: FAQ[] = [
   {
-    question: 'Comment fonctionne PhotoServe ?',
-    answer: 'PhotoServe vous permet de créer des galeries photo sécurisées par mot de passe. Uploadez vos photos, définissez un mot de passe et une date d\'expiration, puis partagez le lien avec vos clients.',
+    question: 'Comment fonctionne PikSend ?',
+    answer: 'PikSend vous permet de créer des galeries photo sécurisées par mot de passe. Uploadez vos photos, définissez un mot de passe et une date d\'expiration, puis partagez le lien avec vos clients.',
   },
   {
     question: 'Mes photos sont-elles sécurisées ?',

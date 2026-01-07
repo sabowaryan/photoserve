@@ -1,5 +1,5 @@
 /**
- * Security Module for PhotoServe
+ * Security Module for PikSend
  * Exports all security-related utilities
  * 
  * @module lib/security

@@ -1,8 +1,8 @@
-# Implementation Plan: PhotoServe Next.js 15+ Migration
+# Implementation Plan: PikSend Next.js 15+ Migration
 
 ## Overview
 
-Ce plan d'implémentation guide la migration de PhotoServe vers Next.js 15+ avec une architecture microservices hybride. Les tâches sont organisées de manière incrémentale, chaque étape construisant sur la précédente.
+Ce plan d'implémentation guide la migration de PikSend vers Next.js 15+ avec une architecture microservices hybride. Les tâches sont organisées de manière incrémentale, chaque étape construisant sur la précédente.
 
 ## Tasks
 

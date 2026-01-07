@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
-/* PhotoServe Design System - Tailwind CSS 4+ Configuration */
+/* PikSend Design System - Tailwind CSS 4+ Configuration */
 
 @theme {
   /* Font families */
@@ -141,7 +141,7 @@
 
   --radius: 0.75rem;
 
-  /* Custom PhotoServe tokens */
+  /* Custom PikSend tokens */
   --success: 142 76% 36%;
   --success-foreground: 210 40% 98%;
   --warning: 38 92% 50%;

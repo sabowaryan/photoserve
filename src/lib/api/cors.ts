@@ -1,5 +1,5 @@
 /**
- * CORS Configuration for PhotoServe API Routes
+ * CORS Configuration for PikSend API Routes
  * Validates allowed origins and provides CORS headers
  * 
  * @module lib/api/cors

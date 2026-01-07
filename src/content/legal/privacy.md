@@ -4,7 +4,7 @@
 
 ## 1. Introduction
 
-Chez **Akollad Group**, nous prenons la protection de vos données personnelles très au sérieux. Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations lorsque vous utilisez PhotoServe.
+Chez **Akollad Group**, nous prenons la protection de vos données personnelles très au sérieux. Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations lorsque vous utilisez PikSend.
 
 ## 2. Données collectées
 
@@ -70,7 +70,7 @@ Vos données peuvent être transférées vers des serveurs situés en dehors de 
 
 ## 10. Mineurs
 
-PhotoServe n'est pas destiné aux personnes de moins de 18 ans. Nous ne collectons pas sciemment de données concernant des mineurs.
+PikSend n'est pas destiné aux personnes de moins de 18 ans. Nous ne collectons pas sciemment de données concernant des mineurs.
 
 ## 11. Modifications
 

@@ -1,4 +1,4 @@
-# PhotoServe - Next.js 15+
+# PikSend - Next.js 15+
 
 Application de partage de galeries photo sécurisées pour photographes professionnels.
 

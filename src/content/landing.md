@@ -88,7 +88,7 @@ testimonials:
   items:
     - name: "Patrick Mukendi"
       role: "Photographe mariage • Kinshasa"
-      content: "J'envoyais tout par WhatsApp. Mes clients imprimaient des photos floues et me demandaient pourquoi. Depuis PhotoServe, plus aucune plainte. Ils reçoivent la vraie qualité."
+      content: "J'envoyais tout par WhatsApp. Mes clients imprimaient des photos floues et me demandaient pourquoi. Depuis PikSend, plus aucune plainte. Ils reçoivent la vraie qualité."
       avatar: "PM"
     - name: "Grace Kabongo"
       role: "Portrait corporate • Lubumbashi"
@@ -149,9 +149,9 @@ faq:
   title: "Vous hésitez encore ?"
   items:
     - question: "Mes clients ne sont pas tech, ils vont y arriver ?"
-      answer: "Si vos clients savent cliquer sur un lien WhatsApp, ils savent utiliser PhotoServe. Ils reçoivent un lien, ils cliquent, ils téléchargent en qualité max. Aucune app à installer, aucun compte à créer."
+      answer: "Si vos clients savent cliquer sur un lien WhatsApp, ils savent utiliser PikSend. Ils reçoivent un lien, ils cliquent, ils téléchargent en qualité max. Aucune app à installer, aucun compte à créer."
     - question: "C'est vraiment mieux que d'envoyer par WhatsApp ?"
-      answer: "WhatsApp compresse vos photos haute résolution à 1600px max et réduit la qualité de 70%. PhotoServe préserve 100% de la qualité originale. Vos clients reçoivent exactement ce que vous avez exporté."
+      answer: "WhatsApp compresse vos photos haute résolution à 1600px max et réduit la qualité de 70%. PikSend préserve 100% de la qualité originale. Vos clients reçoivent exactement ce que vous avez exporté."
     - question: "Comment je sais que mes photos sont en sécurité ?"
       answer: "Chaque galerie est sécurisée par mot de passe. Vos photos ne sont jamais indexées par Google. Galerie temporaire avec expiration automatique après la date que vous choisissez. Serveurs sécurisés en Europe."
     - question: "Est-ce que ça vaut vraiment le prix pour un photographe professionnel ?"

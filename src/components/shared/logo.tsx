@@ -10,7 +10,7 @@ export function Logo({ className = "", size = 24 }: LogoProps) {
       width={size}
       height={size * (258.92 / 162.09)}
       className={className}
-      aria-label="PhotoServe Logo"
+      aria-label="PikSend Logo"
     >
       <g>
         <g>

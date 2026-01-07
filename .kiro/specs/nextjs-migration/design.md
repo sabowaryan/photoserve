@@ -1,8 +1,8 @@
-# Design Document: PhotoServe Next.js 15+ Migration
+# Design Document: PikSend Next.js 15+ Migration
 
 ## Overview
 
-Ce document décrit l'architecture technique pour la migration de PhotoServe vers Next.js 15+ avec une approche microservices hybride. L'application conservera le design visuel existant tout en bénéficiant des fonctionnalités modernes de Next.js (App Router, Server Components, Server Actions) et d'une meilleure architecture backend.
+Ce document décrit l'architecture technique pour la migration de PikSend vers Next.js 15+ avec une approche microservices hybride. L'application conservera le design visuel existant tout en bénéficiant des fonctionnalités modernes de Next.js (App Router, Server Components, Server Actions) et d'une meilleure architecture backend.
 
 ### Objectifs Principaux
 - Migration vers Next.js 15+ avec App Router
@@ -493,18 +493,18 @@ import { Metadata } from 'next';
 export class SeoService {
   static generateLandingMetadata(): Metadata {
     return {
-      title: 'PhotoServe - Partagez vos photos en toute sécurité',
+      title: 'PikSend - Partagez vos photos en toute sécurité',
       description: 'Créez des galeries photo temporaires et sécurisées par mot de passe.',
       keywords: ['galerie photo', 'partage photos', 'photographe professionnel'],
       openGraph: {
-        title: 'PhotoServe - Partagez vos photos en toute sécurité',
+        title: 'PikSend - Partagez vos photos en toute sécurité',
         description: 'Créez des galeries photo temporaires et sécurisées.',
         type: 'website',
         locale: 'fr_FR',
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'PhotoServe',
+        title: 'PikSend',
         description: 'Partagez vos photos en toute sécurité',
       },
     };
@@ -512,7 +512,7 @@ export class SeoService {
 
   static generateGalleryMetadata(gallery: Gallery): Metadata {
     return {
-      title: `${gallery.title} | PhotoServe`,
+      title: `${gallery.title} | PikSend`,
       description: `Galerie photo sécurisée`,
       robots: {
         index: false,

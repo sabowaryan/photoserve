@@ -34,7 +34,7 @@ export function MobileNav() {
           <div className="flex items-center justify-between p-4 border-b border-border">
             <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
               <LogoIcon size={20} />
-              <span className="font-display text-lg font-bold gradient-text">PhotoServe</span>
+              <span className="font-display text-lg font-bold gradient-text">PikSend</span>
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
               <X className="h-5 w-5" />

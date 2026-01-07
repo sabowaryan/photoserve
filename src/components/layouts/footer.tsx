@@ -20,7 +20,7 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <LogoIcon size={20} />
-              <span className="font-display text-xl font-bold">PhotoServe</span>
+              <span className="font-display text-xl font-bold">PikSend</span>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               La plateforme sécurisée pour partager vos photos avec vos clients.
@@ -105,7 +105,7 @@ export function Footer() {
           
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-              © {new Date().getFullYear()} PhotoServe. Tous droits réservés.
+              © {new Date().getFullYear()} PikSend. Tous droits réservés.
             </p>
             <div className="flex items-center gap-4">
               <span className="text-xs text-muted-foreground">By {companyInfo.name}</span>

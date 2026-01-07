@@ -11,7 +11,7 @@ import { ArrowLeft, HardDrive, AlertTriangle } from "lucide-react";
 import { GalleryCreateForm } from "./gallery-create-form";
 
 export const metadata: Metadata = {
-  title: "Nouvelle galerie | PhotoServe",
+  title: "Nouvelle galerie | PikSend",
   description: "Créez une nouvelle galerie photo sécurisée",
 };
 
@@ -102,7 +102,7 @@ export default async function GalleryCreatePage() {
           <Link href="/" className="flex items-center gap-2">
             <LogoIcon size={20} />
             <span className="font-display text-xl font-bold gradient-text">
-              PhotoServe
+              PikSend
             </span>
           </Link>
         </div>

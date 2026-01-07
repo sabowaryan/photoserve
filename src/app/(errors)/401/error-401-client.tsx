@@ -34,7 +34,7 @@ export default function Error401Client() {
         {/* Info box */}
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">
           <p className="text-sm text-muted-foreground">
-            PhotoServe vous permet de créer et partager des galeries photo sécurisées. 
+            PikSend vous permet de créer et partager des galeries photo sécurisées. 
             Inscrivez-vous gratuitement pour commencer !
           </p>
         </div>

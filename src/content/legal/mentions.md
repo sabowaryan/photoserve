@@ -4,7 +4,7 @@
 
 ## 1. Éditeur du site
 
-**PhotoServe** est édité par :
+**PikSend** est édité par :
 
 **Akollad Group**  
 Kinshasa, Gombe  
@@ -42,13 +42,13 @@ Le directeur de la publication est le représentant légal d'Akollad Group.
 ## 5. Propriété intellectuelle
 
 ### 5.1 Marques
-PhotoServe et le logo PhotoServe sont des marques d'Akollad Group. Toute reproduction non autorisée est interdite.
+PikSend et le logo PikSend sont des marques d'Akollad Group. Toute reproduction non autorisée est interdite.
 
 ### 5.2 Contenus
 L'ensemble des contenus du site (textes, images, graphismes, logo, icônes) sont la propriété exclusive d'Akollad Group, sauf mention contraire.
 
 ### 5.3 Contenus utilisateurs
-Les utilisateurs conservent la propriété de leurs photos. En utilisant PhotoServe, ils accordent une licence d'hébergement limitée.
+Les utilisateurs conservent la propriété de leurs photos. En utilisant PikSend, ils accordent une licence d'hébergement limitée.
 
 ## 6. Données personnelles
 
@@ -62,11 +62,11 @@ Pour toute information concernant l'utilisation des cookies, consultez notre [Po
 
 ## 8. Limitation de responsabilité
 
-Akollad Group s'efforce d'assurer l'exactitude des informations diffusées sur PhotoServe. Toutefois, nous ne pouvons garantir l'exactitude, la précision ou l'exhaustivité des informations mises à disposition.
+Akollad Group s'efforce d'assurer l'exactitude des informations diffusées sur PikSend. Toutefois, nous ne pouvons garantir l'exactitude, la précision ou l'exhaustivité des informations mises à disposition.
 
 ## 9. Liens hypertextes
 
-PhotoServe peut contenir des liens vers d'autres sites. Nous ne sommes pas responsables du contenu de ces sites externes.
+PikSend peut contenir des liens vers d'autres sites. Nous ne sommes pas responsables du contenu de ces sites externes.
 
 ## 10. Droit applicable
 

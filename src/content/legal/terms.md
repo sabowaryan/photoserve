@@ -4,15 +4,15 @@
 
 ## 1. Objet
 
-Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation du service PhotoServe, une plateforme de partage de galeries photos sécurisées en qualité originale, éditée par **Akollad Group**.
+Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation du service PikSend, une plateforme de partage de galeries photos sécurisées en qualité originale, éditée par **Akollad Group**.
 
 ## 2. Acceptation des conditions
 
-En accédant ou en utilisant PhotoServe, vous acceptez d'être lié par ces CGU. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
+En accédant ou en utilisant PikSend, vous acceptez d'être lié par ces CGU. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
 
 ## 3. Description du service
 
-PhotoServe permet aux photographes professionnels de livrer leurs photos à leurs clients en qualité originale, sans compression. Le service offre :
+PikSend permet aux photographes professionnels de livrer leurs photos à leurs clients en qualité originale, sans compression. Le service offre :
 - Création de galeries photos sécurisées (qualité 100% préservée)
 - Partage via des liens uniques (aussi simple que WhatsApp)
 - Protection par mot de passe
@@ -22,35 +22,35 @@ PhotoServe permet aux photographes professionnels de livrer leurs photos à leur
 ## 4. Inscription et compte utilisateur
 
 ### 4.1 Création de compte
-Pour utiliser PhotoServe, vous devez créer un compte en fournissant des informations exactes et complètes.
+Pour utiliser PikSend, vous devez créer un compte en fournissant des informations exactes et complètes.
 
 ### 4.2 Sécurité du compte
 Vous êtes responsable de la confidentialité de vos identifiants de connexion et de toutes les activités effectuées sous votre compte.
 
 ### 4.3 Âge minimum
-Vous devez avoir au moins 18 ans pour utiliser PhotoServe.
+Vous devez avoir au moins 18 ans pour utiliser PikSend.
 
 ## 5. Utilisation acceptable
 
-Vous vous engagez à ne pas utiliser PhotoServe pour :
+Vous vous engagez à ne pas utiliser PikSend pour :
 - Partager du contenu illégal, offensant ou portant atteinte aux droits d'autrui
 - Violer les droits de propriété intellectuelle
 - Distribuer des logiciels malveillants
-- Tenter d'accéder sans autorisation aux systèmes de PhotoServe
+- Tenter d'accéder sans autorisation aux systèmes de PikSend
 - Utiliser le service à des fins commerciales non autorisées
 
 ## 6. Propriété intellectuelle
 
 ### 6.1 Vos contenus
-Vous conservez tous les droits sur les photos que vous téléchargez. En utilisant PhotoServe, vous nous accordez une licence limitée pour héberger et afficher vos contenus.
+Vous conservez tous les droits sur les photos que vous téléchargez. En utilisant PikSend, vous nous accordez une licence limitée pour héberger et afficher vos contenus.
 
 ### 6.2 Notre propriété
-PhotoServe, son logo, et tous les éléments du service sont la propriété d'Akollad Group et sont protégés par les lois sur la propriété intellectuelle.
+PikSend, son logo, et tous les éléments du service sont la propriété d'Akollad Group et sont protégés par les lois sur la propriété intellectuelle.
 
 ## 7. Abonnements et paiements
 
 ### 7.1 Plans disponibles
-PhotoServe propose trois plans d'abonnement :
+PikSend propose trois plans d'abonnement :
 - **Free** : $0/mois - 3 galeries, 30 photos/galerie, 30 jours max
 - **Premium** : $9.99/mois - 50 galeries, 500 photos/galerie, 90 jours max
 - **Pro** : $25.99/mois - 500 galeries, 5000 photos/galerie, 180 jours max
@@ -63,14 +63,14 @@ Garantie satisfait ou remboursé de 30 jours sur tous les plans payants.
 
 ## 8. Limitation de responsabilité
 
-PhotoServe est fourni "tel quel". Nous ne garantissons pas que le service sera ininterrompu ou exempt d'erreurs. Notre responsabilité est limitée au montant payé pour le service.
+PikSend est fourni "tel quel". Nous ne garantissons pas que le service sera ininterrompu ou exempt d'erreurs. Notre responsabilité est limitée au montant payé pour le service.
 
 ## 9. Résiliation
 
 ### 9.1 Par l'utilisateur
 Vous pouvez résilier votre compte à tout moment depuis les paramètres de votre compte.
 
-### 9.2 Par PhotoServe
+### 9.2 Par PikSend
 Nous nous réservons le droit de suspendre ou résilier votre compte en cas de violation des présentes CGU.
 
 ## 10. Modifications des CGU

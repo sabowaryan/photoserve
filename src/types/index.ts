@@ -1,5 +1,5 @@
 /**
- * TypeScript Type Definitions for PhotoServe
+ * TypeScript Type Definitions for PikSend
  */
 
 // Subscription Plans

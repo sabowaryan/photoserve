@@ -1,7 +1,7 @@
 {
-  "name": "PhotoServe - Livrez vos photos en qualité originale",
-  "short_name": "PhotoServe",
-  "description": "Arrêtez de détruire vos photos avec WhatsApp. PhotoServe préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes.",
+  "name": "PikSend - Livrez vos photos en qualité originale",
+  "short_name": "PikSend",
+  "description": "Arrêtez de détruire vos photos avec WhatsApp. PikSend préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

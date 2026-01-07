@@ -1,5 +1,5 @@
 /**
- * Custom Error Classes for PhotoServe
+ * Custom Error Classes for PikSend
  * Provides consistent error handling across the application
  */
 

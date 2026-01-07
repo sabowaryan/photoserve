@@ -9,7 +9,7 @@ type PageParams = Promise<{ page: string }>;
 const LEGAL_PAGES = {
   terms: {
     title: 'Conditions d\'utilisation',
-    description: 'Conditions générales d\'utilisation de PhotoServe',
+    description: 'Conditions générales d\'utilisation de PikSend',
     file: 'terms.md',
   },
   privacy: {
@@ -19,12 +19,12 @@ const LEGAL_PAGES = {
   },
   cookies: {
     title: 'Politique des cookies',
-    description: 'Utilisation des cookies sur PhotoServe',
+    description: 'Utilisation des cookies sur PikSend',
     file: 'cookies.md',
   },
   mentions: {
     title: 'Mentions légales',
-    description: 'Informations légales sur PhotoServe et Akollad Group',
+    description: 'Informations légales sur PikSend et Akollad Group',
     file: 'mentions.md',
   },
 };
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   }
 
   return {
-    title: `${pageConfig.title} | PhotoServe`,
+    title: `${pageConfig.title} | PikSend`,
     description: pageConfig.description,
   };
 }

@@ -9,10 +9,10 @@ hero:
   badge: "Fonctionnalités"
   title: "Livrez vos photos en HD."
   titleHighlight: "Pas en version compressée."
-  subtitle: "WhatsApp détruit la qualité de vos photos. PhotoServe la préserve. La solution pour photographes professionnels qui veulent livrer en qualité originale."
+  subtitle: "WhatsApp détruit la qualité de vos photos. PikSend la préserve. La solution pour photographes professionnels qui veulent livrer en qualité originale."
 
 comparison:
-  title: "WhatsApp vs PhotoServe"
+  title: "WhatsApp vs PikSend"
   items:
     - feature: "Qualité des photos"
       whatsapp: "Compressée à 70%"
@@ -31,11 +31,11 @@ comparison:
       photoserve: "Galerie sécurisée mot de passe + expiration"
 
 mainFeatures:
-  title: "Ce que PhotoServe fait pour les photographes professionnels"
+  title: "Ce que PikSend fait pour les photographes professionnels"
   items:
     - icon: "Download"
       title: "Qualité 100% préservée"
-      description: "WhatsApp compresse vos photos à 70%. PhotoServe préserve chaque pixel en haute résolution. Vos clients reçoivent exactement ce que vous avez exporté."
+      description: "WhatsApp compresse vos photos à 70%. PikSend préserve chaque pixel en haute résolution. Vos clients reçoivent exactement ce que vous avez exporté."
       highlight: "vs WhatsApp : -70% de qualité"
       details:
         - "Zéro compression, qualité originale"

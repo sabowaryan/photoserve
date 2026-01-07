@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
         <CardHeader className="text-center space-y-4">
           <Link href="/" className="inline-flex items-center justify-center gap-2">
             <LogoIcon size={32} />
-            <span className="font-display text-2xl font-bold gradient-text">PhotoServe</span>
+            <span className="font-display text-2xl font-bold gradient-text">PikSend</span>
           </Link>
           <CardTitle className="text-xl">Mot de passe oublié</CardTitle>
           <CardDescription className="text-muted-foreground">

@@ -16,7 +16,7 @@ export function LandingHeader() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <LogoIcon size={20} />
-          <span className="font-display text-xl font-bold gradient-text">PhotoServe</span>
+          <span className="font-display text-xl font-bold gradient-text">PikSend</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
