@@ -20,7 +20,7 @@ const PLANS = [
       { text: '20 Mo de stockage', included: true },
       { text: '3 galeries sécurisées', included: true },
       { text: '30 photos par galerie', included: true },
-      { text: 'Galerie temporaire 30 jours', included: true },
+      { text: 'Galerie temporaire 14 jours', included: true },
       { text: 'Qualité originale préservée', included: true },
       { text: 'Durée personnalisable', included: false },
       { text: 'Support prioritaire', included: false },

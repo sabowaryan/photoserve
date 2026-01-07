@@ -117,10 +117,10 @@ plans:
     popular: false
     cta: "Commencer gratuitement"
     features:
-      - "3 galeries actives"
+      - "20 Mo de stockage"
+      - "3 galeries sécurisées"
       - "30 photos par galerie"
-      - "Protection par mot de passe"
-      - "Expiration automatique 14 jours"
+      - "Galerie temporaire 14 jours"
       - "Qualité originale préservée"
 
   - name: "Premium"

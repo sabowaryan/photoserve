@@ -10,7 +10,7 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
     max_galleries: 3,
     max_images_per_gallery: 30,
     max_image_size_mb: 1,
-    max_expiration_days: 30,
+    max_expiration_days: 14,
   },
   premium: {
     storage_limit_mb: 5120, // 5 GB
