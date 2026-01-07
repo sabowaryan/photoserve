@@ -5,11 +5,11 @@
 # Modifiez ce fichier pour mettre à jour le contenu de la landing page.
 
 hero:
-  badge: "Rejoint par 50+ photographes professionnels ce mois-ci"
-  title: "Arrêtez de détruire vos photos"
-  titleHighlight: "en les envoyant par WhatsApp"
-  subtitle: "Vos clients reçoivent leurs photos en qualité originale. Pas de compression. Pas de perte."
-  subtitleHighlight: "Alternative WhatsApp pour photographes, en HD."
+  badge: "Déjà adopté par 50+ photographes professionnels ce mois-ci"
+  title: "Vos photos méritent leur qualité originale"
+  titleHighlight: "jusqu’à la livraison"
+  subtitle: "Ce que vos clients reçoivent après l’envoi n’est pas toujours ce que vous avez exporté."
+  subtitleHighlight: "Livraison photo HD pour photographes professionnels."
   cta: "Créer ma première galerie sécurisée gratuite"
   ctaSecondary: "Aucune carte requise • Livraison photos HD en 2 minutes"
 
@@ -24,62 +24,64 @@ stats:
     label: "Note moyenne"
 
 problem:
-  badge: "Le problème"
-  title: "WhatsApp compresse vos photos à 70%."
-  titleLine2: "Vos clients reçoivent du flou."
-  paragraphs:
-    - text: "Vous passez des heures à retoucher chaque détail. La lumière, les couleurs, la netteté de vos photos haute résolution."
-      highlight: "Puis vous envoyez par WhatsApp."
-    - text: "WhatsApp compresse automatiquement. Votre photo de 24 mégapixels devient une image de 1600px. Les détails disparaissent. Les couleurs s'aplatissent."
-      highlight: "Votre travail de photographe professionnel est détruit."
-    - text: "Votre client imprime la photo. Elle est floue. Il zoome sur son téléphone. C'est pixelisé."
-      highlight: "Il pense que c'est votre faute."
-    - text: "Il ne recommandera pas un photographe dont les photos \"ne sont pas nettes\"."
+  badge: "Ce qui se passe réellement"
+  title: "Lors de l’envoi, vos photos sont automatiquement réduites."
+  titleLine2: "Vos clients ne voient pas la vraie qualité."
+    paragraphs:
+    - text: "Vous passez des heures à retoucher chaque détail : lumière, couleurs, netteté. Vos photos sont prêtes à être livrées en haute résolution."
+      highlight: "Puis vient le moment de l’envoi."
+    - text: "La plupart des outils de messagerie compressent automatiquement les images. Une photo de 24 mégapixels est réduite à environ 1600px."
+      highlight: "Les détails disparaissent."
+    - text: "À l’écran ça passe. Mais dès qu’un client zoome, imprime ou utilise la photo pour le web, la perte devient visible."
+      highlight: "La qualité perçue baisse."
+    - text: "Et sans le vouloir, c’est votre travail qui semble moins professionnel."
       highlight: ""
   comparison:
-    original:
-      label: "Photo qualité originale"
-      value: "24 MP • 6000×4000px"
-      description: "Chaque détail visible, haute résolution"
-    compressed:
-      label: "Après WhatsApp"
-      value: "1600×1067px • -70%"
-      description: "Compression destructive"
-    footer: "Vos clients méritent la qualité originale pour laquelle ils ont payé."
+  original:
+    label: "Photo qualité originale"
+    value: "24 MP • 6000×4000px"
+    description: "Détails nets, couleurs fidèles, haute résolution"
+  compressed:
+    label: "Après messagerie classique"
+    value: "1600×1067px • jusqu’à -70%"
+    description: "Compression automatique"
+  footer: "Vos clients méritent exactement la qualité pour laquelle ils ont payé."
 
 solution:
   badge: "La solution"
-  title: "Livrez en qualité originale."
-  titleLine2: "Aussi simplement que WhatsApp."
-  subtitle: "Vous uploadez vos photos haute résolution. Vous partagez le lien. Vos clients téléchargent en HD."
+  title: "Livrez vos photos en qualité originale."
+  titleLine2: "Aussi simplement qu’un message."
+  subtitle: "Vous uploadez vos photos HD. Vous partagez un lien. Vos clients téléchargent en pleine résolution."
   subtitleHighlight: "Zéro compression. Zéro perte."
-
+  
 benefits:
   - icon: "Shield"
     title: "Qualité originale préservée"
-    description: "Zéro compression. Vos photos arrivent exactement comme vous les avez exportées. Photos haute résolution intactes, 24 mégapixels restent 24 mégapixels."
+    description: "Aucune compression. Vos photos arrivent exactement comme vous les avez exportées. 24 mégapixels restent 24 mégapixels."
     highlight: "0% de perte"
-  - icon: "Clock"
-    title: "Alternative WhatsApp pour photographes"
-    description: "Uploadez, partagez le lien. Vos clients cliquent et téléchargent en qualité max. Pas d'app à installer. Pas de compte à créer pour eux."
-    highlight: "En 2 minutes"
-  - icon: "Zap"
-    title: "Galeries photo professionnelles"
-    description: "Vos clients voient une belle galerie sécurisée avec votre travail. Pas une conversation WhatsApp noyée dans les messages."
-    highlight: "Image pro"
 
+  - icon: "Clock"
+    title: "Plus simple qu’un envoi classique"
+    description: "Uploadez, partagez le lien. Vos clients cliquent et téléchargent en HD. Rien à installer, aucun compte requis."
+    highlight: "En 2 minutes"
+
+  - icon: "Zap"
+    title: "Image professionnelle"
+    description: "Vos clients accèdent à une galerie propre et sécurisée, pas à une conversation noyée dans les messages."
+    highlight: "Galerie pro"
+    
 steps:
-  title: "3 étapes. 2 minutes. Livraison photos HD."
+  title: "3 étapes simples. Livraison photo HD."
   items:
     - step: "1"
-      title: "Glissez"
-      description: "Déposez vos photos haute résolution"
+      title: "Déposez"
+      description: "Uploadez vos photos haute résolution"
     - step: "2"
       title: "Sécurisez"
-      description: "Galerie sécurisée mot de passe + expiration"
+      description: "Mot de passe + expiration automatique"
     - step: "3"
-      title: "Envoyez"
-      description: "Partage photos clients en 1 clic"
+      title: "Partagez"
+      description: "Un lien unique pour vos clients"
 
 testimonials:
   badge: "Témoignages vérifiés"
@@ -146,7 +148,7 @@ plans:
 
 faq:
   badge: "Questions fréquentes"
-  title: "Vous hésitez encore ?"
+  title: "Est-ce que ça vaut le coup ?"
   items:
     - question: "Mes clients ne sont pas tech, ils vont y arriver ?"
       answer: "Si vos clients savent cliquer sur un lien WhatsApp, ils savent utiliser PikSend. Ils reçoivent un lien, ils cliquent, ils téléchargent en qualité max. Aucune app à installer, aucun compte à créer."
@@ -158,8 +160,8 @@ faq:
       answer: "Le plan gratuit vous permet de tester avec 3 galeries. Si un seul client vous recommande grâce à la qualité originale de vos photos, le plan Pro est rentabilisé pour l'année."
 
 cta:
-  title: "Livraison photos HD pour photographes professionnels"
-  subtitle: "Plus de compression WhatsApp. Vos clients reçoivent la vraie qualité originale de votre travail."
+  title: "Livrez vos photos en vraie qualité HD"
+  subtitle: "Sans compression. Sans friction. Vos clients reçoivent exactement votre travail."
   button: "Créer ma galerie sécurisée gratuite"
   footer: "Aucune carte requise • Prêt en 2 minutes • Annulez quand vous voulez"
 ---
