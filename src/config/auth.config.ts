@@ -1,495 +1,280 @@
 /**
  * NextAuth.js Configuration
  * Authentication configuration with Credentials and Google OAuth providers
- * 
+ *
  * ARCHITECTURE:
  * - NextAuth gère les sessions JWT côté client
  * - Les tokens Supabase sont stockés dans le JWT NextAuth
  * - Cela permet aux RLS policies Supabase de fonctionner avec auth.uid()
  */
-import type { NextAuthOptions, User } from ‘next-auth’;
-import CredentialsProvider from ‘next-auth/providers/credentials’;
-import GoogleProvider from ‘next-auth/providers/google’;
-import { signInSchema } from ‘@/lib/validators/auth.schema’;
-import { createAdminClient } from ‘@/lib/supabase/server’;
-import jwt from ‘jsonwebtoken’;
 
-declare module ‘next-auth’ {
-interface Session {
-user: {
-id: string;
-email: string;
-name?: string | null;
-image?: string | null;
-};
-supabaseAccessToken?: string;
-supabaseRefreshToken?: string;
-}
-interface User {
-id: string;
-email: string;
-name?: string | null;
-image?: string | null;
-supabaseAccessToken?: string;
-supabaseRefreshToken?: string;
-}
-}
+import type { NextAuthOptions, User } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { signInSchema } from "@/lib/validators/auth.schema";
+import { createAdminClient } from "@/lib/supabase/server";
+import jwt from "jsonwebtoken";
 
-declare module ‘next-auth/jwt’ {
-interface JWT {
-id: string;
-email: string;
-supabaseAccessToken?: string;
-supabaseRefreshToken?: string;
-supabaseAccessTokenExpires?: number;
-}
-}
+/* -------------------------------------------------------------------------- */
+/*                               Type Augments                                */
+/* -------------------------------------------------------------------------- */
 
-async function updateUserSignIn(
-supabase: ReturnType<typeof createAdminClient>,
-userId: string,
-provider: ‘email’ | ‘google’
-): Promise<boolean> {
-try {
-const { error } = await supabase.rpc(‘update_user_signin’, {
-p_user_id: userId,
-p_provider: provider,
-});
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name?: string | null;
+      image?: string | null;
+    };
+    supabaseAccessToken?: string;
+    supabaseRefreshToken?: string;
+  }
 
-
-if (error) {
-  console.error('[Auth] RPC update_user_signin failed:', error.message);
-  try {
-    await supabase.auth.admin.updateUserById(userId, {
-      user_metadata: {
-        provider,
-      },
-    });
-    return true;
-  } catch (fallbackError) {
-    console.error('[Auth] Fallback metadata update failed:', fallbackError);
-    return false;
+  interface User {
+    id: string;
+    email: string;
+    name?: string | null;
+    image?: string | null;
+    supabaseAccessToken?: string;
+    supabaseRefreshToken?: string;
   }
 }
-return true;
 
-
-} catch (error) {
-console.error(’[Auth] Unexpected error in updateUserSignIn:’, error);
-return false;
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    email: string;
+    supabaseAccessToken?: string;
+    supabaseRefreshToken?: string;
+    supabaseAccessTokenExpires?: number;
+  }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                               Helper Logic                                 */
+/* -------------------------------------------------------------------------- */
+
+async function updateUserSignIn(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  provider: "email" | "google"
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc("update_user_signin", {
+      p_user_id: userId,
+      p_provider: provider,
+    });
+
+    if (error) {
+      console.error("[Auth] RPC update_user_signin failed:", error.message);
+      try {
+        await supabase.auth.admin.updateUserById(userId, {
+          user_metadata: { provider },
+        });
+        return true;
+      } catch (fallbackError) {
+        console.error("[Auth] Fallback metadata update failed:", fallbackError);
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error("[Auth] Unexpected error in updateUserSignIn:", error);
+    return false;
+  }
 }
 
 async function waitForProfileCreation(
-supabase: ReturnType<typeof createAdminClient>,
-userId: string,
-maxRetries: number = 5
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  maxRetries = 5
 ): Promise<boolean> {
-for (let attempt = 0; attempt < maxRetries; attempt++) {
-try {
-const { data: profile, error } = await supabase
-.from(‘profiles’)
-.select(‘id’)
-.eq(‘id’, userId)
-.single();
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", userId)
+        .single();
 
+      if (!error && data) return true;
 
-  if (!error && profile) {
-    console.log('[Auth] Profile created successfully');
-    return true;
+      await new Promise((r) => setTimeout(r, 100 * (attempt + 1)));
+    } catch (error) {
+      console.error(`[Auth] Profile check attempt ${attempt + 1} failed:`, error);
+    }
   }
 
-  if (attempt < maxRetries - 1) {
-    await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
-  }
-} catch (error) {
-  console.error(`[Auth] Profile check attempt ${attempt + 1} failed:`, error);
-}
-}
-
-console.error(’[Auth] Profile not created after retries’);
-return false;
+  console.error("[Auth] Profile not created after retries");
+  return false;
 }
 
 function validateUserData(user: User | null | undefined): boolean {
-if (!user?.email) {
-console.error(’[Auth] Invalid user data: missing email’);
-return false;
-}
-if (!user.email.match(/^[^\s@]+@[^\s@]+.[^\s@]+$/)) {
-console.error(’[Auth] Invalid user data: invalid email format’);
-return false;
-}
-return true;
-}
-
-function isTokenExpired(token: string): boolean {
-try {
-const decoded = jwt.decode(token, { complete: true });
-if (!decoded?.payload?.exp) {
-return true;
-}
-const expiresIn = decoded.payload.exp * 1000 - Date.now();
-return expiresIn < 5 * 60 * 1000;
-} catch (error) {
-console.error(’[Auth] Token decode error:’, error);
-return true;
-}
+  if (!user?.email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email);
 }
 
 function getCookieDomain(): string | undefined {
-if (process.env.NODE_ENV === ‘production’) {
-return process.env.NEXTAUTH_COOKIE_DOMAIN || ‘piksend.com’;
+  if (process.env.NODE_ENV === "production") {
+    return process.env.NEXTAUTH_COOKIE_DOMAIN || "piksend.com";
+  }
+  return undefined;
 }
-return undefined;
-}
+
+/* -------------------------------------------------------------------------- */
+/*                               Auth Options                                  */
+/* -------------------------------------------------------------------------- */
 
 export const authOptions: NextAuthOptions = {
-providers: [
-GoogleProvider({
-clientId: process.env.GOOGLE_CLIENT_ID || ‘’,
-clientSecret: process.env.GOOGLE_CLIENT_SECRET || ‘’,
-authorization: {
-params: {
-prompt: ‘consent’,
-access_type: ‘offline’,
-response_type: ‘code’,
-},
-},
-}),
-CredentialsProvider({
-name: ‘credentials’,
-credentials: {
-email: { label: ‘Email’, type: ‘email’ },
-password: { label: ‘Password’, type: ‘password’ },
-},
-async authorize(credentials): Promise<User | null> {
-try {
-const validatedFields = signInSchema.safeParse(credentials);
-if (!validatedFields.success) {
-console.error(’[Auth] Validation failed:’, validatedFields.error.flatten());
-return null;
-}
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
 
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
 
-      const { email, password } = validatedFields.data;
-      const supabase = createAdminClient();
-
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.toLowerCase(),
-        password,
-      });
-
-      if (signInError || !signInData.user || !signInData.session) {
-        console.error('[Auth] Sign in failed:', signInError?.message);
-        return null;
-      }
-
-      const updateSuccess = await updateUserSignIn(supabase, signInData.user.id, 'email');
-      if (!updateSuccess) {
-        console.warn('[Auth] Failed to update sign in info, continuing anyway');
-      }
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', signInData.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('[Auth] Profile not found:', profileError?.message);
-        return null;
-      }
-
-      return {
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        image: profile.avatar_url,
-        supabaseAccessToken: signInData.session.access_token,
-        supabaseRefreshToken: signInData.session.refresh_token,
-      };
-    } catch (error) {
-      console.error('[Auth] Credentials authorize error:', error);
-      return null;
-    }
-  },
-}),
-],
-
-callbacks: {
-async redirect({ url, baseUrl }) {
-try {
-if (url.startsWith(’/’)) {
-return `${baseUrl}${url}`;
-}
-if (new URL(url).origin === baseUrl) {
-return url;
-}
-} catch (error) {
-console.error(’[Auth] Redirect URL parsing error:’, error);
-}
-return `${baseUrl}/dashboard`;
-},
-
-
-async signIn({ user, account }) {
-  if (!validateUserData(user)) {
-    return false;
-  }
-
-  if (account?.provider === 'google') {
-    try {
-      const supabase = createAdminClient();
-
-      if (!user.email) {
-        console.error('[Auth] Google user missing email');
-        return false;
-      }
-
-      const normalizedEmail = user.email.toLowerCase();
-
-      let existingUserId: string | null = null;
-      try {
-        const { data: users, error: listError } = await supabase.auth.admin.listUsers({
-          filters: {
-            user_email_contains: normalizedEmail,
-          },
-        });
-
-        if (!listError && users?.users) {
-          const found = users.users.find(u => u.email?.toLowerCase() === normalizedEmail);
-          if (found) {
-            existingUserId = found.id;
-          }
-        }
-      } catch (listError) {
-        console.warn('[Auth] Failed to list users, trying single email lookup:', listError);
-      }
-
-      if (existingUserId) {
-        console.log('[Auth] Google user exists, updating metadata');
-
+      async authorize(credentials) {
         try {
-          await supabase.auth.admin.updateUserById(existingUserId, {
-            user_metadata: {
-              name: user.name || '',
-              full_name: user.name || '',
-              avatar_url: user.image || '',
-              provider: 'google',
-            },
+          const validated = signInSchema.safeParse(credentials);
+          if (!validated.success) return null;
+
+          const supabase = createAdminClient();
+          const { email, password } = validated.data;
+
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email.toLowerCase(),
+            password,
           });
-        } catch (updateError) {
-          console.error('[Auth] Failed to update Google user metadata:', updateError);
-        }
 
-        const signInSuccess = await updateUserSignIn(supabase, existingUserId, 'google');
-        if (!signInSuccess) {
-          console.warn('[Auth] Failed to update sign in timestamp, continuing');
-        }
+          if (error || !data.user || !data.session) return null;
 
-        user.id = existingUserId;
+          await updateUserSignIn(supabase, data.user.id, "email");
+
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", data.user.id)
+            .single();
+
+          if (!profile) return null;
+
+          return {
+            id: profile.id,
+            email: profile.email,
+            name: profile.name,
+            image: profile.avatar_url,
+            supabaseAccessToken: data.session.access_token,
+            supabaseRefreshToken: data.session.refresh_token,
+          };
+        } catch {
+          return null;
+        }
+      },
+    }),
+  ],
+
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return `${baseUrl}/dashboard`;
+    },
+
+    async signIn({ user, account }) {
+      if (!validateUserData(user)) return false;
+
+      if (account?.provider !== "google") return true;
+
+      const supabase = createAdminClient();
+      const email = user.email!.toLowerCase();
+
+      const { data } = await supabase.auth.admin.listUsers();
+      const existing = data?.users.find(
+        (u) => u.email?.toLowerCase() === email
+      );
+
+      if (existing) {
+        user.id = existing.id;
+        await updateUserSignIn(supabase, existing.id, "google");
         return true;
       }
 
-      console.log('[Auth] Creating new Google user');
-      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
-        email: normalizedEmail,
+      const { data: created } = await supabase.auth.admin.createUser({
+        email,
         email_confirm: true,
         user_metadata: {
-          name: user.name || '',
-          full_name: user.name || '',
-          avatar_url: user.image || '',
-          provider: 'google',
+          name: user.name ?? "",
+          avatar_url: user.image ?? "",
+          provider: "google",
         },
       });
 
-      if (authError || !authUser?.user) {
-        console.error('[Auth] Failed to create Supabase auth user:', authError?.message);
-        return false;
-      }
+      if (!created?.user) return false;
 
-      const signInSuccess = await updateUserSignIn(supabase, authUser.user.id, 'google');
-      if (!signInSuccess) {
-        console.warn('[Auth] Failed to update sign in timestamp for new user, continuing');
-      }
+      const ok = await waitForProfileCreation(supabase, created.user.id);
+      if (!ok) return false;
 
-      const profileCreated = await waitForProfileCreation(supabase, authUser.user.id);
-
-      if (!profileCreated) {
-        console.error('[Auth] Profile creation timeout');
-        try {
-          await supabase.auth.admin.deleteUser(authUser.user.id);
-        } catch (deleteError) {
-          console.error('[Auth] Failed to delete user after profile creation failure:', deleteError);
-        }
-        return false;
-      }
-
-      user.id = authUser.user.id;
+      user.id = created.user.id;
       return true;
-    } catch (error) {
-      console.error('[Auth] Google sign in error:', error);
-      return false;
-    }
-  }
+    },
 
-  return true;
-},
-
-async jwt({ token, user, trigger, session }) {
-  if (user) {
-    token.id = user.id;
-    token.email = user.email;
-    token.supabaseAccessToken = user.supabaseAccessToken;
-    token.supabaseRefreshToken = user.supabaseRefreshToken;
-
-    if (user.supabaseAccessToken) {
-      try {
-        const decoded = jwt.decode(user.supabaseAccessToken, { complete: true });
-        if (decoded?.payload?.exp) {
-          token.supabaseAccessTokenExpires = decoded.payload.exp * 1000;
-        }
-      } catch (error) {
-        console.error('[Auth] Failed to decode Supabase token:', error);
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.supabaseAccessToken = user.supabaseAccessToken;
+        token.supabaseRefreshToken = user.supabaseRefreshToken;
       }
-    }
-  }
+      return token;
+    },
 
-  if (token.supabaseRefreshToken) {
-    const now = Date.now();
-    const refreshThreshold = 5 * 60 * 1000;
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.supabaseAccessToken = token.supabaseAccessToken;
+      session.supabaseRefreshToken = token.supabaseRefreshToken;
+      return session;
+    },
+  },
 
-    const shouldRefresh =
-      !token.supabaseAccessTokenExpires ||
-      now >= token.supabaseAccessTokenExpires - refreshThreshold;
+  pages: {
+    signIn: "/auth",
+    error: "/auth",
+  },
 
-    if (shouldRefresh) {
-      try {
-        console.log('[Auth] Refreshing Supabase token');
-        const supabase = createAdminClient();
-        const { data, error } = await supabase.auth.refreshSession({
-          refresh_token: token.supabaseRefreshToken,
-        });
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+  },
 
-        if (!error && data?.session) {
-          token.supabaseAccessToken = data.session.access_token;
-          token.supabaseRefreshToken = data.session.refresh_token;
+  cookies: {
+    sessionToken: {
+      name: "__Secure-next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        domain: getCookieDomain(),
+      },
+    },
+  },
 
-          try {
-            const decoded = jwt.decode(data.session.access_token, { complete: true });
-            if (decoded?.payload?.exp) {
-              token.supabaseAccessTokenExpires = decoded.payload.exp * 1000;
-            }
-          } catch (error) {
-            console.error('[Auth] Failed to decode refreshed token:', error);
-          }
-        } else {
-          console.error('[Auth] Token refresh failed:', error?.message);
-          return null;
-        }
-      } catch (error) {
-        console.error('[Auth] Unexpected error during token refresh:', error);
-        return null;
-      }
-    }
-  }
-
-  return token;
-},
-
-async session({ session, token }) {
-  if (token) {
-    session.user.id = token.id;
-    session.user.email = token.email;
-    session.supabaseAccessToken = token.supabaseAccessToken;
-    session.supabaseRefreshToken = token.supabaseRefreshToken;
-  }
-  return session;
-},
-
-
-},
-
-pages: {
-signIn: ‘/auth’,
-error: ‘/auth’,
-},
-
-events: {
-async signIn({ user, account, profile, isNewUser }) {
-try {
-console.log(’[Auth Event] User signed in:’, {
-userId: user?.id,
-email: user?.email,
-provider: account?.provider,
-isNewUser,
-timestamp: new Date().toISOString(),
-});
-} catch (error) {
-console.error(’[Auth Event] Error logging sign in:’, error);
-}
-},
-
-
-async signOut({ token }) {
-  try {
-    console.log('[Auth Event] User signed out:', {
-      userId: token?.id,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('[Auth Event] Error logging sign out:', error);
-  }
-},
-
-async error({ error }) {
-  console.error('[Auth Event] Authentication error:', {
-    error: error?.message || 'Unknown error',
-    timestamp: new Date().toISOString(),
-  });
-},
-},
-
-session: {
-strategy: ‘jwt’,
-maxAge: 30 * 24 * 60 * 60,
-updateAge: 24 * 60 * 60,
-},
-
-cookies: {
-sessionToken: {
-name: ‘__Secure-next-auth.session-token’,
-options: {
-httpOnly: true,
-sameSite: process.env.NODE_ENV === ‘production’ ? ‘none’ : ‘lax’,
-secure: process.env.NODE_ENV === ‘production’,
-path: ‘/’,
-domain: getCookieDomain(),
-},
-},
-callbackUrl: {
-name: ‘__Secure-next-auth.callback-url’,
-options: {
-httpOnly: true,
-sameSite: process.env.NODE_ENV === ‘production’ ? ‘none’ : ‘lax’,
-secure: process.env.NODE_ENV === ‘production’,
-path: ‘/’,
-domain: getCookieDomain(),
-},
-},
-csrfToken: {
-name: ‘__Host-next-auth.csrf-token’,
-options: {
-httpOnly: true,
-sameSite: process.env.NODE_ENV === ‘production’ ? ‘none’ : ‘lax’,
-secure: process.env.NODE_ENV === ‘production’,
-path: ‘/’,
-},
-},
-},
-
-secret: process.env.NEXTAUTH_SECRET,
-
-debug: process.env.NODE_ENV === ‘development’,
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };
