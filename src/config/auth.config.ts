@@ -227,13 +227,14 @@ export const authOptions: NextAuthOptions = {
       if (!email) return false;
 
       // Search existing user
-      const { data } = await supabase.auth.admin.listUsers({
-        filters: { user_email_contains: email },
-      });
+     // Search existing user
+const { data } = await (supabase.auth.admin as any).listUsers({
+  filters: { user_email_contains: email },
+});
 
-      const existing = data?.users?.find(
-        (u) => u.email?.toLowerCase() === email
-      );
+const existing = data?.users?.find(
+  (u: any) => u.email?.toLowerCase() === email
+);
 
       let userId: string;
 
