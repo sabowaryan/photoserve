@@ -1,19 +1,16 @@
 /**
  * NextAuth.js Configuration
- * Authentication configuration with Credentials and Google OAuth providers
+ * NextAuth + Supabase (auth.users + triggers → profiles)
  *
- * ARCHITECTURE:
- * - NextAuth gère les sessions JWT côté client
- * - Les tokens Supabase sont stockés dans le JWT NextAuth
- * - Cela permet aux RLS policies Supabase de fonctionner avec auth.uid()
+ * Google OAuth handled by NextAuth
+ * Supabase kept in sync via RPC (update_user_signin)
  */
 
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { signInSchema } from "@/lib/validators/auth.schema";
 import { createAdminClient } from "@/lib/supabase/server";
-import jwt from "jsonwebtoken";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -55,9 +52,18 @@ declare module "next-auth/jwt" {
 /*                                  Helpers                                   */
 /* -------------------------------------------------------------------------- */
 
-function getTokenExpiry(token?: string): number | null {
+function decodeJwtPayload(token?: string): { exp?: number } | null {
   if (!token) return null;
-  const decoded = jwt.decode(token) as any;
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function getTokenExpiry(token?: string): number | null {
+  const decoded = decodeJwtPayload(token);
   return decoded?.exp ? decoded.exp * 1000 : null;
 }
 
@@ -66,23 +72,24 @@ function shouldRefresh(expiresAt?: number): boolean {
   return Date.now() >= expiresAt - 5 * 60 * 1000;
 }
 
-async function refreshSupabaseToken(refreshToken: string) {
-  const supabase = createAdminClient();
+function validateUser(user?: User | null): boolean {
+  if (!user?.email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email);
+}
 
-  const { data, error } = await supabase.auth.refreshSession({
-    refresh_token: refreshToken,
-  });
-
-  if (error || !data?.session) {
-    console.error("[Auth] Supabase refresh failed:", error?.message);
-    return null;
+async function updateUserSignIn(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  provider: "email" | "google"
+) {
+  try {
+    await supabase.rpc("update_user_signin", {
+      p_user_id: userId,
+      p_provider: provider,
+    });
+  } catch (error) {
+    console.error("[Auth] update_user_signin RPC failed:", error);
   }
-
-  return {
-    accessToken: data.session.access_token,
-    refreshToken: data.session.refresh_token,
-    expiresAt: getTokenExpiry(data.session.access_token),
-  };
 }
 
 function getCookieDomain(): string | undefined {
@@ -97,6 +104,7 @@ function getCookieDomain(): string | undefined {
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    /* -------------------------------- GOOGLE -------------------------------- */
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
@@ -109,6 +117,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
+    /* ------------------------------ CREDENTIALS ----------------------------- */
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -130,6 +139,9 @@ export const authOptions: NextAuthOptions = {
 
         if (error || !data.user || !data.session) return null;
 
+        // Sync Supabase metadata
+        await updateUserSignIn(supabase, data.user.id, "email");
+
         return {
           id: data.user.id,
           email: data.user.email!,
@@ -141,8 +153,50 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    /* -------------------------------- SIGN IN -------------------------------- */
+    async signIn({ user, account }) {
+      if (!validateUser(user)) return false;
+
+      const supabase = createAdminClient();
+
+      if (account?.provider === "google") {
+        const email = user.email!.toLowerCase();
+
+        const { data } = await supabase.auth.admin.listUsers({
+          filters: { user_email_contains: email },
+        });
+
+        const existingUser = data?.users?.find(
+          u => u.email?.toLowerCase() === email
+        );
+
+        if (existingUser) {
+          user.id = existingUser.id;
+        } else {
+          const { data: created, error } =
+            await supabase.auth.admin.createUser({
+              email,
+              email_confirm: true,
+              user_metadata: {
+                name: user.name ?? "",
+                avatar_url: user.image ?? "",
+                provider: "google",
+              },
+            });
+
+          if (error || !created?.user) return false;
+          user.id = created.user.id;
+        }
+
+        // 🔥 Critical sync
+        await updateUserSignIn(supabase, user.id, "google");
+      }
+
+      return true;
+    },
+
+    /* ---------------------------------- JWT ---------------------------------- */
     async jwt({ token, user }) {
-      // Initial login
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -153,38 +207,37 @@ export const authOptions: NextAuthOptions = {
         );
       }
 
-      // Refresh Supabase token
       if (
         token.supabaseRefreshToken &&
         shouldRefresh(token.supabaseAccessTokenExpires)
       ) {
-        const refreshed = await refreshSupabaseToken(
-          token.supabaseRefreshToken
-        );
+        const supabase = createAdminClient();
+        const { data } = await supabase.auth.refreshSession({
+          refresh_token: token.supabaseRefreshToken,
+        });
 
-        if (!refreshed) {
-          console.warn("[Auth] Refresh failed, keeping existing token");
-          return token;
+        if (data?.session) {
+          token.supabaseAccessToken = data.session.access_token;
+          token.supabaseRefreshToken = data.session.refresh_token;
+          token.supabaseAccessTokenExpires = getTokenExpiry(
+            data.session.access_token
+          );
         }
-
-        token.supabaseAccessToken = refreshed.accessToken;
-        token.supabaseRefreshToken = refreshed.refreshToken;
-        token.supabaseAccessTokenExpires = refreshed.expiresAt ?? undefined;
       }
 
       return token;
     },
 
+    /* -------------------------------- SESSION -------------------------------- */
     async session({ session, token }) {
-      if (token?.id && token.email) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.supabaseAccessToken = token.supabaseAccessToken;
-        session.supabaseRefreshToken = token.supabaseRefreshToken;
-      }
+      session.user.id = token.id!;
+      session.user.email = token.email!;
+      session.supabaseAccessToken = token.supabaseAccessToken;
+      session.supabaseRefreshToken = token.supabaseRefreshToken;
       return session;
     },
 
+    /* -------------------------------- REDIRECT -------------------------------- */
     async redirect({ url, baseUrl }) {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       if (new URL(url).origin === baseUrl) return url;
@@ -192,20 +245,60 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
+  /* --------------------------------- EVENTS -------------------------------- */
+  events: {
+    async signIn({ user, account }) {
+      console.log("[Auth] Sign in", {
+        userId: user?.id,
+        provider: account?.provider,
+      });
+    },
+    async signOut({ token }) {
+      console.log("[Auth] Sign out", { userId: token?.id });
+    },
+    async error({ error }) {
+      console.error("[Auth] Error", error);
+    },
+  },
+
+  /* -------------------------------- SESSION -------------------------------- */
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
 
+  /* -------------------------------- COOKIES -------------------------------- */
   cookies: {
     sessionToken: {
       name: "__Secure-next-auth.session-token",
       options: {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         secure: process.env.NODE_ENV === "production",
         path: "/",
         domain: getCookieDomain(),
+      },
+    },
+
+    callbackUrl: {
+      name: "__Secure-next-auth.callback-url",
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        domain: getCookieDomain(),
+      },
+    },
+
+    csrfToken: {
+      name: "__Host-next-auth.csrf-token",
+      options: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
       },
     },
   },
