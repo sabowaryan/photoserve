@@ -1,9 +1,11 @@
 /**
  * NextAuth.js Configuration
- * NextAuth + Supabase (auth.users + triggers → profiles)
+ * NextAuth + Supabase (auth.users + profiles via triggers)
  *
- * Google OAuth handled by NextAuth
- * Supabase kept in sync via RPC (update_user_signin)
+ * - JWT NextAuth côté client
+ * - Tokens Supabase stockés dans le JWT
+ * - RPC pour last_sign_in_at + provider
+ * - Triggers Supabase → profiles
  */
 
 import type { NextAuthOptions, User } from "next-auth";
@@ -11,6 +13,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { signInSchema } from "@/lib/validators/auth.schema";
 import { createAdminClient } from "@/lib/supabase/server";
+import jwt from "jsonwebtoken";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -52,46 +55,79 @@ declare module "next-auth/jwt" {
 /*                                  Helpers                                   */
 /* -------------------------------------------------------------------------- */
 
-function decodeJwtPayload(token?: string): { exp?: number } | null {
-  if (!token) return null;
+/**
+ * RPC: update last_sign_in_at + provider
+ */
+async function updateUserSignIn(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  provider: "email" | "google"
+): Promise<boolean> {
   try {
-    const payload = token.split(".")[1];
-    return JSON.parse(Buffer.from(payload, "base64").toString("utf8"));
-  } catch {
-    return null;
+    const { error } = await supabase.rpc("update_user_signin", {
+      p_user_id: userId,
+      p_provider: provider,
+    });
+
+    if (!error) return true;
+
+    console.error("[Auth] RPC update_user_signin failed:", error.message);
+
+    // Fallback: au moins stocker le provider
+    await supabase.auth.admin.updateUserById(userId, {
+      user_metadata: { provider },
+    });
+
+    return true;
+  } catch (err) {
+    console.error("[Auth] updateUserSignIn unexpected error:", err);
+    return false;
   }
 }
 
+/**
+ * Attendre la création du profil via trigger Supabase
+ */
+async function waitForProfileCreation(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  retries = 5
+): Promise<boolean> {
+  for (let i = 0; i < retries; i++) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .single();
+
+    if (data) return true;
+
+    await new Promise((r) => setTimeout(r, 100 * (i + 1)));
+  }
+
+  return false;
+}
+
+/**
+ * Decode exp from Supabase JWT
+ */
 function getTokenExpiry(token?: string): number | null {
-  const decoded = decodeJwtPayload(token);
+  if (!token) return null;
+  const decoded = jwt.decode(token) as any;
   return decoded?.exp ? decoded.exp * 1000 : null;
 }
 
+/**
+ * Refresh threshold
+ */
 function shouldRefresh(expiresAt?: number): boolean {
   if (!expiresAt) return true;
   return Date.now() >= expiresAt - 5 * 60 * 1000;
 }
 
-function validateUser(user?: User | null): boolean {
-  if (!user?.email) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email);
-}
-
-async function updateUserSignIn(
-  supabase: ReturnType<typeof createAdminClient>,
-  userId: string,
-  provider: "email" | "google"
-) {
-  try {
-    await supabase.rpc("update_user_signin", {
-      p_user_id: userId,
-      p_provider: provider,
-    });
-  } catch (error) {
-    console.error("[Auth] update_user_signin RPC failed:", error);
-  }
-}
-
+/**
+ * Cookie domain
+ */
 function getCookieDomain(): string | undefined {
   return process.env.NODE_ENV === "production"
     ? process.env.NEXTAUTH_COOKIE_DOMAIN || "piksend.com"
@@ -104,7 +140,6 @@ function getCookieDomain(): string | undefined {
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    /* -------------------------------- GOOGLE -------------------------------- */
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
@@ -117,7 +152,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
-    /* ------------------------------ CREDENTIALS ----------------------------- */
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -125,7 +159,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
 
-      async authorize(credentials) {
+      async authorize(credentials): Promise<User | null> {
         const parsed = signInSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
@@ -139,12 +173,21 @@ export const authOptions: NextAuthOptions = {
 
         if (error || !data.user || !data.session) return null;
 
-        // Sync Supabase metadata
         await updateUserSignIn(supabase, data.user.id, "email");
 
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+
+        if (!profile) return null;
+
         return {
-          id: data.user.id,
-          email: data.user.email!,
+          id: profile.id,
+          email: profile.email,
+          name: profile.name,
+          image: profile.avatar_url,
           supabaseAccessToken: data.session.access_token,
           supabaseRefreshToken: data.session.refresh_token,
         };
@@ -153,49 +196,67 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    /* -------------------------------- SIGN IN -------------------------------- */
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return `${baseUrl}/dashboard`;
+    },
+
     async signIn({ user, account }) {
-      if (!validateUser(user)) return false;
+      if (account?.provider !== "google") return true;
 
       const supabase = createAdminClient();
+      const email = user.email?.toLowerCase();
+      if (!email) return false;
 
-      if (account?.provider === "google") {
-        const email = user.email!.toLowerCase();
+      // Search existing user
+      const { data } = await supabase.auth.admin.listUsers({
+        filters: { user_email_contains: email },
+      });
 
-        const { data } = await supabase.auth.admin.listUsers({
-          filters: { user_email_contains: email },
+      const existing = data?.users?.find(
+        (u) => u.email?.toLowerCase() === email
+      );
+
+      let userId: string;
+
+      if (existing) {
+        userId = existing.id;
+
+        await supabase.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            name: user.name,
+            avatar_url: user.image,
+            provider: "google",
+          },
+        });
+      } else {
+        const { data: created } = await supabase.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: {
+            name: user.name,
+            avatar_url: user.image,
+            provider: "google",
+          },
         });
 
-        const existingUser = data?.users?.find(
-          u => u.email?.toLowerCase() === email
-        );
+        if (!created?.user) return false;
+        userId = created.user.id;
 
-        if (existingUser) {
-          user.id = existingUser.id;
-        } else {
-          const { data: created, error } =
-            await supabase.auth.admin.createUser({
-              email,
-              email_confirm: true,
-              user_metadata: {
-                name: user.name ?? "",
-                avatar_url: user.image ?? "",
-                provider: "google",
-              },
-            });
-
-          if (error || !created?.user) return false;
-          user.id = created.user.id;
+        const profileOk = await waitForProfileCreation(supabase, userId);
+        if (!profileOk) {
+          await supabase.auth.admin.deleteUser(userId);
+          return false;
         }
-
-        // 🔥 Critical sync
-        await updateUserSignIn(supabase, user.id, "google");
       }
+
+      await updateUserSignIn(supabase, userId, "google");
+      user.id = userId;
 
       return true;
     },
 
-    /* ---------------------------------- JWT ---------------------------------- */
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -228,47 +289,23 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    /* -------------------------------- SESSION -------------------------------- */
     async session({ session, token }) {
-      session.user.id = token.id!;
-      session.user.email = token.email!;
-      session.supabaseAccessToken = token.supabaseAccessToken;
-      session.supabaseRefreshToken = token.supabaseRefreshToken;
+      if (token?.id && token.email) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.supabaseAccessToken = token.supabaseAccessToken;
+        session.supabaseRefreshToken = token.supabaseRefreshToken;
+      }
       return session;
     },
-
-    /* -------------------------------- REDIRECT -------------------------------- */
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
-      return `${baseUrl}/dashboard`;
-    },
   },
 
-  /* --------------------------------- EVENTS -------------------------------- */
-  events: {
-    async signIn({ user, account }) {
-      console.log("[Auth] Sign in", {
-        userId: user?.id,
-        provider: account?.provider,
-      });
-    },
-    async signOut({ token }) {
-      console.log("[Auth] Sign out", { userId: token?.id });
-    },
-    async error({ error }) {
-      console.error("[Auth] Error", error);
-    },
-  },
-
-  /* -------------------------------- SESSION -------------------------------- */
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
 
-  /* -------------------------------- COOKIES -------------------------------- */
   cookies: {
     sessionToken: {
       name: "__Secure-next-auth.session-token",
@@ -280,7 +317,6 @@ export const authOptions: NextAuthOptions = {
         domain: getCookieDomain(),
       },
     },
-
     callbackUrl: {
       name: "__Secure-next-auth.callback-url",
       options: {
@@ -291,7 +327,6 @@ export const authOptions: NextAuthOptions = {
         domain: getCookieDomain(),
       },
     },
-
     csrfToken: {
       name: "__Host-next-auth.csrf-token",
       options: {
