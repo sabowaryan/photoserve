@@ -116,21 +116,18 @@ async function waitForProfileCreation(
 /**
  * Decode exp from Supabase JWT
  */
-function getTokenExpiry(token?: string): number | null {
-  if (!token) return null;
+function getTokenExpiry(token?: string): number | undefined {
+  if (!token) return undefined; // <-- null → undefined
 
   try {
     const payload = token.split(".")[1];
-    if (!payload) return null;
+    if (!payload) return undefined;
 
-    const decoded = JSON.parse(
-      Buffer.from(payload, "base64").toString("utf-8")
-    );
-
-    return decoded?.exp ? decoded.exp * 1000 : null;
+    const decoded = JSON.parse(Buffer.from(payload, "base64").toString("utf-8"));
+    return decoded?.exp ? decoded.exp * 1000 : undefined; // <-- null → undefined
   } catch (error) {
     console.error("[Auth] Failed to decode Supabase JWT:", error);
-    return null;
+    return undefined; // <-- null → undefined
   }
 }
 
