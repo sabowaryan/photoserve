@@ -64,10 +64,15 @@ async function updateUserSignIn(
   provider: "email" | "google"
 ): Promise<boolean> {
   try {
-    const { error } = await supabase.rpc("update_user_signin", {
-      p_user_id: userId,
-      p_provider: provider,
-    });
+    async function callRpc<T>(supabase: ReturnType<typeof createAdminClient>, fn: string, params: any): Promise<T> {
+       return (supabase as any).rpc(fn, params) as Promise<T>;
+    }
+
+ // utilisation :
+const { error } = await callRpc<{ error?: { message: string } }>(supabase, "update_user_signin", {
+  p_user_id: userId,
+  p_provider: provider,
+});
 
     if (!error) return true;
 
