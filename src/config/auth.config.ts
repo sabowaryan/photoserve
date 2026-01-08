@@ -13,7 +13,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { signInSchema } from "@/lib/validators/auth.schema";
 import { createAdminClient } from "@/lib/supabase/server";
-import jwt from "jsonwebtoken";
+
 
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -113,8 +113,20 @@ async function waitForProfileCreation(
  */
 function getTokenExpiry(token?: string): number | null {
   if (!token) return null;
-  const decoded = jwt.decode(token) as any;
-  return decoded?.exp ? decoded.exp * 1000 : null;
+
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const decoded = JSON.parse(
+      Buffer.from(payload, "base64").toString("utf-8")
+    );
+
+    return decoded?.exp ? decoded.exp * 1000 : null;
+  } catch (error) {
+    console.error("[Auth] Failed to decode Supabase JWT:", error);
+    return null;
+  }
 }
 
 /**
