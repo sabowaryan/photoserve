@@ -1,5 +1,5 @@
 /**
- * CORS Configuration for PikSend API Routes
+ * CORS Configuration for Piksend API Routes
  * Validates allowed origins and provides CORS headers
  * 
  * @module lib/api/cors
@@ -14,11 +14,12 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 const ALLOWED_ORIGIN_PATTERNS: RegExp[] = [
   // Production domain
-  /^https:\/\/photoserve\.app$/,
-  /^https:\/\/www\.photoserve\.app$/,
-  /^https:\/\/photoserve\.akollad\.com$/,
+  /^https:\/\/piksend\.com$/,
+  /^https:\/\/www\.piksend\.com$/,
+
   // Vercel preview deployments
-  /^https:\/\/photoserve-[a-z0-9-]+\.vercel\.app$/,
+  /^https:\/\/piksend-[a-z0-9-]+\.vercel\.app$/,
+
   // Local development
   /^http:\/\/localhost:\d+$/,
   /^http:\/\/127\.0\.0\.1:\d+$/,
@@ -88,9 +89,6 @@ export function getCorsHeaders(request: NextRequest): CorsHeaders {
 
 /**
  * Handles CORS preflight (OPTIONS) requests
- * 
- * @param request - The incoming OPTIONS request
- * @returns NextResponse with CORS headers
  */
 export function handleCorsPreflightRequest(request: NextRequest): NextResponse {
   const corsHeaders = getCorsHeaders(request);
@@ -103,10 +101,6 @@ export function handleCorsPreflightRequest(request: NextRequest): NextResponse {
 
 /**
  * Adds CORS headers to an existing response
- * 
- * @param response - The response to add headers to
- * @param request - The original request (for origin validation)
- * @returns Response with CORS headers added
  */
 export function addCorsHeaders(
   response: NextResponse,
@@ -123,24 +117,16 @@ export function addCorsHeaders(
 
 /**
  * CORS middleware wrapper for API route handlers
- * Automatically handles OPTIONS requests and adds CORS headers to responses
- * 
- * @param handler - The API route handler function
- * @returns Wrapped handler with CORS support
  */
 export function withCors<T>(
   handler: (request: NextRequest) => Promise<NextResponse<T>>
 ): (request: NextRequest) => Promise<NextResponse<T | null>> {
   return async (request: NextRequest): Promise<NextResponse<T | null>> => {
-    // Handle preflight requests
     if (request.method === 'OPTIONS') {
       return handleCorsPreflightRequest(request) as NextResponse<T | null>;
     }
     
-    // Execute the handler
     const response = await handler(request);
-    
-    // Add CORS headers to the response
     return addCorsHeaders(response, request) as NextResponse<T>;
   };
 }
