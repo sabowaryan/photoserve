@@ -57,3 +57,17 @@ export {
   type MetadataInput,
   type StructuredDataInput,
 } from './seo.service';
+
+// Audit Log Service
+export {
+  AuditLogService,
+  createAuditLogService,
+  type IAuditLogService,
+} from './audit-log.service';
+
+// Admin Service
+export {
+  AdminService,
+  createAdminService,
+  type IAdminService,
+} from './admin.service';

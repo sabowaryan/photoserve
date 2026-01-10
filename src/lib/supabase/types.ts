@@ -115,6 +115,8 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
+          is_admin: boolean | null
+          is_suspended: boolean | null
           max_galleries: number | null
           max_image_size_mb: number | null
           max_images_per_gallery: number | null
@@ -131,6 +133,8 @@ export type Database = {
           created_at?: string | null
           email: string
           id: string
+          is_admin?: boolean | null
+          is_suspended?: boolean | null
           max_galleries?: number | null
           max_image_size_mb?: number | null
           max_images_per_gallery?: number | null
@@ -147,6 +151,8 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
+          is_admin?: boolean | null
+          is_suspended?: boolean | null
           max_galleries?: number | null
           max_image_size_mb?: number | null
           max_images_per_gallery?: number | null
@@ -159,6 +165,47 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          id: string
+          admin_id: string
+          action_type: Database["public"]["Enums"]["audit_action_type"]
+          entity_type: Database["public"]["Enums"]["audit_entity_type"]
+          entity_id: string | null
+          details: Record<string, unknown>
+          ip_address: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          admin_id: string
+          action_type: Database["public"]["Enums"]["audit_action_type"]
+          entity_type: Database["public"]["Enums"]["audit_entity_type"]
+          entity_id?: string | null
+          details?: Record<string, unknown>
+          ip_address?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          admin_id?: string
+          action_type?: Database["public"]["Enums"]["audit_action_type"]
+          entity_type?: Database["public"]["Enums"]["audit_entity_type"]
+          entity_id?: string | null
+          details?: Record<string, unknown>
+          ip_address?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       rate_limit_attempts: {
         Row: {
@@ -282,6 +329,8 @@ export type Database = {
     }
     Enums: {
       subscription_plan: "free" | "premium" | "pro"
+      audit_action_type: "user_view" | "user_update" | "user_suspend" | "user_reactivate" | "gallery_view" | "gallery_deactivate" | "gallery_delete" | "subscription_update" | "subscription_cancel" | "admin_login"
+      audit_entity_type: "user" | "gallery" | "subscription" | "system"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -314,3 +363,10 @@ export type RateLimitAttemptUpdate = TablesUpdate<'rate_limit_attempts'>
 
 export type SubscriptionPlanRow = Tables<'subscription_plans'>
 export type SubscriptionPlan = Enums<'subscription_plan'>
+
+// Audit Log types
+export type AuditLog = Tables<'audit_logs'>
+export type AuditLogInsert = TablesInsert<'audit_logs'>
+export type AuditLogUpdate = TablesUpdate<'audit_logs'>
+export type AuditActionType = Enums<'audit_action_type'>
+export type AuditEntityType = Enums<'audit_entity_type'>

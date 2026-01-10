@@ -30,8 +30,13 @@ function AuthContent() {
   // Redirect if already authenticated
   useEffect(() => {
     if (status === 'authenticated' && session) {
-      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-      router.push(callbackUrl);
+      // Redirect admin users to admin dashboard
+      if (session.user.isAdmin) {
+        router.push('/admin');
+      } else {
+        const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+        router.push(callbackUrl);
+      }
     }
   }, [session, status, router, searchParams]);
 
@@ -80,8 +85,9 @@ function AuthContent() {
       if (result?.error) {
         setError('Email ou mot de passe incorrect');
       } else {
-        router.push('/dashboard');
+        // Refresh session to get updated user data including isAdmin
         router.refresh();
+        // The useEffect will handle the redirect based on isAdmin status
       }
     } catch {
       setError('Une erreur est survenue');

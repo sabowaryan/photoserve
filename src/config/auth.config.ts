@@ -26,6 +26,7 @@ declare module "next-auth" {
       email: string;
       name?: string | null;
       image?: string | null;
+      isAdmin?: boolean;
     };
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
@@ -36,6 +37,7 @@ declare module "next-auth" {
     email: string;
     name?: string | null;
     image?: string | null;
+    isAdmin?: boolean;
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
   }
@@ -45,6 +47,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
     email?: string;
+    isAdmin?: boolean;
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
     supabaseAccessTokenExpires?: number;
@@ -195,7 +198,7 @@ export const authOptions: NextAuthOptions = {
 
         const { data: profile } = await supabase
           .from("profiles")
-          .select("*")
+          .select("*, is_admin")
           .eq("id", data.user.id)
           .single();
 
@@ -206,6 +209,7 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
           name: profile.name,
           image: profile.avatar_url,
+          isAdmin: profile.is_admin === true,
           supabaseAccessToken: data.session.access_token,
           supabaseRefreshToken: data.session.refresh_token,
         };
@@ -273,6 +277,15 @@ const existing = data?.users?.find(
       await updateUserSignIn(supabase, userId, "google");
       user.id = userId;
 
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+      
+      user.isAdmin = profile?.is_admin === true;
+
       return true;
     },
 
@@ -280,6 +293,7 @@ const existing = data?.users?.find(
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.isAdmin = user.isAdmin;
         token.supabaseAccessToken = user.supabaseAccessToken;
         token.supabaseRefreshToken = user.supabaseRefreshToken;
         token.supabaseAccessTokenExpires = getTokenExpiry(
@@ -312,6 +326,7 @@ const existing = data?.users?.find(
       if (token?.id && token.email) {
         session.user.id = token.id;
         session.user.email = token.email;
+        session.user.isAdmin = token.isAdmin;
         session.supabaseAccessToken = token.supabaseAccessToken;
         session.supabaseRefreshToken = token.supabaseRefreshToken;
       }

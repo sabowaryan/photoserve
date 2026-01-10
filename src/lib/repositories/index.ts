@@ -22,3 +22,17 @@ export {
   createImageRepository,
   type IImageRepository,
 } from './image.repository'
+
+// Audit Log Repository
+export {
+  AuditLogRepository,
+  createAuditLogRepository,
+  type IAuditLogRepository,
+} from './audit-log.repository'
+
+// Admin Repository
+export {
+  AdminRepository,
+  createAdminRepository,
+  type IAdminRepository,
+} from './admin.repository'

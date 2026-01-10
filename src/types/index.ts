@@ -19,6 +19,8 @@ export interface Profile {
   max_image_size_mb: number;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
+  is_admin: boolean;
+  is_suspended: boolean;
   created_at: string;
   updated_at: string;
 }

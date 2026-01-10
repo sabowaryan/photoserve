@@ -1,0 +1,286 @@
+# Implementation Plan: Admin Dashboard
+
+## Overview
+
+Ce plan implémente l'espace d'administration de PikSend en suivant l'architecture existante. L'implémentation suit une approche incrémentale : d'abord le schéma de base de données, puis les repositories, services, et enfin les routes et composants UI.
+
+## Tasks
+
+- [x] 1. Database Schema Extension
+  - [x] 1.1 Create migration for admin role and audit_logs table
+    - Add `is_admin` boolean column to profiles table with default false
+    - Create `audit_logs` table with columns: id, admin_id, action_type, entity_type, entity_id, details, ip_address, created_at
+    - Add indexes for admin_id, action_type, and created_at
+    - Add RLS policies to restrict audit_logs to admin users only
+    - _Requirements: 1.1, 7.1, 7.5_
+  - [x] 1.2 Update TypeScript types for admin features
+    - Add AuditLog type to `src/lib/supabase/types.ts`
+    - Add is_admin field to Profile type
+    - Create admin-specific types in `src/types/admin.ts`
+    - _Requirements: 1.1, 7.1_
+
+- [x] 2. Audit Log Repository and Service
+  - [x] 2.1 Implement AuditLogRepository
+    - Create `src/lib/repositories/audit-log.repository.ts`
+    - Implement create() method for inserting audit entries
+    - Implement list() method with filtering support
+    - Implement getByEntityId() method
+    - _Requirements: 7.1, 7.3_
+  - [x] 2.2 Write property test for audit log immutability
+    - **Property 15: Audit Log Immutability**
+    - **Validates: Requirements 7.5**
+  - [x] 2.3 Implement AuditLogService
+    - Create `src/lib/services/audit-log.service.ts`
+    - Implement log() method that creates audit entries
+    - Implement list() method with pagination
+    - _Requirements: 7.1, 7.2, 7.3_
+  - [x] 2.4 Write property test for audit log filtering
+    - **Property 14: Audit Log Filtering**
+    - **Validates: Requirements 7.3**
+
+- [x] 3. Checkpoint - Audit Log Foundation
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Admin Repository
+  - [x] 4.1 Implement AdminRepository for dashboard stats
+    - Create `src/lib/repositories/admin.repository.ts`
+    - Implement getDashboardStats() method
+    - Query total users, active galleries, storage used, plan distribution
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+  - [x] 4.2 Write property test for dashboard stats accuracy
+    - **Property 3: Dashboard Stats Accuracy**
+    - **Validates: Requirements 2.1, 2.2, 2.3, 2.4**
+  - [x] 4.3 Implement user management methods in AdminRepository
+    - Implement listUsers() with pagination and search
+    - Implement getUserById() with gallery count
+    - Implement updateUserPlan(), suspendUser(), reactivateUser()
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+  - [x] 4.4 Write property test for user search filtering
+    - **Property 4: User Search Filtering**
+    - **Validates: Requirements 3.2**
+  - [x] 4.5 Implement gallery management methods in AdminRepository
+    - Implement listGalleries() with filtering
+    - Implement getGalleryById() with images and owner
+    - Implement deactivateGallery(), deleteGallery()
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [x] 4.6 Write property test for gallery filtering
+    - **Property 9: Gallery Filtering**
+    - **Validates: Requirements 4.2**
+  - [x] 4.7 Implement analytics methods in AdminRepository
+    - Implement getAnalytics() with date range filtering
+    - Query user growth, storage trends, conversion rates
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [x] 4.8 Write property test for analytics date range filtering
+    - **Property 12: Analytics Date Range Filtering**
+    - **Validates: Requirements 5.5**
+
+- [x] 5. Checkpoint - Repository Layer Complete
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Admin Service
+  - [x] 6.1 Implement AdminService core methods
+    - Create `src/lib/services/admin.service.ts`
+    - Implement isAdmin() method for authorization
+    - Implement getDashboardStats() delegating to repository
+    - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4_
+  - [x] 6.2 Write property test for admin authorization
+    - **Property 1: Admin Authorization**
+    - **Validates: Requirements 1.1, 1.2**
+  - [x] 6.3 Implement user management in AdminService
+    - Implement listUsers(), getUserDetails()
+    - Implement updateUserPlan() with audit logging
+    - Implement suspendUser(), reactivateUser() with audit logging
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+  - [x] 6.4 Write property test for plan update changes limits
+    - **Property 5: Plan Update Changes Limits**
+    - **Validates: Requirements 3.4, 6.3**
+  - [x] 6.5 Write property test for user suspension
+    - **Property 6: User Suspension Deactivates Galleries**
+    - **Validates: Requirements 3.5**
+  - [x] 6.6 Write property test for suspend-reactivate round trip
+    - **Property 7: Suspend-Reactivate Round Trip**
+    - **Validates: Requirements 3.5, 3.6**
+  - [x] 6.7 Implement gallery management in AdminService
+    - Implement listGalleries(), getGalleryDetails()
+    - Implement deactivateGallery() with audit logging
+    - Implement deleteGallery() with storage cleanup and audit logging
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
+  - [x] 6.8 Write property test for gallery deactivation
+    - **Property 10: Gallery Deactivation Prevents Access**
+    - **Validates: Requirements 4.4**
+  - [x] 6.9 Write property test for gallery deletion frees storage
+    - **Property 11: Gallery Deletion Frees Storage**
+    - **Validates: Requirements 4.5**
+  - [x] 6.10 Implement subscription management in AdminService
+    - Implement listSubscriptions()
+    - Implement manualUpgrade() with audit logging
+    - Implement cancelSubscription() with audit logging
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 6.11 Write property test for subscription cancellation
+    - **Property 13: Subscription Cancellation Schedules Downgrade**
+    - **Validates: Requirements 6.4**
+  - [x] 6.12 Write property test for audit logging on modifications
+    - **Property 8: Audit Logging for Modifications**
+    - **Validates: Requirements 3.7, 4.6, 6.5**
+
+- [x] 7. Checkpoint - Service Layer Complete
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Admin Middleware and Auth
+  - [x] 8.1 Create admin authentication middleware
+    - Create `src/lib/middleware/admin-auth.ts`
+    - Implement requireAdmin() function that checks is_admin
+    - Return 403 for non-admin users
+    - Log authentication attempts via AuditLogService
+    - _Requirements: 1.1, 1.2, 1.4_
+  - [x] 8.2 Write property test for authentication audit logging
+    - **Property 2: Authentication Audit Logging**
+    - **Validates: Requirements 1.4**
+
+- [x] 9. API Routes
+  - [x] 9.1 Create admin dashboard API route
+    - Create `src/app/api/admin/dashboard/route.ts`
+    - GET endpoint returning dashboard stats
+    - Apply admin middleware
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [x] 9.2 Create admin users API routes
+    - Create `src/app/api/admin/users/route.ts` for list
+    - Create `src/app/api/admin/users/[id]/route.ts` for details and updates
+    - Create `src/app/api/admin/users/[id]/suspend/route.ts`
+    - Create `src/app/api/admin/users/[id]/reactivate/route.ts`
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+  - [x] 9.3 Create admin galleries API routes
+    - Create `src/app/api/admin/galleries/route.ts` for list
+    - Create `src/app/api/admin/galleries/[id]/route.ts` for details and delete
+    - Create `src/app/api/admin/galleries/[id]/deactivate/route.ts`
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
+  - [x] 9.4 Create admin analytics API route
+    - Create `src/app/api/admin/analytics/route.ts`
+    - GET endpoint with date range query params
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [x] 9.5 Create admin subscriptions API routes
+    - Create `src/app/api/admin/subscriptions/route.ts` for list
+    - Create `src/app/api/admin/subscriptions/[userId]/route.ts` for updates
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 9.6 Create admin audit-logs API route
+    - Create `src/app/api/admin/audit-logs/route.ts`
+    - GET endpoint with filtering support
+    - _Requirements: 7.1, 7.2, 7.3_
+
+- [x] 10. Checkpoint - API Layer Complete
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 11. Admin Layout and Navigation
+  - [x] 11.1 Create admin layout
+    - Create `src/app/(admin)/layout.tsx`
+    - Server-side admin check with redirect to 403
+    - Admin-specific header and navigation
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [x] 11.2 Create admin navigation component
+    - Create `src/components/admin/admin-nav.tsx`
+    - Links to Dashboard, Users, Galleries, Analytics, Subscriptions, Audit Logs
+    - Active state highlighting
+    - _Requirements: 1.3_
+  - [x] 11.3 Create admin header component
+    - Create `src/components/admin/admin-header.tsx`
+    - Display admin name and role
+    - Sign out button
+    - _Requirements: 1.3_
+
+- [x] 12. Admin Dashboard Page
+  - [x] 12.1 Create dashboard page
+    - Create `src/app/(admin)/admin/page.tsx`
+    - Fetch and display dashboard stats
+    - Stats cards for users, galleries, storage, plans
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+  - [x] 12.2 Create stats card components
+    - Create `src/components/admin/stats-card.tsx`
+    - Create `src/components/admin/plan-distribution-chart.tsx`
+    - _Requirements: 2.4_
+  - [x] 12.3 Create recent activity component
+    - Create `src/components/admin/recent-activity.tsx`
+    - Display recent signups and gallery creations
+    - _Requirements: 2.5_
+
+- [x] 13. User Management Pages
+  - [x] 13.1 Create users list page
+    - Create `src/app/(admin)/admin/users/page.tsx`
+    - Table with pagination and search
+    - Filter by plan and status
+    - _Requirements: 3.1, 3.2_
+  - [x] 13.2 Create user detail page
+    - Create `src/app/(admin)/admin/users/[id]/page.tsx`
+    - Display user details, galleries, subscription info
+    - Actions: update plan, suspend, reactivate
+    - _Requirements: 3.3, 3.4, 3.5, 3.6_
+  - [x] 13.3 Create user management components
+    - Create `src/components/admin/user-table.tsx`
+    - Create `src/components/admin/user-detail-card.tsx`
+    - Create `src/components/admin/user-actions.tsx`
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+
+- [x] 14. Gallery Management Pages
+  - [x] 14.1 Create galleries list page
+    - Create `src/app/(admin)/admin/galleries/page.tsx`
+    - Table with pagination and filtering
+    - Filter by status, user, date range
+    - _Requirements: 4.1, 4.2_
+  - [x] 14.2 Create gallery detail page
+    - Create `src/app/(admin)/admin/galleries/[id]/page.tsx`
+    - Display gallery details, images, owner info
+    - Actions: deactivate, delete
+    - _Requirements: 4.3, 4.4, 4.5_
+  - [x] 14.3 Create gallery management components
+    - Create `src/components/admin/gallery-table.tsx`
+    - Create `src/components/admin/gallery-detail-card.tsx`
+    - Create `src/components/admin/gallery-actions.tsx`
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+
+- [x] 15. Analytics Page
+  - [x] 15.1 Create analytics page
+    - Create `src/app/(admin)/admin/analytics/page.tsx`
+    - Date range selector
+    - Charts for user growth, storage, conversions
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [x] 15.2 Create analytics components
+    - Create `src/components/admin/analytics-chart.tsx`
+    - Create `src/components/admin/top-users-table.tsx`
+    - Create `src/components/admin/date-range-picker.tsx`
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+
+- [x] 16. Subscriptions Page
+  - [x] 16.1 Create subscriptions page
+    - Create `src/app/(admin)/admin/subscriptions/page.tsx`
+    - Table of active subscriptions
+    - Actions: manual upgrade, cancel
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 16.2 Create subscription components
+    - Create `src/components/admin/subscription-table.tsx`
+    - Create `src/components/admin/subscription-actions.tsx`
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+
+- [x] 17. Audit Logs Page
+  - [x] 17.1 Create audit logs page
+    - Create `src/app/(admin)/admin/audit-logs/page.tsx`
+    - Table with filtering by admin, action type, date range
+    - Pagination support
+    - _Requirements: 7.1, 7.2, 7.3_
+  - [x] 17.2 Create audit log components
+    - Create `src/components/admin/audit-log-table.tsx`
+    - Create `src/components/admin/audit-log-filters.tsx`
+    - _Requirements: 7.1, 7.2, 7.3_
+
+- [ ] 18. Final Checkpoint
+  - Ensure all tests pass, ask the user if questions arise.
+  - Verify all admin routes are protected
+  - Verify audit logging works for all operations
+  - Test complete admin workflows
+
+## Notes
+
+- All tasks including property-based tests are required for comprehensive coverage
+- Each task references specific requirements for traceability
+- Checkpoints ensure incremental validation
+- Property tests validate universal correctness properties
+- Unit tests validate specific examples and edge cases
+- The implementation follows the existing codebase patterns (repositories, services, API routes)
