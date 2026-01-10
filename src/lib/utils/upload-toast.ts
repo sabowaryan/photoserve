@@ -14,7 +14,7 @@ export interface UploadErrorOptions {
  * Display a user-friendly error toast based on the error message
  */
 export function showUploadError(errorMessage: string, options: UploadErrorOptions = {}) {
-  const { fileName, currentValue, limitValue } = options;
+  const { fileName, limitValue } = options;
 
   // Storage limit error
   if (errorMessage.includes("Storage limit")) {

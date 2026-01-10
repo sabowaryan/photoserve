@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Plus,
   Search,
@@ -13,7 +11,6 @@ import {
   FolderOpen,
   Eye,
   Zap,
-  AlertTriangle,
   ArrowUpDown,
   Calendar,
   Clock,
