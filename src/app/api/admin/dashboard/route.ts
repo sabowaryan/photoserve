@@ -7,7 +7,7 @@
  */
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
-import { requireAdmin, getIpAddress } from '@/lib/middleware/admin-auth';
+import { requireAdmin } from '@/lib/middleware/admin-auth';
 import { createAdminClient } from '@/lib/supabase/server';
 import { createAdminService } from '@/lib/services/admin.service';
 
