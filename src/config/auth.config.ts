@@ -221,9 +221,12 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async redirect({ url, baseUrl }) {
+      // Si l'URL commence par /, c'est une URL relative
       if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Si l'URL est du même domaine, on la garde
       if (new URL(url).origin === baseUrl) return url;
-      return `${baseUrl}/dashboard`;
+      // Par défaut, rediriger vers la page callback qui gère la redirection admin
+      return `${baseUrl}/auth/callback`;
     },
 
     async signIn({ user, account }) {
