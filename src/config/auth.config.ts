@@ -30,6 +30,7 @@ declare module "next-auth" {
     };
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
+    adminSessionLogged?: boolean;
   }
 
   interface User {
@@ -51,6 +52,7 @@ declare module "next-auth/jwt" {
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
     supabaseAccessTokenExpires?: number;
+    adminSessionLogged?: boolean;
   }
 }
 
@@ -329,6 +331,7 @@ const existing = data?.users?.find(
         session.user.isAdmin = token.isAdmin;
         session.supabaseAccessToken = token.supabaseAccessToken;
         session.supabaseRefreshToken = token.supabaseRefreshToken;
+        session.adminSessionLogged = token.adminSessionLogged;
       }
       return session;
     },

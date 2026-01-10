@@ -16,14 +16,14 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * Result of admin authentication check
  */
 export type AdminAuthResult =
-  | { success: true; userId: string; isAdmin: true }
+  | { success: true; userId: string; isAdmin: true; isFirstAdminAccess: boolean }
   | { success: false; error: string; status: 401 | 403 };
 
 /**
  * Options for admin authentication
  */
 export interface AdminAuthOptions {
-  logAttempt?: boolean;
+  logFirstAccess?: boolean;
   ipAddress?: string | null;
 }
 
@@ -115,7 +115,7 @@ export async function logAdminAuthAttempt(
  * Requirements:
  * - 1.1: Verify that the user has the admin role
  * - 1.2: Return 403 for non-admin users
- * - 1.4: Log all admin authentication attempts
+ * - 1.4: Log first admin access per session only
  * 
  * @param request - Next.js request object (optional, for IP extraction)
  * @param options - Authentication options
@@ -125,7 +125,7 @@ export async function requireAdmin(
   request?: NextRequest,
   options: AdminAuthOptions = {}
 ): Promise<AdminAuthResult> {
-  const { logAttempt = true, ipAddress: providedIpAddress } = options;
+  const { logFirstAccess = true, ipAddress: providedIpAddress } = options;
 
   // Get the current session
   const session = await getServerSession(authOptions);
@@ -146,17 +146,6 @@ export async function requireAdmin(
   // Check if user is admin
   const isAdmin = await checkIsAdmin(supabase, userId);
 
-  // Log the authentication attempt if enabled
-  if (logAttempt) {
-    const auditLogService = createAuditLogService(supabase);
-    try {
-      await logAdminAuthAttempt(auditLogService, userId, isAdmin, ipAddress);
-    } catch (error) {
-      // Don't fail the request if audit logging fails
-      console.error('Failed to log admin auth attempt:', error);
-    }
-  }
-
   if (!isAdmin) {
     return {
       success: false,
@@ -165,10 +154,25 @@ export async function requireAdmin(
     };
   }
 
+  // Check if this is the first admin access in this session
+  const isFirstAdminAccess = !session.adminSessionLogged;
+
+  // Log only the first admin access per session
+  if (logFirstAccess && isFirstAdminAccess) {
+    const auditLogService = createAuditLogService(supabase);
+    try {
+      await logAdminAuthAttempt(auditLogService, userId, true, ipAddress);
+    } catch (error) {
+      // Don't fail the request if audit logging fails
+      console.error('Failed to log admin auth attempt:', error);
+    }
+  }
+
   return {
     success: true,
     userId,
     isAdmin: true,
+    isFirstAdminAccess,
   };
 }
 

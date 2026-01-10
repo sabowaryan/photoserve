@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminSessionMarker } from "@/components/admin/admin-session-marker";
 
 /**
  * Check if the current user has admin privileges
@@ -56,6 +57,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
+      <AdminSessionMarker />
       <AdminHeader adminName={adminName} adminEmail={adminEmail} />
       <div className="flex pt-20">
         <AdminNav />
