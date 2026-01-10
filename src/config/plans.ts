@@ -29,6 +29,28 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
 };
 
 /**
+ * Plan Pricing Configuration
+ * Defines the pricing for each subscription plan
+ */
+export const PLAN_PRICING: Record<SubscriptionPlan, {
+  monthlyPrice: number;
+  yearlyPrice: number;
+}> = {
+  free: {
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+  },
+  premium: {
+    monthlyPrice: 9.99,
+    yearlyPrice: 95.90, // ~20% discount
+  },
+  pro: {
+    monthlyPrice: 25.99,
+    yearlyPrice: 249.50, // ~20% discount
+  },
+};
+
+/**
  * Get plan limits for a given subscription plan
  */
 export function getPlanLimits(plan: SubscriptionPlan): PlanLimits {

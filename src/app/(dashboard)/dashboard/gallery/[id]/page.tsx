@@ -1,18 +1,9 @@
 import { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
-import Link from "next/link";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { LogoIcon } from "@/components/shared/logo";
-import {
-  ArrowLeft,
-  Eye,
-  Calendar,
-  Image as ImageIcon,
-} from "lucide-react";
-import { formatDistanceFr, isDatePast } from "@/lib/date";
 import { GalleryDetailClient } from "./gallery-detail-client";
+import { GalleryHero } from "@/components/gallery-detail";
+import { PLAN_LIMITS } from "@/config/plans";
 
 export const metadata: Metadata = {
   title: "Détails de la galerie | PikSend",
@@ -41,7 +32,13 @@ interface GalleryImage {
 }
 
 interface Profile {
+  id: string;
+  email: string;
+  name: string | null;
   subscription_plan: "free" | "premium" | "pro";
+  storage_used_mb: number;
+  storage_limit_mb: number;
+  max_galleries: number;
   max_images_per_gallery: number;
   max_image_size_mb: number;
 }
@@ -49,7 +46,7 @@ interface Profile {
 async function getGalleryData(galleryId: string, userId: string) {
   const { supabase, hasRLS } = await requireSupabaseClient();
 
-  // Fetch gallery (excluding password_hash for security)
+  // Fetch gallery
   let galleryQuery = supabase
     .from("galleries")
     .select(
@@ -83,10 +80,10 @@ async function getGalleryData(galleryId: string, userId: string) {
     console.error("Error fetching images:", imagesError);
   }
 
-  // Fetch profile for limits
+  // Fetch profile
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("subscription_plan, max_images_per_gallery, max_image_size_mb")
+    .select("*")
     .eq("id", userId)
     .single();
 
@@ -102,29 +99,16 @@ async function getGalleryData(galleryId: string, userId: string) {
 }
 
 // Duration options by plan
-const DURATION_OPTIONS = {
-  free: [
-    { value: 7, label: "7 jours" },
-    { value: 14, label: "14 jours" },
-    { value: 30, label: "30 jours" },
-  ],
-  premium: [
-    { value: 7, label: "7 jours" },
-    { value: 14, label: "14 jours" },
-    { value: 30, label: "30 jours" },
-    { value: 60, label: "60 jours" },
-    { value: 90, label: "90 jours" },
-  ],
-  pro: [
-    { value: 7, label: "7 jours" },
-    { value: 14, label: "14 jours" },
-    { value: 30, label: "30 jours" },
-    { value: 60, label: "60 jours" },
-    { value: 90, label: "90 jours" },
-    { value: 180, label: "180 jours" },
-    { value: 365, label: "1 an" },
-  ],
-};
+const ALL_DURATION_OPTIONS = [
+  { value: 1, label: "1 jour" },
+  { value: 3, label: "3 jours" },
+  { value: 7, label: "7 jours" },
+  { value: 14, label: "14 jours" },
+  { value: 30, label: "30 jours" },
+  { value: 90, label: "90 jours" },
+  { value: 180, label: "180 jours" },
+  { value: 365, label: "1 an" },
+];
 
 export default async function GalleryDetailPage({
   params,
@@ -144,69 +128,31 @@ export default async function GalleryDetailPage({
     notFound();
   }
 
-  const isExpired = isDatePast(gallery.expires_at);
-  const totalImageSize = images.reduce(
-    (acc, img) => acc + (img.file_size_mb || 0),
-    0
+  const plan = profile?.subscription_plan || "free";
+  const limits = PLAN_LIMITS[plan];
+  
+  // Filter duration options based on plan
+  const durationOptions = ALL_DURATION_OPTIONS.filter(
+    (opt) => opt.value <= limits.max_expiration_days
   );
-
-  const plan = (profile?.subscription_plan || "free") as keyof typeof DURATION_OPTIONS;
-  const durationOptions = DURATION_OPTIONS[plan] || DURATION_OPTIONS.free;
+  
   const canChangeDuration = plan !== "free";
+  const isExpired = new Date(gallery.expires_at) < new Date();
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <LogoIcon size={20} />
-            <span className="font-display text-xl font-bold gradient-text">
-              PikSend
-            </span>
-          </Link>
-        </div>
-      </header>
+    <main className="max-w-7xl mx-auto px-4 sm:px-10 pt-28 pb-20">
+      {/* Hero Section with Breadcrumb */}
+      <GalleryHero
+          title={gallery.title}
+          uniqueSlug={gallery.unique_slug}
+          viewsCount={gallery.views_count}
+          expiresAt={gallery.expires_at}
+          createdAt={gallery.created_at}
+          imageCount={images.length}
+          isExpired={isExpired}
+        />
 
-      <main className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Back Link */}
-        <Button variant="ghost" asChild className="mb-6">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au dashboard
-          </Link>
-        </Button>
-
-        {/* Gallery Header - Server rendered info */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="font-display text-2xl font-bold">{gallery.title}</h1>
-              <Badge variant={isExpired ? "destructive" : "secondary"}>
-                {isExpired ? "Expirée" : "Active"}
-              </Badge>
-            </div>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Eye className="h-4 w-4" />
-                {gallery.views_count} vues
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {isExpired
-                  ? "Expirée"
-                  : `Expire ${formatDistanceFr(gallery.expires_at)}`}
-              </span>
-              <span className="flex items-center gap-1">
-                <ImageIcon className="h-4 w-4" />
-                {images.length} image{images.length !== 1 ? "s" : ""} (
-                {totalImageSize.toFixed(1)} Mo)
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Client-side interactive components */}
+        {/* Gallery Detail Client */}
         <GalleryDetailClient
           gallery={gallery}
           initialImages={images}
@@ -215,6 +161,5 @@ export default async function GalleryDetailPage({
           canChangeDuration={canChangeDuration}
         />
       </main>
-    </div>
   );
 }

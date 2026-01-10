@@ -154,17 +154,21 @@ function getCookieDomain(): string | undefined {
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            authorization: {
+              params: {
+                prompt: "consent",
+                access_type: "offline",
+                response_type: "code",
+              },
+            },
+          }),
+        ]
+      : []),
 
     CredentialsProvider({
       name: "credentials",
@@ -323,7 +327,9 @@ const existing = data?.users?.find(
 
   cookies: {
     sessionToken: {
-      name: "__Secure-next-auth.session-token",
+      name: process.env.NODE_ENV === "production" 
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
       options: {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -333,7 +339,9 @@ const existing = data?.users?.find(
       },
     },
     callbackUrl: {
-      name: "__Secure-next-auth.callback-url",
+      name: process.env.NODE_ENV === "production"
+        ? "__Secure-next-auth.callback-url"
+        : "next-auth.callback-url",
       options: {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -343,7 +351,9 @@ const existing = data?.users?.find(
       },
     },
     csrfToken: {
-      name: "__Host-next-auth.csrf-token",
+      name: process.env.NODE_ENV === "production"
+        ? "__Host-next-auth.csrf-token"
+        : "next-auth.csrf-token",
       options: {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -356,6 +366,7 @@ const existing = data?.users?.find(
   pages: {
     signIn: "/auth",
     error: "/auth",
+    newUser: "/dashboard",
   },
 
   secret: process.env.NEXTAUTH_SECRET,

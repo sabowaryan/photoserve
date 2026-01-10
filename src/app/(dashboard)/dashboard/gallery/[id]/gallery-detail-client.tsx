@@ -1,44 +1,21 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Upload,
-  Copy,
-  Trash2,
-  ExternalLink,
-  Loader2,
-  Image as ImageIcon,
-  Lock,
-  Calendar,
-  Save,
-  Edit3,
-  X,
-} from "lucide-react";
-import { formatDateFr } from "@/lib/date";
+import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  TabSwitcher,
+  DeleteModal,
+  DragOverlay,
+  ImageGrid,
+  UploadQueue,
+  ContentHeader,
+  ShareCard,
+  QuotaCard,
+  SettingsTab,
+} from "@/components/gallery-detail";
+import { UpgradeModal } from "@/components/shared/upgrade-modal";
 
 interface Gallery {
   id: string;
@@ -65,6 +42,7 @@ interface Profile {
   subscription_plan: "free" | "premium" | "pro";
   max_images_per_gallery: number;
   max_image_size_mb: number;
+  storage_used_mb: number;
 }
 
 interface DurationOption {
@@ -72,11 +50,12 @@ interface DurationOption {
   label: string;
 }
 
-interface UploadingImage {
+interface UploadingFile {
   id: string;
-  url: string;
   file: File;
-  status: "uploading" | "done" | "error";
+  preview: string;
+  progress: number;
+  status: 'uploading' | 'done' | 'error';
 }
 
 interface GalleryDetailClientProps {
@@ -96,573 +75,369 @@ export function GalleryDetailClient({
 }: GalleryDetailClientProps) {
   const router = useRouter();
 
+  // State management
   const [images, setImages] = useState<GalleryImage[]>(initialImages);
-  const [uploadingImages, setUploadingImages] = useState<UploadingImage[]>([]);
-  const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [title, setTitle] = useState(gallery.title);
+  const [password, setPassword] = useState('');
+  const [expirationDays, setExpirationDays] = useState(gallery.expiration_days);
+  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('content');
+  const [error, setError] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ ids: string[], type: 'single' | 'multiple' } | null>(null);
+  const [uploadQueue, setUploadQueue] = useState<UploadingFile[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [publicUrl, setPublicUrl] = useState(`/g/${gallery.unique_slug}`);
+  
+  // Upgrade modal state
+  const [upgradeModal, setUpgradeModal] = useState<{
+    isOpen: boolean;
+    limitType: "gallery" | "storage" | "images" | "imageSize";
+    currentValue?: number;
+    limitValue?: number;
+  }>({
+    isOpen: false,
+    limitType: "images",
+  });
 
-  // Edit states
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [isEditingPassword, setIsEditingPassword] = useState(false);
-  const [editTitle, setEditTitle] = useState(gallery.title);
-  const [editPassword, setEditPassword] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [currentExpirationDays, setCurrentExpirationDays] = useState(
-    gallery.expiration_days || 30
-  );
-  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
-  const [isDeletingGallery, setIsDeletingGallery] = useState(false);
+  // Set public URL on client side only
+  useEffect(() => {
+    setPublicUrl(`${window.location.origin}/g/${gallery.unique_slug}`);
+  }, [gallery.unique_slug]);
 
-  const copyLink = () => {
-    const url = `${window.location.origin}/g/${gallery.unique_slug}`;
-    navigator.clipboard.writeText(url);
-    toast.success("Lien copié dans le presse-papier");
+  const limits = {
+    max_images_per_gallery: profile?.max_images_per_gallery || 30,
+    max_image_size_mb: profile?.max_image_size_mb || 5,
+  };
+  
+  const isLimitReached = images.length >= limits.max_images_per_gallery;
+  const planName = profile?.subscription_plan || 'free';
+
+  // Upgrade modal helpers
+  const openUpgradeModal = useCallback((
+    limitType: "gallery" | "storage" | "images" | "imageSize",
+    currentValue?: number,
+    limitValue?: number
+  ) => {
+    setUpgradeModal({
+      isOpen: true,
+      limitType,
+      currentValue,
+      limitValue,
+    });
+  }, []);
+
+  const closeUpgradeModal = useCallback(() => {
+    setUpgradeModal(prev => ({ ...prev, isOpen: false }));
+  }, []);
+
+  // Selection handlers
+  const toggleSelection = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
   };
 
-  const handleSaveTitle = async () => {
-    if (!editTitle.trim()) return;
-
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/galleries/${gallery.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: editTitle.trim() }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update title");
-
-      setIsEditingTitle(false);
-      toast.success("Titre modifié");
-      router.refresh();
-    } catch (error) {
-      console.error("Error updating title:", error);
-      toast.error("Impossible de modifier le titre");
-    } finally {
-      setIsSaving(false);
+  const toggleSelectAll = () => {
+    if (selectedIds.size === images.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(images.map(img => img.id)));
     }
   };
 
-  const handleSavePassword = async () => {
-    if (!editPassword.trim() || editPassword.trim().length < 4) {
-      toast.error("Le mot de passe doit contenir au moins 4 caractères");
+  // Delete handlers
+  const requestDeleteSelected = () => {
+    if (selectedIds.size === 0) return;
+    setDeleteConfirm({ ids: Array.from(selectedIds), type: 'multiple' });
+  };
+
+  const requestDeleteSingle = (imageId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteConfirm({ ids: [imageId], type: 'single' });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm) return;
+    
+    try {
+      for (const id of deleteConfirm.ids) {
+        await fetch(`/api/images/${id}`, { method: "DELETE" });
+      }
+      
+      const idsToRemove = new Set(deleteConfirm.ids);
+      setImages(prev => prev.filter(img => !idsToRemove.has(img.id)));
+      const newSelected = new Set(selectedIds);
+      deleteConfirm.ids.forEach(id => newSelected.delete(id));
+      setSelectedIds(newSelected);
+      setDeleteConfirm(null);
+      
+      toast.success(`${deleteConfirm.ids.length} image(s) supprimée(s)`);
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting images:", error);
+      toast.error("Impossible de supprimer les images");
+    }
+  };
+
+  // Settings save handler
+  const handleSaveSettings = async () => {
+    setIsUpdating(true);
+    setSaveSuccess(false);
+    
+    try {
+      const updates: Record<string, unknown> = {};
+      if (title.trim() !== gallery.title) {
+        updates.title = title.trim();
+      }
+      if (password.trim()) {
+        updates.password = password.trim();
+      }
+      if (expirationDays !== gallery.expiration_days && canChangeDuration) {
+        updates.expiration_days = expirationDays;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        const response = await fetch(`/api/galleries/${gallery.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+
+        if (!response.ok) throw new Error("Failed to update");
+
+        toast.success("Modifications enregistrées");
+        setPassword("");
+        router.refresh();
+      }
+      
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error saving:", error);
+      toast.error("Impossible d'enregistrer");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Upload logic
+  const processFiles = useCallback((files: File[]) => {
+    setError(null);
+    const currentCount = images.length + uploadQueue.length;
+
+    if (currentCount + files.length > limits.max_images_per_gallery) {
+      openUpgradeModal("images", currentCount, limits.max_images_per_gallery);
       return;
     }
 
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/galleries/${gallery.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: editPassword.trim() }),
-      });
+    const validFiles: File[] = [];
+    let tempError: string | null = null;
 
-      if (!response.ok) throw new Error("Failed to update password");
-
-      setIsEditingPassword(false);
-      setEditPassword("");
-      toast.success("Mot de passe modifié");
-      router.refresh();
-    } catch (error) {
-      console.error("Error updating password:", error);
-      toast.error("Impossible de modifier le mot de passe");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleChangeDuration = async (days: string) => {
-    if (!canChangeDuration) return;
-
-    const daysNum = parseInt(days);
-    setCurrentExpirationDays(daysNum);
-
-    try {
-      const response = await fetch(`/api/galleries/${gallery.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ expirationDays: daysNum }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update duration");
-
-      toast.success("Durée modifiée");
-      router.refresh();
-    } catch (error) {
-      console.error("Error updating duration:", error);
-      toast.error("Impossible de modifier la durée");
-    }
-  };
-
-  const handleFileSelect = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
-      const maxImagesPerGallery = profile?.max_images_per_gallery || 30;
-      const maxImageSizeMb = profile?.max_image_size_mb || 1;
-
-      if (images.length + files.length > maxImagesPerGallery) {
-        toast.error(`Vous ne pouvez pas ajouter plus de ${maxImagesPerGallery} images`);
+    files.forEach(file => {
+      const sizeMb = file.size / (1024 * 1024);
+      
+      if (!file.type.startsWith('image/')) {
+        tempError = `Le fichier ${file.name} n'est pas une image valide.`;
+        return;
+      }
+      
+      if (sizeMb > limits.max_image_size_mb) {
+        openUpgradeModal("imageSize", Math.round(sizeMb * 10) / 10, limits.max_image_size_mb);
         return;
       }
 
-      for (const file of files) {
-        if (!file.type.startsWith("image/")) {
-          toast.error(`${file.name} n'est pas une image`);
-          continue;
-        }
+      validFiles.push(file);
+    });
 
-        if (file.size > maxImageSizeMb * 1024 * 1024) {
-          toast.error(`${file.name} dépasse la limite de ${maxImageSizeMb} Mo`);
-          continue;
-        }
+    if (tempError) {
+      setError(tempError);
+      if (validFiles.length === 0) return;
+    }
 
-        const uploadId = crypto.randomUUID();
-        const uploadingImage: UploadingImage = {
-          id: uploadId,
-          url: URL.createObjectURL(file),
-          file,
-          status: "uploading",
-        };
+    const newQueueItems: UploadingFile[] = validFiles.map(file => ({
+      id: Math.random().toString(36).substr(2, 9),
+      file,
+      preview: URL.createObjectURL(file),
+      progress: 0,
+      status: 'uploading'
+    }));
 
-        setUploadingImages((prev) => [...prev, uploadingImage]);
+    setUploadQueue(prev => [...prev, ...newQueueItems]);
+    newQueueItems.forEach(item => simulateFileUpload(item));
+  }, [images.length, uploadQueue.length, limits, openUpgradeModal]);
 
-        try {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("galleryId", gallery.id);
-          formData.append(
-            "orderIndex",
-            (images.length + uploadingImages.length).toString()
-          );
-
-          const response = await fetch("/api/images/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Upload failed");
-          }
-
-          const { data: newImage } = await response.json();
-
-          setUploadingImages((prev) =>
-            prev.map((img) =>
-              img.id === uploadId ? { ...img, status: "done" } : img
-            )
-          );
-
-          // Add the new image to the list
-          if (newImage) {
-            setImages((prev) => [...prev, newImage]);
-          }
-
-          setTimeout(() => {
-            setUploadingImages((prev) =>
-              prev.filter((img) => img.id !== uploadId)
-            );
-          }, 1000);
-
-          router.refresh();
-        } catch (error) {
-          console.error("Upload error:", error);
-          setUploadingImages((prev) =>
-            prev.map((img) =>
-              img.id === uploadId ? { ...img, status: "error" } : img
-            )
-          );
-          toast.error("Impossible d'uploader l'image");
-        }
-      }
-    },
-    [gallery.id, images.length, uploadingImages.length, profile, router]
-  );
-
-  const deleteImage = async (imageId: string) => {
-    setDeletingImageId(imageId);
+  const simulateFileUpload = useCallback(async (item: UploadingFile) => {
     try {
-      const response = await fetch(`/api/images/${imageId}`, {
-        method: "DELETE",
+      const formData = new FormData();
+      formData.append("file", item.file);
+      formData.append("galleryId", gallery.id);
+      formData.append("orderIndex", images.length.toString());
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 20 + 5;
+        if (progress >= 90) {
+          clearInterval(interval);
+        } else {
+          setUploadQueue(prev => prev.map(q => 
+            q.id === item.id ? { ...q, progress } : q
+          ));
+        }
+      }, 150);
+
+      const response = await fetch("/api/images/upload", {
+        method: "POST",
+        body: formData,
       });
+
+      clearInterval(interval);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Delete failed");
+        throw new Error(errorData.error || "Upload failed");
       }
 
-      setImages((prev) => prev.filter((img) => img.id !== imageId));
-      setImageToDelete(null);
-      toast.success("Image supprimée");
+      const { data: newImage } = await response.json();
+
+      setUploadQueue(prev => prev.map(q => 
+        q.id === item.id ? { ...q, progress: 100, status: 'done' } : q
+      ));
+
+      setTimeout(() => {
+        if (newImage) {
+          setImages(prev => [newImage, ...prev]);
+        }
+        setUploadQueue(prev => prev.filter(q => q.id !== item.id));
+      }, 500);
+
       router.refresh();
     } catch (error) {
-      console.error("Error deleting image:", error);
-      toast.error("Impossible de supprimer l'image");
-    } finally {
-      setDeletingImageId(null);
+      console.error("Upload error:", error);
+      setUploadQueue(prev => prev.map(q => 
+        q.id === item.id ? { ...q, status: 'error' } : q
+      ));
+      toast.error(`Erreur lors de l'upload de ${item.file.name}`);
     }
-  };
+  }, [gallery.id, images.length, router]);
 
-  const deleteGallery = async () => {
-    setIsDeletingGallery(true);
-    try {
-      const response = await fetch(`/api/galleries/${gallery.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete gallery");
-
-      toast.success("Galerie supprimée");
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Error deleting gallery:", error);
-      toast.error("Impossible de supprimer la galerie");
-    } finally {
-      setIsDeletingGallery(false);
-    }
-  };
+  const onDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length > 0) processFiles(files);
+  }, [processFiles]);
 
   return (
-    <>
-      {/* Action Buttons */}
-      <div className="flex items-center gap-2 mb-8">
-        <Button variant="outline" size="sm" onClick={copyLink}>
-          <Copy className="h-4 w-4 mr-2" />
-          Copier le lien
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <a
-            href={`/g/${gallery.unique_slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Voir
-          </a>
-        </Button>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm" disabled={isDeletingGallery}>
-              {isDeletingGallery ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Supprimer la galerie ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Êtes-vous sûr de vouloir supprimer la galerie &quot;{gallery.title}&quot; ?
-                <br />
-                Cette action est irréversible. Toutes les images seront
-                définitivement supprimées.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeletingGallery}>Annuler</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={deleteGallery}
-                disabled={isDeletingGallery}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                {isDeletingGallery && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                Supprimer
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-
-      {/* Gallery Settings Card */}
-      <Card className="glass-card mb-8">
-        <CardContent className="pt-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Title Edit */}
-            <div>
-              <Label className="text-muted-foreground text-xs">Titre</Label>
-              {isEditingTitle ? (
-                <div className="flex items-center gap-2 mt-1">
-                  <Input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    className="h-8 text-sm"
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={handleSaveTitle}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Save className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      setIsEditingTitle(false);
-                      setEditTitle(gallery.title);
-                    }}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-sm font-medium">{gallery.title}</p>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0"
-                    onClick={() => setIsEditingTitle(true)}
-                  >
-                    <Edit3 className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <Label className="text-muted-foreground text-xs flex items-center gap-1">
-                <Lock className="h-3 w-3" />
-                Mot de passe
-              </Label>
-              {isEditingPassword ? (
-                <div className="flex items-center gap-2 mt-1">
-                  <Input
-                    type="text"
-                    value={editPassword}
-                    onChange={(e) => setEditPassword(e.target.value)}
-                    className="h-8 text-sm"
-                    placeholder="Nouveau mot de passe"
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={handleSavePassword}
-                    disabled={isSaving || !editPassword.trim()}
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Save className="h-3 w-3" />
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      setIsEditingPassword(false);
-                      setEditPassword("");
-                    }}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="font-mono text-sm text-muted-foreground">
-                    ••••••••
-                  </p>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0"
-                    onClick={() => setIsEditingPassword(true)}
-                  >
-                    <Edit3 className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Expiration Date */}
-            <div>
-              <Label className="text-muted-foreground text-xs flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                Date d&apos;expiration
-              </Label>
-              <p className="text-sm mt-1">
-                {formatDateFr(gallery.expires_at)}
-              </p>
-            </div>
-
-            {/* Duration Selector */}
-            <div>
-              <Label className="text-muted-foreground text-xs">
-                Durée de vie
-              </Label>
-              {canChangeDuration ? (
-                <Select
-                  value={currentExpirationDays.toString()}
-                  onValueChange={handleChangeDuration}
-                >
-                  <SelectTrigger className="h-8 mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {durationOptions.map((option) => (
-                      <SelectItem
-                        key={option.value}
-                        value={option.value.toString()}
-                      >
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <p className="text-sm mt-1 text-muted-foreground">
-                  {currentExpirationDays} jours
-                  <span className="text-xs block">
-                    Passez à Premium pour modifier
-                  </span>
-                </p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Add Images */}
-      <div className="mb-6">
-        <label className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-          <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-          <span className="text-sm text-muted-foreground">
-            Ajouter des images ({images.length}/
-            {profile?.max_images_per_gallery || 30})
-          </span>
-          <span className="text-xs text-muted-foreground mt-1">
-            Max {profile?.max_image_size_mb || 1} Mo par image
-          </span>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-        </label>
-      </div>
-
-      {/* Images Grid */}
-      {images.length === 0 && uploadingImages.length === 0 ? (
-        <Card className="glass-card">
-          <CardContent className="py-12 text-center">
-            <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-display text-lg font-semibold mb-2">
-              Aucune image
-            </h3>
-            <p className="text-muted-foreground">
-              Ajoutez des images à votre galerie pour commencer.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {/* Existing images */}
-          {images.map((image) => (
-            <div
-              key={image.id}
-              className="relative aspect-square rounded-lg overflow-hidden group"
-            >
-              <img
-                src={image.cloudinary_url}
-                alt=""
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-2">
-                <span className="text-xs text-foreground">
-                  {(image.file_size_mb || 0).toFixed(1)} Mo
-                </span>
-              </div>
-              <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-colors flex items-center justify-center">
-                <AlertDialog open={imageToDelete === image.id} onOpenChange={(open) => !open && setImageToDelete(null)}>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => setImageToDelete(image.id)}
-                      disabled={deletingImageId === image.id}
-                    >
-                      {deletingImageId === image.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Supprimer cette image ?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Cette action est irréversible. L&apos;image sera définitivement supprimée.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel disabled={deletingImageId === image.id}>Annuler</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteImage(image.id)}
-                        disabled={deletingImageId === image.id}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        {deletingImageId === image.id && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                        Supprimer
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </div>
-          ))}
-
-          {/* Uploading images */}
-          {uploadingImages.map((img) => (
-            <div
-              key={img.id}
-              className="relative aspect-square rounded-lg overflow-hidden"
-            >
-              <img
-                src={img.url}
-                alt=""
-                className="w-full h-full object-cover opacity-50"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                {img.status === "uploading" && (
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                )}
-                {img.status === "done" && (
-                  <div className="bg-primary rounded-full p-2">
-                    <svg
-                      className="h-4 w-4 text-primary-foreground"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                )}
-                {img.status === "error" && (
-                  <X className="h-8 w-8 text-destructive" />
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="space-y-8 animate-fade-in relative">
+      {/* Delete Modal */}
+      {deleteConfirm && (
+        <DeleteModal
+          count={deleteConfirm.ids.length}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeleteConfirm(null)}
+        />
       )}
-    </>
+
+      {/* Drag & Drop Overlay */}
+      {isDragging && (
+        <DragOverlay
+          onDragOver={(e) => e.preventDefault()}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={onDrop}
+        />
+      )}
+
+      {/* Tab Switcher */}
+      <TabSwitcher
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        selectedCount={selectedIds.size}
+        onDeleteSelected={requestDeleteSelected}
+      />
+
+      {/* Content Tab */}
+      {activeTab === 'content' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div 
+            className="lg:col-span-3 space-y-6"
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          >
+            {/* Header */}
+            <ContentHeader
+              imageCount={images.length}
+              maxImages={limits.max_images_per_gallery}
+              isLimitReached={isLimitReached}
+              selectedCount={selectedIds.size}
+              totalCount={images.length}
+              onToggleSelectAll={toggleSelectAll}
+              onUpload={processFiles}
+            />
+
+            {/* Error Message */}
+            {error && (
+              <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-2xl text-sm font-bold flex items-center gap-3 animate-in shake-in">
+                <AlertCircle size={20} />
+                {error}
+              </div>
+            )}
+
+            {/* Upload Queue */}
+            <UploadQueue items={uploadQueue} />
+
+            {/* Images Grid */}
+            <ImageGrid
+              images={images}
+              selectedIds={selectedIds}
+              isLimitReached={isLimitReached}
+              onToggleSelection={toggleSelection}
+              onDeleteSingle={requestDeleteSingle}
+              onUpload={processFiles}
+            />
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <ShareCard publicUrl={publicUrl} />
+            <QuotaCard
+              currentCount={images.length}
+              maxCount={limits.max_images_per_gallery}
+              planName={planName}
+            />
+          </div>
+        </div>
+      ) : (
+        /* Settings Tab */
+        <SettingsTab
+          title={title}
+          onTitleChange={setTitle}
+          password={password}
+          onPasswordChange={setPassword}
+          durationOptions={durationOptions}
+          currentDuration={expirationDays}
+          onDurationChange={setExpirationDays}
+          canChangeDuration={canChangeDuration}
+          isUpdating={isUpdating}
+          saveSuccess={saveSuccess}
+          onSave={handleSaveSettings}
+        />
+      )}
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={upgradeModal.isOpen}
+        onClose={closeUpgradeModal}
+        limitType={upgradeModal.limitType}
+        currentValue={upgradeModal.currentValue}
+        limitValue={upgradeModal.limitValue}
+        currentPlan={planName}
+      />
+    </div>
   );
 }

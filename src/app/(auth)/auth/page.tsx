@@ -137,8 +137,14 @@ function AuthContent() {
     setError(null);
     
     try {
-      await signIn('google', { callbackUrl: '/dashboard' });
-    } catch {
+      console.log('[Auth] Tentative de connexion Google...');
+      const result = await signIn('google', { 
+        callbackUrl: '/dashboard',
+        redirect: true,
+      });
+      console.log('[Auth] Résultat signIn:', result);
+    } catch (err) {
+      console.error('[Auth] Erreur Google:', err);
       setError('Erreur lors de la connexion avec Google');
       setIsLoading(false);
     }

@@ -8,23 +8,13 @@ import { Switch } from '@/components/ui/switch';
 import { Check, Crown, Zap, Sparkles } from 'lucide-react';
 import { PricingButton } from '@/components/pricing/pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
+import { PLAN_PRICING, PLAN_LIMITS } from '@/config/plans';
 
 const PLANS = [
   {
     key: 'free' as const,
     name: 'Gratuit',
-    monthlyPrice: 0,
-    yearlyPrice: 0,
     description: 'Testez la livraison photos HD',
-    features: [
-      { text: '20 Mo de stockage', included: true },
-      { text: '3 galeries sécurisées', included: true },
-      { text: '30 photos par galerie', included: true },
-      { text: 'Galerie temporaire 14 jours', included: true },
-      { text: 'Qualité originale préservée', included: true },
-      { text: 'Durée personnalisable', included: false },
-      { text: 'Support prioritaire', included: false },
-    ],
     icon: Sparkles,
     color: 'text-muted-foreground',
     bgColor: 'bg-muted/50',
@@ -34,18 +24,7 @@ const PLANS = [
   {
     key: 'premium' as const,
     name: 'Premium',
-    monthlyPrice: 9.99,
-    yearlyPrice: 95.90, // 9.99 * 12 * 0.8 = 95.90
     description: 'Pour photographes professionnels actifs',
-    features: [
-      { text: '5 Go stockage photos haute résolution', included: true },
-      { text: '50 galeries sécurisées mot de passe', included: true },
-      { text: '500 photos par galerie', included: true },
-      { text: 'Galerie temporaire jusqu\'à 90 jours', included: true },
-      { text: 'Téléchargement qualité max illimité', included: true },
-      { text: 'Durée personnalisable', included: true },
-      { text: 'Support prioritaire', included: false },
-    ],
     icon: Crown,
     color: 'text-amber-500',
     bgColor: 'bg-amber-500/10',
@@ -55,18 +34,7 @@ const PLANS = [
   {
     key: 'pro' as const,
     name: 'Pro',
-    monthlyPrice: 25.99,
-    yearlyPrice: 249.50, // 25.99 * 12 * 0.8 = 249.50
     description: 'Pour photographes professionnels exigeants',
-    features: [
-      { text: '50 Go stockage photos haute résolution', included: true },
-      { text: '500 galeries sécurisées mot de passe', included: true },
-      { text: '5000 photos par galerie', included: true },
-      { text: 'Galerie temporaire jusqu\'à 180 jours', included: true },
-      { text: 'Téléchargement qualité max illimité', included: true },
-      { text: 'Durée personnalisable', included: true },
-      { text: 'Support prioritaire', included: true },
-    ],
     icon: Zap,
     color: 'text-primary',
     bgColor: 'bg-primary/10',
@@ -75,25 +43,51 @@ const PLANS = [
   },
 ];
 
+// Generate features from PLAN_LIMITS
+function getFeatures(planKey: 'free' | 'premium' | 'pro') {
+  const limits = PLAN_LIMITS[planKey];
+  const storage = limits.storage_limit_mb >= 1024 
+    ? `${limits.storage_limit_mb / 1024} Go` 
+    : `${limits.storage_limit_mb} Mo`;
+  
+  return [
+    { text: `${storage} de stockage`, included: true },
+    { text: `${limits.max_galleries} galeries sécurisées`, included: true },
+    { text: `${limits.max_images_per_gallery} photos par galerie`, included: true },
+    { text: `Galerie temporaire ${limits.max_expiration_days} jours`, included: true },
+    { text: 'Qualité originale préservée', included: true },
+    { text: 'Durée personnalisable', included: planKey !== 'free' },
+    { text: 'Support prioritaire', included: planKey === 'pro' },
+  ];
+}
+
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
   const { plan: currentPlan } = useSubscription();
 
-  const formatPrice = (plan: typeof PLANS[0]) => {
-    if (plan.monthlyPrice === 0) return '$0';
-    const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
-    return `$${price.toFixed(2)}`;
+  const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (pricing.monthlyPrice === 0) return '$0';
+    const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
+    return `${price.toFixed(2)}`;
   };
 
-  const getPeriod = (plan: typeof PLANS[0]) => {
-    if (plan.monthlyPrice === 0) return '/mois';
+  const getPeriod = (planKey: 'free' | 'premium' | 'pro') => {
+    if (PLAN_PRICING[planKey].monthlyPrice === 0) return '/mois';
     return isYearly ? '/an' : '/mois';
   };
 
-  const getMonthlyEquivalent = (plan: typeof PLANS[0]) => {
-    if (!isYearly || plan.monthlyPrice === 0) return null;
-    const monthlyEquivalent = plan.yearlyPrice / 12;
-    return `$${monthlyEquivalent.toFixed(2)}/mois`;
+  const getMonthlyEquivalent = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (!isYearly || pricing.monthlyPrice === 0) return null;
+    const monthlyEquivalent = pricing.yearlyPrice / 12;
+    return `${monthlyEquivalent.toFixed(2)}/mois`;
+  };
+
+  const getSavings = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (!isYearly || pricing.monthlyPrice === 0) return null;
+    return ((pricing.monthlyPrice * 12) - pricing.yearlyPrice).toFixed(2);
   };
 
   return (
@@ -136,7 +130,9 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {PLANS.map((plan) => {
               const Icon = plan.icon;
-              const monthlyEquivalent = getMonthlyEquivalent(plan);
+              const monthlyEquivalent = getMonthlyEquivalent(plan.key);
+              const savings = getSavings(plan.key);
+              const features = getFeatures(plan.key);
               
               return (
                 <Card 
@@ -158,24 +154,20 @@ export default function PricingPage() {
                     <CardTitle className="font-display text-2xl">{plan.name}</CardTitle>
                     <CardDescription className="text-sm">{plan.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold">{formatPrice(plan)}</span>
-                      <span className="text-muted-foreground">{getPeriod(plan)}</span>
+                      <span className="text-4xl font-bold">{formatPrice(plan.key)}</span>
+                      <span className="text-muted-foreground">{getPeriod(plan.key)}</span>
                     </div>
                     {monthlyEquivalent && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        soit {monthlyEquivalent}
-                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">soit {monthlyEquivalent}</p>
                     )}
-                    {isYearly && plan.monthlyPrice > 0 && (
-                      <p className="text-xs text-green-500 mt-1">
-                        Économisez ${((plan.monthlyPrice * 12) - plan.yearlyPrice).toFixed(2)}/an
-                      </p>
+                    {savings && (
+                      <p className="text-xs text-green-500 mt-1">Économisez ${savings}/an</p>
                     )}
                   </CardHeader>
                   
                   <CardContent className="flex-1 flex flex-col">
                     <ul className="space-y-3 flex-1 mb-6">
-                      {plan.features.map((feature, i) => (
+                      {features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <Check className={`h-5 w-5 shrink-0 mt-0.5 ${feature.included ? plan.color : 'text-muted-foreground/30'}`} />
                           <span className={`text-sm ${feature.included ? 'text-foreground' : 'text-muted-foreground/50 line-through'}`}>

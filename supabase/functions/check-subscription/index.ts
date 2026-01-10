@@ -32,19 +32,22 @@ function getCorsHeaders(req: Request) {
   };
 }
 
-// Plan configuration matching Landing page pricing
+// Plan configuration matching src/config/plans.ts
+// IMPORTANT: Keep in sync with src/config/plans.ts
 const PLAN_LIMITS = {
   premium: {
     storage_limit_mb: 5120, // 5 Go
     max_galleries: 50,
     max_images_per_gallery: 500,
-    max_image_size_mb: 50, // Illimité en pratique
+    max_image_size_mb: 50,
+    max_expiration_days: 90,
   },
   pro: {
     storage_limit_mb: 51200, // 50 Go
     max_galleries: 500,
     max_images_per_gallery: 5000,
-    max_image_size_mb: 100, // Illimité en pratique
+    max_image_size_mb: 100,
+    max_expiration_days: 180,
   },
 };
 
@@ -63,6 +66,7 @@ const FREE_LIMITS = {
   max_galleries: 3,
   max_images_per_gallery: 30,
   max_image_size_mb: 1,
+  max_expiration_days: 14,
 };
 
 const logStep = (step: string, details?: any) => {

@@ -54,7 +54,7 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
   const supabase = createAdminClient();
   const { data: gallery, error } = await supabase
     .from('galleries')
-    .select('id, title, expires_at, views_count, is_active')
+    .select('id, title, expires_at, views_count, is_active, password_hash')
     .eq('unique_slug', slug)
     .maybeSingle();
 
@@ -66,6 +66,21 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
   const isExpired = new Date(gallery.expires_at) < new Date();
   const isInactive = !gallery.is_active;
 
+  // Fetch images if gallery is accessible
+  let images: { id: string; url: string }[] = [];
+  if (!isExpired && !isInactive) {
+    const { data: galleryImages } = await supabase
+      .from('images')
+      .select('id, cloudinary_url')
+      .eq('gallery_id', gallery.id)
+      .order('order_index');
+    
+    images = (galleryImages || []).map(img => ({
+      id: img.id,
+      url: img.cloudinary_url,
+    }));
+  }
+
   return (
     <GalleryViewClient
       slug={slug}
@@ -74,7 +89,8 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
         title: gallery.title,
         expires_at: gallery.expires_at,
         views_count: gallery.views_count ?? 0,
-        is_active: gallery.is_active ?? true,
+        images,
+        has_password: !!gallery.password_hash,
       }}
       isExpired={isExpired}
       isInactive={isInactive}

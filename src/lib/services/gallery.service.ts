@@ -28,6 +28,7 @@ import {
   GalleryLimitError,
 } from '@/lib/errors';
 import { getPlanLimits, isValidExpirationDays } from '@/config/plans';
+import { sanitizeTitle, sanitizePassword } from '@/lib/utils/sanitize';
 import type { Gallery as DbGallery, Image as DbImage } from '@/lib/supabase/types';
 
 // Local type for gallery access result using database types
@@ -84,6 +85,10 @@ export class GalleryService implements IGalleryService {
 
     const { title, password, expirationDays } = validatedData.data;
 
+    // Sanitize title and password
+    const sanitizedTitle = sanitizeTitle(title);
+    const sanitizedPassword = sanitizePassword(password);
+
     // Get user profile to check limits
     const profile = await this.profileRepository.findById(userId);
     if (!profile) {
@@ -111,7 +116,7 @@ export class GalleryService implements IGalleryService {
     const uniqueSlug = await this.galleryRepository.generateUniqueSlug();
 
     // Hash password (Requirement 4.3)
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+    const passwordHash = await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS);
 
     // Calculate expiration date
     const expiresAt = new Date();
@@ -120,7 +125,7 @@ export class GalleryService implements IGalleryService {
     // Create gallery
     const galleryData: GalleryInsert = {
       user_id: userId,
-      title,
+      title: sanitizedTitle,
       unique_slug: uniqueSlug,
       password_hash: passwordHash,
       expiration_days: expirationDays,
@@ -186,11 +191,12 @@ export class GalleryService implements IGalleryService {
     const updateData: Partial<Gallery> = {};
 
     if (title !== undefined) {
-      updateData.title = title;
+      updateData.title = sanitizeTitle(title);
     }
 
     if (password !== undefined) {
-      updateData.password_hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+      const sanitizedPassword = sanitizePassword(password);
+      updateData.password_hash = await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS);
     }
 
     if (expirationDays !== undefined) {
@@ -285,8 +291,8 @@ export class GalleryService implements IGalleryService {
       };
     }
 
-    // Increment view count (Requirement 4.6)
-    await this.galleryRepository.incrementViewCount(gallery.id);
+    // Note: View count is now incremented client-side after successful access
+    // This allows tracking views for galleries with or without password
 
     // Get images for the gallery
     const { data: images } = await this.supabase

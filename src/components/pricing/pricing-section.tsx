@@ -7,19 +7,18 @@ import { Switch } from '@/components/ui/switch';
 import { Check, Crown, Zap, Lock, Sparkles } from 'lucide-react';
 import { PricingButton } from './pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
+import { PLAN_PRICING } from '@/config/plans';
 import type { LandingContent } from '@/lib/content/landing';
 
 interface PricingSectionProps {
   content: LandingContent;
 }
 
-// Plans avec prix dynamiques
+// Plans metadata (prices come from PLAN_PRICING)
 const PRICING_PLANS = [
   {
     key: 'free' as const,
     name: 'Gratuit',
-    monthlyPrice: 0,
-    yearlyPrice: 0,
     description: 'Testez la livraison photos HD',
     icon: Sparkles,
     popular: false,
@@ -27,8 +26,6 @@ const PRICING_PLANS = [
   {
     key: 'premium' as const,
     name: 'Premium',
-    monthlyPrice: 9.99,
-    yearlyPrice: 95.90,
     description: 'Pour photographes professionnels actifs',
     icon: Crown,
     popular: true,
@@ -36,8 +33,6 @@ const PRICING_PLANS = [
   {
     key: 'pro' as const,
     name: 'Pro',
-    monthlyPrice: 25.99,
-    yearlyPrice: 249.50,
     description: 'Pour photographes professionnels exigeants',
     icon: Zap,
     popular: false,
@@ -48,27 +43,30 @@ export function PricingSection({ content }: PricingSectionProps) {
   const [isYearly, setIsYearly] = useState(false);
   const { plan: currentPlan } = useSubscription();
 
-  const formatPrice = (plan: typeof PRICING_PLANS[0]) => {
-    if (plan.monthlyPrice === 0) return '$0';
-    const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
-    return `$${price.toFixed(2)}`;
+  const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (pricing.monthlyPrice === 0) return '$0';
+    const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
+    return `${price.toFixed(2)}`;
   };
 
-  const getPeriod = (plan: typeof PRICING_PLANS[0]) => {
-    if (plan.monthlyPrice === 0) return '/mois';
+  const getPeriod = (planKey: 'free' | 'premium' | 'pro') => {
+    if (PLAN_PRICING[planKey].monthlyPrice === 0) return '/mois';
     return isYearly ? '/an' : '/mois';
   };
 
-  const getMonthlyEquivalent = (plan: typeof PRICING_PLANS[0]) => {
-    if (!isYearly || plan.monthlyPrice === 0) return null;
-    const monthlyEquivalent = plan.yearlyPrice / 12;
-    return `soit $${monthlyEquivalent.toFixed(2)}/mois`;
+  const getMonthlyEquivalent = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (!isYearly || pricing.monthlyPrice === 0) return null;
+    const monthlyEquivalent = pricing.yearlyPrice / 12;
+    return `soit ${monthlyEquivalent.toFixed(2)}/mois`;
   };
 
-  const getSavings = (plan: typeof PRICING_PLANS[0]) => {
-    if (!isYearly || plan.monthlyPrice === 0) return null;
-    const savings = (plan.monthlyPrice * 12) - plan.yearlyPrice;
-    return `Économisez $${savings.toFixed(2)}/an`;
+  const getSavings = (planKey: 'free' | 'premium' | 'pro') => {
+    const pricing = PLAN_PRICING[planKey];
+    if (!isYearly || pricing.monthlyPrice === 0) return null;
+    const savings = (pricing.monthlyPrice * 12) - pricing.yearlyPrice;
+    return `Économisez ${savings.toFixed(2)}/an`;
   };
 
   return (
@@ -115,8 +113,8 @@ export function PricingSection({ content }: PricingSectionProps) {
               p.name.toLowerCase() === plan.name.toLowerCase() || 
               (plan.key === 'free' && p.name === 'Free')
             );
-            const monthlyEquivalent = getMonthlyEquivalent(plan);
-            const savings = getSavings(plan);
+            const monthlyEquivalent = getMonthlyEquivalent(plan.key);
+            const savings = getSavings(plan.key);
             
             return (
               <Card 
@@ -139,18 +137,14 @@ export function PricingSection({ content }: PricingSectionProps) {
                   <CardTitle className="font-display text-xl sm:text-2xl">{plan.name}</CardTitle>
                   <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
                   <div className="mt-4">
-                    <span className="text-3xl sm:text-4xl font-bold">{formatPrice(plan)}</span>
-                    <span className="text-muted-foreground text-sm">{getPeriod(plan)}</span>
+                    <span className="text-3xl sm:text-4xl font-bold">{formatPrice(plan.key)}</span>
+                    <span className="text-muted-foreground text-sm">{getPeriod(plan.key)}</span>
                   </div>
                   {monthlyEquivalent && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {monthlyEquivalent}
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">{monthlyEquivalent}</p>
                   )}
                   {savings && (
-                    <p className="text-xs text-green-500 mt-1">
-                      {savings}
-                    </p>
+                    <p className="text-xs text-green-500 mt-1">{savings}</p>
                   )}
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
