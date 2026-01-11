@@ -95,11 +95,11 @@ export default async function GalleryCreatePage() {
   );
 
   return (
-  <div className="min-h-screen bg-background overflow-x-hidden">
+  
       
       
 
-      <main className="mx-auto w-full max-w-3xl px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-10 pt-28 pb-20">
         {/* Back Link */}
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard">
@@ -185,6 +185,6 @@ export default async function GalleryCreatePage() {
           </Card>
         </div>
       </main>
-    </div>
+  
   );
 }
