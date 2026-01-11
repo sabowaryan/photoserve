@@ -1,26 +1,29 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { 
-  Menu, 
-  X, 
-  ChevronRight, 
-  Sparkles, 
-  Zap, 
+import {
+  Menu,
+  X,
+  ChevronRight,
+  Sparkles,
+  Zap,
   HelpCircle,
   LayoutDashboard,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 
-export function MobileNav() {
+type MobileNavProps = {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+};
+
+export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated' && !!session;
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleNavClick = (id: string) => {
     const element = document.getElementById(id);
@@ -46,42 +49,47 @@ export function MobileNav() {
   };
 
   const links = [
-    { 
-      id: 'features', 
-      label: 'Fonctionnalités', 
-      icon: Sparkles, 
-      onClick: () => handleNavClick('features') 
+    {
+      id: 'features',
+      label: 'Fonctionnalités',
+      icon: Sparkles,
+      onClick: () => handleNavClick('features'),
     },
-    { 
-      id: 'tarifs', 
-      label: 'Tarification', 
-      icon: Zap, 
-      onClick: () => handleNavClick('tarifs') 
+    {
+      id: 'tarifs',
+      label: 'Tarification',
+      icon: Zap,
+      onClick: () => handleNavClick('tarifs'),
     },
-    { 
-      id: 'help', 
-      label: 'Aide', 
-      icon: HelpCircle, 
-      href: '/help'
+    {
+      id: 'help',
+      label: 'Aide',
+      icon: HelpCircle,
+      href: '/help',
     },
   ];
 
   return (
     <>
-      <button 
+      {/* Burger Button */}
+      <button
         onClick={() => setIsOpen(true)}
         className="md:hidden p-3 bg-slate-50 text-slate-600 rounded-2xl hover:bg-slate-100 transition-all active:scale-90 border border-slate-100"
+        aria-label="Ouvrir le menu"
       >
         <Menu size={22} />
       </button>
 
+      {/* Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[200] md:hidden">
-          <div 
+          {/* Backdrop */}
+          <div
             className="absolute inset-0 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300"
             onClick={() => setIsOpen(false)}
           />
-          
+
+          {/* Drawer */}
           <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl animate-in slide-in-from-right duration-500 flex flex-col">
             {/* Header */}
             <div className="p-6 flex items-center justify-between border-b border-slate-50">
@@ -93,9 +101,10 @@ export function MobileNav() {
                   PikSend
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
                 className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all"
+                aria-label="Fermer le menu"
               >
                 <X size={24} />
               </button>
@@ -106,10 +115,10 @@ export function MobileNav() {
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-2">
                 Menu Principal
               </div>
-              
+
               {links.map((item) => {
                 const Icon = item.icon;
-                
+
                 if (item.href) {
                   return (
                     <Link
@@ -126,7 +135,7 @@ export function MobileNav() {
                     </Link>
                   );
                 }
-                
+
                 return (
                   <button
                     key={item.id}
@@ -157,14 +166,14 @@ export function MobileNav() {
               )}
             </nav>
 
-            {/* Footer Actions */}
+            {/* Footer */}
             <div className="p-6 border-t border-slate-50 space-y-4">
               {isAuthenticated ? (
                 <>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-2">
                     Compte
                   </div>
-                  <button 
+                  <button
                     onClick={handleSignOut}
                     className="w-full flex items-center gap-4 p-4 text-rose-600 font-bold rounded-2xl hover:bg-rose-50 transition-all"
                   >
@@ -176,13 +185,13 @@ export function MobileNav() {
                 </>
               ) : (
                 <div className="grid grid-cols-1 gap-3">
-                  <button 
+                  <button
                     onClick={onLogin}
                     className="w-full py-4 bg-slate-100 text-slate-900 font-black rounded-2xl hover:bg-slate-200 transition-all text-sm"
                   >
                     Connexion
                   </button>
-                  <button 
+                  <button
                     onClick={onSignUp}
                     className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all text-sm"
                   >
