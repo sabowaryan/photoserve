@@ -95,11 +95,11 @@ export default async function GalleryCreatePage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background overflow-x-hidden">
       
       
 
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
+      <main className="mx-auto w-full max-w-3xl px-4 py-8">
         {/* Back Link */}
         <Button variant="ghost" asChild className="mb-6">
           <Link href="/dashboard">
@@ -108,12 +108,12 @@ export default async function GalleryCreatePage() {
           </Link>
         </Button>
 
-        <div className="grid gap-6">
+        <div className="grid min-w-0 gap-6">
           {/* Storage Indicator */}
           <Card className={`glass-card ${storagePercentage >= 100 ? "border-destructive" : ""}`}>
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center justify-between mb-2">
+                <div className="flex min-w-0 items-center gap-2">
                   <HardDrive className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">
                     Espace de stockage
@@ -129,7 +129,7 @@ export default async function GalleryCreatePage() {
                   {profile?.subscription_plan?.toUpperCase() || "FREE"}
                 </Badge>
               </div>
-              <div className="flex items-baseline gap-1 mb-2">
+              <div className="flex min-w-0 items-baseline gap-1 mb-2">
                 <span className="text-2xl font-bold">
                   {currentStorageUsed.toFixed(1)}
                 </span>
@@ -151,7 +151,7 @@ export default async function GalleryCreatePage() {
               {isGalleryLimitReached && (
                 <Link
                   href="/settings?upgrade=true"
-                  className="flex items-center gap-2 mt-2 text-destructive text-sm hover:underline"
+                  className="flex min-w-0 items-center gap-2 mt-2 text-destructive text-sm hover:underline"
                 >
                   <AlertTriangle className="h-4 w-4" />
                   Limite de galeries atteinte ({galleryCount}/{maxGalleries}).
