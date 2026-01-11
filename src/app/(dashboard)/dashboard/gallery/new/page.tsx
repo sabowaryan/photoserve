@@ -96,17 +96,8 @@ export default async function GalleryCreatePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <LogoIcon size={20} />
-            <span className="font-display text-xl font-bold gradient-text">
-              PikSend
-            </span>
-          </Link>
-        </div>
-      </header>
+      
+      
 
       <main className="container mx-auto px-4 py-8 max-w-3xl">
         {/* Back Link */}
