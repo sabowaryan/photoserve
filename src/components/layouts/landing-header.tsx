@@ -59,15 +59,15 @@ export function LandingHeader() {
   const onSignUp = () => router.push('/auth');
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-b ${
-        mobileOpen
-          ? 'bg-white border-slate-200 py-3'
-          : scrolled
-            ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-3 shadow-sm'
-            : 'bg-transparent border-transparent py-5'
-      }`}
-    >
+   <header
+  className={`fixed top-0 left-0 right-0 z-[100] transition-none border-b ${
+    mobileOpen
+      ? 'bg-white border-slate-200 py-3'
+      : scrolled
+        ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-3 shadow-sm'
+        : 'bg-transparent border-transparent py-5'
+  }`}
+>
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
         <button
