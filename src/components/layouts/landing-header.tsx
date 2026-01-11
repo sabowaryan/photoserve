@@ -12,13 +12,41 @@ export function LandingHeader() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated' && !!session;
-  const [scrolled, setScrolled] = useState(false);
 
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  /**
+   * Scroll handling
+   * ➜ Désactivé quand le menu mobile est ouvert
+   */
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    if (mobileOpen) return;
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    handleScroll(); // init au mount
     window.addEventListener('scroll', handleScroll);
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mobileOpen]);
+
+  /**
+   * Bloque le scroll du body quand le menu mobile est ouvert
+   */
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
 
   const handleNavClick = (id: string) => {
     const element = document.getElementById(id);
@@ -31,43 +59,45 @@ export function LandingHeader() {
   const onSignUp = () => router.push('/auth');
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-b border-transparent ${
-        scrolled 
-          ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-3 shadow-sm' 
-          : 'bg-transparent py-5'
+    <header
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-b ${
+        mobileOpen
+          ? 'bg-white border-slate-200 py-3'
+          : scrolled
+            ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-3 shadow-sm'
+            : 'bg-transparent border-transparent py-5'
       }`}
     >
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
-        <button 
+        <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2.5 group"
         >
           <div className="p-1.5 bg-indigo-600 rounded-lg text-white shadow-lg group-hover:scale-110 transition-transform">
             <LogoIcon size={20} />
           </div>
-          <span className="font-display text-xl sm:text-2xl font-black tracking-tight text-slate-900 bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="font-display text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             PikSend
           </span>
         </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <button 
-            onClick={() => handleNavClick('features')} 
+          <button
+            onClick={() => handleNavClick('features')}
             className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
           >
             Fonctionnalités
           </button>
-          <button 
-            onClick={() => handleNavClick('tarifs')} 
+          <button
+            onClick={() => handleNavClick('tarifs')}
             className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
           >
             Tarifs
           </button>
-          <Link 
-            href="/help" 
+          <Link
+            href="/help"
             className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
           >
             Aide
@@ -86,13 +116,13 @@ export function LandingHeader() {
             </Link>
           ) : (
             <>
-              <button 
+              <button
                 onClick={onLogin}
                 className="hidden md:inline-flex px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors rounded-xl hover:bg-slate-50"
               >
                 Connexion
               </button>
-              <button 
+              <button
                 onClick={onSignUp}
                 className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-black text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
               >
@@ -100,9 +130,9 @@ export function LandingHeader() {
               </button>
             </>
           )}
-          
+
           {/* Mobile Navigation */}
-          <MobileNav />
+          <MobileNav isOpen={mobileOpen} setIsOpen={setMobileOpen} />
         </div>
       </div>
     </header>
