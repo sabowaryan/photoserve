@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: GalleryViewPageProps): Promis
       is_active: true,
       created_at: '',
       updated_at: ''
-    } : undefined 
+    } as any: undefined 
   });
 }
 
