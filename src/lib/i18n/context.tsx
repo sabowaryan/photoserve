@@ -15,29 +15,29 @@ import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
 // Note: Additional locale files will be created in task 4
 // Uncomment these imports once the locale files are created:
-// import sv from '@/locales/sv.json';
-// import no from '@/locales/no.json';
-// import da from '@/locales/da.json';
-// import fi from '@/locales/fi.json';
-// import ja from '@/locales/ja.json';
-// import ko from '@/locales/ko.json';
-// import zhCN from '@/locales/zh-CN.json';
-// import zhTW from '@/locales/zh-TW.json';
-// import ar from '@/locales/ar.json';
+import sv from '@/locales/sv.json';
+import no from '@/locales/no.json';
+import da from '@/locales/da.json';
+import fi from '@/locales/fi.json';
+import ja from '@/locales/ja.json';
+import ko from '@/locales/ko.json';
+import zhCN from '@/locales/zh-CN.json';
+import zhTW from '@/locales/zh-TW.json';
+import ar from '@/locales/ar.json';
 
 const dictionaries: Record<SupportedLocale, TranslationDictionary> = {
   en: en as TranslationDictionary,
   fr: fr as TranslationDictionary,
   // Note: Add these entries once locale files are created in task 4:
-  // sv: sv as TranslationDictionary,
-  // no: no as TranslationDictionary,
-  // da: da as TranslationDictionary,
-  // fi: fi as TranslationDictionary,
-  // ja: ja as TranslationDictionary,
-  // ko: ko as TranslationDictionary,
-  // 'zh-CN': zhCN as TranslationDictionary,
-  // 'zh-TW': zhTW as TranslationDictionary,
-  // ar: ar as TranslationDictionary,
+  sv: sv as TranslationDictionary,
+  no: no as TranslationDictionary,
+  da: da as TranslationDictionary,
+  fi: fi as TranslationDictionary,
+  ja: ja as TranslationDictionary,
+  ko: ko as TranslationDictionary,
+  'zh-CN': zhCN as TranslationDictionary,
+  'zh-TW': zhTW as TranslationDictionary,
+   ar: ar as TranslationDictionary,
 };
 
 export interface I18nContextValue {
