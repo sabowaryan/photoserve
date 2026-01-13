@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ExternalLink, Trash2, FileUp, Plus, ImageIcon } from "lucide-react";
+import { Check, ExternalLink, Trash2, FileUp, Plus } from "lucide-react";
 
 interface GalleryImage {
   id: string;
