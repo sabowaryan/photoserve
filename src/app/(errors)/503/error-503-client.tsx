@@ -28,37 +28,37 @@ export default function Error503Client() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-yellow-500/5 flex items-center justify-center p-4">
-      <div className="max-w-screen-lg w-full text-center space-y-8">
+      <div className="max-w-2xl w-full text-center space-y-6">
         {/* Animated 503 */}
         <div className="relative">
-          <h1 className="text-[150px] sm:text-[200px] font-black text-yellow-500/10 leading-none select-none">
+          <h1 className="text-[120px] sm:text-[140px] font-black text-yellow-500/10 leading-none select-none">
             503
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-background/80 backdrop-blur-sm rounded-full p-6">
-              <Construction className="w-16 h-16 text-yellow-500 animate-bounce" />
+            <div className="bg-background/80 backdrop-blur-sm rounded-full p-4">
+              <Construction className="w-12 h-12 text-yellow-500 animate-bounce" />
             </div>
           </div>
         </div>
 
         {/* Message */}
-        <div className="space-y-4">
-          <h2 className="text-3xl font-bold text-foreground">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">
             Service temporairement indisponible
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Nous effectuons actuellement une maintenance pour améliorer nos services. 
             Nous serons de retour très bientôt !
           </p>
         </div>
 
         {/* Countdown */}
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6 space-y-4">
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-center gap-2">
-            <Clock className="w-5 h-5 text-yellow-600" />
-            <span className="font-medium text-yellow-600">Actualisation automatique</span>
+            <Clock className="w-4 h-4 text-yellow-600" />
+            <span className="text-sm font-medium text-yellow-600">Actualisation automatique</span>
           </div>
-          <div className="text-4xl font-bold text-foreground">
+          <div className="text-3xl font-bold text-foreground">
             {countdown}s
           </div>
           <p className="text-sm text-muted-foreground">
@@ -67,7 +67,7 @@ export default function Error503Client() {
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
           <div 
             className="bg-yellow-500 h-full transition-all duration-1000 ease-linear"
             style={{ width: `${((60 - countdown) / 60) * 100}%` }}
@@ -75,12 +75,12 @@ export default function Error503Client() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={handleRefresh} className="gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <Button onClick={handleRefresh} size="sm" className="gap-2">
             <RefreshCw className="w-4 h-4" />
             Réessayer maintenant
           </Button>
-          <Button variant="outline" asChild className="gap-2">
+          <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               Retour à l&apos;accueil

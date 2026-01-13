@@ -25,13 +25,13 @@ export function ExpiredView({ isExpired }: ExpiredViewProps) {
             }
           </p>
         </div>
-        <div className="pt-10 opacity-30">
+        <div className="pt-10">
           <Image 
             src="/icons/logo.svg" 
             alt="PikSend" 
             width={40} 
-            height={40} 
-            className="mx-auto invert"
+            height={40}
+            className="mx-auto brightness-0 invert opacity-30"
           />
         </div>
       </div>

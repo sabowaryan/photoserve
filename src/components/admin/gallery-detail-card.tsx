@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Image, Calendar, Eye, Link as LinkIcon, User, HardDrive, ExternalLink } from "lucide-react";
+import { Image, Calendar, Eye, Link as LinkIcon, User, HardDrive, ExternalLink, Users, RefreshCw, UserCheck, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { GalleryDetails } from "@/types/admin";
+import type { GalleryDetails, GalleryType } from "@/types/admin";
 import type { SubscriptionPlan } from "@/types/index";
 
 interface GalleryDetailCardProps {
@@ -50,11 +50,57 @@ function getPlanBadgeClass(plan: SubscriptionPlan): string {
 }
 
 /**
+ * Get badge class for gallery type
+ * Requirements: 11.1
+ */
+function getTypeBadgeClass(galleryType: GalleryType): string {
+  switch (galleryType) {
+    case "guest":
+      return "bg-purple-100 text-purple-700 border-purple-200";
+    case "converted":
+      return "bg-blue-100 text-blue-700 border-blue-200";
+    case "user":
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-200";
+  }
+}
+
+/**
+ * Get type label for gallery
+ */
+function getTypeLabel(galleryType: GalleryType): string {
+  switch (galleryType) {
+    case "guest":
+      return "Guest";
+    case "converted":
+      return "Converti";
+    case "user":
+    default:
+      return "User";
+  }
+}
+
+/**
+ * Get type icon for gallery
+ */
+function getTypeIcon(galleryType: GalleryType) {
+  switch (galleryType) {
+    case "guest":
+      return <Users className="h-4 w-4" />;
+    case "converted":
+      return <RefreshCw className="h-4 w-4" />;
+    case "user":
+    default:
+      return <UserCheck className="h-4 w-4" />;
+  }
+}
+
+/**
  * Gallery Detail Card Component
  * 
  * Displays detailed gallery information including images, owner info,
  * and view statistics.
- * Requirements: 4.3
+ * Requirements: 4.3, 11.3, 11.5
  */
 export function GalleryDetailCard({ gallery }: GalleryDetailCardProps) {
   const totalStorageMb = gallery.images.reduce((sum, img) => sum + img.file_size_mb, 0);
@@ -100,6 +146,24 @@ export function GalleryDetailCard({ gallery }: GalleryDetailCardProps) {
           >
             {getStatusLabel(gallery.is_active, gallery.expires_at)}
           </Badge>
+          {/* Gallery Type Badge - Requirements: 11.1 */}
+          <Badge
+            variant="outline"
+            className={`${getTypeBadgeClass(gallery.gallery_type)} flex items-center gap-1`}
+          >
+            {getTypeIcon(gallery.gallery_type)}
+            {getTypeLabel(gallery.gallery_type)}
+          </Badge>
+          {/* Unlock Status Badge */}
+          {gallery.is_unlocked && (
+            <Badge
+              variant="outline"
+              className="bg-green-100 text-green-700 border-green-200 flex items-center gap-1"
+            >
+              <CreditCard className="h-3 w-3" />
+              Débloqué
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -142,32 +206,139 @@ export function GalleryDetailCard({ gallery }: GalleryDetailCardProps) {
           </div>
         </div>
 
+        {/* Guest Session Info - Requirements: 11.3 */}
+        {gallery.guest_session_id && (
+          <div>
+            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              Session Guest
+            </h3>
+            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
+              <div className="flex items-center gap-3">
+                <Users className="h-5 w-5 text-purple-500" />
+                <div>
+                  <p className="text-xs text-purple-600 font-medium">Guest Session ID</p>
+                  <p className="text-sm font-mono text-purple-800">{gallery.guest_session_id}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex gap-4 text-xs text-purple-600">
+                <span>Type de paiement: <strong className="text-purple-800">{gallery.payment_type}</strong></span>
+                <span>Débloqué: <strong className="text-purple-800">{gallery.is_unlocked ? 'Oui' : 'Non'}</strong></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Conversion Timeline - Requirements: 11.5 */}
+        {gallery.gallery_type === 'converted' && gallery.conversion_timeline && (
+          <div>
+            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              Timeline de Conversion
+            </h3>
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-blue-600 font-medium">Créé comme Guest</p>
+                    <p className="text-sm text-blue-800">
+                      {new Date(gallery.conversion_timeline.created_as_guest_at).toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+                {gallery.conversion_timeline.payment_at && (
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <CreditCard className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-green-600 font-medium">Paiement effectué</p>
+                      <p className="text-sm text-green-800">
+                        {new Date(gallery.conversion_timeline.payment_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {gallery.conversion_timeline.converted_at && (
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                      <RefreshCw className="h-4 w-4 text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-indigo-600 font-medium">Converti en compte utilisateur</p>
+                      <p className="text-sm text-indigo-800">
+                        {new Date(gallery.conversion_timeline.converted_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Owner Info */}
         <div>
           <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
             Propriétaire
           </h3>
-          <Link
-            href={`/admin/users/${gallery.owner.id}`}
-            className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
-              <User className="h-6 w-6 text-slate-400" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-slate-800">
-                {gallery.owner.name || "Sans nom"}
-              </p>
-              <p className="text-sm text-slate-500">{gallery.owner.email}</p>
-            </div>
-            <Badge
-              variant="outline"
-              className={getPlanBadgeClass(gallery.owner.subscription_plan)}
+          {gallery.owner_id ? (
+            <Link
+              href={`/admin/users/${gallery.owner.id}`}
+              className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
             >
-              {gallery.owner.subscription_plan.charAt(0).toUpperCase() +
-                gallery.owner.subscription_plan.slice(1)}
-            </Badge>
-          </Link>
+              <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
+                <User className="h-6 w-6 text-slate-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">
+                  {gallery.owner.name || "Sans nom"}
+                </p>
+                <p className="text-sm text-slate-500">{gallery.owner.email}</p>
+              </div>
+              <Badge
+                variant="outline"
+                className={getPlanBadgeClass(gallery.owner.subscription_plan)}
+              >
+                {gallery.owner.subscription_plan.charAt(0).toUpperCase() +
+                  gallery.owner.subscription_plan.slice(1)}
+              </Badge>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg">
+              <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+                <Users className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-slate-500 italic">
+                  Visiteur Guest
+                </p>
+                <p className="text-sm text-slate-400">Pas de compte utilisateur</p>
+              </div>
+              <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-200">
+                Guest
+              </Badge>
+            </div>
+          )}
         </div>
 
         {/* Dates */}

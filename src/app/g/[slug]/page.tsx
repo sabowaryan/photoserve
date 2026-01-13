@@ -54,7 +54,7 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
   const supabase = createAdminClient();
   const { data: gallery, error } = await supabase
     .from('galleries')
-    .select('id, title, expires_at, views_count, is_active, password_hash')
+    .select('id, title, expires_at, views_count, is_active, password_hash, is_unlocked, payment_type, guest_session_id')
     .eq('unique_slug', slug)
     .maybeSingle();
 
@@ -90,7 +90,11 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
         expires_at: gallery.expires_at,
         views_count: gallery.views_count ?? 0,
         images,
-        has_password: !!gallery.password_hash,
+        // has_password is true only if password_hash is non-empty
+        has_password: !!gallery.password_hash && gallery.password_hash.length > 0,
+        is_unlocked: gallery.is_unlocked ?? false,
+        payment_type: gallery.payment_type ?? 'free',
+        guest_session_id: gallery.guest_session_id ?? null,
       }}
       isExpired={isExpired}
       isInactive={isInactive}

@@ -16,12 +16,13 @@ import {
   Clock,
   UploadCloud,
   AlertCircle,
-  Sparkles,
   ChevronDown,
+  TrendingUp,
+  Sparkles,
 } from "lucide-react";
 import { GalleryCard } from "@/components/dashboard/gallery-card";
-import { StatsCard } from "@/components/dashboard/stats-card";
 import { SidebarSection } from "@/components/dashboard/sidebar-section";
+import { OnboardingGuide } from "@/components/dashboard/onboarding-guide";
 
 interface Gallery {
   id: string;
@@ -42,6 +43,7 @@ interface Profile {
   storage_used_mb: number;
   storage_limit_mb: number;
   max_galleries: number;
+  onboarding_completed: boolean | null;
 }
 
 interface DashboardClientProps {
@@ -67,9 +69,42 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("created_at_desc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Keyboard shortcuts
+  useEffect(() => {
+    const shouldShowOnboarding = 
+      !profile?.onboarding_completed && 
+      galleries.length === 0;
+    setShowOnboarding(shouldShowOnboarding);
+  }, [profile?.onboarding_completed, galleries.length]);
+
+  const handleOnboardingComplete = async () => {
+    setShowOnboarding(false);
+    try {
+      await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ onboarding_completed: true }),
+      });
+    } catch (error) {
+      console.error("Failed to update onboarding status:", error);
+    }
+  };
+
+  const handleOnboardingDismiss = async () => {
+    setShowOnboarding(false);
+    try {
+      await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ onboarding_completed: true }),
+      });
+    } catch (error) {
+      console.error("Failed to update onboarding status:", error);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isInput = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
@@ -124,7 +159,6 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
     return result;
   }, [galleries, searchQuery, sortBy]);
 
-  // Calculate stats
   const stats = {
     totalGalleries: galleries.length,
     totalImages: galleries.reduce((sum, g) => sum + (g.image_count || 0), 0),
@@ -134,7 +168,6 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
     maxGalleries: profile?.max_galleries || 3,
   };
 
-  // Calculate views trend (comparing last 30 days vs previous 30 days)
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
@@ -148,9 +181,8 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
   const recentViews = recentGalleries.reduce((sum, g) => sum + g.views_count, 0);
   const olderViews = olderGalleries.reduce((sum, g) => sum + g.views_count, 0);
 
-  // Calculate percentage change
   let viewsTrend = { value: "+0%", positive: true };
-  let previousMonthViews = Math.floor(stats.totalViews * 0.89); // Fallback
+  let previousMonthViews = Math.floor(stats.totalViews * 0.89);
 
   if (olderViews > 0) {
     const percentChange = ((recentViews - olderViews) / olderViews) * 100;
@@ -161,14 +193,12 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
     };
     previousMonthViews = olderViews;
   } else if (recentViews > 0) {
-    // If no older data, show as positive growth
     viewsTrend = { value: "+100%", positive: true };
     previousMonthViews = 0;
   }
 
   const isGalleryLimitReached = stats.totalGalleries >= stats.maxGalleries;
 
-  // Generate activities from galleries
   const activities = galleries.slice(0, 5).map((g) => ({
     id: g.id,
     type: "created" as const,
@@ -176,261 +206,288 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
     timestamp: g.created_at,
   }));
 
-  // Plan badge
-  const getPlanBadge = () => {
-    const plan = profile?.subscription_plan || "free";
-    const colors = {
-      free: "bg-slate-100 text-slate-900 border-slate-200",
-      premium: "bg-indigo-100 text-indigo-900 border-indigo-200",
-      pro: "bg-purple-100 text-purple-900 border-purple-200",
-    };
-
-    return (
-      <div className={`px-3 py-1 rounded-lg border font-black text-xs uppercase tracking-wider ${colors[plan]}`}>
-        {plan === "free" ? "Gratuit" : plan === "premium" ? "Premium" : "Pro"}
-      </div>
-    );
+  const planConfig = {
+    free: { label: "Gratuit", color: "slate", gradient: "from-slate-500 to-slate-600" },
+    premium: { label: "Premium", color: "indigo", gradient: "from-indigo-500 to-violet-600" },
+    pro: { label: "Pro", color: "purple", gradient: "from-purple-500 to-pink-600" },
   };
 
+  const currentPlan = planConfig[profile?.subscription_plan || "free"];
+
+  const storagePercent = (stats.storageUsed / stats.storageLimit) * 100;
+  const galleriesPercent = (stats.totalGalleries / stats.maxGalleries) * 100;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-10">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Main Content - 9/12 */}
-        <div className="lg:col-span-9 space-y-10">
-          {/* Header */}
-          <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-indigo-50 rounded-lg text-indigo-600">
-                  <Sparkles size={16} />
-                </div>
-                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">
-                  Tableau de bord
-                </span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">
-                Bonjour, <span className="gradient-text">{userName}</span>
-              </h1>
-              <p className="text-slate-500 font-medium max-w-lg leading-relaxed">
-                Voici un aperçu de vos performances et de la gestion de vos galeries sécurisées.
-              </p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-18 pb-10 font-['Plus_Jakarta_Sans']">
+      {/* Decorative background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-indigo-100/40 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-violet-100/30 rounded-full blur-[100px]" />
+      </div>
 
-            <div className="flex flex-col items-end gap-3">
-              <button
-                onClick={() => router.push("/dashboard/gallery/new")}
-                disabled={isGalleryLimitReached}
-                className={`flex items-center justify-center gap-3 px-8 py-5 font-black rounded-[1.8rem] transition-all active:scale-95 group overflow-hidden relative shadow-2xl ${
-                  isGalleryLimitReached
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-300'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:-translate-y-1.5 shadow-indigo-500/30'
-                }`}
-              >
-                {!isGalleryLimitReached && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite] pointer-events-none"></div>
-                )}
-                <Plus size={24} strokeWidth={3} className="group-hover:rotate-90 transition-transform" />
-                <span className="text-base">Nouvelle Galerie</span>
-                <span className="hidden sm:flex items-center justify-center w-6 h-6 bg-white/20 rounded-lg text-[10px] ml-2 border border-white/20 group-hover:bg-white/30">
-                  N
-                </span>
-              </button>
-
-              {isGalleryLimitReached && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-50 text-rose-500 rounded-xl border border-rose-100 animate-in shake-in">
-                  <AlertCircle size={14} strokeWidth={2.5} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Quota atteint</span>
-                </div>
-              )}
-            </div>
-          </header>
-
-          {/* Stats Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatsCard
-              icon={Zap}
-              label="Offre actuelle"
-              value={profile?.subscription_plan === "free" ? "Gratuit" : profile?.subscription_plan === "premium" ? "Premium" : "Pro"}
-              badge={getPlanBadge()}
-            />
-            <StatsCard
-              icon={HardDrive}
-              label="Stockage"
-              value={stats.storageUsed.toFixed(1)}
-              subtitle={`${stats.storageLimit} Mo`}
-              badgeText="Usage"
-              progress={stats.storageUsed}
-              progressMax={stats.storageLimit}
-            />
-            <StatsCard
-              icon={FolderOpen}
-              label="Galeries"
-              value={stats.totalGalleries}
-              subtitle={`${stats.maxGalleries}`}
-              badgeText="Volume"
-              progress={stats.totalGalleries}
-              progressMax={stats.maxGalleries}
-            />
-            <StatsCard
-              icon={Eye}
-              label="Vues totales"
-              value={stats.totalViews.toLocaleString()}
-              subtitle={`vs ${previousMonthViews.toLocaleString()} le mois dernier`}
-              trend={viewsTrend}
-              variant="dark"
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {showOnboarding && (
+          <div className="mb-5">
+            <OnboardingGuide
+              onComplete={handleOnboardingComplete}
+              onDismiss={handleOnboardingDismiss}
             />
           </div>
+        )}
 
-          {/* Galleries Section Container */}
-          <div className="bg-white rounded-[3rem] p-4 sm:p-10 border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.03)] min-h-[600px] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/30 rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* Main Content */}
+          <div className="lg:col-span-9 space-y-5">
+            {/* Welcome Header */}
+            <header className="relative">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 rounded-full border border-indigo-100">
+                    <Sparkles size={10} className="text-indigo-500" />
+                    <span className="text-[9px] font-bold text-indigo-600">Tableau de bord</span>
+                  </div>
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    Bonjour, <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">{userName}</span> 👋
+                  </h1>
+                  <p className="text-slate-500 font-medium text-[11px] max-w-md">
+                    Gérez vos galeries et suivez vos performances en temps réel.
+                  </p>
+                </div>
 
-            {/* Toolbar */}
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mb-10 pb-8 border-b border-slate-100/60">
-              <div className="flex flex-wrap items-center gap-6 w-full lg:w-auto">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">Galeries</h2>
-                  <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-2.5 py-1 rounded-full border border-slate-200 uppercase">
+                <button
+                  onClick={() => router.push("/dashboard/gallery/new")}
+                  disabled={isGalleryLimitReached}
+                  className={`group flex items-center gap-1.5 px-4 py-2.5 font-bold text-xs rounded-xl transition-all ${
+                    isGalleryLimitReached
+                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5'
+                  }`}
+                >
+                  <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+                  <span>Nouvelle galerie</span>
+                  {!isGalleryLimitReached && (
+                    <kbd className="hidden sm:inline px-1 py-0.5 bg-white/20 rounded text-[9px] font-mono">N</kbd>
+                  )}
+                </button>
+              </div>
+
+              {isGalleryLimitReached && (
+                <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg border border-amber-100">
+                  <AlertCircle size={12} />
+                  <span className="text-[10px] font-bold">Limite de galeries atteinte</span>
+                </div>
+              )}
+            </header>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {/* Plan Card */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all group">
+                <div className="flex items-start justify-between mb-2">
+                  <div className={`p-1.5 rounded-lg bg-gradient-to-br ${currentPlan.gradient} text-white shadow-md`}>
+                    <Zap size={14} />
+                  </div>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider bg-${currentPlan.color}-50 text-${currentPlan.color}-600 border border-${currentPlan.color}-100`}>
+                    {currentPlan.label}
+                  </span>
+                </div>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Offre</p>
+                <p className="text-base font-black text-slate-900">{currentPlan.label}</p>
+              </div>
+
+              {/* Storage Card */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
+                    <HardDrive size={14} />
+                  </div>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
+                    {storagePercent.toFixed(0)}%
+                  </span>
+                </div>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Stockage</p>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-base font-black text-slate-900">{stats.storageUsed.toFixed(1)}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">/ {stats.storageLimit} Mo</span>
+                </div>
+                <div className="mt-1.5 h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all ${storagePercent > 85 ? 'bg-rose-500' : 'bg-amber-500'}`}
+                    style={{ width: `${Math.min(100, storagePercent)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Galleries Card */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
+                    <FolderOpen size={14} />
+                  </div>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
+                    {galleriesPercent.toFixed(0)}%
+                  </span>
+                </div>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Galeries</p>
+                <div className="flex items-baseline gap-0.5">
+                  <span className="text-base font-black text-slate-900">{stats.totalGalleries}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">/ {stats.maxGalleries}</span>
+                </div>
+                <div className="mt-1.5 h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all ${galleriesPercent > 90 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                    style={{ width: `${Math.min(100, galleriesPercent)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Views Card */}
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-3 shadow-lg relative overflow-hidden">
+                <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-indigo-500/20 rounded-full blur-2xl" />
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="p-1.5 rounded-lg bg-white/10 text-indigo-400">
+                      <Eye size={14} />
+                    </div>
+                    <span className={`flex items-center gap-0.5 px-1 py-0.5 rounded-full text-[8px] font-bold ${
+                      viewsTrend.positive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    }`}>
+                      <TrendingUp size={8} />
+                      {viewsTrend.value}
+                    </span>
+                  </div>
+                  <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Vues totales</p>
+                  <p className="text-base font-black text-white">{stats.totalViews.toLocaleString()}</p>
+                  <p className="text-[8px] text-slate-500 mt-0.5">vs {previousMonthViews.toLocaleString()} le mois dernier</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Galleries Section */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+              {/* Toolbar */}
+              <div className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-black text-slate-900">Mes galeries</h2>
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full">
                     {galleries.length}
                   </span>
                 </div>
 
-                <div className="relative flex-1 lg:w-80 group">
-                  <Search
-                    size={18}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors"
-                  />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    placeholder="Rechercher une galerie..."
-                    className="w-full pl-12 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none font-medium"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-[10px] font-black text-slate-300 pointer-events-none border border-slate-200 px-1.5 py-0.5 rounded-md bg-white">
-                    S
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  {/* Search */}
+                  <div className="relative flex-1 sm:w-52 group">
+                    <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Rechercher..."
+                      className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-mono text-slate-400">S</kbd>
+                  </div>
+
+                  {/* View Toggle */}
+                  <div className="flex p-0.5 bg-slate-100 rounded-lg">
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      <LayoutGrid size={14} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      <List size={14} />
+                    </button>
+                  </div>
+
+                  {/* Sort */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+                      className="flex items-center gap-1.5 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all"
+                    >
+                      <ArrowUpDown size={12} />
+                      <span className="hidden sm:inline">{SORT_LABELS[sortBy].label}</span>
+                      <ChevronDown size={10} className={`transition-transform ${isSortMenuOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {isSortMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50 animate-in slide-in-from-top-2">
+                        {(Object.keys(SORT_LABELS) as SortOption[]).map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => { setSortBy(option); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs font-medium transition-colors ${
+                              sortBy === option ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            {SORT_LABELS[option].icon}
+                            {SORT_LABELS[option].label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                {/* View Switcher */}
-                <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-lg transition-all ${
-                      viewMode === "grid"
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    <LayoutGrid size={18} />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-lg transition-all ${
-                      viewMode === "list"
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    <List size={18} />
-                  </button>
-                </div>
-
-                {/* Sort Menu */}
-                <div className="relative">
-                  <button
-                    onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-                    className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
-                  >
-                    <ArrowUpDown size={16} />
-                    <span className="hidden sm:inline">{SORT_LABELS[sortBy].label}</span>
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform duration-300 ${isSortMenuOpen ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-
-                  {isSortMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-[100] animate-in slide-in-from-top-2">
-                      {(Object.keys(SORT_LABELS) as SortOption[]).map((option) => (
-                        <button
-                          key={option}
-                          onClick={() => {
-                            setSortBy(option);
-                            setIsSortMenuOpen(false);
-                          }}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold transition-colors ${
-                            sortBy === option
-                              ? 'text-indigo-600 bg-indigo-50'
-                              : 'text-slate-600 hover:bg-slate-50'
-                          }`}
-                        >
-                          {SORT_LABELS[option].icon}
-                          {SORT_LABELS[option].label}
-                        </button>
-                      ))}
+              {/* Gallery Grid/List */}
+              <div className="p-4">
+                {sortedAndFilteredGalleries.length > 0 ? (
+                  <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2.5"}>
+                    {sortedAndFilteredGalleries.map((gallery) => (
+                      <GalleryCard
+                        key={gallery.id}
+                        id={gallery.id}
+                        title={gallery.title}
+                        slug={gallery.unique_slug}
+                        expiresAt={gallery.expires_at}
+                        viewsCount={gallery.views_count}
+                        isActive={gallery.is_active}
+                        imageUrl={(gallery as any).imageUrl}
+                        imageCount={gallery.image_count}
+                        createdAt={gallery.created_at}
+                        isListView={viewMode === "list"}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-300 mb-4">
+                      <UploadCloud size={32} />
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Galleries Grid/List */}
-            {sortedAndFilteredGalleries.length > 0 ? (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-                    : "space-y-4"
-                }
-              >
-                {sortedAndFilteredGalleries.map((gallery) => (
-                  <GalleryCard
-                    key={gallery.id}
-                    id={gallery.id}
-                    title={gallery.title}
-                    slug={gallery.unique_slug}
-                    expiresAt={gallery.expires_at}
-                    viewsCount={gallery.views_count}
-                    isActive={gallery.is_active}
-                    imageUrl={(gallery as any).imageUrl}
-                    imageCount={gallery.image_count}
-                    createdAt={gallery.created_at}
-                    isListView={viewMode === "list"}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in">
-                <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center text-slate-200 mb-6 shadow-inner">
-                  <UploadCloud size={48} />
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-2">Aucune galerie trouvée</h3>
-                <p className="text-slate-500 font-medium mb-8 max-w-xs">
-                  {searchQuery
-                    ? `Aucun résultat pour "${searchQuery}"`
-                    : "Commencez par créer votre première galerie photo."}
-                </p>
-                {!searchQuery && !isGalleryLimitReached && (
-                  <button
-                    onClick={() => router.push("/dashboard/gallery/new")}
-                    className="flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100"
-                  >
-                    <Plus size={20} />
-                    Créer ma première galerie
-                  </button>
+                    <h3 className="text-lg font-black text-slate-900 mb-1.5">
+                      {searchQuery ? 'Aucun résultat' : 'Aucune galerie'}
+                    </h3>
+                    <p className="text-slate-500 font-medium text-xs mb-5 max-w-xs">
+                      {searchQuery
+                        ? `Aucune galerie ne correspond à "${searchQuery}"`
+                        : "Créez votre première galerie pour commencer à partager vos photos."}
+                    </p>
+                    {!searchQuery && !isGalleryLimitReached && (
+                      <button
+                        onClick={() => router.push("/dashboard/gallery/new")}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25"
+                      >
+                        <Plus size={16} />
+                        Créer une galerie
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Sidebar - 3/12 */}
-        <div className="lg:col-span-3">
-          <SidebarSection activities={activities} />
+          {/* Sidebar */}
+          <div className="lg:col-span-3">
+            <SidebarSection activities={activities} />
+          </div>
         </div>
       </div>
     </div>

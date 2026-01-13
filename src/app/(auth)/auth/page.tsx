@@ -14,7 +14,9 @@ import {
   Eye, 
   EyeOff, 
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  CheckCircle2
 } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 import { z } from 'zod';
@@ -66,10 +68,10 @@ function AuthContent() {
   }, [formData.password]);
 
   const getStrengthColor = () => {
-    if (passwordStrength <= 25) return 'bg-rose-500';
-    if (passwordStrength <= 50) return 'bg-amber-500';
-    if (passwordStrength <= 75) return 'bg-blue-500';
-    return 'bg-emerald-500';
+    if (passwordStrength <= 25) return 'from-rose-500 to-pink-500';
+    if (passwordStrength <= 50) return 'from-amber-500 to-orange-500';
+    if (passwordStrength <= 75) return 'from-blue-500 to-indigo-500';
+    return 'from-emerald-500 to-teal-500';
   };
 
   const getStrengthLabel = () => {
@@ -79,9 +81,31 @@ function AuthContent() {
     return 'Excellent';
   };
 
+  const getStrengthLabelColor = () => {
+    if (passwordStrength <= 25) return 'text-rose-600';
+    if (passwordStrength <= 50) return 'text-amber-600';
+    if (passwordStrength <= 75) return 'text-blue-600';
+    return 'text-emerald-600';
+  };
+
   // Redirect if already authenticated
   useEffect(() => {
     if (status === 'authenticated' && session) {
+      const intent = searchParams.get('intent');
+      const plan = searchParams.get('plan');
+      const gallery = searchParams.get('gallery');
+      
+      const pendingIntent = localStorage.getItem('piksend_subscribe_intent');
+      if (pendingIntent) {
+        router.push('/auth/callback');
+        return;
+      }
+      
+      if (intent === 'subscribe' && plan) {
+        handleSubscriptionRedirect(plan, gallery);
+        return;
+      }
+      
       if (session.user.isAdmin) {
         router.push('/admin');
       } else {
@@ -90,6 +114,36 @@ function AuthContent() {
       }
     }
   }, [session, status, router, searchParams]);
+
+  // Handle subscription redirect after authentication
+  const handleSubscriptionRedirect = async (plan: string, gallery: string | null) => {
+    try {
+      const response = await fetch('/api/stripe/checkout/guest-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan,
+          galleryId: null,
+          successUrl: `${window.location.origin}/dashboard?subscribed=true${gallery ? `&gallery=${gallery}` : ''}`,
+          cancelUrl: gallery 
+            ? `${window.location.origin}/g/${gallery}?showPricing=true`
+            : `${window.location.origin}/pricing`,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create checkout session');
+      }
+
+      const { checkoutUrl } = await response.json();
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error('Subscription redirect error:', error);
+      setError('Erreur lors de la redirection vers le paiement. Veuillez réessayer.');
+      router.push('/dashboard');
+    }
+  };
 
   // Check for error in URL
   useEffect(() => {
@@ -102,6 +156,12 @@ function AuthContent() {
       } else {
         setError('Une erreur est survenue lors de la connexion.');
       }
+    }
+    
+    const intent = searchParams.get('intent');
+    if (intent === 'subscribe') {
+      setSuccess('Créez votre compte pour continuer vers le paiement.');
+      setActiveTab('signup');
     }
   }, [searchParams]);
 
@@ -132,7 +192,6 @@ function AuthContent() {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Signup validation
     if (activeTab === 'signup') {
       if (!formData.name) {
         setError("Veuillez entrer votre nom.");
@@ -165,7 +224,6 @@ function AuthContent() {
           router.refresh();
         }
       } else {
-        // Signup
         const response = await fetch('/api/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -193,8 +251,16 @@ function AuthContent() {
           setSuccess('Compte créé ! Vous pouvez maintenant vous connecter.');
           setActiveTab('signin');
         } else {
-          router.push('/auth/callback');
-          router.refresh();
+          const intent = searchParams.get('intent');
+          const plan = searchParams.get('plan');
+          const gallery = searchParams.get('gallery');
+          
+          if (intent === 'subscribe' && plan) {
+            await handleSubscriptionRedirect(plan, gallery);
+          } else {
+            router.push('/auth/callback');
+            router.refresh();
+          }
         }
       }
     } catch {
@@ -209,6 +275,18 @@ function AuthContent() {
     setError(null);
     
     try {
+      const intent = searchParams.get('intent');
+      const plan = searchParams.get('plan');
+      const gallery = searchParams.get('gallery');
+      
+      if (intent === 'subscribe' && plan) {
+        localStorage.setItem('piksend_subscribe_intent', JSON.stringify({
+          intent,
+          plan,
+          gallery,
+        }));
+      }
+      
       await signIn('google', { 
         callbackUrl: '/auth/callback',
         redirect: true,
@@ -220,266 +298,298 @@ function AuthContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Back button */}
       <Link 
         href="/" 
-        className="fixed top-4 left-4 z-20 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-slate-50 transition-all shadow-sm"
+        className="fixed top-4 left-4 z-20 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 transition-all shadow-sm group"
       >
-        <ArrowLeft className="h-5 w-5 text-slate-600" />
+        <ArrowLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
       </Link>
 
-      {/* Background Decor */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 rounded-full blur-[120px]" />
+      {/* Background Decorative Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-indigo-200/40 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-violet-200/40 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-100/30 rounded-full blur-3xl" />
+        <div className="absolute top-10 right-1/4 w-64 h-64 bg-pink-100/30 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-lg z-10 animate-in slide-in-from-bottom-4 duration-700">
-        <div className="bg-white/90 backdrop-blur-2xl rounded-[3rem] border border-slate-200 shadow-2xl p-8 sm:p-12 relative overflow-hidden group">
-          {/* Header */}
-          <div className="flex flex-col items-center mb-10">
-            <div className="p-4 bg-indigo-50 rounded-[1.5rem] text-indigo-600 shadow-lg border border-indigo-100 mb-6 transform group-hover:rotate-6 transition-transform duration-500">
-              <LogoIcon size={32} />
+        {/* Main Card */}
+        <div className="bg-white/80 backdrop-blur-2xl rounded-[2rem] sm:rounded-[3rem] border border-slate-200/50 shadow-2xl shadow-indigo-500/5 relative overflow-hidden">
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-6 sm:p-8 text-center relative overflow-hidden">
+            {/* Header Orbs */}
+            <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-40 h-40 bg-purple-400/20 rounded-full blur-2xl translate-x-1/3 translate-y-1/3" />
+            
+            <div className="relative">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 shadow-lg border border-white/10">
+                <LogoIcon size={32} className="text-white" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+                PikSend
+              </h1>
+              <p className="text-indigo-100/80 font-medium text-sm max-w-xs mx-auto">
+                La plateforme de partage de photos préférée des créatifs.
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">
-              PikSend
-            </h1>
-            <p className="text-slate-500 font-medium text-center text-sm max-w-xs">
-              La plateforme de partage de photos préférée des créatifs.
-            </p>
           </div>
 
-          {/* Tabs Navigation */}
-          <div className="flex p-1.5 bg-slate-100/80 rounded-2xl mb-10 border border-slate-200/50">
-            <button
-              onClick={() => setActiveTab('signin')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                activeTab === 'signin' 
-                  ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' 
-                  : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              Connexion
-            </button>
-            <button
-              onClick={() => setActiveTab('signup')}
-              className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                activeTab === 'signup' 
-                  ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' 
-                  : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              Inscription
-            </button>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-8 p-4 bg-rose-50 border border-rose-100 text-rose-600 text-sm font-bold rounded-2xl animate-in flex items-center gap-3">
-              <AlertCircle size={20} />
-              {error}
+          {/* Content */}
+          <div className="p-6 sm:p-8">
+            {/* Tabs Navigation */}
+            <div className="flex p-1.5 bg-slate-100/80 rounded-2xl mb-8 border border-slate-200/50">
+              <button
+                onClick={() => setActiveTab('signin')}
+                className={`flex-1 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                  activeTab === 'signin' 
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25' 
+                    : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                Connexion
+              </button>
+              <button
+                onClick={() => setActiveTab('signup')}
+                className={`flex-1 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                  activeTab === 'signup' 
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25' 
+                    : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                Inscription
+              </button>
             </div>
-          )}
 
-          {/* Success Message */}
-          {success && (
-            <div className="mb-8 p-4 bg-emerald-50 border border-emerald-100 text-emerald-600 text-sm font-bold rounded-2xl animate-in flex items-center gap-3">
-              {success}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name field (signup only) */}
-            {activeTab === 'signup' && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                  Nom Complet
-                </label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 transition-all outline-none font-bold text-slate-900"
-                    placeholder="Alexandre Dupont"
-                  />
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm font-bold rounded-2xl animate-in slide-in-from-top-2 flex items-center gap-3">
+                <div className="p-2 bg-rose-100 rounded-xl">
+                  <AlertCircle size={18} />
                 </div>
+                <span>{error}</span>
               </div>
             )}
 
-            {/* Email field */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                Adresse Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 transition-all outline-none font-bold text-slate-900"
-                  placeholder="votre@email.com"
-                />
+            {/* Success Message */}
+            {success && (
+              <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold rounded-2xl animate-in slide-in-from-top-2 flex items-center gap-3">
+                <div className="p-2 bg-emerald-100 rounded-xl">
+                  <CheckCircle2 size={18} />
+                </div>
+                <span>{success}</span>
               </div>
-            </div>
+            )}
 
-            {/* Password field */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                  Mot de passe
-                </label>
-                {activeTab === 'signin' && (
-                  <Link 
-                    href="/forgot-password"
-                    className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors"
-                  >
-                    Oublié ?
-                  </Link>
-                )}
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full pl-12 pr-14 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 transition-all outline-none font-bold text-slate-900"
-                  placeholder="••••••••"
-                />
-                <button 
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-              
-              {/* Password strength indicator */}
-              {activeTab === 'signup' && formData.password && (
-                <div className="mt-3 px-1 animate-in fade-in">
-                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all duration-500 ${getStrengthColor()}`} 
-                      style={{ width: `${passwordStrength}%` }}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name field (signup only) */}
+              {activeTab === 'signup' && (
+                <div className="space-y-2 animate-in slide-in-from-top-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+                    Nom Complet
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-slate-100 rounded-lg group-focus-within:bg-indigo-100 transition-colors">
+                      <User className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                    </div>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="w-full pl-14 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none font-bold text-slate-900 placeholder:text-slate-400"
+                      placeholder="Alexandre Dupont"
                     />
-                  </div>
-                  <div className="flex justify-between mt-2">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
-                      Sécurité
-                    </span>
-                    <span className="text-[9px] font-black text-indigo-600 uppercase tracking-wider">
-                      {getStrengthLabel()}
-                    </span>
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* Confirm password (signup only) */}
-            {activeTab === 'signup' && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
+              {/* Email field */}
+              <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                  Confirmer le mot de passe
+                  Adresse Email
                 </label>
-                <div className="relative">
-                  <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-slate-100 rounded-lg group-focus-within:bg-indigo-100 transition-colors">
+                    <Mail className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                  </div>
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
+                    type="email"
+                    name="email"
                     required
-                    value={formData.confirmPassword}
+                    value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-12 pr-14 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-600 transition-all outline-none font-bold text-slate-900"
+                    className="w-full pl-14 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none font-bold text-slate-900 placeholder:text-slate-400"
+                    placeholder="votre@email.com"
+                  />
+                </div>
+              </div>
+
+              {/* Password field */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    Mot de passe
+                  </label>
+                  {activeTab === 'signin' && (
+                    <Link 
+                      href="/forgot-password"
+                      className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors"
+                    >
+                      Oublié ?
+                    </Link>
+                  )}
+                </div>
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-slate-100 rounded-lg group-focus-within:bg-indigo-100 transition-colors">
+                    <Lock className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                  </div>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    required
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-14 pr-14 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none font-bold text-slate-900 placeholder:text-slate-400"
                     placeholder="••••••••"
                   />
                   <button 
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2 transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
                   >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                
+                {/* Password strength indicator */}
+                {activeTab === 'signup' && formData.password && (
+                  <div className="mt-3 px-1 animate-in fade-in">
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full bg-gradient-to-r ${getStrengthColor()} transition-all duration-500 rounded-full`} 
+                        style={{ width: `${passwordStrength}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                        <ShieldCheck size={12} />
+                        Sécurité
+                      </span>
+                      <span className={`text-[9px] font-black uppercase tracking-wider ${getStrengthLabelColor()}`}>
+                        {getStrengthLabel()}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
 
-            {/* Terms checkbox (signup only) */}
-            {activeTab === 'signup' && (
-              <div className="flex items-start gap-3 ml-1 py-2">
-                <div className="flex items-center h-5">
-                  <input
-                    id="agreeTerms"
-                    name="agreeTerms"
-                    type="checkbox"
-                    checked={formData.agreeTerms}
-                    onChange={handleInputChange}
-                    className="w-5 h-5 text-indigo-600 border-slate-300 rounded-lg focus:ring-indigo-500 cursor-pointer"
-                  />
+              {/* Confirm password (signup only) */}
+              {activeTab === 'signup' && (
+                <div className="space-y-2 animate-in slide-in-from-top-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+                    Confirmer le mot de passe
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 bg-slate-100 rounded-lg group-focus-within:bg-indigo-100 transition-colors">
+                      <ShieldCheck className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                    </div>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="w-full pl-14 pr-14 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all outline-none font-bold text-slate-900 placeholder:text-slate-400"
+                      placeholder="••••••••"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </div>
-                <label htmlFor="agreeTerms" className="text-xs text-slate-500 font-medium leading-tight cursor-pointer">
-                  J&apos;accepte les{' '}
-                  <Link href="/legal/terms" className="text-indigo-600 font-bold hover:underline">
-                    Conditions d&apos;utilisation
-                  </Link>{' '}
-                  et la{' '}
-                  <Link href="/legal/privacy" className="text-indigo-600 font-bold hover:underline">
-                    Politique de confidentialité
-                  </Link>.
-                </label>
-              </div>
-            )}
-
-            {/* Submit button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-2xl shadow-indigo-200 transition-all flex items-center justify-center gap-3 active:scale-95 group/btn overflow-hidden relative disabled:opacity-50"
-            >
-              {isLoading ? (
-                <Loader2 className="animate-spin" size={24} />
-              ) : (
-                <>
-                  <span className="text-lg">
-                    {activeTab === 'signin' ? 'Se connecter' : 'Créer mon compte'}
-                  </span>
-                  <ArrowRight size={22} className="group-hover/btn:translate-x-1 transition-transform" />
-                </>
               )}
-            </button>
-          </form>
 
-          {/* Social Login Separator */}
-          <div className="relative my-10">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.3em]">
-              <span className="bg-white px-6 text-slate-400">Accès rapide</span>
-            </div>
-          </div>
+              {/* Terms checkbox (signup only) */}
+              {activeTab === 'signup' && (
+                <div className="flex items-start gap-3 ml-1 py-2 animate-in slide-in-from-top-2">
+                  <div className="flex items-center h-5 mt-0.5">
+                    <input
+                      id="agreeTerms"
+                      name="agreeTerms"
+                      type="checkbox"
+                      checked={formData.agreeTerms}
+                      onChange={handleInputChange}
+                      className="w-5 h-5 text-indigo-600 border-2 border-slate-300 rounded-lg focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                    />
+                  </div>
+                  <label htmlFor="agreeTerms" className="text-xs text-slate-500 font-medium leading-relaxed cursor-pointer">
+                    J&apos;accepte les{' '}
+                    <Link href="/legal/terms" className="text-indigo-600 font-bold hover:underline">
+                      Conditions d&apos;utilisation
+                    </Link>{' '}
+                    et la{' '}
+                    <Link href="/legal/privacy" className="text-indigo-600 font-bold hover:underline">
+                      Politique de confidentialité
+                    </Link>.
+                  </label>
+                </div>
+              )}
 
-          {/* Google Button */}
-          <div className="flex justify-center">
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-700 hover:via-violet-700 hover:to-purple-700 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/25 transition-all flex items-center justify-center gap-3 active:scale-[0.98] group/btn overflow-hidden relative disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <Loader2 className="animate-spin" size={22} />
+                ) : (
+                  <>
+                    <span className="text-base">
+                      {activeTab === 'signin' ? 'Se connecter' : 'Créer mon compte'}
+                    </span>
+                    <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Social Login Separator */}
+            <div className="relative my-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.3em]">
+                <span className="bg-white px-4 text-slate-400 flex items-center gap-2">
+                  <Sparkles size={12} className="text-indigo-400" />
+                  Accès rapide
+                </span>
+              </div>
+            </div>
+
+            {/* Google Button */}
             <button 
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-4 py-4 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 hover:border-indigo-200 transition-all font-bold text-base text-slate-700 shadow-sm disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 py-4 bg-white border-2 border-slate-200 rounded-2xl hover:bg-slate-50 hover:border-indigo-300 hover:shadow-lg transition-all font-bold text-base text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <GoogleLogo />
-              Se connecter avec Google
+              <span className="group-hover:text-indigo-600 transition-colors">Se connecter avec Google</span>
             </button>
           </div>
         </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-slate-400 font-medium mt-6">
+          © 2025 PikSend. Tous droits réservés.
+        </p>
       </div>
     </div>
   );
@@ -488,8 +598,13 @@ function AuthContent() {
 export default function AuthPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+        <div className="flex flex-col items-center gap-4">
+          <div className="p-4 bg-indigo-100 rounded-2xl">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          </div>
+          <p className="text-sm font-bold text-slate-400">Chargement...</p>
+        </div>
       </div>
     }>
       <AuthContent />

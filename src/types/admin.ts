@@ -69,6 +69,12 @@ export interface DashboardStats {
   };
   recentSignups: number;
   recentGalleries: number;
+  // Guest gallery conversion metrics - Requirements: 11.4
+  guestGalleryMetrics: {
+    totalGuestGalleries: number;
+    convertedGalleries: number;
+    conversionRate: number;
+  };
 }
 
 // User Management Types
@@ -105,6 +111,9 @@ export interface UserDetails extends UserListItem {
   audit_history: AuditLogWithAdmin[];
 }
 
+// Gallery Type for admin display
+export type GalleryType = 'guest' | 'user' | 'converted';
+
 // Gallery Management Types
 export interface GalleryListItem {
   id: string;
@@ -118,11 +127,17 @@ export interface GalleryListItem {
   is_active: boolean;
   expires_at: string;
   created_at: string;
+  // Guest gallery fields
+  gallery_type: GalleryType;
+  guest_session_id: string | null;
+  is_unlocked: boolean;
+  payment_type: 'free' | 'one_time' | 'subscription';
 }
 
 export interface GalleryFilters {
   search?: string;
   status?: 'active' | 'expired' | 'inactive';
+  galleryType?: GalleryType;
   userId?: string;
   dateFrom?: string;
   dateTo?: string;
@@ -143,6 +158,12 @@ export interface GalleryDetails extends GalleryListItem {
     subscription_plan: SubscriptionPlan;
   };
   audit_history: AuditLogWithAdmin[];
+  // Conversion timeline for converted galleries
+  conversion_timeline?: {
+    created_as_guest_at: string;
+    converted_at: string | null;
+    payment_at: string | null;
+  };
 }
 
 // Analytics Types

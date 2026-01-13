@@ -5,6 +5,24 @@
 // Subscription Plans
 export type SubscriptionPlan = 'free' | 'premium' | 'pro';
 
+// Payment Types for Guest Galleries (Requirements 9.2, 9.3)
+export type PaymentType = 'free' | 'one_time' | 'subscription';
+
+// Supported Locales for Translation System
+export type SupportedLocale = 'en' | 'fr';
+
+// Locale Configuration
+export interface LocaleConfig {
+  code: SupportedLocale;
+  name: string;
+  flag: string;
+}
+
+export const SUPPORTED_LOCALES: LocaleConfig[] = [
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+];
+
 // User Profile
 export interface Profile {
   id: string;
@@ -21,6 +39,7 @@ export interface Profile {
   stripe_subscription_id: string | null;
   is_admin: boolean;
   is_suspended: boolean;
+  onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -28,7 +47,7 @@ export interface Profile {
 // Gallery
 export interface Gallery {
   id: string;
-  user_id: string;
+  user_id: string | null;
   title: string;
   unique_slug: string;
   password_hash: string;
@@ -36,6 +55,28 @@ export interface Gallery {
   expires_at: string;
   views_count: number;
   is_active: boolean;
+  guest_session_id: string | null;
+  is_unlocked: boolean;
+  payment_type: PaymentType;
+  converted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Guest Gallery - Gallery created by a visitor without an account (Requirement 9.1)
+export interface GuestGallery extends Gallery {
+  guest_session_id: string;
+  user_id: null;
+}
+
+// Gallery Payment - Tracks one-time payments for gallery unlock (Requirement 9.5)
+export interface GalleryPayment {
+  id: string;
+  gallery_id: string;
+  stripe_payment_intent_id: string;
+  amount_cents: number;
+  currency: string;
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded';
   created_at: string;
   updated_at: string;
 }

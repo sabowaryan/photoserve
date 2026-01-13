@@ -64,20 +64,20 @@ export default function AdminGalleriesPage() {
 
   if (error && galleries.length === 0) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
             Galeries
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-0.5">
             Gérer les galeries de la plateforme
           </p>
         </div>
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-6 text-center">
-          <p className="text-rose-700">{error}</p>
+        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 text-center">
+          <p className="text-sm text-rose-700">{error}</p>
           <button
             onClick={fetchGalleries}
-            className="mt-4 text-sm text-rose-600 hover:text-rose-800 underline"
+            className="mt-3 text-xs text-rose-600 hover:text-rose-800 underline"
           >
             Réessayer
           </button>
@@ -87,25 +87,25 @@ export default function AdminGalleriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-xl">
-              <Image className="h-6 w-6 text-indigo-600" />
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-indigo-100 rounded-lg">
+              <Image className="h-4 w-4 text-indigo-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
               Galeries
             </h1>
           </div>
-          <p className="text-slate-500 mt-1 ml-12">
+          <p className="text-xs text-slate-500 mt-0.5 ml-8">
             Gérer les galeries de la plateforme
           </p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-slate-800">{total}</p>
-          <p className="text-sm text-slate-500">galeries au total</p>
+          <p className="text-xl font-bold text-slate-800">{total}</p>
+          <p className="text-[10px] text-slate-500">galeries au total</p>
         </div>
       </div>
 

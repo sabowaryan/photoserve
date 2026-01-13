@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { generatePageMetadata } from "@/lib/services";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { I18nProviderWrapper } from "@/components/providers/i18n-provider";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} antialiased font-sans`}
       >
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          <I18nProviderWrapper>{children}</I18nProviderWrapper>
+        </SessionProvider>
         <Analytics />
         <SpeedInsights />
       </body>

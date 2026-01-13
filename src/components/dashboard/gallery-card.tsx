@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, Clock, Settings2, ChevronRight, Calendar, Sparkles, AlertCircle } from "lucide-react";
+import { Eye, Clock, ChevronRight, Calendar, AlertCircle, ImageIcon } from "lucide-react";
 import { GalleryActions } from "@/app/(dashboard)/dashboard/gallery-actions";
 
 interface GalleryCardProps {
@@ -24,6 +24,7 @@ export function GalleryCard({
   expiresAt,
   viewsCount,
   imageUrl,
+  imageCount,
   createdAt,
   isListView = false,
 }: GalleryCardProps) {
@@ -37,11 +38,21 @@ export function GalleryCard({
     }).format(new Date(dateStr));
   };
 
-  const StatusBadge = ({ condensed = false }) => (
-    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border backdrop-blur-md transition-all ${
+  const getDaysRemaining = () => {
+    const now = new Date();
+    const expDate = new Date(expiresAt);
+    const diffTime = expDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const daysRemaining = getDaysRemaining();
+
+  const StatusBadge = () => (
+    <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
       isExpired 
-        ? 'bg-rose-50/80 text-rose-600 border-rose-100 shadow-sm' 
-        : 'bg-emerald-50/80 text-emerald-600 border-emerald-100 shadow-sm'
+        ? 'bg-rose-50 text-rose-600 border border-rose-100' 
+        : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
     }`}>
       {!isExpired ? (
         <span className="relative flex h-1.5 w-1.5">
@@ -49,64 +60,56 @@ export function GalleryCard({
           <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
         </span>
       ) : (
-        <AlertCircle size={10} className="text-rose-500" />
+        <AlertCircle size={10} />
       )}
-      {!condensed && (isExpired ? 'Expirée' : 'Active')}
+      {isExpired ? 'Expirée' : 'Active'}
     </div>
   );
 
   if (isListView) {
     return (
-      <div className="group bg-white rounded-3xl p-4 border border-slate-100 transition-all hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 relative">
-        {/* Thumbnail Mini */}
-        <div className="w-16 h-16 sm:w-16 sm:h-16 bg-slate-100 rounded-2xl overflow-hidden flex-shrink-0 border border-slate-50 group-hover:scale-105 transition-transform duration-500 shadow-sm">
-          <img 
-            src={imageUrl || `https://picsum.photos/seed/${id}/100/100`} 
-            alt={title} 
-            className="w-full h-full object-cover" 
-            loading="lazy"
-          />
+      <div className="group bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-500/5 transition-all flex items-center gap-3">
+        {/* Thumbnail */}
+        <div className="w-12 h-12 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0 border border-slate-50">
+          {imageUrl ? (
+            <img src={imageUrl} alt={title} className="w-full h-full object-cover" loading="lazy" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-slate-300">
+              <ImageIcon size={18} />
+            </div>
+          )}
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 min-w-0 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center gap-2 mb-1">
-            <h3 className="font-black text-slate-800 truncate text-base tracking-tight w-full sm:w-auto">
-              {title}
-            </h3>
-            <StatusBadge condensed={true} />
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <h3 className="font-bold text-slate-900 truncate text-xs">{title}</h3>
+            <StatusBadge />
           </div>
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 text-[10px] sm:text-[11px] font-bold text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <Eye size={14} className="text-indigo-400/50" /> 
-              {viewsCount.toLocaleString()} <span>vues</span>
+          <div className="flex items-center gap-3 text-[10px] font-medium text-slate-400">
+            <span className="flex items-center gap-1">
+              <Eye size={10} className="text-slate-300" />
+              {viewsCount.toLocaleString()}
             </span>
-            {createdAt && (
-              <span className="flex items-center gap-1.5">
-                <Calendar size={14} className="text-indigo-400/50" /> 
-                {formatDate(createdAt)}
+            {imageCount !== undefined && (
+              <span className="flex items-center gap-1">
+                <ImageIcon size={10} className="text-slate-300" />
+                {imageCount}
               </span>
             )}
             <span className="flex items-center gap-1">
-              <Clock size={12} className={isExpired ? 'text-rose-400' : 'text-indigo-400/50'} />
-              Exp: {formatDate(expiresAt)}
+              <Clock size={10} className={isExpired ? 'text-rose-400' : 'text-slate-300'} />
+              {isExpired ? 'Expirée' : `${daysRemaining}j`}
             </span>
           </div>
         </div>
 
-        {/* Actions List View */}
-        <div className="flex items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-50 w-full sm:w-auto justify-center">
-          <GalleryActions
-            galleryId={id}
-            gallerySlug={slug}
-            galleryTitle={title}
-          />
+        {/* Actions */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <GalleryActions galleryId={id} gallerySlug={slug} galleryTitle={title} />
           <Link href={`/dashboard/gallery/${id}`}>
-            <button 
-              className="p-3 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all active:scale-90"
-              aria-label="Éditer la galerie"
-            >
-              <ChevronRight size={18} />
+            <button className="p-2 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+              <ChevronRight size={14} />
             </button>
           </Link>
         </div>
@@ -115,80 +118,85 @@ export function GalleryCard({
   }
 
   return (
-    <div className="group bg-white rounded-[2.8rem] p-6 border border-slate-100 transition-all duration-500 hover:border-indigo-100 hover:shadow-[0_40px_80px_-20px_rgba(99,102,241,0.12)] flex flex-col relative overflow-hidden h-full">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-50/40 rounded-full blur-[80px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+    <div className="group bg-white rounded-xl border border-slate-100 hover:border-indigo-100 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden h-full flex flex-col">
+      {/* Image */}
+      <div className="aspect-[16/10] bg-slate-100 relative overflow-hidden">
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-200">
+            <ImageIcon size={40} />
+          </div>
+        )}
 
-      <div className="aspect-[16/10] rounded-[2.2rem] bg-slate-100 mb-6 relative overflow-hidden border border-slate-50 shadow-inner group-hover:shadow-lg transition-shadow duration-500">
-        <img 
-          src={imageUrl || `https://picsum.photos/seed/${id}/400/300`} 
-          alt={title} 
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-          loading="lazy"
-        />
-
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+        {/* Status Badge */}
+        <div className="absolute top-2 left-2">
           <StatusBadge />
         </div>
 
-        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-4 backdrop-blur-[2px] translate-y-6 group-hover:translate-y-0">
-          <div className="bg-white/95 p-3 rounded-3xl shadow-2xl flex items-center gap-2 border border-white">
-            <GalleryActions
-              galleryId={id}
-              gallerySlug={slug}
-              galleryTitle={title}
-            />
-            <div className="w-px h-6 bg-slate-100 mx-1"></div>
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-3">
+          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-lg shadow-lg border border-white/50">
+            <GalleryActions galleryId={id} gallerySlug={slug} galleryTitle={title} />
+            <div className="w-px h-4 bg-slate-200" />
             <Link href={`/dashboard/gallery/${id}`}>
-              <button
-                className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
-                title="Paramètres de la galerie"
-              >
-                <Settings2 size={18} />
+              <button className="p-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all">
+                <ChevronRight size={14} />
               </button>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-between space-y-4">
-        <div>
-          <h3 className="font-black text-xl text-slate-900 tracking-tight mb-3 group-hover:text-indigo-600 transition-colors leading-tight line-clamp-2">
-            {title}
-          </h3>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100/50">
-              <Eye size={12} className="text-indigo-500" />
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">
-                {viewsCount.toLocaleString()} <span className="text-slate-400 font-bold">vues</span>
-              </span>
+      {/* Content */}
+      <div className="p-3 flex-1 flex flex-col">
+        <h3 className="font-bold text-slate-900 mb-2.5 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug text-sm">
+          {title}
+        </h3>
+
+        <div className="flex flex-wrap items-center gap-2 mt-auto">
+          <div className="flex items-center gap-1 px-2 py-1 bg-slate-50 rounded-md border border-slate-100">
+            <Eye size={10} className="text-indigo-500" />
+            <span className="text-[10px] font-bold text-slate-600">{viewsCount.toLocaleString()}</span>
+          </div>
+          
+          {imageCount !== undefined && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-slate-50 rounded-md border border-slate-100">
+              <ImageIcon size={10} className="text-indigo-500" />
+              <span className="text-[10px] font-bold text-slate-600">{imageCount}</span>
             </div>
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${
-              isExpired 
-                ? 'bg-rose-50 border-rose-100 text-rose-500' 
-                : 'bg-slate-50 border-slate-100/50 text-slate-500'
-            }`}>
-              <Clock size={12} className={isExpired ? 'text-rose-500' : 'text-indigo-500'} />
-              <span className="text-[11px] font-black uppercase tracking-widest">
-                Exp: {formatDate(expiresAt)}
-              </span>
-            </div>
+          )}
+
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-md border ${
+            isExpired 
+              ? 'bg-rose-50 border-rose-100 text-rose-600' 
+              : daysRemaining <= 3 
+                ? 'bg-amber-50 border-amber-100 text-amber-600'
+                : 'bg-slate-50 border-slate-100 text-slate-600'
+          }`}>
+            <Clock size={10} />
+            <span className="text-[10px] font-bold">
+              {isExpired ? 'Expirée' : `${daysRemaining}j`}
+            </span>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-indigo-600">
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-              <Sparkles size={14} />
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
-              {createdAt ? `Dernière modif. ${formatDate(createdAt)}` : 'Aucune date'}
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-50">
+          <div className="flex items-center gap-1 text-slate-400">
+            <Calendar size={10} />
+            <span className="text-[9px] font-medium">
+              {createdAt ? formatDate(createdAt) : 'N/A'}
             </span>
           </div>
           <Link href={`/dashboard/gallery/${id}`}>
-            <button
-              className="w-11 h-11 bg-slate-50 text-slate-400 hover:bg-indigo-600 hover:text-white rounded-xl transition-all flex items-center justify-center group/btn shadow-sm active:scale-90"
-            >
-              <ChevronRight size={22} className="group-hover/btn:translate-x-0.5 transition-transform" />
+            <button className="p-1.5 bg-slate-50 text-slate-400 hover:bg-indigo-600 hover:text-white rounded-md transition-all">
+              <ChevronRight size={12} />
             </button>
           </Link>
         </div>

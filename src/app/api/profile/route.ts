@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(100).optional(),
+  onboarding_completed: z.boolean().optional(),
 });
 
 export async function PATCH(request: Request) {
@@ -20,11 +21,15 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { name } = validatedData.data;
+    const { name, onboarding_completed } = validatedData.data;
+
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (name !== undefined) updateData.name = name;
+    if (onboarding_completed !== undefined) updateData.onboarding_completed = onboarding_completed;
 
     const { data, error } = await supabase
       .from("profiles")
-      .update({ name, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq("id", userId)
       .select()
       .single();

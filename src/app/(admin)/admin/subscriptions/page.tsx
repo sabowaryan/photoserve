@@ -51,20 +51,20 @@ export default function AdminSubscriptionsPage() {
 
   if (error && subscriptions.length === 0) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
             Abonnements
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-0.5">
             Gérer les abonnements des utilisateurs
           </p>
         </div>
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-6 text-center">
-          <p className="text-rose-700">{error}</p>
+        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 text-center">
+          <p className="text-sm text-rose-700">{error}</p>
           <button
             onClick={fetchSubscriptions}
-            className="mt-4 text-sm text-rose-600 hover:text-rose-800 underline"
+            className="mt-3 text-xs text-rose-600 hover:text-rose-800 underline"
           >
             Réessayer
           </button>
@@ -74,70 +74,70 @@ export default function AdminSubscriptionsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-xl">
-              <CreditCard className="h-6 w-6 text-indigo-600" />
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-indigo-100 rounded-lg">
+              <CreditCard className="h-4 w-4 text-indigo-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
               Abonnements
             </h1>
           </div>
-          <p className="text-slate-500 mt-1 ml-12">
+          <p className="text-xs text-slate-500 mt-0.5 ml-8">
             Gérer les abonnements des utilisateurs
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <Users className="h-5 w-5 text-slate-600" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white rounded-lg border border-slate-200 p-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-slate-100 rounded-lg">
+              <Users className="h-4 w-4 text-slate-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-800">{stats.total}</p>
-              <p className="text-sm text-slate-500">Total abonnés</p>
+              <p className="text-xl font-bold text-slate-800">{stats.total}</p>
+              <p className="text-[10px] text-slate-500">Total abonnés</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-100 rounded-lg">
-              <CreditCard className="h-5 w-5 text-amber-600" />
+        <div className="bg-white rounded-lg border border-slate-200 p-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-amber-100 rounded-lg">
+              <CreditCard className="h-4 w-4 text-amber-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-800">{stats.premium}</p>
-              <p className="text-sm text-slate-500">Premium</p>
+              <p className="text-xl font-bold text-slate-800">{stats.premium}</p>
+              <p className="text-[10px] text-slate-500">Premium</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-lg">
-              <CreditCard className="h-5 w-5 text-indigo-600" />
+        <div className="bg-white rounded-lg border border-slate-200 p-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-indigo-100 rounded-lg">
+              <CreditCard className="h-4 w-4 text-indigo-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-800">{stats.pro}</p>
-              <p className="text-sm text-slate-500">Pro</p>
+              <p className="text-xl font-bold text-slate-800">{stats.pro}</p>
+              <p className="text-[10px] text-slate-500">Pro</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <TrendingUp className="h-5 w-5 text-emerald-600" />
+        <div className="bg-white rounded-lg border border-slate-200 p-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-100 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-emerald-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-800">{stats.active}</p>
-              <p className="text-sm text-slate-500">Actifs</p>
+              <p className="text-xl font-bold text-slate-800">{stats.active}</p>
+              <p className="text-[10px] text-slate-500">Actifs</p>
             </div>
           </div>
         </div>

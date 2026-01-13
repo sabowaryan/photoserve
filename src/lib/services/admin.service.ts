@@ -293,7 +293,7 @@ export class AdminService implements IAdminService {
 
   /**
    * Get detailed gallery information including images and owner
-   * Requirements: 4.3
+   * Requirements: 4.3, 11.3, 11.5
    */
   async getGalleryDetails(id: string): Promise<GalleryDetails> {
     const gallery = await this.adminRepository.getGalleryById(id);
@@ -311,17 +311,41 @@ export class AdminService implements IAdminService {
 
     if (imagesError) throw imagesError;
 
-    // Get owner details
-    const { data: owner, error: ownerError } = await this.supabase
-      .from('profiles')
-      .select('id, email, name, subscription_plan')
-      .eq('id', gallery.owner_id)
-      .single();
+    // Get owner details (only if gallery has an owner)
+    let owner = null;
+    if (gallery.owner_id) {
+      const { data: ownerData, error: ownerError } = await this.supabase
+        .from('profiles')
+        .select('id, email, name, subscription_plan')
+        .eq('id', gallery.owner_id)
+        .single();
 
-    if (ownerError && ownerError.code !== 'PGRST116') throw ownerError;
+      if (ownerError && ownerError.code !== 'PGRST116') throw ownerError;
+      owner = ownerData;
+    }
 
     // Get audit history for this gallery
     const auditHistory = await this.auditLogService.getByEntityId(id);
+
+    // Build conversion timeline for converted galleries (Requirements: 11.5)
+    let conversionTimeline: GalleryDetails['conversion_timeline'] = undefined;
+    if (gallery.gallery_type === 'converted') {
+      // Get payment record if exists
+      const { data: payment } = await this.supabase
+        .from('gallery_payments')
+        .select('created_at')
+        .eq('gallery_id', id)
+        .eq('status', 'succeeded')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+
+      conversionTimeline = {
+        created_as_guest_at: gallery.created_at,
+        converted_at: owner ? gallery.created_at : null, // Approximation - when user_id was set
+        payment_at: payment?.created_at || null,
+      };
+    }
 
     return {
       ...gallery,
@@ -336,12 +360,13 @@ export class AdminService implements IAdminService {
         name: owner.name,
         subscription_plan: owner.subscription_plan || 'free',
       } : {
-        id: gallery.owner_id,
+        id: gallery.owner_id || '',
         email: gallery.owner_email,
         name: gallery.owner_name,
         subscription_plan: 'free' as SubscriptionPlan,
       },
       audit_history: auditHistory,
+      conversion_timeline: conversionTimeline,
     };
   }
 

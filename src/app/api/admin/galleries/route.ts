@@ -3,14 +3,14 @@
  * GET - List galleries with pagination and filtering
  * 
  * @module app/api/admin/galleries/route
- * Requirements: 4.1, 4.2
+ * Requirements: 4.1, 4.2, 11.1, 11.2
  */
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
 import { requireAdmin } from '@/lib/middleware/admin-auth';
 import { createAdminClient } from '@/lib/supabase/server';
 import { createAdminService } from '@/lib/services/admin.service';
-import type { GalleryFilters } from '@/types/admin';
+import type { GalleryFilters, GalleryType } from '@/types/admin';
 
 /**
  * GET /api/admin/galleries
@@ -19,6 +19,7 @@ import type { GalleryFilters } from '@/types/admin';
  * Query Parameters:
  * - search: Search by title or slug
  * - status: Filter by status (active, expired, inactive)
+ * - galleryType: Filter by gallery type (guest, user, converted)
  * - userId: Filter by owner user ID
  * - dateFrom: Filter by creation date (from)
  * - dateTo: Filter by creation date (to)
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest) {
     const filters: GalleryFilters = {
       search: searchParams.get('search') || undefined,
       status: (searchParams.get('status') as 'active' | 'expired' | 'inactive') || undefined,
+      galleryType: (searchParams.get('galleryType') as GalleryType) || undefined,
       userId: searchParams.get('userId') || undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,

@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageIcon, CheckSquare, Square, ImagePlus } from "lucide-react";
+import { ImageIcon, CheckSquare, Square, ImagePlus, Sparkles } from "lucide-react";
 
 interface ContentHeaderProps {
   imageCount: number;
@@ -22,60 +22,80 @@ export function ContentHeader({
   onUpload 
 }: ContentHeaderProps) {
   const allSelected = selectedCount === totalCount && totalCount > 0;
+  const percentage = Math.min(100, (imageCount / maxImages) * 100);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
-      <div className="flex items-center gap-4">
-        <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600">
-          <ImageIcon size={24} />
-        </div>
-        <div>
-          <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-            Photos de la galerie
-          </h3>
-          <div className="flex items-center gap-2 mt-0.5">
-            <p className={`text-sm font-bold ${isLimitReached ? 'text-rose-500' : 'text-slate-500'}`}>
-              {imageCount} / {maxImages}
-            </p>
-            {isLimitReached && (
-              <span className="text-[10px] font-black bg-rose-100 text-rose-600 px-2 py-0.5 rounded-md uppercase tracking-widest">
-                Quota plein
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-lg text-white shadow-md shadow-indigo-500/25">
+            <ImageIcon size={18} />
+          </div>
+          <div>
+            <h3 className="text-base font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+              Photos
+              {!isLimitReached && imageCount > 0 && (
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              )}
+            </h3>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className={`text-xs font-bold ${isLimitReached ? 'text-rose-500' : 'text-slate-500'}`}>
+                {imageCount} / {maxImages}
               </span>
-            )}
+              {isLimitReached && (
+                <span className="text-[8px] font-black bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
+                  Limite
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          {totalCount > 0 && (
+            <button 
+              onClick={onToggleSelectAll}
+              className="flex items-center gap-1.5 px-3 py-2 text-slate-600 font-bold text-[10px] uppercase tracking-wider hover:bg-slate-50 rounded-lg transition-all border border-slate-200"
+            >
+              {allSelected ? <CheckSquare size={14} className="text-indigo-600" /> : <Square size={14} />}
+              <span className="hidden sm:inline">Tout sélectionner</span>
+            </button>
+          )}
+
+          <div className="relative group">
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              className={`absolute inset-0 opacity-0 z-10 ${isLimitReached ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onChange={(e) => onUpload(Array.from(e.target.files || []))}
+              disabled={isLimitReached}
+            />
+            <button 
+              disabled={isLimitReached}
+              className={`flex items-center gap-1.5 px-4 py-2 font-bold rounded-lg text-xs transition-all pointer-events-none ${
+                isLimitReached 
+                  ? 'bg-slate-100 text-slate-400' 
+                  : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25 group-hover:shadow-lg group-hover:shadow-indigo-500/30'
+              }`}
+            >
+              <ImagePlus size={16} />
+              Ajouter
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button 
-          onClick={onToggleSelectAll}
-          className="flex items-center gap-2 px-4 py-2 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 rounded-xl transition-all border border-slate-100"
-        >
-          {allSelected ? <CheckSquare size={16} /> : <Square size={16} />}
-          Tout sélectionner
-        </button>
-
-        <div className="relative group">
-          <input 
-            type="file" 
-            multiple 
-            accept="image/*" 
-            className={`absolute inset-0 opacity-0 z-10 ${isLimitReached ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-            onChange={(e) => onUpload(Array.from(e.target.files || []))}
-            disabled={isLimitReached}
-          />
-          <button 
-            disabled={isLimitReached}
-            className={`flex items-center gap-2 px-5 py-2.5 font-bold rounded-xl text-sm transition-all shadow-lg pointer-events-none ${
-              isLimitReached 
-                ? 'bg-slate-200 text-slate-400 shadow-none' 
-                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-100'
-            }`}
-          >
-            <ImagePlus size={18} />
-            Uploader
-          </button>
-        </div>
+      {/* Progress bar */}
+      <div className="h-1 bg-slate-100">
+        <div 
+          className={`h-full transition-all duration-500 ${
+            isLimitReached 
+              ? 'bg-gradient-to-r from-rose-500 to-pink-500' 
+              : 'bg-gradient-to-r from-indigo-500 to-violet-500'
+          }`}
+          style={{ width: `${percentage}%` }}
+        />
       </div>
     </div>
   );

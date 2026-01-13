@@ -59,9 +59,9 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       <AdminSessionMarker />
       <AdminHeader adminName={adminName} adminEmail={adminEmail} />
-      <div className="flex pt-20">
+      <div className="flex pt-16">
         <AdminNav />
-        <main className="flex-1 min-w-0 lg:ml-64 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 min-w-0 lg:ml-56 p-3 sm:p-4 lg:p-6">
           <div className="max-w-full overflow-x-auto">
             {children}
           </div>

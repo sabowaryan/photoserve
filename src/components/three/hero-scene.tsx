@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Sparkles, Environment, RoundedBox } from '@react-three/drei';
+import { Float, Sparkles, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 
 // 3D Camera Model - stylized geometric camera
@@ -286,7 +286,8 @@ function Scene() {
         color="#a855f7"
       />
 
-      <Environment preset="night" />
+      {/* Use simple lighting instead of HDR environment to avoid network issues */}
+      <fog attach="fog" args={['#0f0f1a', 8, 25]} />
     </>
   );
 }

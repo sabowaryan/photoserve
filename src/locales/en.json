@@ -1,0 +1,623 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "open": "Open",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "all": "All",
+    "none": "None",
+    "required": "Required",
+    "optional": "Optional",
+    "language": "Language",
+    "account": "Account",
+    "menu": "Menu"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "help": "Help",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "getStarted": "Get Started"
+  },
+  "landing": {
+    "badge": "The choice of professional photographers",
+    "title": "Your photos deserve",
+    "titleHighlight": "original quality.",
+    "subtitle": "What your clients receive shouldn't be compressed.",
+    "subtitleHighlight": "HD photo delivery",
+    "subtitleEnd": "without loss for demanding creators.",
+    "cta": {
+      "primary": "Start for free",
+      "secondary": "Learn more"
+    },
+    "tagline": "Zero compression • HD delivery • Ready in 2 min",
+    "stats": {
+      "experts": "Pro experts",
+      "galleries": "Galleries delivered",
+      "photos": "HD photos",
+      "satisfaction": "Satisfaction"
+    },
+    "problem": {
+      "badge": "The invisible problem",
+      "title": "When sending, your photos are",
+      "titleHighlight": "automatically degraded.",
+      "paragraph1": "You spend hours retouching every detail. Your photos are ready to be delivered.",
+      "paragraph1Highlight": "Then comes the moment of sending.",
+      "paragraph2": "Messaging automatically compresses your files. Your 24 megapixels are reduced to a mediocre web format.",
+      "paragraph2Highlight": "Details disappear.",
+      "paragraph3": "As soon as a client zooms or prints, the loss becomes obvious.",
+      "paragraph3Highlight": "Perceived quality drops,",
+      "paragraph3End": "and your professional image with it.",
+      "comparison": {
+        "original": "PikSend original quality",
+        "originalSpec": "24 MP • 6000×4000px",
+        "originalDesc": "Sharp details, true colors, 100% HD",
+        "classic": "Classic messaging",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "Irreversible automatic compression"
+      }
+    },
+    "benefits": {
+      "badge": "The PikSend solution",
+      "title": "Deliver in original quality.",
+      "subtitle": "Upload your HD files. Share a unique link.",
+      "subtitleHighlight": "Your clients receive 100% of your work.",
+      "features": {
+        "quality": {
+          "highlight": "0% loss",
+          "title": "Original quality",
+          "desc": "Zero compression. Your photos arrive exactly as you exported them from Lightroom or Photoshop."
+        },
+        "friction": {
+          "highlight": "Ready in 2 min",
+          "title": "Minimal friction",
+          "desc": "No account to create for your clients. They click the link and instantly download in HD."
+        },
+        "gallery": {
+          "highlight": "Pro Design",
+          "title": "Premium Gallery",
+          "desc": "Offer a high-end, secure, and clean viewing experience. Enhance your brand image."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Ready to deliver the",
+      "titleHighlight": "best quality?",
+      "subtitle": "Join the 500+ photographers who have already chosen PikSend to showcase their work.",
+      "button": "Create my free gallery",
+      "note": "No card required • Cancel anytime"
+    }
+  },
+  "auth": {
+    "title": "PikSend",
+    "subtitle": "The photo sharing platform loved by creatives.",
+    "tabs": {
+      "signIn": "Sign In",
+      "signUp": "Sign Up"
+    },
+    "form": {
+      "name": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Confirm Password",
+      "forgotPassword": "Forgot?",
+      "rememberMe": "Remember me",
+      "agreeTerms": "I agree to the",
+      "termsLink": "Terms of Service",
+      "andThe": "and the",
+      "privacyLink": "Privacy Policy"
+    },
+    "passwordStrength": {
+      "label": "Security",
+      "weak": "Weak",
+      "medium": "Medium",
+      "good": "Good",
+      "excellent": "Excellent"
+    },
+    "buttons": {
+      "signIn": "Sign In",
+      "signUp": "Create my account",
+      "google": "Sign in with Google"
+    },
+    "divider": "Quick access",
+    "errors": {
+      "invalidEmail": "Invalid email",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "nameRequired": "Please enter your name.",
+      "termsRequired": "You must accept the terms of service.",
+      "invalidCredentials": "Invalid email or password",
+      "signupFailed": "Error during registration",
+      "googleFailed": "Error signing in with Google",
+      "accountExists": "An account already exists with this email. Sign in with your password.",
+      "oauthError": "Error signing in with Google. Please try again.",
+      "genericError": "An error occurred"
+    },
+    "success": {
+      "accountCreated": "Account created! You can now sign in."
+    }
+  },
+  "dashboard": {
+    "badge": "Dashboard",
+    "greeting": "Hello,",
+    "subtitle": "Here's an overview of your performance and secure gallery management.",
+    "newGallery": "New Gallery",
+    "quotaReached": "Quota reached",
+    "stats": {
+      "currentPlan": "Current plan",
+      "storage": "Storage",
+      "galleries": "Galleries",
+      "totalViews": "Total views",
+      "usage": "Usage",
+      "volume": "Volume",
+      "vsLastMonth": "vs {{count}} last month"
+    },
+    "plans": {
+      "free": "Free",
+      "premium": "Premium",
+      "pro": "Pro"
+    },
+    "galleriesSection": {
+      "title": "Galleries",
+      "search": "Search a gallery...",
+      "noResults": "No gallery found",
+      "noResultsQuery": "No results for \"{{query}}\"",
+      "emptyState": "Start by creating your first photo gallery.",
+      "createFirst": "Create my first gallery"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "mostViews": "Most views",
+      "leastViews": "Least views",
+      "expiresLast": "Expires last",
+      "expiresSoon": "Expires soon"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "galleryCreated": "Gallery \"{{title}}\" created"
+    }
+  },
+  "gallery": {
+    "create": {
+      "title": "Create Gallery",
+      "titleLabel": "Gallery Title",
+      "titlePlaceholder": "My photo gallery",
+      "uploadLabel": "Upload Photos",
+      "uploadHint": "Drag and drop or click to select",
+      "maxFiles": "Maximum {{count}} photos",
+      "maxSize": "Maximum {{size}}MB per image",
+      "allowedTypes": "JPG, PNG, WebP accepted",
+      "creating": "Creating...",
+      "submit": "Create Gallery"
+    },
+    "detail": {
+      "views": "views",
+      "images": "images",
+      "expires": "Expires",
+      "expired": "Expired",
+      "active": "Active",
+      "inactive": "Inactive",
+      "shareLink": "Share Link",
+      "copyLink": "Copy Link",
+      "linkCopied": "Link copied!",
+      "download": "Download All",
+      "delete": "Delete Gallery",
+      "settings": "Settings",
+      "content": "Content"
+    },
+    "view": {
+      "downloadAll": "Download All",
+      "downloadSelected": "Download Selected",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "passwordRequired": "Password Required",
+      "passwordPlaceholder": "Enter password",
+      "passwordSubmit": "Access Gallery",
+      "passwordError": "Incorrect password",
+      "expired": "This gallery has expired",
+      "expiredMessage": "The gallery you're looking for is no longer available."
+    },
+    "watermark": {
+      "badge": "Free Gallery",
+      "expiresIn": "Expires in {{hours}} hours"
+    },
+    "publicFooter": {
+      "poweredBy": "Powered by",
+      "tagline": "HD photo delivery for demanding creators",
+      "creatorPrompt": "Are you the creator of this gallery?",
+      "creatorDescription": "Access your dashboard to manage your shares and subscriptions.",
+      "accessDashboard": "Access my dashboard",
+      "createGallery": "Create your gallery",
+      "createDescription": "Share your photos in original quality, without compression.",
+      "learnMore": "Learn more",
+      "photos": "photos",
+      "expiresOn": "Expires on"
+    },
+    "unlockSuccess": {
+      "title": "Gallery Unlocked!",
+      "subtitle": "Your payment was successful",
+      "benefitsTitle": "What you get",
+      "benefit1": "Watermarks removed",
+      "benefit2": "Extended to {days} days",
+      "benefit3": "HD downloads enabled",
+      "createAccountTitle": "Want to manage your gallery?",
+      "createAccountDesc": "Create a free account to access your dashboard, track views, and manage your galleries.",
+      "createAccountBtn": "Create my account",
+      "continueBtn": "Continue without account"
+    },
+    "pricingReminder": {
+      "title": "Don't lose your gallery!",
+      "subtitle": "Only {hours}h left before expiration",
+      "cta": "Unlock"
+    }
+  },
+  "guest": {
+    "upload": {
+      "title": "Share your photos instantly",
+      "subtitle": "No account required. Upload and share in seconds.",
+      "dropzone": "Drop your photos here",
+      "dropzoneHint": "or click to select files",
+      "uploading": "Uploading...",
+      "processing": "Processing...",
+      "complete": "Upload complete!"
+    },
+    "pricing": {
+      "title": "Your gallery is ready!",
+      "subtitle": "Choose how you want to share it",
+      "options": {
+        "free": {
+          "title": "Keep it Free",
+          "price": "$0",
+          "description": "Expires in 24 hours",
+          "benefits": {
+            "0": "24h access",
+            "1": "PikSend watermark",
+            "2": "Basic sharing"
+          }
+        },
+        "unlock": {
+          "title": "Unlock This Gallery",
+          "price": "$2.99",
+          "description": "One-time payment",
+          "benefits": {
+            "0": "30-day access",
+            "1": "No watermark",
+            "2": "HD downloads",
+            "3": "Custom title"
+          }
+        },
+        "subscribe": {
+          "title": "Go Premium",
+          "price": "$9.99/mo",
+          "description": "Best value",
+          "benefits": {
+            "0": "50 galleries",
+            "1": "5 GB storage",
+            "2": "No watermarks",
+            "3": "Priority support"
+          },
+          "recommended": "Recommended"
+        }
+      }
+    }
+  },
+  "pricing": {
+    "badge": "Simple Pricing",
+    "title": "Choose your plan",
+    "subtitle": "Start free, upgrade when you need more.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save 20%",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "currentPlan": "Current Plan",
+    "selectPlan": "Select Plan",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Perfect to get started",
+        "features": [
+          "3 galleries",
+          "20 MB storage",
+          "7-day expiration",
+          "Basic support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "For active photographers",
+        "features": [
+          "20 galleries",
+          "500 MB storage",
+          "30-day expiration",
+          "Priority support",
+          "Custom branding"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "For professionals",
+        "features": [
+          "Unlimited galleries",
+          "5 GB storage",
+          "90-day expiration",
+          "24/7 support",
+          "Custom branding",
+          "Analytics"
+        ]
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "email": "Email",
+      "save": "Save Changes",
+      "saved": "Profile updated!"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "currentPlan": "Current Plan",
+      "manage": "Manage Subscription",
+      "upgrade": "Upgrade Plan",
+      "cancel": "Cancel Subscription"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "deleteAccount": "Delete Account",
+      "deleteWarning": "This action is irreversible. All your data will be permanently deleted."
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "galleries": "Galleries",
+      "subscriptions": "Subscriptions",
+      "analytics": "Analytics",
+      "auditLogs": "Audit Logs"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "PikSend platform overview",
+      "stats": {
+        "users": "Users",
+        "usersSubtitle": "Registered accounts",
+        "activeGalleries": "Active galleries",
+        "totalGalleries": "{{count}} total",
+        "storage": "Storage used",
+        "storageSubtitle": "Total space consumed",
+        "conversionRate": "Conversion rate",
+        "conversionSubtitle": "Paying users"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Manage platform users",
+      "search": "Search users...",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "plan": "Plan",
+        "galleries": "Galleries",
+        "storage": "Storage",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "actions": {
+        "view": "View",
+        "suspend": "Suspend",
+        "reactivate": "Reactivate"
+      }
+    },
+    "galleries": {
+      "title": "Galleries",
+      "subtitle": "Manage all galleries",
+      "search": "Search galleries...",
+      "table": {
+        "title": "Title",
+        "owner": "Owner",
+        "type": "Type",
+        "images": "Images",
+        "views": "Views",
+        "status": "Status",
+        "expires": "Expires",
+        "actions": "Actions"
+      },
+      "types": {
+        "guest": "Guest",
+        "user": "User",
+        "converted": "Converted"
+      },
+      "status": {
+        "active": "Active",
+        "expired": "Expired",
+        "deactivated": "Deactivated"
+      }
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "subtitle": "Manage user subscriptions"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Platform statistics and trends"
+    },
+    "auditLogs": {
+      "title": "Audit Logs",
+      "subtitle": "System activity history"
+    }
+  },
+  "errors": {
+    "401": {
+      "title": "Authentication required",
+      "message": "You must be logged in to access this page. Sign in or create an account to continue.",
+      "info": "PikSend allows you to create and share secure photo galleries. Sign up for free to get started!",
+      "signIn": "Sign In",
+      "signUp": "Create an account",
+      "home": "Back to home"
+    },
+    "403": {
+      "title": "Access denied",
+      "message": "You don't have permission to access this page.",
+      "home": "Back to home"
+    },
+    "404": {
+      "title": "Page not found",
+      "message": "The page you're looking for doesn't exist or has been moved.",
+      "home": "Back to home"
+    },
+    "500": {
+      "title": "Server error",
+      "message": "Something went wrong on our end. Please try again later.",
+      "retry": "Try again",
+      "home": "Back to home"
+    },
+    "503": {
+      "title": "Service unavailable",
+      "message": "We're currently performing maintenance. Please check back soon.",
+      "home": "Back to home"
+    },
+    "upload": {
+      "fileTooLarge": "File too large. Maximum {{size}}MB per image.",
+      "invalidFileType": "Invalid file type. Please upload JPG, PNG, or WebP images.",
+      "tooManyFiles": "Too many files. Maximum {{count}} images for guest galleries.",
+      "noFiles": "Please select at least one image to upload.",
+      "networkError": "Upload failed. Please check your connection and try again.",
+      "galleryCreationFailed": "Failed to create gallery. Please try again.",
+      "uploadFailed": "Failed to upload image. Please try again."
+    },
+    "payment": {
+      "failed": "Payment failed. Please try again.",
+      "declined": "Payment declined. Please try a different payment method.",
+      "sessionExpired": "Session expired. Please try again.",
+      "checkoutFailed": "Failed to start checkout. Please try again.",
+      "invalidAmount": "Invalid payment amount.",
+      "stripeError": "Payment processing error: {{message}}"
+    },
+    "session": {
+      "expired": "Your session has expired. Your galleries may no longer be accessible.",
+      "invalid": "Invalid session. Please refresh the page.",
+      "creationFailed": "Failed to create session. Please try again."
+    },
+    "gallery": {
+      "notFound": "Gallery not found.",
+      "expired": "This gallery has expired and is no longer available.",
+      "accessDenied": "You don't have access to this gallery.",
+      "migrationFailed": "Failed to migrate galleries to your account. Please contact support."
+    },
+    "generic": {
+      "unexpected": "An unexpected error occurred. Please try again.",
+      "networkError": "Network error. Please check your connection.",
+      "retry": "Something went wrong. Please try again."
+    }
+  },
+  "footer": {
+    "tagline": "HD photo delivery for demanding creators.",
+    "product": "Product",
+    "platform": "Platform",
+    "company": "Company",
+    "legal": "Legal",
+    "officialContact": "Official Contact",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "help": "Help Center",
+      "contact": "Contact",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "mentions": "Legal Notice"
+    },
+    "identifiers": {
+      "rccm": "RCCM",
+      "nationalId": "National ID",
+      "taxNumber": "Tax Number"
+    },
+    "exclusiveProperty": "Exclusive property of",
+    "country": "Democratic Republic of Congo",
+    "copyright": "© {{year}} PikSend. All rights reserved."
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to PikSend",
+      "description": "The easiest way to share your photos in original quality."
+    },
+    "upload": {
+      "title": "Upload your photos",
+      "description": "Drag and drop your HD photos or click to select files."
+    },
+    "customize": {
+      "title": "Customize your gallery",
+      "description": "Add a title and configure your sharing settings."
+    },
+    "share": {
+      "title": "Share with your clients",
+      "description": "Get a unique link to share your gallery instantly."
+    },
+    "skip": "Skip",
+    "finish": "Get Started"
+  },
+  "myGalleries": {
+    "title": "My Galleries",
+    "subtitle": "Galleries created during this session",
+    "createNew": "Create new",
+    "empty": {
+      "title": "No galleries yet",
+      "description": "You haven't created any galleries during this session. Create your first gallery to share your photos.",
+      "cta": "Create my first gallery"
+    },
+    "warning": {
+      "title": "Save your links!",
+      "description": "These galleries are linked to your browser. If you clear your data or change device, you'll lose access. Create an account to keep them forever."
+    },
+    "status": {
+      "unlocked": "Unlocked",
+      "expired": "Expired"
+    },
+    "createAccount": {
+      "title": "Want to keep your galleries?",
+      "description": "Create a free account to access your galleries from any device, get more storage, and unlock premium features.",
+      "cta": "Create my account"
+    }
+  }
+}

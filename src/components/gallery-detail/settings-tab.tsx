@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, Lock, Clock, Eye, EyeOff, ChevronRight, Save, Loader2, CheckCircle2 } from "lucide-react";
+import { Settings, Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Crown } from "lucide-react";
+import Link from "next/link";
 
 interface DurationOption {
   value: number;
@@ -38,130 +39,139 @@ export function SettingsTab({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 animate-in slide-in-from-bottom-6">
+    <div className="max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-bottom-6">
       {/* Left Column - General Settings */}
-      <div className="space-y-8 bg-white rounded-[3rem] p-8 sm:p-10 border border-slate-200 shadow-sm">
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 border-b border-slate-50 pb-6">
-            <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600 shadow-inner">
-              <Settings size={22} />
+      <div className="space-y-6">
+        {/* Title Card */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-xl text-white shadow-lg">
+              <Type size={18} />
             </div>
-            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Général</h3>
+            <span className="font-bold text-slate-900">Titre de la galerie</span>
           </div>
           
-          {/* Title Input */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
-              Titre de la galerie
-            </label>
+          <input 
+            type="text" 
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
+            value={title} 
+            onChange={(e) => onTitleChange(e.target.value)}
+            placeholder="Nom de votre galerie"
+          />
+        </div>
+
+        {/* Password Card */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl text-white shadow-lg">
+              <Lock size={18} />
+            </div>
+            <div>
+              <span className="font-bold text-slate-900">Protection par mot de passe</span>
+              <p className="text-xs text-slate-500 mt-0.5">Sécurisez l&apos;accès à votre galerie</p>
+            </div>
+          </div>
+          
+          <div className="relative">
             <input 
-              type="text" 
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
-              value={title} 
-              onChange={(e) => onTitleChange(e.target.value)} 
+              type={showPassword ? "text" : "password"} 
+              className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none pr-12 font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
+              value={password} 
+              onChange={(e) => onPasswordChange(e.target.value)}
+              placeholder="Nouveau mot de passe"
             />
-          </div>
-          
-          {/* Password Section */}
-          <div className="space-y-4 pt-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
-                <Lock size={18} />
-              </div>
-              <span className="text-lg font-bold text-slate-900">Sécurité</span>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
-                Mot de passe visiteur
-              </label>
-              <div className="relative">
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none pr-14 font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
-                  value={password} 
-                  onChange={(e) => onPasswordChange(e.target.value)}
-                  placeholder="Nouveau mot de passe"
-                />
-                <button 
-                  onClick={() => setShowPassword(!showPassword)} 
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} 
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2 transition-colors rounded-lg hover:bg-slate-100"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
       </div>
 
       {/* Right Column - Duration & Save */}
-      <div className="flex flex-col gap-8">
+      <div className="space-y-6">
         {/* Duration Card */}
-        <div className="bg-white rounded-[3rem] p-8 sm:p-10 border border-slate-200 shadow-sm flex-1">
-          <div className="flex items-center gap-3 border-b border-slate-50 pb-6 mb-8">
-            <div className="p-3 bg-amber-50 rounded-2xl text-amber-600 shadow-inner">
-              <Clock size={22} />
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl text-white shadow-lg">
+              <Clock size={18} />
             </div>
-            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Expiration</h3>
+            <div>
+              <span className="font-bold text-slate-900">Durée d&apos;expiration</span>
+              <p className="text-xs text-slate-500 mt-0.5">Définissez la validité de la galerie</p>
+            </div>
           </div>
           
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
-                Délai d'expiration
-              </label>
-              <div className="relative">
-                <select 
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none appearance-none disabled:bg-slate-100 font-bold text-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
-                  disabled={!canChangeDuration}
-                  value={currentDuration}
-                  onChange={(e) => onDurationChange(Number(e.target.value))}
-                >
-                  {durationOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  <ChevronRight size={18} className="rotate-90" />
-                </div>
-              </div>
-              {!canChangeDuration && (
-                <p className="text-sm text-slate-500 font-medium mt-2">
-                  💎 Passez à Premium pour modifier la durée
-                </p>
-              )}
+          <div className="relative">
+            <select 
+              className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none appearance-none disabled:bg-slate-100 disabled:text-slate-400 font-bold text-slate-800 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all cursor-pointer" 
+              disabled={!canChangeDuration}
+              value={currentDuration}
+              onChange={(e) => onDurationChange(Number(e.target.value))}
+            >
+              {durationOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              <ChevronDown size={18} />
             </div>
           </div>
+          
+          {!canChangeDuration && (
+            <Link 
+              href="/settings?upgrade=true"
+              className="mt-4 flex items-center gap-2 p-3 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-xl text-sm font-bold text-indigo-600 hover:from-indigo-100 hover:to-violet-100 transition-all"
+            >
+              <Crown size={16} />
+              Passez à Premium pour modifier la durée
+            </Link>
+          )}
         </div>
 
         {/* Save Button Card */}
-        <div className="bg-slate-900 rounded-[2.5rem] p-6 shadow-2xl relative overflow-hidden group">
-          <div className="relative z-10 flex flex-col gap-4">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+          {/* Decorative orb */}
+          <div className={`absolute -bottom-8 -right-8 w-32 h-32 rounded-full blur-2xl transition-colors duration-500 ${
+            saveSuccess ? 'bg-emerald-500/30' : 'bg-indigo-500/20'
+          }`} />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles size={16} className="text-amber-400" />
+              <span className="text-sm font-bold text-white/70">Enregistrer les modifications</span>
+            </div>
+            
             <button 
               onClick={onSave} 
               disabled={isUpdating} 
-              className={`relative w-full py-5 rounded-2xl font-black text-base transition-all duration-500 flex items-center justify-center gap-3 shadow-xl overflow-hidden ${
+              className={`relative w-full py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden ${
                 saveSuccess 
-                  ? 'bg-emerald-500 text-white' 
-                  : 'bg-white text-slate-900 hover:text-indigo-600 shadow-white/5'
+                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' 
+                  : 'bg-white text-slate-900 hover:bg-slate-50 shadow-lg'
               }`}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite] pointer-events-none" />
               {isUpdating ? (
-                <Loader2 size={20} className="animate-spin" />
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Mise à jour...
+                </>
               ) : saveSuccess ? (
-                <CheckCircle2 size={20} />
+                <>
+                  <CheckCircle2 size={18} />
+                  Sauvegardé !
+                </>
               ) : (
-                <Save size={20} />
+                <>
+                  <Save size={18} />
+                  Appliquer les changements
+                </>
               )}
-              <span className="relative z-10">
-                {saveSuccess ? 'Sauvegardé' : isUpdating ? 'Mise à jour...' : 'Appliquer'}
-              </span>
             </button>
           </div>
-          <div className={`absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-[80px] transition-colors duration-1000 ${
-            saveSuccess ? 'bg-emerald-500/20' : 'bg-indigo-500/10'
-          }`} />
         </div>
       </div>
     </div>

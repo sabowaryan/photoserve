@@ -7,34 +7,34 @@ import { Button } from '@/components/ui/button';
 export default function Error403Client() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-orange-500/5 flex items-center justify-center p-4">
-      <div className="max-w-screen-lg w-full text-center space-y-8">
+      <div className="max-w-2xl w-full text-center space-y-6">
         {/* Animated 403 */}
         <div className="relative">
-          <h1 className="text-[150px] sm:text-[200px] font-black text-orange-500/10 leading-none select-none">
+          <h1 className="text-[120px] sm:text-[140px] font-black text-orange-500/10 leading-none select-none">
             403
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-background/80 backdrop-blur-sm rounded-full p-6">
-              <ShieldX className="w-16 h-16 text-orange-500" />
+            <div className="bg-background/80 backdrop-blur-sm rounded-full p-4">
+              <ShieldX className="w-12 h-12 text-orange-500" />
             </div>
           </div>
         </div>
 
         {/* Message */}
-        <div className="space-y-4">
-          <h2 className="text-3xl font-bold text-foreground">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">
             Accès refusé
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Vous n&apos;avez pas les permissions nécessaires pour accéder à cette page 
             ou cette ressource est protégée.
           </p>
         </div>
 
         {/* Reasons */}
-        <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-6 text-left space-y-3">
-          <p className="font-medium text-foreground">Raisons possibles :</p>
-          <ul className="text-sm text-muted-foreground space-y-2">
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 text-left space-y-2">
+          <p className="text-sm font-medium text-foreground">Raisons possibles :</p>
+          <ul className="text-sm text-muted-foreground space-y-1.5">
             <li className="flex items-start gap-2">
               <span className="text-orange-500">•</span>
               Vous n&apos;êtes pas connecté à votre compte
@@ -51,14 +51,14 @@ export default function Error403Client() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild className="gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <Button asChild size="sm" className="gap-2">
             <Link href="/auth">
               <LogIn className="w-4 h-4" />
               Se connecter
             </Link>
           </Button>
-          <Button variant="outline" asChild className="gap-2">
+          <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               Retour à l&apos;accueil

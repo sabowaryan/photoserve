@@ -72,16 +72,16 @@ export function AdminStatsCard({
   const styles = variantStyles[variant];
 
   return (
-    <div className="group bg-white rounded-2xl p-6 border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-slate-300">
-      <div className="flex items-start justify-between mb-4">
+    <div className="group bg-white rounded-xl p-4 border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-slate-300">
+      <div className="flex items-start justify-between mb-3">
         <div
-          className={`p-3 rounded-xl transition-colors ${styles.icon} ${styles.iconHover}`}
+          className={`p-2 rounded-lg transition-colors ${styles.icon} ${styles.iconHover}`}
         >
-          <Icon size={22} strokeWidth={2} />
+          <Icon size={18} strokeWidth={2} />
         </div>
         {trend && (
           <span
-            className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
               trend.positive
                 ? "text-emerald-600 bg-emerald-50"
                 : "text-rose-600 bg-rose-50"
@@ -94,14 +94,14 @@ export function AdminStatsCard({
       </div>
 
       <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">
           {label}
         </p>
-        <h4 className="text-2xl font-bold text-slate-800 tracking-tight">
+        <h4 className="text-xl font-bold text-slate-800 tracking-tight">
           {typeof value === "number" ? value.toLocaleString("fr-FR") : value}
         </h4>
         {subtitle && (
-          <p className="text-sm text-slate-500 font-medium mt-1">{subtitle}</p>
+          <p className="text-xs text-slate-500 font-medium mt-0.5">{subtitle}</p>
         )}
       </div>
     </div>

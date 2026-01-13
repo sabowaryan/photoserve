@@ -14,6 +14,7 @@ interface Profile {
   storage_used_mb: number;
   storage_limit_mb: number;
   max_galleries: number;
+  onboarding_completed: boolean | null;
 }
 
 interface Gallery {

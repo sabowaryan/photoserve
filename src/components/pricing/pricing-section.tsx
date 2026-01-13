@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Check, Crown, Zap, Lock, Sparkles } from 'lucide-react';
 import { PricingButton } from './pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
@@ -14,27 +11,32 @@ interface PricingSectionProps {
   content: LandingContent;
 }
 
-// Plans metadata (prices come from PLAN_PRICING)
 const PRICING_PLANS = [
   {
     key: 'free' as const,
     name: 'Gratuit',
     description: 'Testez la livraison photos HD',
     icon: Sparkles,
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
     popular: false,
   },
   {
     key: 'premium' as const,
     name: 'Premium',
-    description: 'Pour photographes professionnels actifs',
+    description: 'Pour photographes actifs',
     icon: Crown,
+    iconBg: 'bg-amber-100',
+    iconColor: 'text-amber-600',
     popular: true,
   },
   {
     key: 'pro' as const,
     name: 'Pro',
-    description: 'Pour photographes professionnels exigeants',
+    description: 'Pour professionnels exigeants',
     icon: Zap,
+    iconBg: 'bg-indigo-100',
+    iconColor: 'text-indigo-600',
     popular: false,
   },
 ];
@@ -47,7 +49,7 @@ export function PricingSection({ content }: PricingSectionProps) {
     const pricing = PLAN_PRICING[planKey];
     if (pricing.monthlyPrice === 0) return '$0';
     const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
-    return `${price.toFixed(2)}`;
+    return `${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
   };
 
   const getPeriod = (planKey: 'free' | 'premium' | 'pro') => {
@@ -59,54 +61,65 @@ export function PricingSection({ content }: PricingSectionProps) {
     const pricing = PLAN_PRICING[planKey];
     if (!isYearly || pricing.monthlyPrice === 0) return null;
     const monthlyEquivalent = pricing.yearlyPrice / 12;
-    return `soit ${monthlyEquivalent.toFixed(2)}/mois`;
+    return `${monthlyEquivalent.toFixed(2)}/mois`;
   };
 
   const getSavings = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
     if (!isYearly || pricing.monthlyPrice === 0) return null;
-    const savings = (pricing.monthlyPrice * 12) - pricing.yearlyPrice;
-    return `Économisez ${savings.toFixed(2)}/an`;
+    return ((pricing.monthlyPrice * 12) - pricing.yearlyPrice).toFixed(2);
   };
 
   return (
-    <section id="tarifs" className="py-16 sm:py-24 px-4 relative">
+    <section id="tarifs" className="py-12 md:py-16 px-4 relative">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-indigo-500/5 rounded-full blur-[80px]" />
       </div>
 
-      <div className="container mx-auto relative z-10">
-        <div className="text-center mb-12 sm:mb-16">
-          <Badge variant="outline" className="mb-4">{content.pricing.badge}</Badge>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-            {content.pricing.title}<br />{content.pricing.titleLine2}
+      <div className="container mx-auto max-w-5xl relative z-10">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold mb-3">
+            <Sparkles size={12} />
+            {content.pricing.badge}
+          </div>
+          <h2 className="text-2xl md:text-4xl font-black mb-2 tracking-tight text-slate-900">
+            {content.pricing.title}
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
+          <p className="text-slate-500 text-sm max-w-lg mx-auto mb-5">
             {content.pricing.subtitle}
           </p>
 
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+          <div className="inline-flex items-center gap-1 p-1 bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl shadow-sm">
+            <button
+              onClick={() => setIsYearly(false)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                !isYearly 
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow' 
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
               Mensuel
-            </span>
-            <Switch
-              checked={isYearly}
-              onCheckedChange={setIsYearly}
-              className="data-[state=checked]:bg-primary"
-            />
-            <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+            </button>
+            <button
+              onClick={() => setIsYearly(true)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                isYearly 
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow' 
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
               Annuel
-            </span>
-            {isYearly && (
-              <Badge variant="secondary" className="bg-green-500/10 text-green-500 border-green-500/20">
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
+                isYearly ? 'bg-white/20' : 'bg-emerald-100 text-emerald-700'
+              }`}>
                 -20%
-              </Badge>
-            )}
+              </span>
+            </button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-4">
           {PRICING_PLANS.map((plan) => {
             const Icon = plan.icon;
             const contentPlan = content.plans.find(p => 
@@ -117,63 +130,79 @@ export function PricingSection({ content }: PricingSectionProps) {
             const savings = getSavings(plan.key);
             
             return (
-              <Card 
-                key={plan.key} 
-                className={`glass-card relative flex flex-col transition-all duration-300 hover:-translate-y-1 ${
-                  plan.popular ? 'border-primary glow-effect' : ''
+              <div 
+                key={plan.key}
+                className={`relative bg-white/80 backdrop-blur-sm border rounded-xl overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+                  plan.popular 
+                    ? 'border-indigo-300 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/20' 
+                    : 'border-slate-200/50 shadow'
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground px-3">
-                      Le plus choisi
-                    </Badge>
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2">
+                    <div className="px-2.5 py-0.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-[10px] font-bold rounded-b-lg">
+                      Populaire
+                    </div>
                   </div>
                 )}
-                <CardHeader className="text-center pb-2">
-                  <div className={`mx-auto p-3 rounded-xl ${plan.popular ? 'bg-amber-500/10' : 'bg-muted/50'} mb-4`}>
-                    <Icon className={`h-6 w-6 ${plan.popular ? 'text-amber-500' : 'text-muted-foreground'}`} />
+
+                {/* Card Header */}
+                <div className="p-4 text-center">
+                  <div className={`w-10 h-10 mx-auto ${plan.iconBg} rounded-xl flex items-center justify-center mb-2`}>
+                    <Icon size={20} className={plan.iconColor} />
                   </div>
-                  <CardTitle className="font-display text-xl sm:text-2xl">{plan.name}</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-3xl sm:text-4xl font-bold">{formatPrice(plan.key)}</span>
-                    <span className="text-muted-foreground text-sm">{getPeriod(plan.key)}</span>
+                  <h3 className="text-base font-bold text-slate-900">{plan.name}</h3>
+                  <p className="text-xs text-slate-500 mb-3">{plan.description}</p>
+                  
+                  {/* Price */}
+                  <div className="mb-1">
+                    <span className="text-2xl font-bold text-slate-900">{formatPrice(plan.key)}</span>
+                    <span className="text-slate-500 text-sm">{getPeriod(plan.key)}</span>
                   </div>
                   {monthlyEquivalent && (
-                    <p className="text-sm text-muted-foreground mt-1">{monthlyEquivalent}</p>
+                    <p className="text-xs text-slate-400">soit {monthlyEquivalent}</p>
                   )}
                   {savings && (
-                    <p className="text-xs text-green-500 mt-1">{savings}</p>
+                    <p className="text-[10px] text-emerald-600 font-medium">-${savings}/an</p>
                   )}
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 flex-1 mb-6">
+                </div>
+
+                {/* Features */}
+                <div className="px-4 pb-4">
+                  <ul className="space-y-1.5 mb-4">
                     {contentPlan?.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
+                      <li key={featureIndex} className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${plan.iconBg}`}>
+                          <Check size={10} className={plan.iconColor} />
+                        </div>
+                        <span className="text-xs text-slate-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {/* CTA Button */}
                   <PricingButton
                     planKey={plan.key}
                     interval={isYearly ? 'yearly' : 'monthly'}
                     currentPlan={currentPlan}
                     variant={plan.popular ? 'default' : 'outline'}
-                    className={`w-full ${plan.popular ? 'btn-primary' : ''}`}
+                    className={`w-full py-2 rounded-lg text-sm font-bold transition-all ${
+                      plan.popular 
+                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow shadow-indigo-500/20' 
+                        : 'border border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                    }`}
                   >
-                    {contentPlan?.cta || 'Choisir ce plan'}
+                    {contentPlan?.cta || 'Choisir'}
                   </PricingButton>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-sm text-muted-foreground">
-            <Lock className="h-4 w-4 inline mr-1" />
+        <div className="text-center mt-6">
+          <p className="text-[11px] text-slate-500">
+            <Lock className="h-3 w-3 inline mr-1" />
             {content.pricing.guarantee}
           </p>
         </div>

@@ -2,12 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-
-import { ArrowLeft, HardDrive, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ChevronRight, HardDrive, AlertTriangle, Sparkles, Zap, TrendingUp } from "lucide-react";
 import { GalleryCreateForm } from "./gallery-create-form";
 
 export const metadata: Metadata = {
@@ -95,96 +90,137 @@ export default async function GalleryCreatePage() {
   );
 
   return (
-  
-      
-      
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+      {/* Decorative background orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-violet-200/30 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-100/20 rounded-full blur-3xl" />
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-10 pt-28 pb-20">
-        {/* Back Link */}
-        <Button variant="ghost" asChild className="mb-6">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au dashboard
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-28 pb-20">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-left-4 duration-500">
+          <Link 
+            href="/dashboard"
+            className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-bold text-sm transition-all group"
+          >
+            <div className="p-2 bg-white rounded-xl border border-slate-200 shadow-sm group-hover:border-indigo-200 group-hover:shadow-md group-active:scale-95 transition-all">
+              <ArrowLeft size={16} />
+            </div>
+            <span className="hidden sm:inline">Dashboard</span>
           </Link>
-        </Button>
+          <ChevronRight size={14} className="text-slate-300" />
+          <span className="text-sm font-bold text-slate-400">Nouvelle galerie</span>
+        </div>
 
-        <div className="grid min-w-0 gap-6">
-          {/* Storage Indicator */}
-          <Card className={`glass-card ${storagePercentage >= 100 ? "border-destructive" : ""}`}>
-            <CardContent className="pt-6">
-              <div className="flex min-w-0 items-center justify-between mb-2">
-                <div className="flex min-w-0 items-center gap-2">
-                  <HardDrive className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">
-                    Espace de stockage
+        {/* Hero Header */}
+        <div className="relative mb-8 animate-in slide-in-from-top-4 duration-700">
+          <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white relative overflow-hidden">
+            {/* Decorative orbs */}
+            <div className="absolute top-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-400/20 rounded-full blur-2xl translate-x-1/3 translate-y-1/3" />
+            
+            <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3 h-3 inline mr-1" />
+                    Nouvelle création
+                  </div>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-2">
+                  Créer une galerie
+                </h1>
+                <p className="text-indigo-100/70 font-medium max-w-md">
+                  Partagez vos photos en qualité HD avec vos clients en toute sécurité.
+                </p>
+              </div>
+
+              {/* Storage Card */}
+              <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl p-5 min-w-[240px]">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-xl ${storagePercentage >= 90 ? 'bg-rose-500/20' : 'bg-white/10'}`}>
+                    <HardDrive size={18} className={storagePercentage >= 90 ? 'text-rose-300' : 'text-white'} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-white/50 uppercase tracking-wider">Stockage</p>
+                    <p className="text-sm font-black">
+                      {currentStorageUsed.toFixed(1)} / {storageLimit} Mo
+                    </p>
+                  </div>
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all ${
+                      storagePercentage >= 90 
+                        ? 'bg-gradient-to-r from-rose-500 to-pink-500' 
+                        : 'bg-gradient-to-r from-emerald-400 to-teal-400'
+                    }`}
+                    style={{ width: `${Math.min(storagePercentage, 100)}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-[10px] font-bold text-white/50 uppercase tracking-wider">
+                    Plan {profile?.subscription_plan || 'free'}
+                  </span>
+                  <span className="text-[10px] font-bold text-white/70">
+                    {Math.round(storagePercentage)}%
                   </span>
                 </div>
-                <Badge
-                  variant={
-                    profile?.subscription_plan === "free"
-                      ? "secondary"
-                      : "default"
-                  }
-                >
-                  {profile?.subscription_plan?.toUpperCase() || "FREE"}
-                </Badge>
               </div>
-              <div className="flex min-w-0 items-baseline gap-1 mb-2">
-                <span className="text-2xl font-bold">
-                  {currentStorageUsed.toFixed(1)}
-                </span>
-                <span className="text-muted-foreground">/ {storageLimit} Mo</span>
-              </div>
-              <Progress
-                value={Math.min(storagePercentage, 100)}
-                className={`h-2 ${storagePercentage >= 100 ? "[&>div]:bg-destructive" : ""}`}
-              />
-              {storagePercentage >= 100 && (
-                <Link
-                  href="/settings?upgrade=true"
-                  className="flex items-center gap-2 mt-2 text-destructive text-sm hover:underline"
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  Espace insuffisant. Passez à un plan supérieur →
-                </Link>
-              )}
-              {isGalleryLimitReached && (
-                <Link
-                  href="/settings?upgrade=true"
-                  className="flex min-w-0 items-center gap-2 mt-2 text-destructive text-sm hover:underline"
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                  Limite de galeries atteinte ({galleryCount}/{maxGalleries}).
-                  Passez à un plan supérieur →
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Main Form */}
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="font-display text-2xl">
-                Nouvelle galerie
-              </CardTitle>
-              <CardDescription>
-                Créez une galerie photo sécurisée à partager avec vos clients.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <GalleryCreateForm
-                maxImagesPerGallery={profile?.max_images_per_gallery || 30}
-                maxImageSizeMb={profile?.max_image_size_mb || 1}
-                storageLimit={storageLimit}
-                currentStorageUsed={currentStorageUsed}
-                isGalleryLimitReached={isGalleryLimitReached}
-                durationOptions={durationOptions}
-                subscriptionPlan={profile?.subscription_plan || "free"}
-              />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
-      </main>
-  
+
+        {/* Alerts */}
+        {(storagePercentage >= 100 || isGalleryLimitReached) && (
+          <div className="mb-6 space-y-3 animate-in slide-in-from-bottom-4 duration-500">
+            {storagePercentage >= 100 && (
+              <Link
+                href="/settings?upgrade=true"
+                className="flex items-center gap-4 p-4 bg-rose-50 border border-rose-200 rounded-2xl hover:bg-rose-100 transition-all group"
+              >
+                <div className="p-2.5 bg-rose-100 rounded-xl text-rose-600">
+                  <AlertTriangle size={20} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-rose-900">Espace de stockage insuffisant</p>
+                  <p className="text-sm text-rose-700">Passez à un plan supérieur pour continuer</p>
+                </div>
+                <Zap size={18} className="text-rose-600 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
+            
+            {isGalleryLimitReached && (
+              <Link
+                href="/settings?upgrade=true"
+                className="flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl hover:bg-amber-100 transition-all group"
+              >
+                <div className="p-2.5 bg-amber-100 rounded-xl text-amber-600">
+                  <TrendingUp size={20} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-amber-900">Limite de galeries atteinte</p>
+                  <p className="text-sm text-amber-700">{galleryCount}/{maxGalleries} galeries • Passez à Premium</p>
+                </div>
+                <Zap size={18} className="text-amber-600 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
+          </div>
+        )}
+
+        {/* Main Form */}
+        <GalleryCreateForm
+          maxImagesPerGallery={profile?.max_images_per_gallery || 30}
+          maxImageSizeMb={profile?.max_image_size_mb || 1}
+          storageLimit={storageLimit}
+          currentStorageUsed={currentStorageUsed}
+          isGalleryLimitReached={isGalleryLimitReached}
+          durationOptions={durationOptions}
+          subscriptionPlan={profile?.subscription_plan || "free"}
+        />
+      </div>
+    </main>
   );
 }

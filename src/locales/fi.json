@@ -1,0 +1,623 @@
+{
+  "common": {
+    "loading": "",
+    "error": "",
+    "success": "",
+    "cancel": "",
+    "confirm": "",
+    "save": "",
+    "delete": "",
+    "edit": "",
+    "close": "",
+    "open": "",
+    "back": "",
+    "next": "",
+    "previous": "",
+    "search": "",
+    "filter": "",
+    "sort": "",
+    "view": "",
+    "download": "",
+    "upload": "",
+    "share": "",
+    "copy": "",
+    "copied": "",
+    "yes": "",
+    "no": "",
+    "or": "",
+    "and": "",
+    "all": "",
+    "none": "",
+    "required": "",
+    "optional": "",
+    "language": "",
+    "account": "",
+    "menu": ""
+  },
+  "nav": {
+    "home": "",
+    "features": "",
+    "pricing": "",
+    "help": "",
+    "contact": "",
+    "dashboard": "",
+    "settings": "",
+    "signIn": "",
+    "signOut": "",
+    "getStarted": ""
+  },
+  "landing": {
+    "badge": "",
+    "title": "",
+    "titleHighlight": "",
+    "subtitle": "",
+    "subtitleHighlight": "",
+    "subtitleEnd": "",
+    "cta": {
+      "primary": "",
+      "secondary": ""
+    },
+    "tagline": "",
+    "stats": {
+      "experts": "",
+      "galleries": "",
+      "photos": "",
+      "satisfaction": ""
+    },
+    "problem": {
+      "badge": "",
+      "title": "",
+      "titleHighlight": "",
+      "paragraph1": "",
+      "paragraph1Highlight": "",
+      "paragraph2": "",
+      "paragraph2Highlight": "",
+      "paragraph3": "",
+      "paragraph3Highlight": "",
+      "paragraph3End": "",
+      "comparison": {
+        "original": "",
+        "originalSpec": "",
+        "originalDesc": "",
+        "classic": "",
+        "classicSpec": "",
+        "classicDesc": ""
+      }
+    },
+    "benefits": {
+      "badge": "",
+      "title": "",
+      "subtitle": "",
+      "subtitleHighlight": "",
+      "features": {
+        "quality": {
+          "highlight": "",
+          "title": "",
+          "desc": ""
+        },
+        "friction": {
+          "highlight": "",
+          "title": "",
+          "desc": ""
+        },
+        "gallery": {
+          "highlight": "",
+          "title": "",
+          "desc": ""
+        }
+      }
+    },
+    "finalCta": {
+      "title": "",
+      "titleHighlight": "",
+      "subtitle": "",
+      "button": "",
+      "note": ""
+    }
+  },
+  "auth": {
+    "title": "",
+    "subtitle": "",
+    "tabs": {
+      "signIn": "",
+      "signUp": ""
+    },
+    "form": {
+      "name": "",
+      "namePlaceholder": "",
+      "email": "",
+      "emailPlaceholder": "",
+      "password": "",
+      "passwordPlaceholder": "",
+      "confirmPassword": "",
+      "forgotPassword": "",
+      "rememberMe": "",
+      "agreeTerms": "",
+      "termsLink": "",
+      "andThe": "",
+      "privacyLink": ""
+    },
+    "passwordStrength": {
+      "label": "",
+      "weak": "",
+      "medium": "",
+      "good": "",
+      "excellent": ""
+    },
+    "buttons": {
+      "signIn": "",
+      "signUp": "",
+      "google": ""
+    },
+    "divider": "",
+    "errors": {
+      "invalidEmail": "",
+      "passwordTooShort": "",
+      "passwordMismatch": "",
+      "nameRequired": "",
+      "termsRequired": "",
+      "invalidCredentials": "",
+      "signupFailed": "",
+      "googleFailed": "",
+      "accountExists": "",
+      "oauthError": "",
+      "genericError": ""
+    },
+    "success": {
+      "accountCreated": ""
+    }
+  },
+  "dashboard": {
+    "badge": "",
+    "greeting": "",
+    "subtitle": "",
+    "newGallery": "",
+    "quotaReached": "",
+    "stats": {
+      "currentPlan": "",
+      "storage": "",
+      "galleries": "",
+      "totalViews": "",
+      "usage": "",
+      "volume": "",
+      "vsLastMonth": ""
+    },
+    "plans": {
+      "free": "",
+      "premium": "",
+      "pro": ""
+    },
+    "galleriesSection": {
+      "title": "",
+      "search": "",
+      "noResults": "",
+      "noResultsQuery": "",
+      "emptyState": "",
+      "createFirst": ""
+    },
+    "sort": {
+      "newest": "",
+      "oldest": "",
+      "mostViews": "",
+      "leastViews": "",
+      "expiresLast": "",
+      "expiresSoon": ""
+    },
+    "activity": {
+      "title": "",
+      "galleryCreated": ""
+    }
+  },
+  "gallery": {
+    "create": {
+      "title": "",
+      "titleLabel": "",
+      "titlePlaceholder": "",
+      "uploadLabel": "",
+      "uploadHint": "",
+      "maxFiles": "",
+      "maxSize": "",
+      "allowedTypes": "",
+      "creating": "",
+      "submit": ""
+    },
+    "detail": {
+      "views": "",
+      "images": "",
+      "expires": "",
+      "expired": "",
+      "active": "",
+      "inactive": "",
+      "shareLink": "",
+      "copyLink": "",
+      "linkCopied": "",
+      "download": "",
+      "delete": "",
+      "settings": "",
+      "content": ""
+    },
+    "view": {
+      "downloadAll": "",
+      "downloadSelected": "",
+      "selectAll": "",
+      "deselectAll": "",
+      "passwordRequired": "",
+      "passwordPlaceholder": "",
+      "passwordSubmit": "",
+      "passwordError": "",
+      "expired": "",
+      "expiredMessage": ""
+    },
+    "watermark": {
+      "badge": "",
+      "expiresIn": ""
+    },
+    "publicFooter": {
+      "poweredBy": "",
+      "tagline": "",
+      "creatorPrompt": "",
+      "creatorDescription": "",
+      "accessDashboard": "",
+      "createGallery": "",
+      "createDescription": "",
+      "learnMore": "",
+      "photos": "",
+      "expiresOn": ""
+    },
+    "unlockSuccess": {
+      "title": "",
+      "subtitle": "",
+      "benefitsTitle": "",
+      "benefit1": "",
+      "benefit2": "",
+      "benefit3": "",
+      "createAccountTitle": "",
+      "createAccountDesc": "",
+      "createAccountBtn": "",
+      "continueBtn": ""
+    },
+    "pricingReminder": {
+      "title": "",
+      "subtitle": "",
+      "cta": ""
+    }
+  },
+  "guest": {
+    "upload": {
+      "title": "",
+      "subtitle": "",
+      "dropzone": "",
+      "dropzoneHint": "",
+      "uploading": "",
+      "processing": "",
+      "complete": ""
+    },
+    "pricing": {
+      "title": "",
+      "subtitle": "",
+      "options": {
+        "free": {
+          "title": "",
+          "price": "",
+          "description": "",
+          "benefits": {
+            "0": "",
+            "1": "",
+            "2": ""
+          }
+        },
+        "unlock": {
+          "title": "",
+          "price": "",
+          "description": "",
+          "benefits": {
+            "0": "",
+            "1": "",
+            "2": "",
+            "3": ""
+          }
+        },
+        "subscribe": {
+          "title": "",
+          "price": "",
+          "description": "",
+          "benefits": {
+            "0": "",
+            "1": "",
+            "2": "",
+            "3": ""
+          },
+          "recommended": ""
+        }
+      }
+    }
+  },
+  "pricing": {
+    "badge": "",
+    "title": "",
+    "subtitle": "",
+    "monthly": "",
+    "yearly": "",
+    "yearlyDiscount": "",
+    "perMonth": "",
+    "perYear": "",
+    "currentPlan": "",
+    "selectPlan": "",
+    "upgrade": "",
+    "downgrade": "",
+    "plans": {
+      "free": {
+        "name": "",
+        "description": "",
+        "features": [
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "premium": {
+        "name": "",
+        "description": "",
+        "features": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "pro": {
+        "name": "",
+        "description": "",
+        "features": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    }
+  },
+  "settings": {
+    "title": "",
+    "subtitle": "",
+    "profile": {
+      "title": "",
+      "name": "",
+      "email": "",
+      "save": "",
+      "saved": ""
+    },
+    "subscription": {
+      "title": "",
+      "currentPlan": "",
+      "manage": "",
+      "upgrade": "",
+      "cancel": ""
+    },
+    "danger": {
+      "title": "",
+      "deleteAccount": "",
+      "deleteWarning": ""
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "",
+      "users": "",
+      "galleries": "",
+      "subscriptions": "",
+      "analytics": "",
+      "auditLogs": ""
+    },
+    "dashboard": {
+      "title": "",
+      "subtitle": "",
+      "stats": {
+        "users": "",
+        "usersSubtitle": "",
+        "activeGalleries": "",
+        "totalGalleries": "",
+        "storage": "",
+        "storageSubtitle": "",
+        "conversionRate": "",
+        "conversionSubtitle": ""
+      }
+    },
+    "users": {
+      "title": "",
+      "subtitle": "",
+      "search": "",
+      "table": {
+        "name": "",
+        "email": "",
+        "plan": "",
+        "galleries": "",
+        "storage": "",
+        "status": "",
+        "actions": ""
+      },
+      "status": {
+        "active": "",
+        "suspended": ""
+      },
+      "actions": {
+        "view": "",
+        "suspend": "",
+        "reactivate": ""
+      }
+    },
+    "galleries": {
+      "title": "",
+      "subtitle": "",
+      "search": "",
+      "table": {
+        "title": "",
+        "owner": "",
+        "type": "",
+        "images": "",
+        "views": "",
+        "status": "",
+        "expires": "",
+        "actions": ""
+      },
+      "types": {
+        "guest": "",
+        "user": "",
+        "converted": ""
+      },
+      "status": {
+        "active": "",
+        "expired": "",
+        "deactivated": ""
+      }
+    },
+    "subscriptions": {
+      "title": "",
+      "subtitle": ""
+    },
+    "analytics": {
+      "title": "",
+      "subtitle": ""
+    },
+    "auditLogs": {
+      "title": "",
+      "subtitle": ""
+    }
+  },
+  "errors": {
+    "401": {
+      "title": "",
+      "message": "",
+      "info": "",
+      "signIn": "",
+      "signUp": "",
+      "home": ""
+    },
+    "403": {
+      "title": "",
+      "message": "",
+      "home": ""
+    },
+    "404": {
+      "title": "",
+      "message": "",
+      "home": ""
+    },
+    "500": {
+      "title": "",
+      "message": "",
+      "retry": "",
+      "home": ""
+    },
+    "503": {
+      "title": "",
+      "message": "",
+      "home": ""
+    },
+    "upload": {
+      "fileTooLarge": "",
+      "invalidFileType": "",
+      "tooManyFiles": "",
+      "noFiles": "",
+      "networkError": "",
+      "galleryCreationFailed": "",
+      "uploadFailed": ""
+    },
+    "payment": {
+      "failed": "",
+      "declined": "",
+      "sessionExpired": "",
+      "checkoutFailed": "",
+      "invalidAmount": "",
+      "stripeError": ""
+    },
+    "session": {
+      "expired": "",
+      "invalid": "",
+      "creationFailed": ""
+    },
+    "gallery": {
+      "notFound": "",
+      "expired": "",
+      "accessDenied": "",
+      "migrationFailed": ""
+    },
+    "generic": {
+      "unexpected": "",
+      "networkError": "",
+      "retry": ""
+    }
+  },
+  "footer": {
+    "tagline": "",
+    "product": "",
+    "platform": "",
+    "company": "",
+    "legal": "",
+    "officialContact": "",
+    "links": {
+      "features": "",
+      "pricing": "",
+      "help": "",
+      "contact": "",
+      "terms": "",
+      "privacy": "",
+      "mentions": ""
+    },
+    "identifiers": {
+      "rccm": "",
+      "nationalId": "",
+      "taxNumber": ""
+    },
+    "exclusiveProperty": "",
+    "country": "",
+    "copyright": ""
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "",
+      "description": ""
+    },
+    "upload": {
+      "title": "",
+      "description": ""
+    },
+    "customize": {
+      "title": "",
+      "description": ""
+    },
+    "share": {
+      "title": "",
+      "description": ""
+    },
+    "skip": "",
+    "finish": ""
+  },
+  "myGalleries": {
+    "title": "",
+    "subtitle": "",
+    "createNew": "",
+    "empty": {
+      "title": "",
+      "description": "",
+      "cta": ""
+    },
+    "warning": {
+      "title": "",
+      "description": ""
+    },
+    "status": {
+      "unlocked": "",
+      "expired": ""
+    },
+    "createAccount": {
+      "title": "",
+      "description": "",
+      "cta": ""
+    }
+  }
+}

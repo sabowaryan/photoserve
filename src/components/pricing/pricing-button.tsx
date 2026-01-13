@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Loader2, Check, ArrowDown } from 'lucide-react';
+import { Loader2, Check, ArrowDown, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface PricingButtonProps {
@@ -16,7 +15,6 @@ interface PricingButtonProps {
   children: React.ReactNode;
 }
 
-// Plan hierarchy for upgrade/downgrade detection
 const PLAN_HIERARCHY: Record<string, number> = {
   free: 0,
   premium: 1,
@@ -27,7 +25,6 @@ export function PricingButton({
   planKey,
   interval = 'monthly',
   currentPlan,
-  variant = 'default',
   className = '',
   children,
 }: PricingButtonProps) {
@@ -39,24 +36,20 @@ export function PricingButton({
   const isCurrentPlan = isAuthenticated && currentPlan === planKey;
   const isFree = planKey === 'free';
 
-  // Determine if this is an upgrade or downgrade
   const currentPlanLevel = PLAN_HIERARCHY[currentPlan || 'free'] ?? 0;
   const targetPlanLevel = PLAN_HIERARCHY[planKey] ?? 0;
   const isDowngrade = isAuthenticated && targetPlanLevel < currentPlanLevel;
 
   const handleClick = async () => {
-    // If not authenticated, redirect to auth
     if (!isAuthenticated) {
       router.push('/auth');
       return;
     }
 
-    // If current plan, do nothing
     if (isCurrentPlan) {
       return;
     }
 
-    // For downgrade, redirect to Stripe portal
     if (isDowngrade) {
       setIsLoading(true);
       try {
@@ -82,13 +75,11 @@ export function PricingButton({
       return;
     }
 
-    // If free plan and user is on free, redirect to dashboard
     if (isFree && currentPlan === 'free') {
       router.push('/dashboard');
       return;
     }
 
-    // For upgrades, create Stripe checkout session
     setIsLoading(true);
     try {
       const response = await fetch('/api/stripe/checkout', {
@@ -113,36 +104,56 @@ export function PricingButton({
     }
   };
 
-  // Button text logic
-  const getButtonText = () => {
-    if (isLoading) return null;
-    if (isCurrentPlan) return (
-      <>
-        <Check className="h-4 w-4 mr-2" />
-        Plan actuel
-      </>
+  const getButtonContent = () => {
+    if (isLoading) {
+      return <Loader2 className="animate-spin" size={18} />;
+    }
+    
+    if (isCurrentPlan) {
+      return (
+        <span className="flex items-center justify-center gap-2">
+          <Check size={16} />
+          Plan actuel
+        </span>
+      );
+    }
+    
+    if (isDowngrade) {
+      return (
+        <span className="flex items-center justify-center gap-2">
+          <ArrowDown size={16} />
+          {isFree ? 'Annuler l\'abonnement' : 'Rétrograder'}
+        </span>
+      );
+    }
+    
+    return (
+      <span className="flex items-center justify-center gap-2">
+        {children}
+        <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+      </span>
     );
-    if (isDowngrade) return (
-      <>
-        <ArrowDown className="h-4 w-4 mr-2" />
-        {isFree ? 'Annuler l\'abonnement' : 'Rétrograder'}
-      </>
-    );
-    return children;
   };
 
-  // Determine button variant for downgrade
-  const buttonVariant = isDowngrade ? 'outline' : variant;
+  const getButtonStyles = () => {
+    if (isCurrentPlan) {
+      return 'bg-emerald-100 text-emerald-700 cursor-default';
+    }
+    
+    if (isDowngrade) {
+      return 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200';
+    }
+    
+    return className;
+  };
 
   return (
-    <Button
+    <button
       onClick={handleClick}
       disabled={isLoading || isCurrentPlan}
-      variant={buttonVariant}
-      className={`${className} ${isDowngrade ? 'text-slate-500 border-slate-300 hover:bg-slate-50' : ''}`}
+      className={`group flex items-center justify-center transition-all active:scale-[0.98] disabled:cursor-not-allowed ${getButtonStyles()}`}
     >
-      {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-      {getButtonText()}
-    </Button>
+      {getButtonContent()}
+    </button>
   );
 }

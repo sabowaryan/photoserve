@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ChevronRight, ExternalLink, Activity, Clock, ImageIcon, Sparkles } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Clock, ImageIcon, Eye, Calendar } from "lucide-react";
 import Link from "next/link";
 
 interface GalleryHeroProps {
@@ -34,128 +34,135 @@ export function GalleryHero({
     ? `${window.location.origin}/g/${uniqueSlug}` 
     : `/g/${uniqueSlug}`;
 
+  // Calculate days remaining
+  const daysRemaining = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
   return (
     <>
       {/* Navigation / Breadcrumb */}
-      <div className="flex items-center gap-4 mb-8 animate-in fade-in slide-in-from-left-4 duration-500">
+      <div className="flex items-center gap-2 mb-4 animate-in fade-in slide-in-from-left-4 duration-500">
         <Link 
           href="/dashboard"
-          className="flex items-center gap-3 text-slate-500 hover:text-indigo-600 font-bold text-sm transition-all group"
+          className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 font-bold text-xs transition-all group"
         >
-          <div className="p-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm group-hover:border-indigo-200 group-hover:shadow-md group-active:scale-95 transition-all">
-            <ArrowLeft size={18} />
+          <div className="p-1.5 bg-white rounded-lg border border-slate-200 shadow-sm group-hover:border-indigo-200 group-hover:shadow-md group-active:scale-95 transition-all">
+            <ArrowLeft size={14} />
           </div>
-          Tableau de bord
+          <span className="hidden sm:inline">Tableau de bord</span>
         </Link>
-        <div className="text-slate-300">
-          <ChevronRight size={16} />
-        </div>
-        <span className="text-sm font-bold text-slate-400">Configuration galerie</span>
+        <ChevronRight size={12} className="text-slate-300" />
+        <span className="text-xs font-bold text-slate-400 truncate max-w-[200px]">{title}</span>
       </div>
 
       {/* Hero Section */}
-      <div className="relative mb-12 animate-in slide-in-from-top-4 duration-700">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-[3rem] sm:rounded-[4rem] shadow-2xl overflow-hidden">
-          {/* Decorative patterns */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_2px_2px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:32px_32px]" />
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-400/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
+      <div className="relative mb-5 animate-in slide-in-from-top-4 duration-700">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-xl sm:rounded-2xl shadow-xl overflow-hidden">
+          {/* Decorative orbs */}
+          <div className="absolute top-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+          
+          {/* Subtle pattern */}
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_2px_2px,rgba(255,255,255,0.3)_1px,transparent_0)] bg-[length:20px_20px]" />
         </div>
 
-        <div className="relative z-10 p-8 sm:p-14 text-white">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-            <div className="space-y-6 max-w-3xl">
-              {/* Status Badge */}
-              <div className="flex items-center gap-3 flex-wrap">
-                <div className={`px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-[0.15em] flex items-center gap-2 border shadow-lg backdrop-blur-md ${
+        <div className="relative z-10 p-4 sm:p-6 text-white">
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+            <div className="space-y-2.5 flex-1 min-w-0">
+              {/* Status Badges */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <div className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 backdrop-blur-md ${
                   isExpired 
-                    ? 'bg-rose-500/20 text-rose-200 border-rose-500/30' 
-                    : 'bg-emerald-500/20 text-emerald-200 border-emerald-500/30'
+                    ? 'bg-rose-500/20 text-rose-200 border border-rose-400/30' 
+                    : 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/30'
                 }`}>
-                  <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)] ${
+                  <div className={`w-1 h-1 rounded-full ${
                     isExpired ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse'
                   }`} />
-                  {isExpired ? 'Galerie Expirée' : 'Diffusion Active'}
+                  {isExpired ? 'Expirée' : 'Active'}
                 </div>
-                <div className="px-4 py-1.5 rounded-full bg-white/10 text-white/70 text-[11px] font-bold uppercase tracking-widest border border-white/10 backdrop-blur-md">
-                  ID: {uniqueSlug}
+                <div className="px-2 py-1 rounded-full bg-white/10 text-white/70 text-[9px] font-bold uppercase tracking-wider border border-white/10 backdrop-blur-md">
+                  #{uniqueSlug}
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight drop-shadow-sm">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight truncate">
                 {title}
               </h1>
               
-              <p className="text-indigo-100/70 text-lg font-medium max-w-2xl leading-relaxed">
-                Gérez les accès, visualisez les statistiques et personnalisez l'expérience client de votre galerie sécurisée.
+              <p className="text-indigo-100/60 text-xs sm:text-sm font-medium max-w-xl leading-relaxed hidden sm:block">
+                Gérez les accès, visualisez les statistiques et personnalisez votre galerie.
               </p>
             </div>
 
-            {/* Action Preview Button */}
+            {/* Action Button */}
             <div className="shrink-0">
               <button 
                 onClick={() => window.open(publicUrl, '_blank')}
-                className="group relative w-full sm:w-auto px-10 py-6 bg-white text-slate-900 font-black rounded-[2rem] hover:bg-slate-50 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1.5 active:scale-95 flex items-center justify-center gap-4 overflow-hidden"
+                className="group relative px-4 py-2.5 bg-white text-slate-900 font-bold text-sm rounded-xl hover:bg-slate-50 transition-all shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-50 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_infinite] pointer-events-none" />
-                <ExternalLink size={24} className="text-indigo-600" />
-                <span className="text-lg">Aperçu Public</span>
+                <ExternalLink size={16} className="text-indigo-600" />
+                <span>Aperçu Public</span>
               </button>
             </div>
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-14">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
             {/* Views Card */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-6 hover:bg-white/15 transition-all group/stat">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl text-white group-hover/stat:scale-110 transition-transform">
-                  <Activity size={24} />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 hover:bg-white/15 transition-all group/stat">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-white/10 rounded-lg text-white group-hover/stat:scale-110 transition-transform">
+                  <Eye size={16} />
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Total Vues</p>
-                  <p className="text-2xl font-black tracking-tight">{viewsCount.toLocaleString()}</p>
+                <div className="min-w-0">
+                  <p className="text-[8px] font-black text-white/50 uppercase tracking-widest mb-0.5">Vues</p>
+                  <p className="text-base font-black tracking-tight">{viewsCount.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Photos Card */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 hover:bg-white/15 transition-all group/stat">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-white/10 rounded-lg text-white group-hover/stat:scale-110 transition-transform">
+                  <ImageIcon size={16} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[8px] font-black text-white/50 uppercase tracking-widest mb-0.5">Photos</p>
+                  <p className="text-base font-black tracking-tight">{imageCount}</p>
                 </div>
               </div>
             </div>
 
             {/* Expiration Card */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-6 hover:bg-white/15 transition-all group/stat">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl text-white group-hover/stat:scale-110 transition-transform">
-                  <Clock size={24} />
+            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 hover:bg-white/15 transition-all group/stat">
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 rounded-lg group-hover/stat:scale-110 transition-transform ${
+                  isExpired ? 'bg-rose-500/20 text-rose-300' : daysRemaining <= 3 ? 'bg-amber-500/20 text-amber-300' : 'bg-white/10 text-white'
+                }`}>
+                  <Clock size={16} />
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Expiration</p>
-                  <p className="text-xl font-black tracking-tight truncate">{formatDate(expiresAt)}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Media Card */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-6 hover:bg-white/15 transition-all group/stat">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl text-white group-hover/stat:scale-110 transition-transform">
-                  <ImageIcon size={24} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Photos</p>
-                  <p className="text-2xl font-black tracking-tight">
-                    {imageCount} <span className="text-white/40 text-sm font-bold">Média</span>
+                <div className="min-w-0">
+                  <p className="text-[8px] font-black text-white/50 uppercase tracking-widest mb-0.5">Expire</p>
+                  <p className={`text-sm font-black tracking-tight truncate ${
+                    isExpired ? 'text-rose-300' : daysRemaining <= 3 ? 'text-amber-300' : ''
+                  }`}>
+                    {isExpired ? 'Expirée' : `${daysRemaining}j`}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Created At Card */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-6 hover:bg-white/15 transition-all group/stat">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/10 rounded-2xl text-white group-hover/stat:scale-110 transition-transform">
-                  <Sparkles size={24} />
+            {/* Created Card */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 hover:bg-white/15 transition-all group/stat">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-white/10 rounded-lg text-white group-hover/stat:scale-110 transition-transform">
+                  <Calendar size={16} />
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Mise en ligne</p>
-                  <p className="text-xl font-black tracking-tight truncate">{formatDate(createdAt)}</p>
+                <div className="min-w-0">
+                  <p className="text-[8px] font-black text-white/50 uppercase tracking-widest mb-0.5">Créée</p>
+                  <p className="text-[11px] font-bold tracking-tight truncate">{formatDate(createdAt)}</p>
                 </div>
               </div>
             </div>

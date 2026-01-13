@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import {
   Menu,
@@ -12,8 +12,10 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
+  Globe,
 } from 'lucide-react';
-import { LogoIcon } from '@/components/shared/logo';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
+import { useTranslation } from '@/lib/i18n/context';
 
 type MobileNavProps = {
   isOpen: boolean;
@@ -22,16 +24,10 @@ type MobileNavProps = {
 
 export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { t } = useTranslation();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated' && !!session;
-
-  const handleNavClick = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsOpen(false);
-  };
 
   const onLogin = () => {
     router.push('/auth');
@@ -44,29 +40,19 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   };
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' });
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      await signOut({ callbackUrl: '/' });
+    } catch (error) {
+      console.error("Erreur déconnexion:", error);
+    }
     setIsOpen(false);
   };
 
   const links = [
-    {
-      id: 'features',
-      label: 'Fonctionnalités',
-      icon: Sparkles,
-      onClick: () => handleNavClick('features'),
-    },
-    {
-      id: 'tarifs',
-      label: 'Tarification',
-      icon: Zap,
-      onClick: () => handleNavClick('tarifs'),
-    },
-    {
-      id: 'help',
-      label: 'Aide',
-      icon: HelpCircle,
-      href: '/help',
-    },
+    { id: 'features', labelKey: 'nav.features', icon: Sparkles, href: '/features' },
+    { id: 'pricing', labelKey: 'nav.pricing', icon: Zap, href: '/pricing' },
+    { id: 'help', labelKey: 'nav.help', icon: HelpCircle, href: '/help' },
   ];
 
   return (
@@ -74,10 +60,10 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
       {/* Burger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden p-3 bg-slate-50 text-slate-600 rounded-2xl hover:bg-slate-100 transition-all active:scale-90 border border-slate-100"
-        aria-label="Ouvrir le menu"
+        className="md:hidden p-2 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition-all active:scale-90 border border-slate-100"
+        aria-label={t('common.open')}
       >
-        <Menu size={22} />
+        <Menu size={18} />
       </button>
 
       {/* Overlay */}
@@ -85,69 +71,65 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
         <div className="fixed inset-0 z-[200] md:hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300"
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setIsOpen(false)}
           />
 
           {/* Drawer */}
-          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl animate-in slide-in-from-right duration-500 flex flex-col">
+          <div className="absolute right-0 top-0 bottom-0 w-[80%] max-w-xs bg-white shadow-xl animate-in slide-in-from-right duration-300 flex flex-col">
             {/* Header */}
-            <div className="p-6 flex items-center justify-between border-b border-slate-50">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-100">
-                  <LogoIcon size={20} />
+            <div className="p-4 flex items-center justify-between border-b border-slate-100">
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 bg-indigo-50 rounded-lg">
+                  <img 
+                    src="/icons/logo.svg" 
+                    alt="PikSend" 
+                    className="h-5 w-auto"
+                  />
                 </div>
-                <span className="font-black text-xl tracking-tighter text-slate-900">
-                  PikSend
-                </span>
+                <span className="font-bold text-base text-slate-900">PikSend</span>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all"
-                aria-label="Fermer le menu"
+                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                aria-label={t('common.close')}
               >
-                <X size={24} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-2">
-                Menu Principal
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+              {/* Language Switcher */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 mb-3">
+                <div className="flex items-center gap-2 text-slate-500">
+                  <Globe size={14} />
+                  <span className="text-xs font-medium">{t('common.language')}</span>
+                </div>
+                <LanguageSwitcher variant="compact" />
               </div>
 
               {links.map((item) => {
                 const Icon = item.icon;
-
-                if (item.href) {
-                  return (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className="w-full flex items-center justify-between p-4 rounded-2xl font-bold transition-all text-slate-500 hover:bg-slate-50"
-                    >
-                      <div className="flex items-center gap-4">
-                        <Icon size={20} />
-                        <span className="text-sm">{item.label}</span>
-                      </div>
-                      <ChevronRight size={16} className="text-slate-300" />
-                    </Link>
-                  );
-                }
+                const isActive = pathname === item.href;
 
                 return (
-                  <button
+                  <Link
                     key={item.id}
-                    onClick={item.onClick}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl font-bold transition-all text-slate-500 hover:bg-slate-50"
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`w-full flex items-center justify-between p-2.5 rounded-lg font-medium transition-all ${
+                      isActive
+                        ? 'bg-indigo-50 text-indigo-600'
+                        : 'text-slate-600 hover:bg-slate-50'
+                    }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <Icon size={20} />
-                      <span className="text-sm">{item.label}</span>
+                    <div className="flex items-center gap-2.5">
+                      <Icon size={16} />
+                      <span className="text-sm">{t(item.labelKey)}</span>
                     </div>
-                    <ChevronRight size={16} className="text-slate-300" />
-                  </button>
+                    <ChevronRight size={14} className={isActive ? 'text-indigo-300' : 'text-slate-300'} />
+                  </Link>
                 );
               })}
 
@@ -155,47 +137,40 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl font-bold transition-all bg-indigo-50 text-indigo-600"
+                  className="w-full flex items-center justify-between p-2.5 rounded-lg font-medium transition-all bg-indigo-50 text-indigo-600"
                 >
-                  <div className="flex items-center gap-4">
-                    <LayoutDashboard size={20} />
-                    <span className="text-sm">Dashboard</span>
+                  <div className="flex items-center gap-2.5">
+                    <LayoutDashboard size={16} />
+                    <span className="text-sm">{t('nav.dashboard')}</span>
                   </div>
-                  <ChevronRight size={16} className="text-indigo-300" />
+                  <ChevronRight size={14} className="text-indigo-300" />
                 </Link>
               )}
             </nav>
 
             {/* Footer */}
-            <div className="p-6 border-t border-slate-50 space-y-4">
+            <div className="p-3 border-t border-slate-100 space-y-2">
               {isAuthenticated ? (
-                <>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-2">
-                    Compte
-                  </div>
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full flex items-center gap-4 p-4 text-rose-600 font-bold rounded-2xl hover:bg-rose-50 transition-all"
-                  >
-                    <div className="p-2 bg-rose-100 rounded-lg">
-                      <LogOut size={18} />
-                    </div>
-                    <span className="text-sm">Déconnexion</span>
-                  </button>
-                </>
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-2.5 p-2.5 text-rose-600 font-medium rounded-lg hover:bg-rose-50 transition-all"
+                >
+                  <LogOut size={16} />
+                  <span className="text-sm">{t('nav.signOut')}</span>
+                </button>
               ) : (
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={onLogin}
-                    className="w-full py-4 bg-slate-100 text-slate-900 font-black rounded-2xl hover:bg-slate-200 transition-all text-sm"
+                    className="py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-all text-xs"
                   >
-                    Connexion
+                    {t('nav.signIn')}
                   </button>
                   <button
                     onClick={onSignUp}
-                    className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all text-sm"
+                    className="py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition-all text-xs"
                   >
-                    Commencer
+                    {t('nav.getStarted')}
                   </button>
                 </div>
               )}

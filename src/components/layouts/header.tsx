@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { LogoIcon } from '@/components/shared/logo';
 import { ArrowLeft, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 
@@ -26,26 +25,32 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="container mx-auto px-4 h-12 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           {showBackButton && (
-            <Button variant="ghost" size="icon" asChild className="hidden sm:inline-flex">
-              <Link href="/"><ArrowLeft className="h-5 w-5" /></Link>
+            <Button variant="ghost" size="icon" asChild className="hidden sm:inline-flex h-8 w-8">
+              <Link href="/"><ArrowLeft className="h-4 w-4" /></Link>
             </Button>
           )}
-          <Link href="/" className="flex items-center gap-2">
-            <LogoIcon size={20} />
-            <span className="font-display text-xl font-bold gradient-text">PikSend</span>
+          <Link href="/" className="flex items-center gap-1.5">
+            <div className="p-1 bg-indigo-50 rounded-lg">
+              <img 
+                src="/icons/logo.svg" 
+                alt="PikSend" 
+                className="h-4 w-auto"
+              />
+            </div>
+            <span className="font-display text-base font-bold gradient-text">PikSend</span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-5">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm transition-colors ${
+              className={`text-xs transition-colors ${
                 pathname === link.href
                   ? 'text-primary font-medium'
                   : 'text-muted-foreground hover:text-foreground'
@@ -56,33 +61,32 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {isAuthenticated ? (
-            <Button asChild className="btn-primary hidden sm:inline-flex">
+            <Button asChild size="sm" className="btn-primary hidden sm:inline-flex h-8 text-xs">
               <Link href="/dashboard">
-                <LayoutDashboard className="h-4 w-4 mr-2" />
+                <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
                 Dashboard
               </Link>
             </Button>
           ) : (
             <>
-              <Button variant="ghost" asChild className="hidden sm:inline-flex">
+              <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex h-8 text-xs">
                 <Link href="/auth">Connexion</Link>
               </Button>
-              <Button asChild className="btn-primary hidden sm:inline-flex">
+              <Button asChild size="sm" className="btn-primary hidden sm:inline-flex h-8 text-xs">
                 <Link href="/auth">Commencer</Link>
               </Button>
             </>
           )}
           
-          {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden h-8 w-8"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
         </div>
       </div>
@@ -90,13 +94,13 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+          <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                className={`px-3 py-2 rounded-lg text-xs transition-colors ${
                   pathname === link.href
                     ? 'bg-primary/10 text-primary font-medium'
                     : 'text-muted-foreground hover:bg-muted'
@@ -105,23 +109,23 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
                 {link.label}
               </Link>
             ))}
-            <div className="border-t border-border/50 mt-2 pt-4 flex flex-col gap-2">
+            <div className="border-t border-border/50 mt-2 pt-3 flex flex-col gap-2">
               {isAuthenticated ? (
-                <Button asChild className="w-full btn-primary">
+                <Button asChild size="sm" className="w-full btn-primary h-8 text-xs">
                   <Link href="/dashboard">
-                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
                     Dashboard
                   </Link>
                 </Button>
               ) : (
-                <>
-                  <Button variant="outline" asChild className="w-full">
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" size="sm" asChild className="h-8 text-xs">
                     <Link href="/auth">Connexion</Link>
                   </Button>
-                  <Button asChild className="w-full btn-primary">
+                  <Button asChild size="sm" className="btn-primary h-8 text-xs">
                     <Link href="/auth">Commencer</Link>
                   </Button>
-                </>
+                </div>
               )}
             </div>
           </nav>

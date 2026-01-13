@@ -12,6 +12,7 @@ import type {
   UserFilters,
   GalleryListItem,
   GalleryFilters,
+  GalleryType,
   AnalyticsData,
   TimeSeriesData,
   TopUserData,
@@ -50,7 +51,7 @@ export class AdminRepository implements IAdminRepository {
 
   /**
    * Get dashboard statistics
-   * Requirements: 2.1, 2.2, 2.3, 2.4
+   * Requirements: 2.1, 2.2, 2.3, 2.4, 11.4
    */
   async getDashboardStats(): Promise<DashboardStats> {
     const now = new Date().toISOString();
@@ -125,6 +126,9 @@ export class AdminRepository implements IAdminRepository {
 
     if (recentGalleriesError) throw recentGalleriesError;
 
+    // Get guest gallery metrics - Requirements: 11.4
+    const guestGalleryMetrics = await this.getGuestGalleryMetrics();
+
     return {
       totalUsers: totalUsers || 0,
       totalGalleries: totalGalleries || 0,
@@ -133,6 +137,52 @@ export class AdminRepository implements IAdminRepository {
       planDistribution,
       recentSignups: recentSignups || 0,
       recentGalleries: recentGalleries || 0,
+      guestGalleryMetrics,
+    };
+  }
+
+  /**
+   * Get guest gallery conversion metrics
+   * Requirements: 11.4
+   */
+  private async getGuestGalleryMetrics(): Promise<{
+    totalGuestGalleries: number;
+    convertedGalleries: number;
+    conversionRate: number;
+  }> {
+    // Get all galleries with guest-related fields
+    const { data: galleries, error } = await this.supabase
+      .from('galleries')
+      .select('user_id, guest_session_id, is_unlocked, payment_type');
+
+    if (error) throw error;
+
+    let totalGuestGalleries = 0;
+    let convertedGalleries = 0;
+
+    (galleries || []).forEach((gallery) => {
+      // Count current guest galleries (no user_id, has guest_session_id)
+      if (!gallery.user_id && gallery.guest_session_id) {
+        totalGuestGalleries++;
+      }
+      
+      // Count converted galleries (has user_id AND was previously a guest - indicated by payment or unlock)
+      if (gallery.user_id && (gallery.is_unlocked || (gallery.payment_type && gallery.payment_type !== 'free'))) {
+        convertedGalleries++;
+        // Also count these in total guest galleries for accurate conversion rate
+        totalGuestGalleries++;
+      }
+    });
+
+    // Calculate conversion rate
+    const conversionRate = totalGuestGalleries > 0 
+      ? (convertedGalleries / totalGuestGalleries) * 100 
+      : 0;
+
+    return {
+      totalGuestGalleries,
+      convertedGalleries,
+      conversionRate: Math.round(conversionRate * 10) / 10, // Round to 1 decimal
     };
   }
 
@@ -349,7 +399,7 @@ export class AdminRepository implements IAdminRepository {
 
   /**
    * List galleries with pagination and filtering
-   * Requirements: 4.1, 4.2
+   * Requirements: 4.1, 4.2, 11.1, 11.2
    */
   async listGalleries(filters: GalleryFilters): Promise<PaginatedResult<GalleryListItem>> {
     const page = filters.page || 1;
@@ -382,6 +432,20 @@ export class AdminRepository implements IAdminRepository {
       query = query.eq('is_active', false);
     }
 
+    // Apply gallery type filter
+    if (filters.galleryType === 'guest') {
+      // Guest galleries: no user_id, has guest_session_id
+      query = query.is('user_id', null).not('guest_session_id', 'is', null);
+    } else if (filters.galleryType === 'user') {
+      // User galleries: has user_id, no guest_session_id (never was a guest gallery)
+      query = query.not('user_id', 'is', null).is('guest_session_id', null);
+    } else if (filters.galleryType === 'converted') {
+      // Converted galleries: has user_id AND was previously a guest (has payment record or specific markers)
+      // For now, we identify converted galleries as those with user_id AND payment_type not 'free' OR is_unlocked
+      query = query.not('user_id', 'is', null);
+      // We'll filter converted galleries in post-processing since it requires checking payment history
+    }
+
     // Apply user filter
     if (filters.userId) {
       query = query.eq('user_id', filters.userId);
@@ -409,29 +473,74 @@ export class AdminRepository implements IAdminRepository {
     const galleryIds = (data || []).map((g) => g.id);
     const imageCounts = await this.getImageCountsForGalleries(galleryIds);
 
-    const galleries: GalleryListItem[] = (data || []).map((gallery) => ({
-      id: gallery.id,
-      title: gallery.title,
-      unique_slug: gallery.unique_slug,
-      owner_email: (gallery.profiles as { email: string; name: string | null } | null)?.email || '',
-      owner_name: (gallery.profiles as { email: string; name: string | null } | null)?.name || null,
-      owner_id: gallery.user_id,
-      image_count: imageCounts[gallery.id] || 0,
-      views_count: gallery.views_count || 0,
-      is_active: gallery.is_active || false,
-      expires_at: gallery.expires_at,
-      created_at: gallery.created_at || new Date().toISOString(),
-    }));
+    const galleries: GalleryListItem[] = (data || []).map((gallery) => {
+      // Determine gallery type based on Requirements 9.4, 11.1
+      const galleryType = this.determineGalleryType(gallery);
+      
+      return {
+        id: gallery.id,
+        title: gallery.title,
+        unique_slug: gallery.unique_slug,
+        owner_email: (gallery.profiles as { email: string; name: string | null } | null)?.email || '',
+        owner_name: (gallery.profiles as { email: string; name: string | null } | null)?.name || null,
+        owner_id: gallery.user_id || '',
+        image_count: imageCounts[gallery.id] || 0,
+        views_count: gallery.views_count || 0,
+        is_active: gallery.is_active || false,
+        expires_at: gallery.expires_at,
+        created_at: gallery.created_at || new Date().toISOString(),
+        gallery_type: galleryType,
+        guest_session_id: gallery.guest_session_id || null,
+        is_unlocked: gallery.is_unlocked || false,
+        payment_type: gallery.payment_type || 'free',
+      };
+    });
+
+    // Post-filter for converted type if needed
+    let filteredGalleries = galleries;
+    if (filters.galleryType === 'converted') {
+      filteredGalleries = galleries.filter(g => g.gallery_type === 'converted');
+    }
 
     const total = count || 0;
 
     return {
-      data: galleries,
+      data: filteredGalleries,
       total,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  /**
+   * Determine gallery type based on user_id, guest_session_id, and payment status
+   * Requirements: 9.4, 11.1
+   */
+  private determineGalleryType(gallery: {
+    user_id: string | null;
+    guest_session_id: string | null;
+    is_unlocked?: boolean;
+    payment_type?: string;
+  }): GalleryType {
+    // If no user_id and has guest_session_id -> Guest
+    if (!gallery.user_id && gallery.guest_session_id) {
+      return 'guest';
+    }
+    
+    // If has user_id and was previously a guest gallery (has payment or is_unlocked)
+    // This indicates it was converted from guest to user
+    if (gallery.user_id && (gallery.is_unlocked || (gallery.payment_type && gallery.payment_type !== 'free'))) {
+      return 'converted';
+    }
+    
+    // If has user_id and no guest indicators -> User
+    if (gallery.user_id) {
+      return 'user';
+    }
+    
+    // Default to user if unclear
+    return 'user';
   }
 
   /**
@@ -457,7 +566,7 @@ export class AdminRepository implements IAdminRepository {
 
   /**
    * Get gallery by ID with owner info
-   * Requirements: 4.3
+   * Requirements: 4.3, 11.3
    */
   async getGalleryById(id: string): Promise<GalleryListItem | null> {
     const { data: gallery, error } = await this.supabase
@@ -487,18 +596,25 @@ export class AdminRepository implements IAdminRepository {
 
     if (countError) throw countError;
 
+    // Determine gallery type
+    const galleryType = this.determineGalleryType(gallery);
+
     return {
       id: gallery.id,
       title: gallery.title,
       unique_slug: gallery.unique_slug,
       owner_email: (gallery.profiles as { email: string; name: string | null } | null)?.email || '',
       owner_name: (gallery.profiles as { email: string; name: string | null } | null)?.name || null,
-      owner_id: gallery.user_id,
+      owner_id: gallery.user_id || '',
       image_count: imageCount || 0,
       views_count: gallery.views_count || 0,
       is_active: gallery.is_active || false,
       expires_at: gallery.expires_at,
       created_at: gallery.created_at || new Date().toISOString(),
+      gallery_type: galleryType,
+      guest_session_id: gallery.guest_session_id || null,
+      is_unlocked: gallery.is_unlocked || false,
+      payment_type: gallery.payment_type || 'free',
     };
   }
 

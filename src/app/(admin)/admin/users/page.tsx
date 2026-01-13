@@ -85,25 +85,25 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-xl">
-              <Users className="h-6 w-6 text-indigo-600" />
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-indigo-100 rounded-lg">
+              <Users className="h-4 w-4 text-indigo-600" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
               Utilisateurs
             </h1>
           </div>
-          <p className="text-slate-500 mt-1 ml-12">
+          <p className="text-xs text-slate-500 mt-0.5 ml-8">
             Gérer les comptes utilisateurs de la plateforme
           </p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-slate-800">{total}</p>
-          <p className="text-sm text-slate-500">utilisateurs au total</p>
+          <p className="text-xl font-bold text-slate-800">{total}</p>
+          <p className="text-[10px] text-slate-500">utilisateurs au total</p>
         </div>
       </div>
 

@@ -7,7 +7,7 @@ async function getProfile(userId: string) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, subscription_plan")
+    .select("name, subscription_plan, avatar_url")
     .eq("id", userId)
     .maybeSingle();
 
@@ -28,10 +28,11 @@ export default async function DashboardLayout({
   const profile = await getProfile(session.user.id);
   const userName = profile?.name || session.user.email?.split("@")[0] || "";
   const userPlan = profile?.subscription_plan || "free";
+  const userAvatar = profile?.avatar_url || session.user.image || null;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <DashboardHeader userName={userName} userPlan={userPlan} />
+      <DashboardHeader userName={userName} userPlan={userPlan} userAvatar={userAvatar} />
       {children}
     </div>
   );

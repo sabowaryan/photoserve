@@ -1,16 +1,8 @@
 'use client';
 
-/**
- * Forgot Password Page
- * Allows users to request a password reset email
- */
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Mail, Loader2, ArrowLeft, CheckCircle2, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 import { z } from 'zod';
 
@@ -60,102 +52,132 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Back button */}
       <Link 
-        href="/" 
-        className="fixed top-4 left-4 z-20 p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-muted transition-colors"
+        href="/auth" 
+        className="fixed top-4 left-4 z-20 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 transition-all shadow-sm group"
       >
-        <ArrowLeft className="h-5 w-5" />
+        <ArrowLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
       </Link>
 
-      {/* Background glow effect */}
+      {/* Background Decorative Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-violet-200/40 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" />
       </div>
 
-      <Card className="w-full max-w-md glass-card animate-scale-in relative z-10">
-        <CardHeader className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2">
-            <LogoIcon size={32} />
-            <span className="font-display text-2xl font-bold gradient-text">PikSend</span>
-          </Link>
-          <CardTitle className="text-xl">Mot de passe oublié</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {emailSent 
-              ? 'Vérifiez votre boîte de réception'
-              : 'Entrez votre email pour réinitialiser votre mot de passe'
-            }
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          {/* Error message */}
-          {error && (
-            <div className="mb-4 p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-              {error}
-            </div>
-          )}
-
-          {emailSent ? (
-            <div className="space-y-6 text-center">
-              <div className="flex justify-center">
-                <div className="p-4 rounded-full bg-primary/20">
-                  <CheckCircle className="h-12 w-12 text-primary" />
-                </div>
+      <div className="w-full max-w-sm z-10 animate-in slide-in-from-bottom-4 duration-500">
+        {/* Main Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-xl shadow-indigo-500/5 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 px-5 py-6 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-400/20 rounded-full blur-2xl translate-x-1/3 translate-y-1/3" />
+            
+            <div className="relative flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3">
+                <LogoIcon size={28} />
               </div>
-              <div className="space-y-2">
-                <p className="text-foreground">
-                  Un email de réinitialisation a été envoyé à :
-                </p>
-                <p className="font-medium text-primary">{email}</p>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Cliquez sur le lien dans l&apos;email pour définir un nouveau mot de passe.
-                Si vous ne voyez pas l&apos;email, vérifiez votre dossier spam.
+              <h1 className="text-lg font-bold text-white mb-1">
+                Mot de passe oublié
+              </h1>
+              <p className="text-xs text-indigo-100/70">
+                {emailSent ? 'Vérifiez votre boîte mail' : 'Réinitialisez votre mot de passe'}
               </p>
-              <Link href="/auth">
-                <Button variant="outline" className="w-full">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Retour à la connexion
-                </Button>
-              </Link>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="vous@exemple.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-5">
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl animate-in slide-in-from-top-2 flex items-center gap-2">
+                <AlertCircle size={16} className="text-rose-500 flex-shrink-0" />
+                <span className="text-xs text-rose-600 font-medium">{error}</span>
               </div>
+            )}
 
-              <Button type="submit" className="w-full btn-primary" disabled={isLoading}>
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null}
-                Envoyer le lien de réinitialisation
-              </Button>
-
-              <Link href="/auth" className="block">
-                <Button variant="ghost" className="w-full text-muted-foreground">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
+            {emailSent ? (
+              <div className="text-center space-y-4">
+                <div className="w-14 h-14 mx-auto bg-emerald-100 rounded-2xl flex items-center justify-center">
+                  <CheckCircle2 size={28} className="text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Email envoyé à :</p>
+                  <p className="text-sm font-bold text-indigo-600">{email}</p>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Cliquez sur le lien dans l&apos;email pour définir un nouveau mot de passe.
+                </p>
+                <Link 
+                  href="/auth"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all"
+                >
+                  <ArrowLeft size={14} />
                   Retour à la connexion
-                </Button>
-              </Link>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Info */}
+                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-start gap-2">
+                  <KeyRound size={16} className="text-indigo-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-indigo-700">
+                    Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                  </p>
+                </div>
+
+                {/* Email Input */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
+                    Adresse email
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
+                      <Mail className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
+                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
+                      placeholder="votre@email.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <>
+                      <span>Envoyer le lien</span>
+                      <ArrowRight size={14} />
+                    </>
+                  )}
+                </button>
+
+                {/* Back Link */}
+                <Link 
+                  href="/auth"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all"
+                >
+                  <ArrowLeft size={14} />
+                  Retour à la connexion
+                </Link>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

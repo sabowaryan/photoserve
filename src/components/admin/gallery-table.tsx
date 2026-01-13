@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight, Image, Calendar, Eye } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Image, Calendar, Eye, Users, UserCheck, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { GalleryListItem, GalleryFilters } from "@/types/admin";
+import type { GalleryListItem, GalleryFilters, GalleryType } from "@/types/admin";
 
 interface GalleryTableProps {
   galleries: GalleryListItem[];
@@ -57,10 +57,57 @@ function getStatusLabel(isActive: boolean, expiresAt: string): string {
 }
 
 /**
+ * Get badge class for gallery type
+ * Requirements: 11.1
+ */
+function getTypeBadgeClass(galleryType: GalleryType): string {
+  switch (galleryType) {
+    case "guest":
+      return "bg-purple-100 text-purple-700 border-purple-200";
+    case "converted":
+      return "bg-blue-100 text-blue-700 border-blue-200";
+    case "user":
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-200";
+  }
+}
+
+/**
+ * Get type label for gallery
+ * Requirements: 11.1
+ */
+function getTypeLabel(galleryType: GalleryType): string {
+  switch (galleryType) {
+    case "guest":
+      return "Guest";
+    case "converted":
+      return "Converti";
+    case "user":
+    default:
+      return "User";
+  }
+}
+
+/**
+ * Get type icon for gallery
+ */
+function getTypeIcon(galleryType: GalleryType) {
+  switch (galleryType) {
+    case "guest":
+      return <Users className="h-3 w-3" />;
+    case "converted":
+      return <RefreshCw className="h-3 w-3" />;
+    case "user":
+    default:
+      return <UserCheck className="h-3 w-3" />;
+  }
+}
+
+/**
  * Gallery Table Component
  * 
  * Displays a list of galleries with search, filtering, and pagination.
- * Requirements: 4.1, 4.2
+ * Requirements: 4.1, 4.2, 11.1, 11.2
  */
 export function GalleryTable({
   galleries,
@@ -96,6 +143,14 @@ export function GalleryTable({
     onFiltersChange({
       ...filters,
       status: value === "all" ? undefined : (value as "active" | "expired" | "inactive"),
+      page: 1,
+    });
+  };
+
+  const handleTypeChange = (value: string) => {
+    onFiltersChange({
+      ...filters,
+      galleryType: value === "all" ? undefined : (value as GalleryType),
       page: 1,
     });
   };
@@ -145,6 +200,21 @@ export function GalleryTable({
               <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
+          {/* Gallery Type Filter - Requirements: 11.2 */}
+          <Select
+            value={filters.galleryType || "all"}
+            onValueChange={handleTypeChange}
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous types</SelectItem>
+              <SelectItem value="guest">Guest</SelectItem>
+              <SelectItem value="user">User</SelectItem>
+              <SelectItem value="converted">Converti</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         
         {/* Date Range Filters */}
@@ -167,7 +237,7 @@ export function GalleryTable({
               className="w-[160px]"
             />
           </div>
-          {(filters.search || filters.status || filters.dateFrom || filters.dateTo) && (
+          {(filters.search || filters.status || filters.galleryType || filters.dateFrom || filters.dateTo) && (
             <Button variant="ghost" size="sm" onClick={handleClearFilters}>
               Effacer les filtres
             </Button>
@@ -186,6 +256,9 @@ export function GalleryTable({
                 </th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Propriétaire
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Type
                 </th>
                 <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Images
@@ -207,7 +280,7 @@ export function GalleryTable({
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center gap-2 text-slate-500">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-600" />
                       Chargement...
@@ -216,7 +289,7 @@ export function GalleryTable({
                 </tr>
               ) : galleries.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
                     Aucune galerie trouvée
                   </td>
                 </tr>
@@ -243,15 +316,35 @@ export function GalleryTable({
                       </Link>
                     </td>
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/admin/users/${gallery.owner_id}`}
-                        className="hover:text-indigo-600 transition-colors"
+                      {gallery.owner_id ? (
+                        <Link
+                          href={`/admin/users/${gallery.owner_id}`}
+                          className="hover:text-indigo-600 transition-colors"
+                        >
+                          <p className="text-sm font-medium text-slate-800">
+                            {gallery.owner_name || "Sans nom"}
+                          </p>
+                          <p className="text-xs text-slate-500">{gallery.owner_email}</p>
+                        </Link>
+                      ) : (
+                        <div>
+                          <p className="text-sm font-medium text-slate-500 italic">
+                            Guest
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            {gallery.guest_session_id ? `Session: ${gallery.guest_session_id.slice(0, 8)}...` : "N/A"}
+                          </p>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge
+                        variant="outline"
+                        className={`${getTypeBadgeClass(gallery.gallery_type)} flex items-center gap-1 w-fit`}
                       >
-                        <p className="text-sm font-medium text-slate-800">
-                          {gallery.owner_name || "Sans nom"}
-                        </p>
-                        <p className="text-xs text-slate-500">{gallery.owner_email}</p>
-                      </Link>
+                        {getTypeIcon(gallery.gallery_type)}
+                        {getTypeLabel(gallery.gallery_type)}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-slate-800 font-medium">

@@ -43,6 +43,12 @@ const FREE_LIMITS = {
   max_expiration_days: 14,
 };
 
+// Gallery unlock price in cents ($2.99)
+const GALLERY_UNLOCK_PRICE_CENTS = 299;
+
+// Gallery unlock expiration extension (30 days)
+const GALLERY_UNLOCK_EXPIRATION_DAYS = 30;
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
@@ -106,11 +112,35 @@ serve(async (req) => {
         logStep("Checkout session completed", { 
           sessionId: session.id, 
           customerId: session.customer,
-          subscriptionId: session.subscription 
+          subscriptionId: session.subscription,
+          metadata: session.metadata
         });
 
-        // Update user profile based on subscription
-        if (session.customer && session.subscription) {
+        // Check if this is a gallery unlock payment
+        if (session.metadata?.type === 'gallery_unlock') {
+          await handleGalleryUnlockPayment(supabase, session);
+        }
+        // Check if this is a guest subscription
+        else if (session.metadata?.type === 'guest_subscription') {
+          // Guest subscription - will be handled when user creates account
+          // The subscription is created but not yet linked to a user
+          logStep("Guest subscription created", {
+            guestSessionId: session.metadata.guest_session_id,
+            subscriptionId: session.subscription
+          });
+          
+          // If there's a customer and subscription, handle it
+          if (session.customer && session.subscription) {
+            await handleSubscriptionCreated(
+              supabase, 
+              stripe, 
+              session.customer as string, 
+              session.subscription as string
+            );
+          }
+        }
+        // Regular subscription checkout
+        else if (session.customer && session.subscription) {
           await handleSubscriptionCreated(
             supabase, 
             stripe, 
@@ -333,5 +363,94 @@ async function updateProfileFromSubscription(
     logStep("Error updating profile", { error: updateError });
   } else {
     logStep("Profile updated successfully", { userId: profile.id, planName });
+  }
+}
+
+/**
+ * Handle gallery unlock payment
+ * Updates gallery: is_unlocked=true, expires_at=+30 days
+ * Creates gallery_payments record
+ * 
+ * Requirements: 4.2
+ */
+async function handleGalleryUnlockPayment(
+  supabase: any,
+  session: Stripe.Checkout.Session
+) {
+  const galleryId = session.metadata?.gallery_id;
+  const guestSessionId = session.metadata?.guest_session_id;
+  const paymentIntentId = session.payment_intent as string;
+
+  logStep("Processing gallery unlock payment", { 
+    galleryId, 
+    guestSessionId,
+    paymentIntentId 
+  });
+
+  if (!galleryId) {
+    logStep("No gallery_id in metadata");
+    return;
+  }
+
+  // Verify gallery exists
+  const { data: gallery, error: galleryError } = await supabase
+    .from("galleries")
+    .select("id, is_unlocked, guest_session_id")
+    .eq("id", galleryId)
+    .single();
+
+  if (galleryError || !gallery) {
+    logStep("Gallery not found", { galleryId, error: galleryError });
+    return;
+  }
+
+  // Check if already unlocked (idempotency)
+  if (gallery.is_unlocked) {
+    logStep("Gallery already unlocked", { galleryId });
+    return;
+  }
+
+  // Calculate new expiration date (30 days from now)
+  const now = new Date();
+  const newExpiresAt = new Date(now.getTime() + GALLERY_UNLOCK_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+
+  // Update gallery: is_unlocked=true, expires_at=+30 days, payment_type='one_time'
+  const { error: updateError } = await supabase
+    .from("galleries")
+    .update({
+      is_unlocked: true,
+      payment_type: "one_time",
+      expires_at: newExpiresAt.toISOString(),
+      updated_at: now.toISOString(),
+    })
+    .eq("id", galleryId);
+
+  if (updateError) {
+    logStep("Error updating gallery", { galleryId, error: updateError });
+    return;
+  }
+
+  logStep("Gallery unlocked successfully", { 
+    galleryId, 
+    newExpiresAt: newExpiresAt.toISOString() 
+  });
+
+  // Create gallery_payments record
+  if (paymentIntentId) {
+    const { error: paymentError } = await supabase
+      .from("gallery_payments")
+      .insert({
+        gallery_id: galleryId,
+        stripe_payment_intent_id: paymentIntentId,
+        amount_cents: GALLERY_UNLOCK_PRICE_CENTS,
+        currency: "usd",
+        status: "succeeded",
+      });
+
+    if (paymentError) {
+      logStep("Error creating payment record", { error: paymentError });
+    } else {
+      logStep("Payment record created", { galleryId, paymentIntentId });
+    }
   }
 }

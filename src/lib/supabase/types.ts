@@ -25,8 +25,12 @@ export type Database = {
           title: string
           unique_slug: string
           updated_at: string | null
-          user_id: string
+          user_id: string | null
           views_count: number | null
+          guest_session_id: string | null
+          is_unlocked: boolean | null
+          payment_type: Database["public"]["Enums"]["payment_type"] | null
+          converted_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -38,8 +42,12 @@ export type Database = {
           title: string
           unique_slug: string
           updated_at?: string | null
-          user_id: string
+          user_id?: string | null
           views_count?: number | null
+          guest_session_id?: string | null
+          is_unlocked?: boolean | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          converted_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -51,8 +59,12 @@ export type Database = {
           title?: string
           unique_slug?: string
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
           views_count?: number | null
+          guest_session_id?: string | null
+          is_unlocked?: boolean | null
+          payment_type?: Database["public"]["Enums"]["payment_type"] | null
+          converted_at?: string | null
         }
         Relationships: [
           {
@@ -127,6 +139,7 @@ export type Database = {
           stripe_subscription_id: string | null
           subscription_plan: Database["public"]["Enums"]["subscription_plan"] | null
           updated_at: string | null
+          onboarding_completed: boolean | null
         }
         Insert: {
           avatar_url?: string | null
@@ -145,6 +158,7 @@ export type Database = {
           stripe_subscription_id?: string | null
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           updated_at?: string | null
+          onboarding_completed?: boolean | null
         }
         Update: {
           avatar_url?: string | null
@@ -163,8 +177,50 @@ export type Database = {
           stripe_subscription_id?: string | null
           subscription_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           updated_at?: string | null
+          onboarding_completed?: boolean | null
         }
         Relationships: []
+      }
+      gallery_payments: {
+        Row: {
+          id: string
+          gallery_id: string
+          stripe_payment_intent_id: string
+          amount_cents: number
+          currency: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          gallery_id: string
+          stripe_payment_intent_id: string
+          amount_cents: number
+          currency?: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          gallery_id?: string
+          stripe_payment_intent_id?: string
+          amount_cents?: number
+          currency?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_payments_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       audit_logs: {
         Row: {
@@ -331,6 +387,8 @@ export type Database = {
       subscription_plan: "free" | "premium" | "pro"
       audit_action_type: "user_view" | "user_update" | "user_suspend" | "user_reactivate" | "gallery_view" | "gallery_deactivate" | "gallery_delete" | "subscription_update" | "subscription_cancel" | "admin_login"
       audit_entity_type: "user" | "gallery" | "subscription" | "system"
+      payment_type: "free" | "one_time" | "subscription"
+      payment_status: "pending" | "succeeded" | "failed" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -370,3 +428,10 @@ export type AuditLogInsert = TablesInsert<'audit_logs'>
 export type AuditLogUpdate = TablesUpdate<'audit_logs'>
 export type AuditActionType = Enums<'audit_action_type'>
 export type AuditEntityType = Enums<'audit_entity_type'>
+
+// Gallery Payment types
+export type GalleryPayment = Tables<'gallery_payments'>
+export type GalleryPaymentInsert = TablesInsert<'gallery_payments'>
+export type GalleryPaymentUpdate = TablesUpdate<'gallery_payments'>
+export type PaymentType = Enums<'payment_type'>
+export type PaymentStatus = Enums<'payment_status'>

@@ -2,24 +2,43 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { LogoIcon } from '@/components/shared/logo';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { MobileNav } from './mobile-nav';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, FolderOpen } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/context';
+import { GuestSessionManager } from '@/lib/guest/session';
 
 export function LandingHeader() {
   const router = useRouter();
+  const pathname = usePathname();
+  const { t } = useTranslation();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated' && !!session;
+  const isLandingPage = pathname === '/';
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hasGuestGalleries, setHasGuestGalleries] = useState(false);
 
-  /**
-   * Scroll handling
-   * ➜ Désactivé quand le menu mobile est ouvert
-   */
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const sessionManager = new GuestSessionManager();
+      const token = sessionManager.getSessionToken();
+      if (token) {
+        fetch('/api/guest/galleries', {
+          headers: { 'x-guest-token': token },
+        })
+          .then(res => res.json())
+          .then(data => {
+            setHasGuestGalleries(data.galleries?.length > 0);
+          })
+          .catch(() => setHasGuestGalleries(false));
+      }
+    }
+  }, [isAuthenticated]);
+
   useEffect(() => {
     if (mobileOpen) return;
 
@@ -27,15 +46,12 @@ export function LandingHeader() {
       setScrolled(window.scrollY > 20);
     };
 
-    handleScroll(); // init au mount
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [mobileOpen]);
 
-  /**
-   * Bloque le scroll du body quand le menu mobile est ouvert
-   */
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = 'hidden';
@@ -48,10 +64,11 @@ export function LandingHeader() {
     };
   }, [mobileOpen]);
 
-  const handleNavClick = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleLogoClick = () => {
+    if (isLandingPage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      router.push('/');
     }
   };
 
@@ -59,79 +76,105 @@ export function LandingHeader() {
   const onSignUp = () => router.push('/auth');
 
   return (
-   <header
-  className={`fixed top-0 left-0 right-0 z-[100] transition-none border-b ${
-    mobileOpen
-      ? 'bg-white border-slate-200 py-3'
-      : scrolled
-        ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-3 shadow-sm'
-        : 'bg-transparent border-transparent py-5'
-  }`}
->
-      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-[100] transition-none border-b ${
+        mobileOpen
+          ? 'bg-white border-slate-200 py-2'
+          : scrolled
+            ? 'bg-white/80 backdrop-blur-xl border-slate-200/50 py-2 shadow-sm'
+            : 'bg-transparent border-transparent py-3'
+      }`}
+    >
+      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-2.5 group"
+          onClick={handleLogoClick}
+          className="flex items-center gap-1.5 group"
         >
-          <div className="p-1.5 bg-indigo-600 rounded-lg text-white shadow-lg group-hover:scale-110 transition-transform">
-            <LogoIcon size={20} />
+          <div className="p-1 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
+            <img 
+              src="/icons/logo.svg" 
+              alt="PikSend" 
+              className="h-5 w-auto"
+            />
           </div>
-          <span className="font-display text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="font-display text-base font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             PikSend
           </span>
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <button
-            onClick={() => handleNavClick('features')}
-            className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+        <nav className="hidden md:flex items-center gap-6">
+          <Link
+            href="/features"
+            className={`text-xs font-semibold transition-colors ${
+              pathname === '/features'
+                ? 'text-indigo-600'
+                : 'text-slate-500 hover:text-indigo-600'
+            }`}
           >
-            Fonctionnalités
-          </button>
-          <button
-            onClick={() => handleNavClick('tarifs')}
-            className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+            {t('nav.features')}
+          </Link>
+          <Link
+            href="/pricing"
+            className={`text-xs font-semibold transition-colors ${
+              pathname === '/pricing'
+                ? 'text-indigo-600'
+                : 'text-slate-500 hover:text-indigo-600'
+            }`}
           >
-            Tarifs
-          </button>
+            {t('nav.pricing')}
+          </Link>
           <Link
             href="/help"
-            className="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+            className={`text-xs font-semibold transition-colors ${
+              pathname === '/help'
+                ? 'text-indigo-600'
+                : 'text-slate-500 hover:text-indigo-600'
+            }`}
           >
-            Aide
+            {t('nav.help')}
           </Link>
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher variant="compact" className="hidden sm:flex" />
+
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-black text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
+              className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-indigo-600 text-white font-semibold text-xs rounded-lg hover:bg-indigo-700 transition-all shadow active:scale-95"
             >
-              <LayoutDashboard size={16} />
-              Dashboard
+              <LayoutDashboard size={14} />
+              {t('nav.dashboard')}
             </Link>
           ) : (
             <>
+              {hasGuestGalleries && (
+                <Link
+                  href="/my-galleries"
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors rounded-lg hover:bg-slate-50"
+                >
+                  <FolderOpen size={14} />
+                  {t('myGalleries.title')}
+                </Link>
+              )}
               <button
                 onClick={onLogin}
-                className="hidden md:inline-flex px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors rounded-xl hover:bg-slate-50"
+                className="hidden md:inline-flex px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-600 transition-colors rounded-lg hover:bg-slate-50"
               >
-                Connexion
+                {t('nav.signIn')}
               </button>
               <button
                 onClick={onSignUp}
-                className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-black text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-indigo-600 text-white font-semibold text-xs rounded-lg hover:bg-indigo-700 transition-all shadow active:scale-95"
               >
-                Créer une galerie
+                {t('nav.getStarted')}
               </button>
             </>
           )}
 
-          {/* Mobile Navigation */}
           <MobileNav isOpen={mobileOpen} setIsOpen={setMobileOpen} />
         </div>
       </div>

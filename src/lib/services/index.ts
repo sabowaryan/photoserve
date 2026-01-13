@@ -71,3 +71,23 @@ export {
   createAdminService,
   type IAdminService,
 } from './admin.service';
+
+// Guest Gallery Service
+export {
+  GuestGalleryService,
+  createGuestGalleryService,
+  GUEST_GALLERY_LIMITS,
+  type IGuestGalleryService,
+  type CreateGuestGalleryInput,
+  type GuestImageUploadInput,
+  type GuestImageUploadResult,
+  type GuestGalleryWithImages,
+} from './guest-gallery.service';
+
+// Gallery Migration Service
+export {
+  GalleryMigrationService,
+  createGalleryMigrationService,
+  type IGalleryMigrationService,
+  type MigrationResult,
+} from './gallery-migration.service';
