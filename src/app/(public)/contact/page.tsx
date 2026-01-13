@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, MessageSquare, Clock, Send, MapPin, HelpCircle, ArrowLeft, User, AtSign, FileText, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Mail, MessageSquare, Clock, Send, MapPin, HelpCircle, ArrowLeft, User, AtSign, FileText, Loader2, CheckCircle2} from 'lucide-react';
 
 const contactMethods = [
   { icon: Mail, title: 'Email', description: 'Questions générales', value: 'contact@piksend.com', href: 'mailto:contact@piksend.com', color: 'bg-indigo-100 text-indigo-600' },
