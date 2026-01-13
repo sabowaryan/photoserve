@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Crown } from "lucide-react";
+import {  Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Crown } from "lucide-react";
 import Link from "next/link";
 
 interface DurationOption {
