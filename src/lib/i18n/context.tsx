@@ -149,9 +149,10 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
   );
 
   // Date formatting function
-  const formatDate = useCallback((date: Date, format?: string): string => {
+  const formatDate = useCallback((date: Date): string => {
     // Use Intl.DateTimeFormat for locale-aware date formatting
     return new Intl.DateTimeFormat(locale).format(date);
+
   }, [locale]);
 
   // Number formatting function
