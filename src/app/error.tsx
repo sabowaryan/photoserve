@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ServerCrash, RefreshCw, Home, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function Error({
   error,
@@ -12,6 +13,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useTranslation();
+  
   useEffect(() => {
     // Log the error to an error reporting service
     console.error(error);
@@ -42,11 +45,10 @@ export default function Error({
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-slate-900">
-            Erreur interne du serveur
+            {t('errors.500.title')}
           </h2>
           <p className="text-base text-slate-600">
-            Nous rencontrons des difficultés techniques. 
-            Notre équipe a été notifiée et travaille à résoudre le problème.
+            {t('errors.500.message')}
           </p>
         </div>
 
@@ -54,10 +56,10 @@ export default function Error({
         <div className="bg-red-50/60 backdrop-blur-xl border border-red-200 rounded-xl p-4 space-y-2 shadow-lg shadow-red-500/5">
           <div className="flex items-center justify-center gap-2">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-red-600">Service temporairement indisponible</span>
+            <span className="text-sm font-medium text-red-600">{t('errors.503.temporarilyUnavailable')}</span>
           </div>
           <p className="text-sm text-slate-600">
-            Veuillez réessayer dans quelques minutes
+            {t('errors.500.retryLater')}
           </p>
         </div>
 
@@ -65,12 +67,12 @@ export default function Error({
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button onClick={reset} size="sm" className="gap-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-lg shadow-red-500/25">
             <RefreshCw className="w-4 h-4" />
-            Réessayer
+            {t('errors.500.retry')}
           </Button>
           <Button variant="outline" size="sm" asChild className="gap-2 border-red-200 hover:bg-red-50">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
+              {t('errors.500.home')}
             </Link>
           </Button>
         </div>
@@ -78,12 +80,12 @@ export default function Error({
         {/* Support */}
         <div className="pt-3 border-t border-slate-200">
           <p className="text-sm text-slate-600 mb-2">
-            Le problème persiste ?
+            {t('errors.500.problemPersists')}
           </p>
           <Button variant="ghost" size="sm" asChild className="gap-2 hover:bg-red-50">
             <a href="mailto:support@piksend.com">
               <Mail className="w-3.5 h-3.5" />
-              Contacter le support
+              {t('errors.500.contactSupport')}
             </a>
           </Button>
         </div>

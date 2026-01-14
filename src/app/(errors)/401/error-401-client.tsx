@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import { UserX, LogIn, Home, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function Error401Client() {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center space-y-6">
@@ -23,19 +26,17 @@ export default function Error401Client() {
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
-            Authentification requise
+            {t('errors.401.title')}
           </h2>
           <p className="text-base text-muted-foreground">
-            Vous devez être connecté pour accéder à cette page. 
-            Connectez-vous ou créez un compte pour continuer.
+            {t('errors.401.message')}
           </p>
         </div>
 
         {/* Info box */}
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
           <p className="text-sm text-muted-foreground">
-            PikSend vous permet de créer et partager des galeries photo sécurisées. 
-            Inscrivez-vous gratuitement pour commencer !
+            {t('errors.401.info')}
           </p>
         </div>
 
@@ -44,13 +45,13 @@ export default function Error401Client() {
           <Button asChild size="sm" className="gap-2">
             <Link href="/auth">
               <LogIn className="w-4 h-4" />
-              Se connecter
+              {t('errors.401.signIn')}
             </Link>
           </Button>
           <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/auth?tab=register">
               <UserPlus className="w-4 h-4" />
-              Créer un compte
+              {t('errors.401.signUp')}
             </Link>
           </Button>
         </div>
@@ -59,7 +60,7 @@ export default function Error401Client() {
         <Button variant="ghost" size="sm" asChild className="gap-2">
           <Link href="/">
             <Home className="w-4 h-4" />
-            Retour à l&apos;accueil
+            {t('errors.401.home')}
           </Link>
         </Button>
       </div>

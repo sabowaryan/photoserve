@@ -20,8 +20,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Note: The lang attribute is set dynamically by RTLManager.applyDirection()
+  // on the client side based on the user's locale preference.
+  // Default to 'en' for SSR to avoid hydration mismatches.
   return (
-    <html lang="fr">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${plusJakarta.variable} antialiased font-sans`}
       >

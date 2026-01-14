@@ -185,6 +185,127 @@ h1, h2, h3, h4, h5, h6 {
   animation-delay: 1000ms;
 }
 
+/* RTL Tailwind Utilities - Directional utilities for RTL support */
+@utility rtl-flip {
+  [dir="rtl"] & {
+    transform: scaleX(-1);
+  }
+}
+
+@utility rtl-space-reverse {
+  [dir="rtl"] & {
+    --tw-space-x-reverse: 1;
+  }
+}
+
+@utility start-0 {
+  inset-inline-start: 0;
+}
+
+@utility start-2 {
+  inset-inline-start: 0.5rem;
+}
+
+@utility start-3 {
+  inset-inline-start: 0.75rem;
+}
+
+@utility start-4 {
+  inset-inline-start: 1rem;
+}
+
+@utility start-auto {
+  inset-inline-start: auto;
+}
+
+@utility end-0 {
+  inset-inline-end: 0;
+}
+
+@utility end-2 {
+  inset-inline-end: 0.5rem;
+}
+
+@utility end-3 {
+  inset-inline-end: 0.75rem;
+}
+
+@utility end-4 {
+  inset-inline-end: 1rem;
+}
+
+@utility end-auto {
+  inset-inline-end: auto;
+}
+
+@utility border-s {
+  border-inline-start-width: 1px;
+}
+
+@utility border-s-2 {
+  border-inline-start-width: 2px;
+}
+
+@utility border-e {
+  border-inline-end-width: 1px;
+}
+
+@utility border-e-2 {
+  border-inline-end-width: 2px;
+}
+
+@utility rounded-s-lg {
+  border-start-start-radius: 0.5rem;
+  border-end-start-radius: 0.5rem;
+}
+
+@utility rounded-s-xl {
+  border-start-start-radius: 0.75rem;
+  border-end-start-radius: 0.75rem;
+}
+
+@utility rounded-e-lg {
+  border-start-end-radius: 0.5rem;
+  border-end-end-radius: 0.5rem;
+}
+
+@utility rounded-e-xl {
+  border-start-end-radius: 0.75rem;
+  border-end-end-radius: 0.75rem;
+}
+
+@utility text-start {
+  text-align: start;
+}
+
+@utility text-end {
+  text-align: end;
+}
+
+@utility scroll-ms-0 {
+  scroll-margin-inline-start: 0;
+}
+
+@utility scroll-me-0 {
+  scroll-margin-inline-end: 0;
+}
+
+@utility float-start {
+  float: inline-start;
+}
+
+@utility float-end {
+  float: inline-end;
+}
+
+@utility clear-start {
+  clear: inline-start;
+}
+
+@utility clear-end {
+  clear: inline-end;
+}
+
 /* Bounce slow animation for hero floating elements */
 .animate-bounce-slow {
   animation: bounce-slow 3s ease-in-out infinite;
@@ -224,4 +345,209 @@ h1, h2, h3, h4, h5, h6 {
   outline: none;
   box-shadow: 0 0 0 4px hsl(239 84% 67% / 0.2);
   outline-offset: 2px;
+}
+
+/* ============================================
+   RTL (Right-to-Left) Support for Arabic
+   ============================================ */
+
+/* Base RTL direction */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Mirror horizontal padding for RTL */
+[dir="rtl"] .ps-2 { padding-inline-start: 0.5rem; }
+[dir="rtl"] .ps-3 { padding-inline-start: 0.75rem; }
+[dir="rtl"] .ps-4 { padding-inline-start: 1rem; }
+[dir="rtl"] .pe-2 { padding-inline-end: 0.5rem; }
+[dir="rtl"] .pe-3 { padding-inline-end: 0.75rem; }
+[dir="rtl"] .pe-4 { padding-inline-end: 1rem; }
+
+/* Mirror horizontal margins for RTL */
+[dir="rtl"] .ms-2 { margin-inline-start: 0.5rem; }
+[dir="rtl"] .ms-3 { margin-inline-start: 0.75rem; }
+[dir="rtl"] .ms-4 { margin-inline-start: 1rem; }
+[dir="rtl"] .ms-auto { margin-inline-start: auto; }
+[dir="rtl"] .me-2 { margin-inline-end: 0.5rem; }
+[dir="rtl"] .me-3 { margin-inline-end: 0.75rem; }
+[dir="rtl"] .me-4 { margin-inline-end: 1rem; }
+[dir="rtl"] .me-auto { margin-inline-end: auto; }
+
+/* Mirror positioning for RTL */
+[dir="rtl"] .left-0 { left: auto; right: 0; }
+[dir="rtl"] .left-2 { left: auto; right: 0.5rem; }
+[dir="rtl"] .left-3 { left: auto; right: 0.75rem; }
+[dir="rtl"] .left-4 { left: auto; right: 1rem; }
+[dir="rtl"] .right-0 { right: auto; left: 0; }
+[dir="rtl"] .right-2 { right: auto; left: 0.5rem; }
+[dir="rtl"] .right-3 { right: auto; left: 0.75rem; }
+[dir="rtl"] .right-4 { right: auto; left: 1rem; }
+
+/* Mirror border radius for RTL */
+[dir="rtl"] .rounded-l-none { border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+[dir="rtl"] .rounded-r-none { border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+[dir="rtl"] .rounded-l-lg { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
+[dir="rtl"] .rounded-r-lg { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; }
+[dir="rtl"] .rounded-l-xl { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
+[dir="rtl"] .rounded-r-xl { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem; }
+
+/* Mirror borders for RTL */
+[dir="rtl"] .border-l { border-left: none; border-right: 1px solid hsl(var(--border)); }
+[dir="rtl"] .border-r { border-right: none; border-left: 1px solid hsl(var(--border)); }
+[dir="rtl"] .border-l-2 { border-left: none; border-right: 2px solid hsl(var(--border)); }
+[dir="rtl"] .border-r-2 { border-right: none; border-left: 2px solid hsl(var(--border)); }
+
+/* Mirror flex direction for RTL */
+[dir="rtl"] .flex-row { flex-direction: row-reverse; }
+[dir="rtl"] .flex-row-reverse { flex-direction: row; }
+
+/* RTL-aware flex utilities - use these for explicit RTL control */
+[dir="rtl"] .rtl\:flex-row-reverse { flex-direction: row-reverse; }
+[dir="rtl"] .rtl\:flex-row { flex-direction: row; }
+
+/* Mirror text alignment for RTL */
+[dir="rtl"] .text-left { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+
+/* RTL-aware text alignment - use these for explicit RTL control */
+[dir="rtl"] .rtl\:text-right { text-align: right; }
+[dir="rtl"] .rtl\:text-left { text-align: left; }
+
+/* Mirror transform for icons and arrows in RTL */
+[dir="rtl"] .rtl\:rotate-180 { transform: rotate(180deg); }
+[dir="rtl"] .rtl\:scale-x-\[-1\] { transform: scaleX(-1); }
+
+/* Mirror gradients for RTL */
+[dir="rtl"] .bg-gradient-to-r { background-image: linear-gradient(to left, var(--tw-gradient-stops)); }
+[dir="rtl"] .bg-gradient-to-l { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+
+/* Mirror slide animations for RTL */
+[dir="rtl"] .slide-in-from-right { animation-name: rtl-slide-in-from-left; }
+[dir="rtl"] .slide-in-from-left { animation-name: rtl-slide-in-from-right; }
+
+@keyframes rtl-slide-in-from-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes rtl-slide-in-from-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Mirror translate animations for RTL */
+[dir="rtl"] .translate-x-full { transform: translateX(-100%); }
+[dir="rtl"] .-translate-x-full { transform: translateX(100%); }
+
+/* RTL-specific spacing utilities */
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* RTL-aware gap utilities - these work automatically with flexbox */
+[dir="rtl"] .gap-x-2 { column-gap: 0.5rem; }
+[dir="rtl"] .gap-x-3 { column-gap: 0.75rem; }
+[dir="rtl"] .gap-x-4 { column-gap: 1rem; }
+
+/* Mirror icon positioning in buttons and inputs */
+[dir="rtl"] .icon-left { margin-right: 0; margin-left: 0.5rem; }
+[dir="rtl"] .icon-right { margin-left: 0; margin-right: 0.5rem; }
+
+/* RTL-aware absolute positioning for badges and indicators */
+[dir="rtl"] .absolute.top-2.right-2 { right: auto; left: 0.5rem; }
+[dir="rtl"] .absolute.top-0.right-0 { right: auto; left: 0; }
+[dir="rtl"] .absolute.-top-1.-right-1 { right: auto; left: -0.25rem; }
+
+/* Mirror sidebar positioning for RTL */
+[dir="rtl"] .sidebar-left { left: auto; right: 0; }
+[dir="rtl"] .sidebar-right { right: auto; left: 0; }
+
+/* RTL-aware scrollbar positioning */
+[dir="rtl"]::-webkit-scrollbar {
+  direction: rtl;
+}
+
+/* RTL-aware form elements */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="url"],
+[dir="rtl"] input[type="tel"] {
+  text-align: left;
+  direction: ltr;
+}
+
+/* RTL-aware placeholder alignment */
+[dir="rtl"] input::placeholder,
+[dir="rtl"] textarea::placeholder {
+  text-align: right;
+}
+
+/* RTL-aware list styling */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+[dir="rtl"] li::marker {
+  unicode-bidi: isolate;
+}
+
+/* RTL-aware table alignment */
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* RTL-aware dropdown and popover positioning */
+[dir="rtl"] [data-side="left"] { --radix-popper-transform-origin: right center; }
+[dir="rtl"] [data-side="right"] { --radix-popper-transform-origin: left center; }
+
+/* RTL-aware chevron/arrow icons */
+[dir="rtl"] .chevron-right { transform: rotate(180deg); }
+[dir="rtl"] .chevron-left { transform: rotate(180deg); }
+[dir="rtl"] .arrow-right { transform: rotate(180deg); }
+[dir="rtl"] .arrow-left { transform: rotate(180deg); }
+
+/* Utility classes for explicit LTR content in RTL context */
+[dir="rtl"] .ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Utility classes for explicit RTL content in LTR context */
+[dir="ltr"] .rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Preserve LTR for code blocks and technical content */
+[dir="rtl"] code,
+[dir="rtl"] pre,
+[dir="rtl"] .code-block {
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL-aware notification badge positioning */
+[dir="rtl"] .notification-badge {
+  right: auto;
+  left: 0;
+}
+
+/* RTL-aware breadcrumb separator */
+[dir="rtl"] .breadcrumb-separator {
+  transform: rotate(180deg);
 }

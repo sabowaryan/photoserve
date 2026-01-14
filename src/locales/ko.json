@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "success": "성공",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "close": "닫기",
+    "open": "열기",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "view": "보기",
+    "download": "다운로드",
+    "upload": "업로드",
+    "share": "공유",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "yes": "예",
+    "no": "아니오",
+    "or": "또는",
+    "and": "그리고",
+    "all": "전체",
+    "none": "없음",
+    "required": "필수",
+    "optional": "선택",
+    "language": "언어",
+    "account": "계정",
+    "menu": "메뉴",
+    "actions": "작업",
+    "active": "활성",
+    "inactive": "비활성",
+    "expired": "만료됨",
+    "status": "상태",
+    "type": "유형",
+    "allTypes": "모든 유형",
+    "guest": "게스트",
+    "converted": "전환됨",
+    "startDate": "시작일",
+    "endDate": "종료일",
+    "filters": "필터",
+    "shortcuts": "단축키:",
+    "from": "시작",
+    "to": "종료",
+    "days7": "7일",
+    "days30": "30일",
+    "days90": "90일",
+    "last7Days": "최근 7일",
+    "last30Days": "최근 30일",
+    "last90Days": "최근 90일",
+    "thisYear": "올해",
+    "today": "오늘",
+    "views": "조회수",
+    "images": "이미지",
+    "storage": "저장공간",
+    "expiration": "만료",
+    "creation": "생성",
+    "galleries": "갤러리",
+    "totalViews": "총 조회수",
+    "offer": "플랜",
+    "searchPlaceholder": "검색...",
+    "newest": "최신순",
+    "oldest": "오래된순",
+    "mostViews": "조회수 높은순",
+    "leastViews": "조회수 낮은순",
+    "expiresLast": "만료 늦은순",
+    "expiresSoon": "만료 임박순",
+    "free": "무료",
+    "newGallery": "새 갤러리",
+    "galleryLimitReached": "갤러리 한도 도달",
+    "insufficientStorage": "저장공간 부족",
+    "upgradeToHigherPlan": "계속하려면 상위 플랜으로 업그레이드하세요",
+    "dashboard": "대시보드",
+    "settings": "설정",
+    "signIn": "로그인",
+    "signOut": "로그아웃",
+    "signingOut": "로그아웃 중...",
+    "getStarted": "시작하기",
+    "send": "보내기",
+    "name": "이름",
+    "email": "이메일",
+    "subject": "제목",
+    "message": "메시지",
+    "yourName": "이름",
+    "yourEmail": "your@email.com",
+    "messageSubject": "메시지 제목",
+    "describeRequest": "요청 내용을 설명해주세요...",
+    "messageSent": "메시지 전송됨!",
+    "weWillReply24h": "24-48시간 내에 답변드리겠습니다.",
+    "weWillReplyShortly": "최대한 빨리 답변드리겠습니다.",
+    "responseTime": "응답 시간",
+    "businessHours24to48": "영업일 기준 24~48시간",
+    "location": "위치",
+    "contactUs": "문의하기",
+    "generalQuestions": "일반 문의",
+    "technicalIssues": "기술 문제",
+    "support": "지원",
+    "help": "도움말",
+    "faqAndGuides": "FAQ 및 가이드",
+    "helpCenter": "고객센터",
+    "findAnswers": "질문에 대한 답변 찾기",
+    "sendUsMessage": "메시지 보내기",
+    "terms": "이용약관",
+    "termsOfUse": "이용약관",
+    "privacyPolicy": "개인정보처리방침",
+    "cookiePolicy": "쿠키 정책",
+    "legalNotice": "법적 고지",
+    "features": "기능",
+    "pricing": "요금제",
+    "zeroCompression": "무압축",
+    "fullySecure": "비밀번호 보호",
+    "readyIn2Min": "30초 설정",
+    "hdQuality": "원본 품질",
+    "noCompression": "무압축",
+    "instantDelivery": "전문 전달",
+    "secureUniqueLink": "제로 마찰 접근",
+    "exampleWeddingSession": "웨딩 사진 촬영",
+    "examplePhotosHd": "24장 • HD",
+    "downloads": "다운로드",
+    "info": "정보",
+    "security": "보안",
+    "photos": "사진",
+    "exampleTitle": "예: 민수 & 지영의 결혼식",
+    "generateTitle": "제목 생성",
+    "passwordProtection": "비밀번호 보호",
+    "onlyPeopleWithPassword": "비밀번호를 가진 사람만 갤러리에 접근할 수 있습니다",
+    "enterPassword": "비밀번호 입력",
+    "expectedStorage": "예상 저장공간",
+    "expirationDuration": "만료 기간",
+    "setGalleryValidity": "갤러리 유효 기간 설정",
+    "saveChanges": "변경사항 저장",
+    "galleryTitle": "갤러리 제목",
+    "galleryName": "갤러리 이름",
+    "secureGalleryAccess": "갤러리 접근 보안",
+    "newPassword": "새 비밀번호",
+    "day1": "1일",
+    "days3": "3일",
+    "days7Full": "7일",
+    "days14": "14일",
+    "days30Full": "30일",
+    "days60": "60일",
+    "days90Full": "90일",
+    "days180": "180일",
+    "year1": "1년",
+    "galleryDetails": "갤러리 상세",
+    "manageYourGallery": "사진 갤러리 관리",
+    "guestSessionId": "게스트 세션 ID",
+    "paymentType": "결제 유형:",
+    "unlocked": "잠금 해제:",
+    "createdAsGuest": "게스트로 생성됨",
+    "paymentCompleted": "결제 완료",
+    "convertedToUserAccount": "사용자 계정으로 전환됨",
+    "noUserAccount": "사용자 계정 없음",
+    "recentActivity": "최근 활동",
+    "upgradeLevel": "다음 레벨로 업그레이드",
+    "quickHelp": "빠른 도움말",
+    "myGalleries": "내 갤러리",
+    "myProfile": "내 프로필",
+    "accountInfo": "계정 정보",
+    "manageAccountAccess": "계정 접근 관리",
+    "emailAndPassword": "이메일 및 비밀번호",
+    "loginMethod": "로그인 방법",
+    "subscription": "구독",
+    "choosePlanForNeeds": "필요에 맞는 플랜 선택",
+    "cloudinaryHdStripe": "Cloudinary HD 인프라 • 안전한 Stripe 결제",
+    "discoverPiksend": "PikSend 알아보기",
+    "forActivePhotographers": "활동적인 사진작가를 위해",
+    "forProfessionals": "전문가를 위해",
+    "forDemandingProfessionals": "까다로운 전문가를 위해",
+    "testHdDelivery": "HD 사진 전달 테스트",
+    "originalQuality": "원본 품질",
+    "customizableDuration": "맞춤 기간",
+    "prioritySupport": "우선 지원",
+    "linkExpired": "링크 만료됨",
+    "linkNoLongerValid": "이 링크는 더 이상 유효하지 않습니다",
+    "atLeast6Characters": "최소 6자 이상",
+    "confirmYourPassword": "비밀번호 확인",
+    "reset": "재설정",
+    "passwordMinLength": "비밀번호는 최소 6자 이상이어야 합니다",
+    "hdPhotoSharing": "HD 사진 공유",
+    "google": "Google",
+    "users": "사용자",
+    "registeredAccounts": "등록된 계정",
+    "activeGalleries": "활성 갤러리",
+    "storageUsed": "사용된 저장공간",
+    "totalSpaceConsumed": "총 사용 공간",
+    "conversionRate": "전환율",
+    "payingUsers": "유료 사용자",
+    "userGrowth": "사용자 증가",
+    "newUsersPerDay": "일일 신규 사용자",
+    "storageEvolution": "저장공간 변화",
+    "totalStorageUsedMb": "총 사용 저장공간 (MB)",
+    "subscriptionConversions": "구독 전환",
+    "planUpgradesInPeriod": "기간 내 플랜 업그레이드",
+    "searchByTitleOrSlug": "제목 또는 슬러그로 검색...",
+    "searchByEmailOrName": "이메일 또는 이름으로 검색...",
+    "allPlans": "모든 플랜",
+    "allAdmins": "모든 관리자",
+    "allActions": "모든 작업",
+    "suspended": "정지됨",
+    "suspendUser": "사용자 정지",
+    "reactivateUser": "사용자 재활성화",
+    "exampleViolation": "예: 서비스 약관 위반",
+    "analytics": "분석",
+    "subscriptions": "구독",
+    "auditLog": "감사 로그",
+    "galleryNotFound": "갤러리를 찾을 수 없습니다",
+    "galleryNotAccessible": "이 갤러리는 더 이상 접근할 수 없습니다",
+    "errorFetchingImages": "이미지 가져오기 오류",
+    "noImagesInGallery": "이 갤러리에 이미지가 없습니다",
+    "errorCreatingArchive": "아카이브 생성 오류",
+    "errorDownloading": "다운로드 오류",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "홈",
+    "features": "기능",
+    "pricing": "요금제",
+    "help": "도움말",
+    "contact": "문의",
+    "dashboard": "대시보드",
+    "settings": "설정",
+    "signIn": "로그인",
+    "signOut": "로그아웃",
+    "getStarted": "시작하기",
+    "menu": "메뉴",
+    "contactUs": "문의하기"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "전문 사진 전달 갤러리",
+    "title": "당신의 작품은 하이엔드.",
+    "titleHighlight": "전달도 그래야 합니다.",
+    "subtitle": "전문 사진 전달 갤러리,",
+    "subtitleHighlight": "무압축.",
+    "subtitleEnd": "원본 품질, 제로 마찰, 게스트는 계정 불필요.",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "갤러리 만들기",
+      "secondary": "작동 방식 보기"
     },
-    "tagline": "",
+    "tagline": "무압축 • 원본 품질 • 제로 마찰",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "사진작가",
+      "galleries": "전달된 갤러리",
+      "photos": "원본 품질",
+      "satisfaction": "만족도"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "알고리즘이 픽셀을 파괴하게 두지 마세요",
+      "title": "WhatsApp은 사진을",
+      "titleHighlight": "최대 70% 압축합니다.",
+      "paragraph1": "모든 디테일을 완벽하게 하는 데 몇 시간을 투자합니다. 사진이 전문 전달 준비가 되었습니다.",
+      "paragraph1Highlight": "그리고 공유의 순간이 옵니다.",
+      "paragraph2": "WhatsApp, WeTransfer, Google Drive — 모두 당신의 작품을 손상시킵니다. 압축, 블라인드 ZIP, '액세스 요청' 버튼.",
+      "paragraph2Highlight": "고객은 더 나은 것을 받을 자격이 있습니다.",
+      "paragraph3": "전문 사진 전달 갤러리는",
+      "paragraph3Highlight": "원본 품질을 보존해야 합니다,",
+      "paragraph3End": "파괴하는 것이 아니라.",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — 무압축",
+        "originalSpec": "24 MP • 6000×4000px",
+        "originalDesc": "원본 품질 보존, 전문 갤러리",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "압축, 블라인드 ZIP, 미리보기 없음"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "전문 사진 전달",
+      "title": "우아한 다리.",
+      "subtitle": "WeTransfer의 단순함과 스튜디오 갤러리의 우아함의 만남.",
+      "subtitleHighlight": "원본 품질, 제로 마찰.",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "무압축",
+          "title": "원본 품질",
+          "desc": "알고리즘이 픽셀을 파괴하게 두지 마세요. 모든 사진이 내보낸 그대로 전달됩니다."
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "제로 마찰",
+          "title": "계정 불필요",
+          "desc": "'액세스 요청' 버튼 없음. 고객 가입 불필요. 링크를 공유하면 즉시 접근."
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30초",
+          "title": "전문 갤러리",
+          "desc": "30분이 아닌 30초 만에 프로 갤러리. 블라인드 ZIP이 아닌 비주얼 미리보기."
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "전문 사진 전달",
+      "titleHighlight": "갤러리가 기다립니다.",
+      "subtitle": "원본 품질을 고객에게 전달하는 500명 이상의 사진작가와 함께하세요. 무압축, 제로 마찰.",
+      "button": "무료 갤러리 만들기",
+      "note": "카드 불필요 • 무압축 • 원본 품질"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "크리에이터가 사랑하는 사진 공유 플랫폼.",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "로그인",
+      "signUp": "회원가입"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "이름",
+      "namePlaceholder": "홍길동",
+      "email": "이메일 주소",
+      "emailPlaceholder": "your@email.com",
+      "password": "비밀번호",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "비밀번호 확인",
+      "forgotPassword": "비밀번호 찾기",
+      "rememberMe": "로그인 유지",
+      "agreeTerms": "동의합니다",
+      "termsLink": "서비스 약관",
+      "andThe": "및",
+      "privacyLink": "개인정보처리방침"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "보안",
+      "weak": "약함",
+      "medium": "보통",
+      "good": "좋음",
+      "excellent": "우수"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "로그인",
+      "signUp": "계정 만들기",
+      "google": "Google로 로그인"
     },
-    "divider": "",
+    "divider": "빠른 접근",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "유효하지 않은 이메일",
+      "passwordTooShort": "비밀번호는 최소 6자 이상이어야 합니다",
+      "passwordMismatch": "비밀번호가 일치하지 않습니다",
+      "nameRequired": "이름을 입력해주세요.",
+      "termsRequired": "서비스 약관에 동의해야 합니다.",
+      "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
+      "signupFailed": "회원가입 중 오류 발생",
+      "googleFailed": "Google 로그인 오류",
+      "accountExists": "이 이메일로 이미 계정이 존재합니다. 비밀번호로 로그인하세요.",
+      "oauthError": "Google 로그인 오류. 다시 시도해주세요.",
+      "genericError": "오류가 발생했습니다",
+      "accountCreationError": "계정 생성 오류",
+      "profileCreationError": "프로필 생성 오류",
+      "resetLinkInvalid": "재설정 링크가 유효하지 않거나 만료되었습니다",
+      "passwordUpdateError": "비밀번호 업데이트 오류",
+      "resetEmailError": "재설정 이메일 전송 오류"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "계정이 생성되었습니다! 이제 로그인할 수 있습니다.",
+      "passwordReset": "비밀번호가 성공적으로 재설정되었습니다!"
+    },
+    "forgotPassword": {
+      "title": "비밀번호 찾기",
+      "subtitle": "재설정 링크를 받을 이메일을 입력하세요",
+      "sendLink": "재설정 링크 보내기",
+      "emailSentTo": "이메일 전송됨:",
+      "backToLogin": "로그인으로 돌아가기"
+    },
+    "resetPassword": {
+      "title": "비밀번호 재설정",
+      "subtitle": "새 비밀번호를 입력하세요",
+      "newPassword": "새 비밀번호",
+      "confirmPassword": "비밀번호 확인",
+      "resetButton": "비밀번호 재설정"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "대시보드",
+    "greeting": "안녕하세요,",
+    "subtitle": "성과 개요와 안전한 갤러리 관리입니다.",
+    "newGallery": "새 갤러리",
+    "quotaReached": "할당량 도달",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "현재 플랜",
+      "storage": "저장공간",
+      "galleries": "갤러리",
+      "totalViews": "총 조회수",
+      "usage": "사용량",
+      "volume": "용량",
+      "vsLastMonth": "지난달 {{count}} 대비"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "무료",
+      "premium": "프리미엄",
+      "pro": "프로"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "갤러리",
+      "search": "갤러리 검색...",
+      "noResults": "갤러리를 찾을 수 없습니다",
+      "noResultsQuery": "\"{{query}}\"에 대한 결과 없음",
+      "emptyState": "첫 번째 사진 갤러리를 만들어 시작하세요.",
+      "createFirst": "첫 갤러리 만들기"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "최신순",
+      "oldest": "오래된순",
+      "mostViews": "조회수 높은순",
+      "leastViews": "조회수 낮은순",
+      "expiresLast": "만료 늦은순",
+      "expiresSoon": "만료 임박순"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "최근 활동",
+      "galleryCreated": "갤러리 \"{{title}}\" 생성됨"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "갤러리 만들기",
+      "titleLabel": "갤러리 제목",
+      "titlePlaceholder": "내 사진 갤러리",
+      "uploadLabel": "사진 업로드",
+      "uploadHint": "드래그 앤 드롭 또는 클릭하여 선택",
+      "maxFiles": "최대 {{count}}장",
+      "maxSize": "이미지당 최대 {{size}}MB",
+      "allowedTypes": "JPG, PNG, WebP 허용",
+      "creating": "생성 중...",
+      "submit": "갤러리 만들기"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "조회수",
+      "images": "이미지",
+      "expires": "만료",
+      "expired": "만료됨",
+      "active": "활성",
+      "inactive": "비활성",
+      "shareLink": "링크 공유",
+      "copyLink": "링크 복사",
+      "linkCopied": "링크 복사됨!",
+      "download": "전체 다운로드",
+      "delete": "갤러리 삭제",
+      "settings": "설정",
+      "content": "콘텐츠"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "전체 다운로드",
+      "downloadSelected": "선택 다운로드",
+      "selectAll": "전체 선택",
+      "deselectAll": "전체 해제",
+      "passwordRequired": "비밀번호 필요",
+      "passwordPlaceholder": "비밀번호 입력",
+      "passwordSubmit": "갤러리 접근",
+      "passwordError": "비밀번호가 올바르지 않습니다",
+      "expired": "이 갤러리는 만료되었습니다",
+      "expiredMessage": "찾으시는 갤러리는 더 이상 이용할 수 없습니다."
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "무료 갤러리",
+      "expiresIn": "{{hours}}시간 후 만료"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "Powered by",
+      "tagline": "까다로운 크리에이터를 위한 HD 사진 전달",
+      "creatorPrompt": "이 갤러리의 제작자이신가요?",
+      "creatorDescription": "대시보드에 접근하여 공유 및 구독을 관리하세요.",
+      "accessDashboard": "내 대시보드 접근",
+      "createGallery": "갤러리 만들기",
+      "createDescription": "압축 없이 원본 품질로 사진을 공유하세요.",
+      "learnMore": "더 알아보기",
+      "photos": "사진",
+      "expiresOn": "만료일"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "갤러리 잠금 해제됨!",
+      "subtitle": "결제가 성공적으로 완료되었습니다",
+      "benefitsTitle": "혜택",
+      "benefit1": "워터마크 제거됨",
+      "benefit2": "{days}일로 연장됨",
+      "benefit3": "HD 다운로드 활성화됨",
+      "createAccountTitle": "갤러리를 관리하시겠습니까?",
+      "createAccountDesc": "무료 계정을 만들어 대시보드에 접근하고, 조회수를 추적하고, 갤러리를 관리하세요.",
+      "createAccountBtn": "내 계정 만들기",
+      "continueBtn": "계정 없이 계속"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "갤러리를 잃지 마세요!",
+      "subtitle": "만료까지 {hours}시간 남음",
+      "cta": "잠금 해제"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "30초 만에 전문 사진 전달",
+      "subtitle": "무압축. 계정 불필요. 원본 품질 갤러리.",
+      "dropzone": "여기에 사진을 놓으세요",
+      "dropzoneHint": "또는 클릭하여 파일 선택",
+      "uploading": "업로드 중...",
+      "processing": "처리 중...",
+      "complete": "업로드 완료!"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "갤러리가 준비되었습니다!",
+      "subtitle": "공유 방법을 선택하세요",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "무료 유지",
+          "price": "$0",
+          "description": "24시간 후 만료",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24시간 접근",
+            "1": "PikSend 워터마크",
+            "2": "기본 공유"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "이 갤러리 잠금 해제",
+          "price": "$2.99",
+          "description": "일회성 결제",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30일 접근",
+            "1": "워터마크 없음",
+            "2": "HD 다운로드",
+            "3": "맞춤 제목"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "프리미엄 가입",
+          "price": "$9.99/월",
+          "description": "최고의 가치",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50개 갤러리",
+            "1": "5 GB 저장공간",
+            "2": "워터마크 없음",
+            "3": "우선 지원"
           },
-          "recommended": ""
+          "recommended": "추천"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "간단한 요금제",
+    "title": "플랜을 선택하세요",
+    "subtitle": "압축 없는 HD 사진. 무료로 시작하세요.",
+    "monthly": "월간",
+    "yearly": "연간",
+    "yearlyDiscount": "20% 절약",
+    "perMonth": "/월",
+    "perYear": "/년",
+    "currentPlan": "현재 플랜",
+    "selectPlan": "플랜 선택",
+    "upgrade": "업그레이드",
+    "downgrade": "다운그레이드",
+    "popular": "인기",
+    "equivalent": "즉",
+    "needHelp": "도움이 필요하신가요?",
+    "priceNote": "가격은 USD 기준. 언제든 취소 가능.",
+    "faqTitle": "FAQ",
+    "faq": {
+      "changePlan": {
+        "question": "플랜을 변경할 수 있나요?",
+        "answer": "네, 언제든 변경 가능합니다. 요금은 비례 계산됩니다."
+      },
+      "quality": {
+        "question": "모든 플랜에서 품질이 유지되나요?",
+        "answer": "네, 100% 원본 품질. 무압축."
+      },
+      "yearly": {
+        "question": "연간 결제는 어떻게 작동하나요?",
+        "answer": "12개월 선결제로 20% 절약하세요."
+      },
+      "cancel": {
+        "question": "취소하면 어떻게 되나요?",
+        "answer": "결제 기간 종료까지 접근 유지, 이후 무료 플랜으로 전환."
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "무료",
+        "description": "시작하기에 완벽",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3개 갤러리",
+          "20 MB 저장공간",
+          "7일 만료",
+          "기본 지원"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "프리미엄",
+        "description": "활동적인 사진작가를 위해",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20개 갤러리",
+          "500 MB 저장공간",
+          "30일 만료",
+          "우선 지원",
+          "맞춤 브랜딩"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "프로",
+        "description": "전문가를 위해",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "무제한 갤러리",
+          "5 GB 저장공간",
+          "90일 만료",
+          "24/7 지원",
+          "맞춤 브랜딩",
+          "분석"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "설정",
+    "subtitle": "계정 및 환경설정 관리",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "프로필",
+      "name": "이름",
+      "email": "이메일",
+      "save": "변경사항 저장",
+      "saved": "프로필 업데이트됨!",
+      "saveError": "프로필 저장 오류"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "구독",
+      "currentPlan": "현재 플랜",
+      "manage": "구독 관리",
+      "upgrade": "플랜 업그레이드",
+      "cancel": "구독 취소"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "위험 구역",
+      "deleteAccount": "계정 삭제",
+      "deleteWarning": "이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구적으로 삭제됩니다."
+    },
+    "signOut": {
+      "title": "로그아웃",
+      "description": "세션 종료",
+      "button": "로그아웃",
+      "signingOut": "로그아웃 중..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "대시보드",
+      "users": "사용자",
+      "galleries": "갤러리",
+      "subscriptions": "구독",
+      "analytics": "분석",
+      "auditLogs": "감사 로그"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "대시보드",
+      "subtitle": "PikSend 플랫폼 개요",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "사용자",
+        "usersSubtitle": "등록된 계정",
+        "activeGalleries": "활성 갤러리",
+        "totalGalleries": "총 {{count}}개",
+        "storage": "사용된 저장공간",
+        "storageSubtitle": "총 사용 공간",
+        "conversionRate": "전환율",
+        "conversionSubtitle": "유료 사용자"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "사용자",
+      "subtitle": "플랫폼 사용자 관리",
+      "search": "사용자 검색...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "이름",
+        "email": "이메일",
+        "plan": "플랜",
+        "galleries": "갤러리",
+        "storage": "저장공간",
+        "status": "상태",
+        "actions": "작업",
+        "registration": "가입일",
+        "currentPlan": "현재 플랜",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "활성",
+        "suspended": "정지됨"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "보기",
+        "suspend": "정지",
+        "reactivate": "재활성화",
+        "changePlan": "플랜 변경"
+      },
+      "totalUsers": "총 사용자",
+      "userReactivated": "사용자 재활성화됨",
+      "userSuspended": "사용자 정지됨",
+      "planUpdated": "사용자 플랜 업데이트됨"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "갤러리",
+      "subtitle": "모든 갤러리 관리",
+      "search": "갤러리 검색...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "제목",
+        "owner": "소유자",
+        "type": "유형",
+        "images": "이미지",
+        "views": "조회수",
+        "status": "상태",
+        "expires": "만료",
+        "actions": "작업"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "게스트",
+        "user": "사용자",
+        "converted": "전환됨"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "활성",
+        "expired": "만료됨",
+        "deactivated": "비활성화됨"
+      },
+      "totalGalleries": "총 갤러리",
+      "galleryDeactivated": "갤러리 비활성화됨"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "구독",
+      "subtitle": "사용자 구독 관리",
+      "totalSubscribers": "총 구독자",
+      "premiumCount": "프리미엄",
+      "proCount": "프로",
+      "activeCount": "활성",
+      "upgraded": "구독 업그레이드됨",
+      "cancelled": "구독 취소됨"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "분석",
+      "subtitle": "플랫폼 통계 및 트렌드",
+      "newRegistrations": "신규 가입",
+      "galleriesCreated": "생성된 갤러리",
+      "totalActivities": "총 활동"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "감사 로그",
+      "subtitle": "시스템 활동 기록",
+      "totalEntries": "총 항목",
+      "modifications": "수정"
+    },
+    "header": {
+      "signOut": "로그아웃",
+      "signingOut": "로그아웃 중..."
+    },
+    "recentActivity": {
+      "title": "최근 활동"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "인증 필요",
+      "message": "이 페이지에 접근하려면 로그인해야 합니다. 로그인하거나 계정을 만들어 계속하세요.",
+      "info": "PikSend를 사용하면 안전한 사진 갤러리를 만들고 공유할 수 있습니다. 무료로 가입하여 시작하세요!",
+      "signIn": "로그인",
+      "signUp": "계정 만들기",
+      "home": "홈으로 돌아가기",
+      "possibleReasons": "가능한 원인:",
+      "reason1": "세션이 만료되었습니다",
+      "reason2": "로그인하지 않았습니다",
+      "reason3": "계정이 정지되었습니다"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "접근 거부",
+      "message": "이 페이지에 접근할 권한이 없습니다.",
+      "home": "홈으로 돌아가기",
+      "suggestions": "제안:",
+      "suggestion1": "올바른 권한이 있는지 확인하세요",
+      "suggestion2": "오류라고 생각되면 관리자에게 문의하세요"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "페이지를 찾을 수 없습니다",
+      "message": "찾으시는 페이지가 존재하지 않거나 이동되었습니다.",
+      "home": "홈으로 돌아가기",
+      "suggestions": "제안",
+      "suggestion1": "URL 철자를 확인하세요",
+      "suggestion2": "갤러리가 만료되었을 수 있습니다",
+      "suggestion3": "따라온 링크가 오래되었을 수 있습니다",
+      "previousPage": "이전 페이지"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "서버 오류",
+      "message": "서버에서 문제가 발생했습니다. 나중에 다시 시도해주세요.",
+      "retry": "다시 시도",
+      "home": "홈으로 돌아가기",
+      "possibleReasons": "가능한 원인:",
+      "reason1": "일시적인 서버 과부하",
+      "reason2": "유지보수 진행 중",
+      "reason3": "예기치 않은 오류",
+      "retryLater": "몇 분 후에 다시 시도해주세요",
+      "problemPersists": "문제가 지속되나요?",
+      "contactSupport": "지원팀에 문의"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "서비스 이용 불가",
+      "message": "현재 유지보수를 진행 중입니다. 곧 다시 확인해주세요.",
+      "home": "홈으로 돌아가기",
+      "temporarilyUnavailable": "서비스 일시적으로 이용 불가",
+      "autoRefresh": "자동 새로고침",
+      "inSeconds": "{{seconds}}초 후",
+      "statusPage": "서비스 상태 확인:"
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "파일이 너무 큽니다. 이미지당 최대 {{size}}MB.",
+      "invalidFileType": "유효하지 않은 파일 형식입니다. JPG, PNG 또는 WebP 이미지를 업로드하세요.",
+      "tooManyFiles": "파일이 너무 많습니다. 게스트 갤러리는 최대 {{count}}개 이미지.",
+      "noFiles": "업로드할 이미지를 하나 이상 선택하세요.",
+      "networkError": "업로드 실패. 연결을 확인하고 다시 시도하세요.",
+      "galleryCreationFailed": "갤러리 생성 실패. 다시 시도하세요.",
+      "uploadFailed": "이미지 업로드 실패. 다시 시도하세요."
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "결제 실패. 다시 시도하세요.",
+      "declined": "결제 거부됨. 다른 결제 수단을 시도하세요.",
+      "sessionExpired": "세션 만료됨. 다시 시도하세요.",
+      "checkoutFailed": "결제 시작 실패. 다시 시도하세요.",
+      "invalidAmount": "유효하지 않은 결제 금액.",
+      "stripeError": "결제 처리 오류: {{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "세션이 만료되었습니다. 갤러리에 더 이상 접근할 수 없을 수 있습니다.",
+      "invalid": "유효하지 않은 세션. 페이지를 새로고침하세요.",
+      "creationFailed": "세션 생성 실패. 다시 시도하세요."
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "갤러리를 찾을 수 없습니다.",
+      "expired": "이 갤러리는 만료되어 더 이상 이용할 수 없습니다.",
+      "accessDenied": "이 갤러리에 접근할 수 없습니다.",
+      "migrationFailed": "갤러리를 계정으로 마이그레이션하지 못했습니다. 지원팀에 문의하세요.",
+      "noLongerActive": "이 갤러리는 더 이상 활성 상태가 아닙니다",
+      "incorrectPassword": "비밀번호가 올바르지 않습니다"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "예기치 않은 오류가 발생했습니다. 다시 시도하세요.",
+      "networkError": "네트워크 오류. 연결을 확인하세요.",
+      "retry": "문제가 발생했습니다. 다시 시도하세요.",
+      "validationFailed": "유효성 검사 실패",
+      "invalidData": "유효하지 않은 데이터",
+      "invalidActionType": "유효하지 않은 작업 유형",
+      "invalidEntityType": "유효하지 않은 엔티티 유형",
+      "unauthorized": "권한 없음",
+      "internalServerError": "내부 서버 오류",
+      "authenticationRequired": "인증 필요",
+      "adminAccessRequired": "관리자 접근 필요",
+      "updateError": "업데이트 중 오류",
+      "serverError": "서버 오류",
+      "tooManyAttempts": "시도 횟수가 너무 많습니다. 나중에 다시 시도하세요."
+    },
+    "profile": {
+      "fetchFailed": "프로필 가져오기 실패",
+      "updateFailed": "프로필 업데이트 실패",
+      "notFound": "프로필을 찾을 수 없습니다"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "까다로운 크리에이터를 위한 HD 사진 전달.",
+    "product": "제품",
+    "platform": "플랫폼",
+    "company": "회사",
+    "legal": "법적 정보",
+    "officialContact": "공식 연락처",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "기능",
+      "pricing": "요금제",
+      "help": "고객센터",
+      "contact": "문의",
+      "terms": "이용약관",
+      "privacy": "개인정보처리방침",
+      "mentions": "법적 고지"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "국가 ID",
+      "taxNumber": "세금 번호"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "독점 소유",
+    "country": "콩고민주공화국",
+    "copyright": "© {{year}} PikSend. 모든 권리 보유."
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "PikSend에 오신 것을 환영합니다",
+      "description": "원본 품질로 사진을 공유하는 가장 쉬운 방법."
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "사진 업로드",
+      "description": "HD 사진을 드래그 앤 드롭하거나 클릭하여 파일을 선택하세요."
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "갤러리 맞춤 설정",
+      "description": "제목을 추가하고 공유 설정을 구성하세요."
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "고객과 공유",
+      "description": "고유 링크를 받아 갤러리를 즉시 공유하세요."
     },
-    "skip": "",
-    "finish": ""
+    "skip": "건너뛰기",
+    "finish": "시작하기"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "내 갤러리",
+    "subtitle": "이 세션에서 생성된 갤러리",
+    "createNew": "새로 만들기",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "아직 갤러리가 없습니다",
+      "description": "이 세션에서 갤러리를 만들지 않았습니다. 첫 번째 갤러리를 만들어 사진을 공유하세요.",
+      "cta": "첫 갤러리 만들기"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "링크를 저장하세요!",
+      "description": "이 갤러리는 브라우저에 연결되어 있습니다. 데이터를 지우거나 기기를 변경하면 접근 권한을 잃게 됩니다. 계정을 만들어 영구적으로 보관하세요."
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "잠금 해제됨",
+      "expired": "만료됨"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "갤러리를 보관하시겠습니까?",
+      "description": "무료 계정을 만들어 어떤 기기에서든 갤러리에 접근하고, 더 많은 저장공간을 얻고, 프리미엄 기능을 잠금 해제하세요.",
+      "cta": "내 계정 만들기"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – 품질 손실 없는 HD 사진 전달",
+      "description": "원본 품질로 사진을 공유하세요. 무압축, 안전한 갤러리, 자동 만료."
+    },
+    "pricing": {
+      "title": "PikSend 요금제 - 무료부터 프로까지",
+      "description": "3개 갤러리로 무료 시작. 더 많은 기능을 위해 프리미엄 또는 프로로 업그레이드."
+    },
+    "features": {
+      "title": "PikSend 기능",
+      "description": "100% 품질 보존, 안전한 갤러리, 자동 만료. 모든 기능을 알아보세요."
+    },
+    "help": {
+      "title": "PikSend 고객센터",
+      "description": "PikSend 사용을 위한 가이드, FAQ 및 기술 지원."
+    },
+    "contact": {
+      "title": "PikSend 문의",
+      "description": "질문이 있으신가요? 저희 팀이 도와드리겠습니다."
+    },
+    "auth": {
+      "title": "PikSend 로그인",
+      "description": "안전한 사진 갤러리에 접근하세요."
+    },
+    "legal": {
+      "terms": {
+        "title": "서비스 약관 - PikSend",
+        "description": "PikSend의 일반 서비스 약관을 읽어보세요."
+      },
+      "privacy": {
+        "title": "개인정보처리방침 - PikSend",
+        "description": "PikSend가 개인 데이터를 어떻게 보호하는지 알아보세요."
+      },
+      "cookies": {
+        "title": "쿠키 정책 - PikSend",
+        "description": "PikSend의 쿠키 사용에 대한 정보."
+      },
+      "mentions": {
+        "title": "법적 고지 - PikSend",
+        "description": "PikSend 발행인에 대한 법적 정보."
+      }
+    },
+    "dashboard": {
+      "title": "대시보드 | PikSend",
+      "description": "사진 갤러리 관리"
+    },
+    "newGallery": {
+      "title": "새 갤러리 | PikSend",
+      "description": "새로운 안전한 사진 갤러리 만들기"
+    },
+    "galleryDetails": {
+      "title": "갤러리 상세 | PikSend",
+      "description": "사진 갤러리 관리"
+    },
+    "myGalleries": {
+      "title": "내 갤러리 | PikSend",
+      "description": "게스트로 생성한 갤러리 찾기"
+    },
+    "error401": {
+      "title": "인증되지 않음 - 401 | PikSend",
+      "description": "이 페이지에 접근하려면 로그인하세요."
+    },
+    "error403": {
+      "title": "접근 거부 - 403 | PikSend",
+      "description": "이 리소스에 접근할 권한이 없습니다."
+    },
+    "error500": {
+      "title": "서버 오류 - 500 | PikSend",
+      "description": "내부 서버 오류가 발생했습니다. 나중에 다시 시도하세요."
+    },
+    "error503": {
+      "title": "서비스 이용 불가 - 503 | PikSend",
+      "description": "유지보수로 인해 서비스를 일시적으로 이용할 수 없습니다."
+    },
+    "pageNotFound": {
+      "title": "페이지를 찾을 수 없습니다",
+      "description": "찾으시는 페이지가 존재하지 않습니다."
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "갤러리 한도 도달",
+      "description": "플랜의 최대 갤러리 수에 도달했습니다."
+    },
+    "storageLimit": {
+      "title": "저장공간 부족",
+      "description": "저장공간이 가득 찼거나 이 작업에 충분하지 않습니다."
+    },
+    "imageLimit": {
+      "title": "이미지 한도 도달",
+      "description": "이 갤러리는 플랜의 최대 이미지 수에 도달했습니다."
+    },
+    "fileSize": {
+      "title": "파일이 너무 큼",
+      "description": "파일 크기가 플랜에서 허용하는 한도를 초과합니다."
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "갤러리를 찾을 수 없습니다",
+      "galleryNotAccessible": "이 갤러리는 더 이상 접근할 수 없습니다",
+      "errorFetchingImages": "이미지 가져오기 오류",
+      "noImagesInGallery": "이 갤러리에 이미지가 없습니다",
+      "errorCreatingArchive": "아카이브 생성 오류",
+      "errorDownloading": "다운로드 오류",
+      "tooManyAttempts": "시도 횟수가 너무 많습니다. 나중에 다시 시도하세요.",
+      "validationFailed": "유효성 검사 실패",
+      "registrationFailed": "등록 실패",
+      "accountCreatedSuccess": "계정이 성공적으로 생성되었습니다",
+      "passwordResetSuccess": "비밀번호가 성공적으로 재설정되었습니다",
+      "passwordResetEmailSent": "이 이메일 주소로 계정이 존재하면 재설정 링크를 받게 됩니다.",
+      "invalidData": "유효하지 않은 데이터",
+      "profileUpdateFailed": "프로필 업데이트 실패",
+      "profileFetchFailed": "프로필 가져오기 실패",
+      "updateError": "업데이트 중 오류",
+      "serverError": "서버 오류"
     }
   }
 }

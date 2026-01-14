@@ -6,22 +6,24 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
-
-const navLinks = [
-  { href: '/features', label: 'Fonctionnalités' },
-  { href: '/pricing', label: 'Tarifs' },
-  { href: '/help', label: 'Aide' },
-];
+import { useTranslation } from '@/lib/i18n/context';
 
 interface PublicHeaderProps {
   showBackButton?: boolean;
 }
 
 export function Header({ showBackButton = false }: PublicHeaderProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated' && !!session;
+
+  const navLinks = [
+    { href: '/features', label: t('nav.features') },
+    { href: '/pricing', label: t('nav.pricing') },
+    { href: '/help', label: t('nav.help') },
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -66,16 +68,16 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
             <Button asChild size="sm" className="btn-primary hidden sm:inline-flex h-8 text-xs">
               <Link href="/dashboard">
                 <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
-                Dashboard
+                {t('nav.dashboard')}
               </Link>
             </Button>
           ) : (
             <>
               <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex h-8 text-xs">
-                <Link href="/auth">Connexion</Link>
+                <Link href="/auth">{t('nav.signIn')}</Link>
               </Button>
               <Button asChild size="sm" className="btn-primary hidden sm:inline-flex h-8 text-xs">
-                <Link href="/auth">Commencer</Link>
+                <Link href="/auth">{t('nav.getStarted')}</Link>
               </Button>
             </>
           )}
@@ -114,16 +116,16 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
                 <Button asChild size="sm" className="w-full btn-primary h-8 text-xs">
                   <Link href="/dashboard">
                     <LayoutDashboard className="h-3.5 w-3.5 mr-1.5" />
-                    Dashboard
+                    {t('nav.dashboard')}
                   </Link>
                 </Button>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   <Button variant="outline" size="sm" asChild className="h-8 text-xs">
-                    <Link href="/auth">Connexion</Link>
+                    <Link href="/auth">{t('nav.signIn')}</Link>
                   </Button>
                   <Button asChild size="sm" className="btn-primary h-8 text-xs">
-                    <Link href="/auth">Commencer</Link>
+                    <Link href="/auth">{t('nav.getStarted')}</Link>
                   </Button>
                 </div>
               )}

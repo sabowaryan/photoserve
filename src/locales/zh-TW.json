@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "確認",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "close": "關閉",
+    "open": "開啟",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "search": "搜尋",
+    "filter": "篩選",
+    "sort": "排序",
+    "view": "檢視",
+    "download": "下載",
+    "upload": "上傳",
+    "share": "分享",
+    "copy": "複製",
+    "copied": "已複製！",
+    "yes": "是",
+    "no": "否",
+    "or": "或",
+    "and": "和",
+    "all": "全部",
+    "none": "無",
+    "required": "必填",
+    "optional": "選填",
+    "language": "語言",
+    "account": "帳戶",
+    "menu": "選單",
+    "actions": "操作",
+    "active": "活躍",
+    "inactive": "未啟用",
+    "expired": "已過期",
+    "status": "狀態",
+    "type": "類型",
+    "allTypes": "所有類型",
+    "guest": "訪客",
+    "converted": "已轉換",
+    "startDate": "開始日期",
+    "endDate": "結束日期",
+    "filters": "篩選器",
+    "shortcuts": "快捷鍵：",
+    "from": "從",
+    "to": "到",
+    "days7": "7天",
+    "days30": "30天",
+    "days90": "90天",
+    "last7Days": "最近7天",
+    "last30Days": "最近30天",
+    "last90Days": "最近90天",
+    "thisYear": "今年",
+    "today": "今天",
+    "views": "瀏覽次數",
+    "images": "圖片",
+    "storage": "儲存空間",
+    "expiration": "到期",
+    "creation": "建立",
+    "galleries": "相簿",
+    "totalViews": "總瀏覽次數",
+    "offer": "方案",
+    "searchPlaceholder": "搜尋...",
+    "newest": "最新",
+    "oldest": "最舊",
+    "mostViews": "瀏覽最多",
+    "leastViews": "瀏覽最少",
+    "expiresLast": "最晚到期",
+    "expiresSoon": "即將到期",
+    "free": "免費",
+    "newGallery": "新建相簿",
+    "galleryLimitReached": "已達相簿上限",
+    "insufficientStorage": "儲存空間不足",
+    "upgradeToHigherPlan": "升級到更高方案以繼續",
+    "dashboard": "控制台",
+    "settings": "設定",
+    "signIn": "登入",
+    "signOut": "登出",
+    "signingOut": "正在登出...",
+    "getStarted": "開始使用",
+    "send": "傳送",
+    "name": "姓名",
+    "email": "電子郵件",
+    "subject": "主旨",
+    "message": "訊息",
+    "yourName": "您的姓名",
+    "yourEmail": "your@email.com",
+    "messageSubject": "訊息主旨",
+    "describeRequest": "描述您的請求...",
+    "messageSent": "訊息已傳送！",
+    "weWillReply24h": "我們將在24-48小時內回覆。",
+    "weWillReplyShortly": "我們將盡快回覆。",
+    "responseTime": "回應時間",
+    "businessHours24to48": "24至48個工作小時",
+    "location": "位置",
+    "contactUs": "聯絡我們",
+    "generalQuestions": "一般問題",
+    "technicalIssues": "技術問題",
+    "support": "支援",
+    "help": "說明",
+    "faqAndGuides": "常見問題和指南",
+    "helpCenter": "說明中心",
+    "findAnswers": "尋找問題答案",
+    "sendUsMessage": "傳送訊息給我們",
+    "terms": "條款",
+    "termsOfUse": "使用條款",
+    "privacyPolicy": "隱私權政策",
+    "cookiePolicy": "Cookie政策",
+    "legalNotice": "法律聲明",
+    "features": "功能",
+    "pricing": "定價",
+    "zeroCompression": "零壓縮",
+    "fullySecure": "密碼保護",
+    "readyIn2Min": "30秒設定",
+    "hdQuality": "原始品質",
+    "noCompression": "零壓縮",
+    "instantDelivery": "專業交付",
+    "secureUniqueLink": "零摩擦存取",
+    "exampleWeddingSession": "婚禮攝影",
+    "examplePhotosHd": "24張照片 • 高畫質",
+    "downloads": "下載",
+    "info": "資訊",
+    "security": "安全性",
+    "photos": "照片",
+    "exampleTitle": "例如：小明和小美的婚禮",
+    "generateTitle": "產生標題",
+    "passwordProtection": "密碼保護",
+    "onlyPeopleWithPassword": "只有擁有密碼的人才能存取您的相簿",
+    "enterPassword": "輸入密碼",
+    "expectedStorage": "預計儲存空間",
+    "expirationDuration": "有效期限",
+    "setGalleryValidity": "設定相簿有效期",
+    "saveChanges": "儲存變更",
+    "galleryTitle": "相簿標題",
+    "galleryName": "您的相簿名稱",
+    "secureGalleryAccess": "保護相簿存取",
+    "newPassword": "新密碼",
+    "day1": "1天",
+    "days3": "3天",
+    "days7Full": "7天",
+    "days14": "14天",
+    "days30Full": "30天",
+    "days60": "60天",
+    "days90Full": "90天",
+    "days180": "180天",
+    "year1": "1年",
+    "galleryDetails": "相簿詳情",
+    "manageYourGallery": "管理您的照片相簿",
+    "guestSessionId": "訪客工作階段ID",
+    "paymentType": "付款類型：",
+    "unlocked": "已解鎖：",
+    "createdAsGuest": "以訪客身分建立",
+    "paymentCompleted": "付款完成",
+    "convertedToUserAccount": "已轉換為使用者帳戶",
+    "noUserAccount": "無使用者帳戶",
+    "recentActivity": "最近活動",
+    "upgradeLevel": "升級到下一級",
+    "quickHelp": "快速說明",
+    "myGalleries": "我的相簿",
+    "myProfile": "我的個人資料",
+    "accountInfo": "帳戶資訊",
+    "manageAccountAccess": "管理帳戶存取",
+    "emailAndPassword": "電子郵件和密碼",
+    "loginMethod": "登入方式",
+    "subscription": "訂閱",
+    "choosePlanForNeeds": "選擇適合您需求的方案",
+    "cloudinaryHdStripe": "Cloudinary高畫質基礎設施 • 安全的Stripe付款",
+    "discoverPiksend": "了解PikSend",
+    "forActivePhotographers": "適合活躍的攝影師",
+    "forProfessionals": "適合專業人士",
+    "forDemandingProfessionals": "適合要求嚴格的專業人士",
+    "testHdDelivery": "測試高畫質照片交付",
+    "originalQuality": "原始品質",
+    "customizableDuration": "可自訂時長",
+    "prioritySupport": "優先支援",
+    "linkExpired": "連結已過期",
+    "linkNoLongerValid": "此連結已失效",
+    "atLeast6Characters": "至少6個字元",
+    "confirmYourPassword": "確認您的密碼",
+    "reset": "重設",
+    "passwordMinLength": "密碼至少需要6個字元",
+    "hdPhotoSharing": "高畫質照片分享",
+    "google": "Google",
+    "users": "使用者",
+    "registeredAccounts": "註冊帳戶",
+    "activeGalleries": "活躍相簿",
+    "storageUsed": "已用儲存空間",
+    "totalSpaceConsumed": "總使用空間",
+    "conversionRate": "轉換率",
+    "payingUsers": "付費使用者",
+    "userGrowth": "使用者成長",
+    "newUsersPerDay": "每日新使用者",
+    "storageEvolution": "儲存空間變化",
+    "totalStorageUsedMb": "總使用儲存空間（MB）",
+    "subscriptionConversions": "訂閱轉換",
+    "planUpgradesInPeriod": "期間內方案升級",
+    "searchByTitleOrSlug": "按標題或連結搜尋...",
+    "searchByEmailOrName": "按電子郵件或姓名搜尋...",
+    "allPlans": "所有方案",
+    "allAdmins": "所有管理員",
+    "allActions": "所有操作",
+    "suspended": "已暫停",
+    "suspendUser": "暫停使用者",
+    "reactivateUser": "重新啟用使用者",
+    "exampleViolation": "例如：違反服務條款",
+    "analytics": "分析",
+    "subscriptions": "訂閱",
+    "auditLog": "稽核日誌",
+    "galleryNotFound": "找不到相簿",
+    "galleryNotAccessible": "此相簿已無法存取",
+    "errorFetchingImages": "取得圖片時發生錯誤",
+    "noImagesInGallery": "此相簿中沒有圖片",
+    "errorCreatingArchive": "建立壓縮檔時發生錯誤",
+    "errorDownloading": "下載時發生錯誤",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "首頁",
+    "features": "功能",
+    "pricing": "定價",
+    "help": "說明",
+    "contact": "聯絡",
+    "dashboard": "控制台",
+    "settings": "設定",
+    "signIn": "登入",
+    "signOut": "登出",
+    "getStarted": "開始使用",
+    "menu": "選單",
+    "contactUs": "聯絡我們"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "專業照片交付相簿",
+    "title": "您的作品是高端的。",
+    "titleHighlight": "您的交付也應如此。",
+    "subtitle": "專業照片交付相簿，",
+    "subtitleHighlight": "零壓縮。",
+    "subtitleEnd": "原始品質，零摩擦，訪客無需帳戶。",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "建立我的相簿",
+      "secondary": "了解運作方式"
     },
-    "tagline": "",
+    "tagline": "零壓縮 • 原始品質 • 零摩擦",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "攝影師",
+      "galleries": "已交付相簿",
+      "photos": "原始品質",
+      "satisfaction": "滿意度"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "別讓演算法破壞您的像素",
+      "title": "WhatsApp壓縮您的照片",
+      "titleHighlight": "高達70%。",
+      "paragraph1": "您花費數小時完善每一個細節。您的照片已準備好專業交付。",
+      "paragraph1Highlight": "然後到了分享的時刻。",
+      "paragraph2": "WhatsApp、WeTransfer、Google Drive——它們都會損害您的作品。壓縮、盲目ZIP、「請求存取」按鈕。",
+      "paragraph2Highlight": "您的客戶值得更好的。",
+      "paragraph3": "專業照片交付相簿應該保留",
+      "paragraph3Highlight": "原始品質，",
+      "paragraph3End": "而不是破壞它。",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — 零壓縮",
+        "originalSpec": "2400萬像素 • 6000×4000px",
+        "originalDesc": "原始品質保留，專業相簿",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "壓縮、盲目ZIP、無預覽"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "專業照片交付",
+      "title": "優雅的橋樑。",
+      "subtitle": "WeTransfer的簡潔與工作室相簿的優雅相遇。",
+      "subtitleHighlight": "原始品質，零摩擦。",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "零壓縮",
+          "title": "原始品質",
+          "desc": "別讓演算法破壞您的像素。每張照片都按您匯出的原樣交付。"
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "零摩擦",
+          "title": "無需帳戶",
+          "desc": "沒有「請求存取」按鈕。客戶無需註冊。分享連結，即刻存取。"
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30秒",
+          "title": "專業相簿",
+          "desc": "30秒建立專業相簿，而非30分鐘。視覺預覽，而非盲目ZIP檔案。"
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "專業照片交付",
+      "titleHighlight": "相簿等待著您。",
+      "subtitle": "加入500多位向客戶交付原始品質的攝影師。零壓縮，零摩擦。",
+      "button": "建立我的免費相簿",
+      "note": "無需信用卡 • 零壓縮 • 原始品質"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "創作者喜愛的照片分享平台。",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "登入",
+      "signUp": "註冊"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "姓名",
+      "namePlaceholder": "王小明",
+      "email": "電子郵件地址",
+      "emailPlaceholder": "your@email.com",
+      "password": "密碼",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "確認密碼",
+      "forgotPassword": "忘記密碼？",
+      "rememberMe": "記住我",
+      "agreeTerms": "我同意",
+      "termsLink": "服務條款",
+      "andThe": "和",
+      "privacyLink": "隱私權政策"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "安全性",
+      "weak": "弱",
+      "medium": "中等",
+      "good": "良好",
+      "excellent": "優秀"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "登入",
+      "signUp": "建立帳戶",
+      "google": "使用Google登入"
     },
-    "divider": "",
+    "divider": "快速存取",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "電子郵件無效",
+      "passwordTooShort": "密碼至少需要6個字元",
+      "passwordMismatch": "密碼不符",
+      "nameRequired": "請輸入您的姓名。",
+      "termsRequired": "您必須接受服務條款。",
+      "invalidCredentials": "電子郵件或密碼無效",
+      "signupFailed": "註冊時發生錯誤",
+      "googleFailed": "Google登入發生錯誤",
+      "accountExists": "此電子郵件已存在帳戶。請使用密碼登入。",
+      "oauthError": "Google登入發生錯誤。請重試。",
+      "genericError": "發生錯誤",
+      "accountCreationError": "建立帳戶時發生錯誤",
+      "profileCreationError": "建立個人資料時發生錯誤",
+      "resetLinkInvalid": "重設連結無效或已過期",
+      "passwordUpdateError": "更新密碼時發生錯誤",
+      "resetEmailError": "傳送重設郵件時發生錯誤"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "帳戶已建立！您現在可以登入了。",
+      "passwordReset": "密碼重設成功！"
+    },
+    "forgotPassword": {
+      "title": "忘記密碼",
+      "subtitle": "輸入您的電子郵件以接收重設連結",
+      "sendLink": "傳送重設連結",
+      "emailSentTo": "郵件已傳送至：",
+      "backToLogin": "返回登入"
+    },
+    "resetPassword": {
+      "title": "重設密碼",
+      "subtitle": "輸入您的新密碼",
+      "newPassword": "新密碼",
+      "confirmPassword": "確認密碼",
+      "resetButton": "重設密碼"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "控制台",
+    "greeting": "您好，",
+    "subtitle": "這是您的業績概覽和安全相簿管理。",
+    "newGallery": "新建相簿",
+    "quotaReached": "已達配額",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "目前方案",
+      "storage": "儲存空間",
+      "galleries": "相簿",
+      "totalViews": "總瀏覽次數",
+      "usage": "使用量",
+      "volume": "容量",
+      "vsLastMonth": "對比上月{{count}}"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "免費",
+      "premium": "進階",
+      "pro": "專業"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "相簿",
+      "search": "搜尋相簿...",
+      "noResults": "找不到相簿",
+      "noResultsQuery": "沒有「{{query}}」的結果",
+      "emptyState": "從建立您的第一個照片相簿開始。",
+      "createFirst": "建立我的第一個相簿"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "最新",
+      "oldest": "最舊",
+      "mostViews": "瀏覽最多",
+      "leastViews": "瀏覽最少",
+      "expiresLast": "最晚到期",
+      "expiresSoon": "即將到期"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "最近活動",
+      "galleryCreated": "相簿「{{title}}」已建立"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "建立相簿",
+      "titleLabel": "相簿標題",
+      "titlePlaceholder": "我的照片相簿",
+      "uploadLabel": "上傳照片",
+      "uploadHint": "拖放或點擊選擇",
+      "maxFiles": "最多{{count}}張照片",
+      "maxSize": "每張圖片最大{{size}}MB",
+      "allowedTypes": "支援JPG、PNG、WebP",
+      "creating": "建立中...",
+      "submit": "建立相簿"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "瀏覽次數",
+      "images": "圖片",
+      "expires": "到期",
+      "expired": "已過期",
+      "active": "活躍",
+      "inactive": "未啟用",
+      "shareLink": "分享連結",
+      "copyLink": "複製連結",
+      "linkCopied": "連結已複製！",
+      "download": "全部下載",
+      "delete": "刪除相簿",
+      "settings": "設定",
+      "content": "內容"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "全部下載",
+      "downloadSelected": "下載選取",
+      "selectAll": "全選",
+      "deselectAll": "取消全選",
+      "passwordRequired": "需要密碼",
+      "passwordPlaceholder": "輸入密碼",
+      "passwordSubmit": "存取相簿",
+      "passwordError": "密碼錯誤",
+      "expired": "此相簿已過期",
+      "expiredMessage": "您尋找的相簿已不可用。"
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "免費相簿",
+      "expiresIn": "{{hours}}小時後到期"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "由以下提供支援",
+      "tagline": "為要求嚴格的創作者提供高畫質照片交付",
+      "creatorPrompt": "您是此相簿的建立者嗎？",
+      "creatorDescription": "存取您的控制台以管理分享和訂閱。",
+      "accessDashboard": "存取我的控制台",
+      "createGallery": "建立您的相簿",
+      "createDescription": "以原始品質分享您的照片，無壓縮。",
+      "learnMore": "了解更多",
+      "photos": "照片",
+      "expiresOn": "到期日期"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "相簿已解鎖！",
+      "subtitle": "您的付款已成功",
+      "benefitsTitle": "您將獲得",
+      "benefit1": "浮水印已移除",
+      "benefit2": "延長至{days}天",
+      "benefit3": "高畫質下載已啟用",
+      "createAccountTitle": "想要管理您的相簿嗎？",
+      "createAccountDesc": "建立免費帳戶以存取控制台、追蹤瀏覽次數並管理相簿。",
+      "createAccountBtn": "建立我的帳戶",
+      "continueBtn": "不建立帳戶繼續"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "不要失去您的相簿！",
+      "subtitle": "距離到期還有{hours}小時",
+      "cta": "解鎖"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "30秒專業照片交付",
+      "subtitle": "零壓縮。無需帳戶。原始品質相簿。",
+      "dropzone": "將照片拖放到這裡",
+      "dropzoneHint": "或點擊選擇檔案",
+      "uploading": "上傳中...",
+      "processing": "處理中...",
+      "complete": "上傳完成！"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "您的相簿已準備就緒！",
+      "subtitle": "選擇您想要的分享方式",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "保持免費",
+          "price": "$0",
+          "description": "24小時後到期",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24小時存取",
+            "1": "PikSend浮水印",
+            "2": "基本分享"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "解鎖此相簿",
+          "price": "$2.99",
+          "description": "一次性付款",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30天存取",
+            "1": "無浮水印",
+            "2": "高畫質下載",
+            "3": "自訂標題"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "升級進階版",
+          "price": "$9.99/月",
+          "description": "最佳價值",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50個相簿",
+            "1": "5 GB儲存空間",
+            "2": "無浮水印",
+            "3": "優先支援"
           },
-          "recommended": ""
+          "recommended": "推薦"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "簡單定價",
+    "title": "選擇您的方案",
+    "subtitle": "無壓縮的高畫質照片。免費開始。",
+    "monthly": "月付",
+    "yearly": "年付",
+    "yearlyDiscount": "節省20%",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "currentPlan": "目前方案",
+    "selectPlan": "選擇方案",
+    "upgrade": "升級",
+    "downgrade": "降級",
+    "popular": "熱門",
+    "equivalent": "即",
+    "needHelp": "需要協助？",
+    "priceNote": "價格以美元計。隨時取消。",
+    "faqTitle": "常見問題",
+    "faq": {
+      "changePlan": {
+        "question": "我可以更換方案嗎？",
+        "answer": "可以，隨時更換。費用按比例計算。"
+      },
+      "quality": {
+        "question": "所有方案都保持品質嗎？",
+        "answer": "是的，100%原始品質。零壓縮。"
+      },
+      "yearly": {
+        "question": "年付如何運作？",
+        "answer": "預付12個月，節省20%。"
+      },
+      "cancel": {
+        "question": "如果我取消會怎樣？",
+        "answer": "存取權限保持到付費期結束，然後轉為免費方案。"
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "免費",
+        "description": "完美的入門選擇",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3個相簿",
+          "20 MB儲存空間",
+          "7天有效期",
+          "基本支援"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "進階",
+        "description": "適合活躍的攝影師",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20個相簿",
+          "500 MB儲存空間",
+          "30天有效期",
+          "優先支援",
+          "自訂品牌"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "專業",
+        "description": "適合專業人士",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "無限相簿",
+          "5 GB儲存空間",
+          "90天有效期",
+          "24/7支援",
+          "自訂品牌",
+          "數據分析"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "設定",
+    "subtitle": "管理您的帳戶和偏好設定",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "個人資料",
+      "name": "姓名",
+      "email": "電子郵件",
+      "save": "儲存變更",
+      "saved": "個人資料已更新！",
+      "saveError": "儲存個人資料時發生錯誤"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "訂閱",
+      "currentPlan": "目前方案",
+      "manage": "管理訂閱",
+      "upgrade": "升級方案",
+      "cancel": "取消訂閱"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "危險區域",
+      "deleteAccount": "刪除帳戶",
+      "deleteWarning": "此操作不可逆。您的所有資料將被永久刪除。"
+    },
+    "signOut": {
+      "title": "登出",
+      "description": "結束您的工作階段",
+      "button": "登出",
+      "signingOut": "正在登出..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "控制台",
+      "users": "使用者",
+      "galleries": "相簿",
+      "subscriptions": "訂閱",
+      "analytics": "分析",
+      "auditLogs": "稽核日誌"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "控制台",
+      "subtitle": "PikSend平台概覽",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "使用者",
+        "usersSubtitle": "註冊帳戶",
+        "activeGalleries": "活躍相簿",
+        "totalGalleries": "共{{count}}個",
+        "storage": "已用儲存空間",
+        "storageSubtitle": "總使用空間",
+        "conversionRate": "轉換率",
+        "conversionSubtitle": "付費使用者"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "使用者",
+      "subtitle": "管理平台使用者",
+      "search": "搜尋使用者...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "姓名",
+        "email": "電子郵件",
+        "plan": "方案",
+        "galleries": "相簿",
+        "storage": "儲存空間",
+        "status": "狀態",
+        "actions": "操作",
+        "registration": "註冊時間",
+        "currentPlan": "目前方案",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "活躍",
+        "suspended": "已暫停"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "檢視",
+        "suspend": "暫停",
+        "reactivate": "重新啟用",
+        "changePlan": "更換方案"
+      },
+      "totalUsers": "總使用者數",
+      "userReactivated": "使用者已重新啟用",
+      "userSuspended": "使用者已暫停",
+      "planUpdated": "使用者方案已更新"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "相簿",
+      "subtitle": "管理所有相簿",
+      "search": "搜尋相簿...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "標題",
+        "owner": "擁有者",
+        "type": "類型",
+        "images": "圖片",
+        "views": "瀏覽次數",
+        "status": "狀態",
+        "expires": "到期",
+        "actions": "操作"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "訪客",
+        "user": "使用者",
+        "converted": "已轉換"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "活躍",
+        "expired": "已過期",
+        "deactivated": "已停用"
+      },
+      "totalGalleries": "總相簿數",
+      "galleryDeactivated": "相簿已停用"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "訂閱",
+      "subtitle": "管理使用者訂閱",
+      "totalSubscribers": "總訂閱者",
+      "premiumCount": "進階",
+      "proCount": "專業",
+      "activeCount": "活躍",
+      "upgraded": "訂閱已升級",
+      "cancelled": "訂閱已取消"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "分析",
+      "subtitle": "平台統計和趨勢",
+      "newRegistrations": "新註冊",
+      "galleriesCreated": "已建立相簿",
+      "totalActivities": "總活動"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "稽核日誌",
+      "subtitle": "系統活動歷史",
+      "totalEntries": "總條目",
+      "modifications": "修改"
+    },
+    "header": {
+      "signOut": "登出",
+      "signingOut": "正在登出..."
+    },
+    "recentActivity": {
+      "title": "最近活動"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "需要身分驗證",
+      "message": "您必須登入才能存取此頁面。請登入或建立帳戶以繼續。",
+      "info": "PikSend讓您建立和分享安全的照片相簿。免費註冊即可開始！",
+      "signIn": "登入",
+      "signUp": "建立帳戶",
+      "home": "返回首頁",
+      "possibleReasons": "可能的原因：",
+      "reason1": "您的工作階段已過期",
+      "reason2": "您未登入",
+      "reason3": "您的帳戶已被暫停"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "存取被拒絕",
+      "message": "您沒有權限存取此頁面。",
+      "home": "返回首頁",
+      "suggestions": "建議：",
+      "suggestion1": "檢查您是否擁有正確的權限",
+      "suggestion2": "如果您認為這是錯誤，請聯絡管理員"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "找不到頁面",
+      "message": "您尋找的頁面不存在或已被移動。",
+      "home": "返回首頁",
+      "suggestions": "建議",
+      "suggestion1": "檢查URL拼寫",
+      "suggestion2": "相簿可能已過期",
+      "suggestion3": "您存取的連結可能已過時",
+      "previousPage": "上一頁"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "伺服器錯誤",
+      "message": "我們這邊出了問題。請稍後重試。",
+      "retry": "重試",
+      "home": "返回首頁",
+      "possibleReasons": "可能的原因：",
+      "reason1": "伺服器暫時過載",
+      "reason2": "正在進行維護",
+      "reason3": "意外錯誤",
+      "retryLater": "請幾分鐘後重試",
+      "problemPersists": "問題仍然存在？",
+      "contactSupport": "聯絡支援"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "服務不可用",
+      "message": "我們目前正在進行維護。請稍後再來。",
+      "home": "返回首頁",
+      "temporarilyUnavailable": "服務暫時不可用",
+      "autoRefresh": "自動重新整理",
+      "inSeconds": "{{seconds}}秒後",
+      "statusPage": "關注我們的服務狀態："
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "檔案太大。每張圖片最大{{size}}MB。",
+      "invalidFileType": "檔案類型無效。請上傳JPG、PNG或WebP圖片。",
+      "tooManyFiles": "檔案太多。訪客相簿最多{{count}}張圖片。",
+      "noFiles": "請至少選擇一張圖片上傳。",
+      "networkError": "上傳失敗。請檢查您的連線並重試。",
+      "galleryCreationFailed": "建立相簿失敗。請重試。",
+      "uploadFailed": "上傳圖片失敗。請重試。"
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "付款失敗。請重試。",
+      "declined": "付款被拒絕。請嘗試其他付款方式。",
+      "sessionExpired": "工作階段已過期。請重試。",
+      "checkoutFailed": "啟動結帳失敗。請重試。",
+      "invalidAmount": "付款金額無效。",
+      "stripeError": "付款處理錯誤：{{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "您的工作階段已過期。您的相簿可能無法再存取。",
+      "invalid": "工作階段無效。請重新整理頁面。",
+      "creationFailed": "建立工作階段失敗。請重試。"
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "找不到相簿。",
+      "expired": "此相簿已過期，不再可用。",
+      "accessDenied": "您無權存取此相簿。",
+      "migrationFailed": "將相簿遷移到您的帳戶失敗。請聯絡支援。",
+      "noLongerActive": "此相簿已不再活躍",
+      "incorrectPassword": "密碼錯誤"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "發生意外錯誤。請重試。",
+      "networkError": "網路錯誤。請檢查您的連線。",
+      "retry": "出了點問題。請重試。",
+      "validationFailed": "驗證失敗",
+      "invalidData": "資料無效",
+      "invalidActionType": "操作類型無效",
+      "invalidEntityType": "實體類型無效",
+      "unauthorized": "未授權",
+      "internalServerError": "內部伺服器錯誤",
+      "authenticationRequired": "需要身分驗證",
+      "adminAccessRequired": "需要管理員權限",
+      "updateError": "更新時發生錯誤",
+      "serverError": "伺服器錯誤",
+      "tooManyAttempts": "嘗試次數過多。請稍後重試。"
+    },
+    "profile": {
+      "fetchFailed": "取得個人資料失敗",
+      "updateFailed": "更新個人資料失敗",
+      "notFound": "找不到個人資料"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "為要求嚴格的創作者提供高畫質照片交付。",
+    "product": "產品",
+    "platform": "平台",
+    "company": "公司",
+    "legal": "法律",
+    "officialContact": "官方聯絡方式",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "功能",
+      "pricing": "定價",
+      "help": "說明中心",
+      "contact": "聯絡",
+      "terms": "條款",
+      "privacy": "隱私權",
+      "mentions": "法律聲明"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "國家ID",
+      "taxNumber": "稅號"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "獨家所有",
+    "country": "剛果民主共和國",
+    "copyright": "© {{year}} PikSend。保留所有權利。"
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "歡迎使用PikSend",
+      "description": "以原始品質分享照片的最簡單方式。"
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "上傳您的照片",
+      "description": "拖放您的高畫質照片或點擊選擇檔案。"
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "自訂您的相簿",
+      "description": "新增標題並設定分享設定。"
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "與客戶分享",
+      "description": "取得唯一連結，即時分享您的相簿。"
     },
-    "skip": "",
-    "finish": ""
+    "skip": "略過",
+    "finish": "開始使用"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "我的相簿",
+    "subtitle": "此工作階段中建立的相簿",
+    "createNew": "新建",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "還沒有相簿",
+      "description": "您在此工作階段中還沒有建立任何相簿。建立您的第一個相簿來分享照片。",
+      "cta": "建立我的第一個相簿"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "儲存您的連結！",
+      "description": "這些相簿與您的瀏覽器關聯。如果您清除資料或更換裝置，將失去存取權限。建立帳戶以永久儲存。"
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "已解鎖",
+      "expired": "已過期"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "想要保留您的相簿嗎？",
+      "description": "建立免費帳戶，從任何裝置存取相簿，獲得更多儲存空間，解鎖進階功能。",
+      "cta": "建立我的帳戶"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – 無品質損失的高畫質照片交付",
+      "description": "以原始品質分享您的照片。零壓縮，安全相簿，自動到期。"
+    },
+    "pricing": {
+      "title": "PikSend定價 - 從免費到專業",
+      "description": "免費開始，3個相簿。升級到進階或專業版獲得更多功能。"
+    },
+    "features": {
+      "title": "PikSend功能",
+      "description": "100%品質保留，安全相簿，自動到期。了解所有功能。"
+    },
+    "help": {
+      "title": "PikSend說明中心",
+      "description": "使用PikSend的指南、常見問題和技術支援。"
+    },
+    "contact": {
+      "title": "聯絡PikSend",
+      "description": "有問題？我們的團隊隨時為您提供協助。"
+    },
+    "auth": {
+      "title": "PikSend登入",
+      "description": "存取您的安全照片相簿。"
+    },
+    "legal": {
+      "terms": {
+        "title": "服務條款 - PikSend",
+        "description": "閱讀PikSend的一般服務條款。"
+      },
+      "privacy": {
+        "title": "隱私權政策 - PikSend",
+        "description": "了解PikSend如何保護您的個人資料。"
+      },
+      "cookies": {
+        "title": "Cookie政策 - PikSend",
+        "description": "關於PikSend使用Cookie的資訊。"
+      },
+      "mentions": {
+        "title": "法律聲明 - PikSend",
+        "description": "關於PikSend發布者的法律資訊。"
+      }
+    },
+    "dashboard": {
+      "title": "控制台 | PikSend",
+      "description": "管理您的照片相簿"
+    },
+    "newGallery": {
+      "title": "新建相簿 | PikSend",
+      "description": "建立新的安全照片相簿"
+    },
+    "galleryDetails": {
+      "title": "相簿詳情 | PikSend",
+      "description": "管理您的照片相簿"
+    },
+    "myGalleries": {
+      "title": "我的相簿 | PikSend",
+      "description": "尋找您作為訪客建立的相簿"
+    },
+    "error401": {
+      "title": "未驗證 - 401 | PikSend",
+      "description": "請登入以存取此頁面。"
+    },
+    "error403": {
+      "title": "存取被拒絕 - 403 | PikSend",
+      "description": "您沒有權限存取此資源。"
+    },
+    "error500": {
+      "title": "伺服器錯誤 - 500 | PikSend",
+      "description": "發生內部伺服器錯誤。請稍後重試。"
+    },
+    "error503": {
+      "title": "服務不可用 - 503 | PikSend",
+      "description": "服務因維護暫時不可用。"
+    },
+    "pageNotFound": {
+      "title": "找不到頁面",
+      "description": "您尋找的頁面不存在。"
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "已達相簿上限",
+      "description": "您已達到方案的最大相簿數量。"
+    },
+    "storageLimit": {
+      "title": "儲存空間不足",
+      "description": "您的儲存空間已滿或不足以進行此操作。"
+    },
+    "imageLimit": {
+      "title": "已達圖片上限",
+      "description": "此相簿已達到方案的最大圖片數量。"
+    },
+    "fileSize": {
+      "title": "檔案太大",
+      "description": "檔案大小超過方案允許的限制。"
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "找不到相簿",
+      "galleryNotAccessible": "此相簿已無法存取",
+      "errorFetchingImages": "取得圖片時發生錯誤",
+      "noImagesInGallery": "此相簿中沒有圖片",
+      "errorCreatingArchive": "建立壓縮檔時發生錯誤",
+      "errorDownloading": "下載時發生錯誤",
+      "tooManyAttempts": "嘗試次數過多。請稍後重試。",
+      "validationFailed": "驗證失敗",
+      "registrationFailed": "註冊失敗",
+      "accountCreatedSuccess": "帳戶建立成功",
+      "passwordResetSuccess": "密碼重設成功",
+      "passwordResetEmailSent": "如果此電子郵件地址存在帳戶，您將收到重設連結。",
+      "invalidData": "資料無效",
+      "profileUpdateFailed": "更新個人資料失敗",
+      "profileFetchFailed": "取得個人資料失敗",
+      "updateError": "更新時發生錯誤",
+      "serverError": "伺服器錯誤"
     }
   }
 }

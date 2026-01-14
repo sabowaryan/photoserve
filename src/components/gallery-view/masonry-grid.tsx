@@ -1,8 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { Maximize2, Download, ImageOff, Sparkles } from "lucide-react";
 import { WatermarkOverlay } from "@/components/gallery/watermark-overlay";
 import { useState } from "react";
+
+// Number of images above the fold that should be prioritized for LCP optimization
+const ABOVE_FOLD_THRESHOLD = 4;
 
 interface MasonryGridProps {
   images: { id: string; url: string }[];
@@ -51,16 +55,18 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
                 ${isHovered ? 'shadow-2xl shadow-slate-400/30 scale-[1.02] z-10' : 'shadow-lg shadow-slate-200/50'}
               `}
             >
-              {/* Image */}
-              <img 
+              {/* Image - Using Next/Image for LCP optimization */}
+              <Image 
                 src={img.url} 
+                alt={`Photo ${index + 1}`}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                priority={index < ABOVE_FOLD_THRESHOLD}
                 className={`
-                  w-full h-full object-cover
+                  object-cover
                   transition-transform duration-700 ease-out
                   ${isHovered ? 'scale-105' : 'scale-100'}
                 `}
-                alt={`Photo ${index + 1}`} 
-                loading="lazy"
               />
               
               {/* Watermark overlay */}

@@ -32,7 +32,7 @@ export async function POST(
 
     if (fetchError || !gallery) {
       return NextResponse.json(
-        { error: 'Galerie non trouvée' },
+        { error: 'api.errors.galleryNotFound', code: 'GALLERY_NOT_FOUND' },
         { status: 404 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(
     const isExpired = new Date(gallery.expires_at) < new Date();
     if (!gallery.is_active || isExpired) {
       return NextResponse.json(
-        { error: 'Galerie non accessible' },
+        { error: 'api.errors.galleryNotAccessible', code: 'GALLERY_NOT_ACCESSIBLE' },
         { status: 403 }
       );
     }
@@ -55,7 +55,7 @@ export async function POST(
     if (updateError) {
       console.error('Error incrementing view count:', updateError);
       return NextResponse.json(
-        { error: 'Erreur lors de la mise à jour' },
+        { error: 'api.errors.updateError', code: 'UPDATE_ERROR' },
         { status: 500 }
       );
     }
@@ -67,7 +67,7 @@ export async function POST(
   } catch (error) {
     console.error('View count error:', error);
     return NextResponse.json(
-      { error: 'Erreur serveur' },
+      { error: 'api.errors.serverError', code: 'SERVER_ERROR' },
       { status: 500 }
     );
   }

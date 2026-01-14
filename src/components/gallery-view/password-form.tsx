@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, AlertTriangle, Loader2, Calendar, ArrowRight, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Lock, AlertTriangle, Calendar, ArrowRight, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { useTranslation } from "@/lib/i18n/context";
+import { LoadingButton } from "@/components/ui/loading-button";
 
 interface PasswordFormProps {
   title: string;
@@ -12,6 +14,7 @@ interface PasswordFormProps {
 }
 
 export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: PasswordFormProps) {
+  const { t } = useTranslation();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +35,8 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
       setAttempts(nextAttempts);
       setError(
         nextAttempts > 0 
-          ? `Mot de passe incorrect. ${nextAttempts} tentative${nextAttempts > 1 ? 's' : ''} restante${nextAttempts > 1 ? 's' : ''}.`
-          : "Accès bloqué. Trop de tentatives."
+          ? t('errors.gallery.incorrectPassword')
+          : t('errors.generic.tooManyAttempts')
       );
     }
     
@@ -91,7 +94,7 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
               </h1>
               <div className="flex items-center gap-1 text-indigo-100/70">
                 <ShieldCheck size={10} />
-                <span className="text-[10px] font-medium">Galerie protégée</span>
+                <span className="text-[10px] font-medium">{t('gallery.view.passwordRequired')}</span>
               </div>
             </div>
           </div>
@@ -102,7 +105,7 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
               {/* Password Input */}
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                  Mot de passe
+                  {t('auth.form.password')}
                 </label>
                 <div className="relative group">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
@@ -115,7 +118,7 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-9 pr-9 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium disabled:opacity-30 disabled:cursor-not-allowed"
-                    placeholder="Entrez le mot de passe"
+                    placeholder={t('gallery.view.passwordPlaceholder')}
                     autoFocus
                   />
                   <button 
@@ -137,27 +140,23 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
               )}
 
               {/* Submit Button */}
-              <button
+              <LoadingButton
                 type="submit"
-                disabled={isLoading || attempts <= 0}
+                disabled={attempts <= 0}
+                isLoading={isLoading}
+                spinnerSize="sm"
                 className="w-full py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] group/btn disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
-                  <Loader2 className="animate-spin" size={14} />
-                ) : (
-                  <>
-                    <span>Accéder à la galerie</span>
-                    <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
-                  </>
-                )}
-              </button>
+                <span>{t('gallery.view.passwordSubmit')}</span>
+                <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+              </LoadingButton>
             </form>
 
             {/* Footer Info */}
             <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-center gap-1.5 text-slate-400">
               <Calendar size={10} />
               <span className="text-[9px] font-medium">
-                Expire le {formatExpirationDate(expiresAt)}
+                {t('gallery.detail.expires')} {formatExpirationDate(expiresAt)}
               </span>
             </div>
           </div>

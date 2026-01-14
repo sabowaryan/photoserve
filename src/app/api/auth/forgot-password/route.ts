@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!validatedFields.success) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: 'api.errors.validationFailed',
           code: 'VALIDATION_ERROR',
           details: validatedFields.error.issues,
         },
@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
 
     // Always return success to prevent email enumeration
     return NextResponse.json({
-      message: 'Si un compte existe avec cette adresse email, vous recevrez un lien de réinitialisation.',
+      message: 'api.errors.passwordResetEmailSent',
+      messageKey: 'api.errors.passwordResetEmailSent',
       success: true,
     });
   } catch (error) {

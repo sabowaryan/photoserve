@@ -32,7 +32,191 @@
     "optional": "Optionnel",
     "language": "Langue",
     "account": "Compte",
-    "menu": "Menu"
+    "menu": "Menu",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expired": "Expirée",
+    "status": "Statut",
+    "type": "Type",
+    "allTypes": "Tous types",
+    "guest": "Invité",
+    "converted": "Converti",
+    "startDate": "Date début",
+    "endDate": "Date fin",
+    "filters": "Filtres",
+    "shortcuts": "Raccourcis :",
+    "from": "Du",
+    "to": "Au",
+    "days7": "7j",
+    "days30": "30j",
+    "days90": "90j",
+    "last7Days": "7 derniers jours",
+    "last30Days": "30 derniers jours",
+    "last90Days": "90 derniers jours",
+    "thisYear": "Cette année",
+    "today": "Aujourd'hui",
+    "views": "Vues",
+    "images": "Images",
+    "storage": "Stockage",
+    "expiration": "Expiration",
+    "creation": "Création",
+    "galleries": "Galeries",
+    "totalViews": "Vues totales",
+    "offer": "Offre",
+    "searchPlaceholder": "Rechercher...",
+    "newest": "Plus récentes",
+    "oldest": "Plus anciennes",
+    "mostViews": "Plus de vues",
+    "leastViews": "Moins de vues",
+    "expiresLast": "Expiration lointaine",
+    "expiresSoon": "Expiration proche",
+    "free": "Gratuit",
+    "newGallery": "Nouvelle galerie",
+    "galleryLimitReached": "Limite de galeries atteinte",
+    "insufficientStorage": "Espace de stockage insuffisant",
+    "upgradeToHigherPlan": "Passez à un plan supérieur pour continuer",
+    "dashboard": "Tableau de bord",
+    "settings": "Paramètres",
+    "signIn": "Connexion",
+    "signOut": "Déconnexion",
+    "signingOut": "Déconnexion...",
+    "getStarted": "Commencer",
+    "send": "Envoyer",
+    "name": "Nom",
+    "email": "Email",
+    "subject": "Sujet",
+    "message": "Message",
+    "yourName": "Votre nom",
+    "yourEmail": "votre@email.com",
+    "messageSubject": "Objet de votre message",
+    "describeRequest": "Décrivez votre demande...",
+    "messageSent": "Message envoyé !",
+    "weWillReply24h": "Nous vous répondrons dans les 24-48h.",
+    "weWillReplyShortly": "Nous vous répondrons dans les plus brefs délais.",
+    "responseTime": "Temps de réponse",
+    "businessHours24to48": "24 à 48 heures ouvrées",
+    "location": "Localisation",
+    "contactUs": "Contactez-nous",
+    "generalQuestions": "Questions générales",
+    "technicalIssues": "Problèmes techniques",
+    "support": "Support",
+    "help": "Aide",
+    "faqAndGuides": "FAQ et guides",
+    "helpCenter": "Centre d'aide",
+    "findAnswers": "Trouvez des réponses à vos questions",
+    "sendUsMessage": "Envoyez-nous un message",
+    "terms": "Conditions",
+    "termsOfUse": "Termes d'utilisation",
+    "privacyPolicy": "Politique de confidentialité",
+    "cookiePolicy": "Politique des cookies",
+    "legalNotice": "Mentions légales",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "zeroCompression": "Sans compression",
+    "fullySecure": "Protégé par mot de passe",
+    "readyIn2Min": "Prêt en 30 secondes",
+    "hdQuality": "Qualité Originale",
+    "noCompression": "Sans compression",
+    "instantDelivery": "Livraison professionnelle",
+    "secureUniqueLink": "Accès zéro friction",
+    "exampleWeddingSession": "Séance Photo Mariage",
+    "examplePhotosHd": "24 photos • HD",
+    "downloads": "Downloads",
+    "info": "Infos",
+    "security": "Sécurité",
+    "photos": "Photos",
+    "exampleTitle": "Ex: Mariage de Marie & Jean",
+    "generateTitle": "Générer un titre",
+    "passwordProtection": "Protection par mot de passe",
+    "onlyPeopleWithPassword": "Seules les personnes avec le mot de passe pourront accéder à votre galerie",
+    "enterPassword": "Entrez un mot de passe",
+    "expectedStorage": "Stockage prévu",
+    "expirationDuration": "Durée d'expiration",
+    "setGalleryValidity": "Définissez la validité de la galerie",
+    "saveChanges": "Enregistrer les modifications",
+    "galleryTitle": "Titre de la galerie",
+    "galleryName": "Nom de votre galerie",
+    "secureGalleryAccess": "Sécurisez l'accès à votre galerie",
+    "newPassword": "Nouveau mot de passe",
+    "day1": "1 jour",
+    "days3": "3 jours",
+    "days7Full": "7 jours",
+    "days14": "14 jours",
+    "days30Full": "30 jours",
+    "days60": "60 jours",
+    "days90Full": "90 jours",
+    "days180": "180 jours",
+    "year1": "1 an",
+    "galleryDetails": "Détails de la galerie",
+    "manageYourGallery": "Gérez votre galerie photo",
+    "guestSessionId": "Guest Session ID",
+    "paymentType": "Type de paiement :",
+    "unlocked": "Débloqué :",
+    "createdAsGuest": "Créé comme Guest",
+    "paymentCompleted": "Paiement effectué",
+    "convertedToUserAccount": "Converti en compte utilisateur",
+    "noUserAccount": "Pas de compte utilisateur",
+    "recentActivity": "Activité récente",
+    "upgradeLevel": "Passez au niveau supérieur",
+    "quickHelp": "Aide rapide",
+    "myGalleries": "Mes galeries",
+    "myProfile": "Mon Profil",
+    "accountInfo": "Informations de votre compte",
+    "manageAccountAccess": "Gérez l'accès à votre compte",
+    "emailAndPassword": "Email & Mot de passe",
+    "loginMethod": "Méthode de connexion",
+    "subscription": "Abonnement",
+    "choosePlanForNeeds": "Choisissez le plan adapté à vos besoins",
+    "cloudinaryHdStripe": "Infrastructure Cloudinary HD • Paiement sécurisé Stripe",
+    "discoverPiksend": "Pour découvrir PikSend",
+    "forActivePhotographers": "Pour photographes actifs",
+    "forProfessionals": "Pour les professionnels",
+    "forDemandingProfessionals": "Pour professionnels exigeants",
+    "testHdDelivery": "Testez la livraison photos HD",
+    "originalQuality": "Qualité originale",
+    "customizableDuration": "Durée personnalisable",
+    "prioritySupport": "Support prioritaire",
+    "linkExpired": "Lien expiré",
+    "linkNoLongerValid": "Ce lien n'est plus valide",
+    "atLeast6Characters": "Au moins 6 caractères",
+    "confirmYourPassword": "Confirmer votre mot de passe",
+    "reset": "Réinitialiser",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+    "hdPhotoSharing": "Partage de photos HD",
+    "google": "Google",
+    "users": "Utilisateurs",
+    "registeredAccounts": "Comptes enregistrés",
+    "activeGalleries": "Galeries actives",
+    "storageUsed": "Stockage utilisé",
+    "totalSpaceConsumed": "Espace total consommé",
+    "conversionRate": "Taux de conversion",
+    "payingUsers": "Utilisateurs payants",
+    "userGrowth": "Croissance des utilisateurs",
+    "newUsersPerDay": "Nouveaux utilisateurs par jour",
+    "storageEvolution": "Évolution du stockage",
+    "totalStorageUsedMb": "Stockage total utilisé (MB)",
+    "subscriptionConversions": "Conversions d'abonnements",
+    "planUpgradesInPeriod": "Upgrades de plans sur la période",
+    "searchByTitleOrSlug": "Rechercher par titre ou slug...",
+    "searchByEmailOrName": "Rechercher par email ou nom...",
+    "allPlans": "Tous les plans",
+    "allAdmins": "Tous les admins",
+    "allActions": "Toutes les actions",
+    "suspended": "Suspendu",
+    "suspendUser": "Suspendre l'utilisateur",
+    "reactivateUser": "Réactiver l'utilisateur",
+    "exampleViolation": "Ex: Violation des conditions d'utilisation",
+    "analytics": "Analytics",
+    "subscriptions": "Abonnements",
+    "auditLog": "Journal d'audit",
+    "galleryNotFound": "Galerie non trouvée",
+    "galleryNotAccessible": "Cette galerie n'est plus accessible",
+    "errorFetchingImages": "Erreur lors de la récupération des images",
+    "noImagesInGallery": "Aucune image dans cette galerie",
+    "errorCreatingArchive": "Erreur lors de la création de l'archive",
+    "errorDownloading": "Erreur lors du téléchargement",
+    "piksend": "PikSend"
   },
   "nav": {
     "home": "Accueil",
@@ -44,75 +228,77 @@
     "settings": "Paramètres",
     "signIn": "Connexion",
     "signOut": "Déconnexion",
-    "getStarted": "Commencer"
+    "getStarted": "Commencer",
+    "menu": "Menu",
+    "contactUs": "Nous contacter"
   },
   "landing": {
-    "badge": "Le choix des photographes professionnels",
-    "title": "Vos photos méritent la",
-    "titleHighlight": "qualité originale.",
-    "subtitle": "Ce que vos clients reçoivent ne doit pas être compressé.",
-    "subtitleHighlight": "Livraison photo HD",
-    "subtitleEnd": "sans perte pour les créateurs exigeants.",
+    "badge": "Galeries de livraison photo professionnelles",
+    "title": "Votre travail est haut de gamme.",
+    "titleHighlight": "Votre livraison aussi.",
+    "subtitle": "Galeries de livraison photo professionnelles",
+    "subtitleHighlight": "sans compression.",
+    "subtitleEnd": "Qualité originale, zéro friction, aucun compte requis pour vos clients.",
     "cta": {
-      "primary": "Démarrer gratuitement",
-      "secondary": "En savoir plus"
+      "primary": "Créer ma galerie",
+      "secondary": "Voir comment ça marche"
     },
-    "tagline": "Zéro compression • Livraison HD • Prêt en 2 min",
+    "tagline": "Sans compression • Qualité originale • Zéro friction",
     "stats": {
-      "experts": "Experts pro",
+      "experts": "Photographes",
       "galleries": "Galeries livrées",
-      "photos": "Photos HD",
+      "photos": "Qualité originale",
       "satisfaction": "Satisfaction"
     },
     "problem": {
-      "badge": "Le problème invisible",
-      "title": "Lors de l'envoi, vos photos sont",
-      "titleHighlight": "automatiquement dégradées.",
-      "paragraph1": "Vous passez des heures à retoucher chaque détail. Vos photos sont prêtes à être livrées.",
-      "paragraph1Highlight": "Puis vient le moment de l'envoi.",
-      "paragraph2": "La messagerie compresse automatiquement vos fichiers. Vos 24 mégapixels sont réduits à un format web médiocre.",
-      "paragraph2Highlight": "Les détails disparaissent.",
-      "paragraph3": "Dès qu'un client zoome ou imprime, la perte devient flagrante.",
-      "paragraph3Highlight": "La qualité perçue chute,",
-      "paragraph3End": "et votre image professionnelle avec.",
+      "badge": "Ne laissez pas un algorithme détruire vos pixels",
+      "title": "WhatsApp compresse vos photos",
+      "titleHighlight": "jusqu'à 70%.",
+      "paragraph1": "Vous passez des heures à perfectionner chaque détail. Vos photos sont prêtes pour une livraison professionnelle.",
+      "paragraph1Highlight": "Puis vient le moment du partage.",
+      "paragraph2": "WhatsApp, WeTransfer, Google Drive — tous compromettent votre travail. Compression, ZIP aveugles, boutons 'Demander l'accès'.",
+      "paragraph2Highlight": "Vos clients méritent mieux.",
+      "paragraph3": "Les galeries de livraison photo professionnelles doivent préserver la",
+      "paragraph3Highlight": "qualité originale,",
+      "paragraph3End": "pas la détruire.",
       "comparison": {
-        "original": "Qualité originale PikSend",
+        "original": "PikSend — Sans compression",
         "originalSpec": "24 MP • 6000×4000px",
-        "originalDesc": "Détails nets, couleurs fidèles, 100% HD",
-        "classic": "Messagerie classique",
+        "originalDesc": "Qualité originale préservée, galerie professionnelle",
+        "classic": "WhatsApp / WeTransfer",
         "classicSpec": "1600×1067px • -70%",
-        "classicDesc": "Compression automatique irréversible"
+        "classicDesc": "Compression, ZIP aveugle, pas d'aperçu"
       }
     },
     "benefits": {
-      "badge": "La solution PikSend",
-      "title": "Livrez en qualité originale.",
-      "subtitle": "Uploadez vos fichiers HD. Partagez un lien unique.",
-      "subtitleHighlight": "Vos clients reçoivent 100% de votre travail.",
+      "badge": "Livraison photo professionnelle",
+      "title": "Le pont élégant.",
+      "subtitle": "La simplicité de WeTransfer rencontre l'élégance d'une galerie studio.",
+      "subtitleHighlight": "Qualité originale, zéro friction.",
       "features": {
         "quality": {
-          "highlight": "0% de perte",
-          "title": "Qualité originale",
-          "desc": "Zéro compression. Vos photos arrivent exactement comme vous les avez exportées depuis Lightroom ou Photoshop."
+          "highlight": "Sans compression",
+          "title": "Qualité Originale",
+          "desc": "Ne laissez pas un algorithme détruire vos pixels. Chaque photo livrée exactement comme vous l'avez exportée."
         },
         "friction": {
-          "highlight": "Prêt en 2 min",
-          "title": "Friction minimale",
-          "desc": "Pas de compte à créer pour vos clients. Ils cliquent sur le lien et téléchargent instantanément en HD."
+          "highlight": "Zéro friction",
+          "title": "Aucun Compte Requis",
+          "desc": "Pas de boutons 'Demander l'accès'. Pas d'inscription pour les clients. Partagez un lien, ils y accèdent instantanément."
         },
         "gallery": {
-          "highlight": "Design Pro",
-          "title": "Galerie Premium",
-          "desc": "Offrez une expérience de visionnage haut de gamme, sécurisée et épurée. Valorisez votre image de marque."
+          "highlight": "30 secondes",
+          "title": "Galerie Professionnelle",
+          "desc": "Galerie pro en 30 secondes, pas en 30 minutes. Aperçu visuel, pas un fichier ZIP aveugle."
         }
       }
     },
     "finalCta": {
-      "title": "Prêt à livrer la",
-      "titleHighlight": "meilleure qualité ?",
-      "subtitle": "Rejoignez les 500+ photographes qui ont déjà choisi PikSend pour valoriser leur travail.",
+      "title": "Les galeries de livraison",
+      "titleHighlight": "photo professionnelles vous attendent.",
+      "subtitle": "Rejoignez 500+ photographes qui livrent en qualité originale à leurs clients. Sans compression, zéro friction.",
       "button": "Créer ma galerie gratuite",
-      "note": "Aucune carte requise • Annulez quand vous voulez"
+      "note": "Aucune carte requise • Sans compression • Qualité originale"
     }
   },
   "auth": {
@@ -161,10 +347,30 @@
       "googleFailed": "Erreur lors de la connexion avec Google",
       "accountExists": "Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.",
       "oauthError": "Erreur lors de la connexion avec Google. Veuillez réessayer.",
-      "genericError": "Une erreur est survenue"
+      "genericError": "Une erreur est survenue",
+      "accountCreationError": "Erreur lors de la création du compte",
+      "profileCreationError": "Erreur lors de la création du profil",
+      "resetLinkInvalid": "Le lien de réinitialisation est invalide ou a expiré",
+      "passwordUpdateError": "Erreur lors de la mise à jour du mot de passe",
+      "resetEmailError": "Erreur lors de l'envoi de l'email de réinitialisation"
     },
     "success": {
-      "accountCreated": "Compte créé ! Vous pouvez maintenant vous connecter."
+      "accountCreated": "Compte créé ! Vous pouvez maintenant vous connecter.",
+      "passwordReset": "Mot de passe réinitialisé avec succès !"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Entrez votre email pour recevoir un lien de réinitialisation",
+      "sendLink": "Envoyer le lien",
+      "emailSentTo": "Email envoyé à :",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "resetButton": "Réinitialiser le mot de passe"
     }
   },
   "dashboard": {
@@ -284,8 +490,8 @@
   },
   "guest": {
     "upload": {
-      "title": "Partagez vos photos instantanément",
-      "subtitle": "Aucun compte requis. Téléversez et partagez en quelques secondes.",
+      "title": "Livraison photo professionnelle en 30 secondes",
+      "subtitle": "Sans compression. Aucun compte requis. Galeries en qualité originale.",
       "dropzone": "Déposez vos photos ici",
       "dropzoneHint": "ou cliquez pour sélectionner des fichiers",
       "uploading": "Téléversement...",
@@ -335,7 +541,7 @@
   "pricing": {
     "badge": "Tarifs simples",
     "title": "Choisissez votre offre",
-    "subtitle": "Commencez gratuitement, évoluez selon vos besoins.",
+    "subtitle": "Photos HD sans compression. Commencez gratuitement.",
     "monthly": "Mensuel",
     "yearly": "Annuel",
     "yearlyDiscount": "Économisez 20%",
@@ -345,6 +551,29 @@
     "selectPlan": "Choisir",
     "upgrade": "Passer à",
     "downgrade": "Rétrograder",
+    "popular": "Populaire",
+    "equivalent": "soit",
+    "needHelp": "Besoin d'aide ?",
+    "priceNote": "Prix en USD. Annulation possible à tout moment.",
+    "faqTitle": "FAQ",
+    "faq": {
+      "changePlan": {
+        "question": "Puis-je changer de plan ?",
+        "answer": "Oui, changez à tout moment. La facturation est ajustée au prorata."
+      },
+      "quality": {
+        "question": "Qualité préservée sur tous les plans ?",
+        "answer": "Oui, 100% de la qualité originale. Zéro compression."
+      },
+      "yearly": {
+        "question": "Comment fonctionne l'annuel ?",
+        "answer": "Payez 12 mois d'avance et économisez 20%."
+      },
+      "cancel": {
+        "question": "Si j'annule ?",
+        "answer": "Accès actif jusqu'à la fin de la période payée, puis plan Gratuit."
+      }
+    },
     "plans": {
       "free": {
         "name": "Gratuit",
@@ -389,7 +618,8 @@
       "name": "Nom",
       "email": "Email",
       "save": "Enregistrer",
-      "saved": "Profil mis à jour !"
+      "saved": "Profil mis à jour !",
+      "saveError": "Erreur lors de la sauvegarde"
     },
     "subscription": {
       "title": "Abonnement",
@@ -402,6 +632,12 @@
       "title": "Zone de danger",
       "deleteAccount": "Supprimer le compte",
       "deleteWarning": "Cette action est irréversible. Toutes vos données seront définitivement supprimées."
+    },
+    "signOut": {
+      "title": "Déconnexion",
+      "description": "Terminer votre session",
+      "button": "Se déconnecter",
+      "signingOut": "Déconnexion..."
     }
   },
   "admin": {
@@ -438,7 +674,10 @@
         "galleries": "Galeries",
         "storage": "Stockage",
         "status": "Statut",
-        "actions": "Actions"
+        "actions": "Actions",
+        "registration": "Inscription",
+        "currentPlan": "Plan actuel",
+        "stripe": "Stripe"
       },
       "status": {
         "active": "Actif",
@@ -447,8 +686,13 @@
       "actions": {
         "view": "Voir",
         "suspend": "Suspendre",
-        "reactivate": "Réactiver"
-      }
+        "reactivate": "Réactiver",
+        "changePlan": "Changer de plan"
+      },
+      "totalUsers": "utilisateurs au total",
+      "userReactivated": "Utilisateur réactivé",
+      "userSuspended": "Utilisateur suspendu",
+      "planUpdated": "Plan utilisateur mis à jour"
     },
     "galleries": {
       "title": "Galeries",
@@ -473,19 +717,39 @@
         "active": "Active",
         "expired": "Expirée",
         "deactivated": "Désactivée"
-      }
+      },
+      "totalGalleries": "galeries au total",
+      "galleryDeactivated": "Galerie désactivée"
     },
     "subscriptions": {
       "title": "Abonnements",
-      "subtitle": "Gérer les abonnements utilisateurs"
+      "subtitle": "Gérer les abonnements utilisateurs",
+      "totalSubscribers": "Total abonnés",
+      "premiumCount": "Premium",
+      "proCount": "Pro",
+      "activeCount": "Actifs",
+      "upgraded": "Abonnement mis à niveau",
+      "cancelled": "Abonnement annulé"
     },
     "analytics": {
       "title": "Statistiques",
-      "subtitle": "Statistiques et tendances de la plateforme"
+      "subtitle": "Statistiques et tendances de la plateforme",
+      "newRegistrations": "Nouvelles inscriptions",
+      "galleriesCreated": "Galeries créées",
+      "totalActivities": "Total d'activités"
     },
     "auditLogs": {
       "title": "Journaux d'audit",
-      "subtitle": "Historique des activités système"
+      "subtitle": "Historique des activités système",
+      "totalEntries": "Total entrées",
+      "modifications": "Modifications"
+    },
+    "header": {
+      "signOut": "Se déconnecter",
+      "signingOut": "Déconnexion..."
+    },
+    "recentActivity": {
+      "title": "Activité récente"
     }
   },
   "errors": {
@@ -495,28 +759,51 @@
       "info": "PikSend vous permet de créer et partager des galeries photo sécurisées. Inscrivez-vous gratuitement pour commencer !",
       "signIn": "Se connecter",
       "signUp": "Créer un compte",
-      "home": "Retour à l'accueil"
+      "home": "Retour à l'accueil",
+      "possibleReasons": "Raisons possibles :",
+      "reason1": "Votre session a expiré",
+      "reason2": "Vous n'êtes pas connecté",
+      "reason3": "Votre compte a été suspendu"
     },
     "403": {
       "title": "Accès refusé",
       "message": "Vous n'avez pas la permission d'accéder à cette page.",
-      "home": "Retour à l'accueil"
+      "home": "Retour à l'accueil",
+      "suggestions": "Suggestions :",
+      "suggestion1": "Vérifiez que vous avez les bonnes permissions",
+      "suggestion2": "Contactez l'administrateur si vous pensez qu'il s'agit d'une erreur"
     },
     "404": {
       "title": "Page introuvable",
       "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
-      "home": "Retour à l'accueil"
+      "home": "Retour à l'accueil",
+      "suggestions": "Suggestions",
+      "suggestion1": "Vérifiez l'orthographe de l'URL",
+      "suggestion2": "La galerie a peut-être expiré",
+      "suggestion3": "Le lien que vous avez suivi est peut-être obsolète",
+      "previousPage": "Page précédente"
     },
     "500": {
       "title": "Erreur serveur",
       "message": "Une erreur s'est produite de notre côté. Veuillez réessayer plus tard.",
       "retry": "Réessayer",
-      "home": "Retour à l'accueil"
+      "home": "Retour à l'accueil",
+      "possibleReasons": "Raisons possibles :",
+      "reason1": "Surcharge temporaire du serveur",
+      "reason2": "Maintenance en cours",
+      "reason3": "Erreur inattendue",
+      "retryLater": "Veuillez réessayer dans quelques minutes",
+      "problemPersists": "Le problème persiste ?",
+      "contactSupport": "Contacter le support"
     },
     "503": {
       "title": "Service indisponible",
       "message": "Nous effectuons actuellement une maintenance. Veuillez revenir bientôt.",
-      "home": "Retour à l'accueil"
+      "home": "Retour à l'accueil",
+      "temporarilyUnavailable": "Service temporairement indisponible",
+      "autoRefresh": "Actualisation automatique",
+      "inSeconds": "dans {{seconds}} secondes",
+      "statusPage": "Suivez l'état de nos services sur"
     },
     "upload": {
       "fileTooLarge": "Fichier trop volumineux. Maximum {{size}} Mo par image.",
@@ -544,16 +831,34 @@
       "notFound": "Galerie introuvable.",
       "expired": "Cette galerie a expiré et n'est plus disponible.",
       "accessDenied": "Vous n'avez pas accès à cette galerie.",
-      "migrationFailed": "Échec de la migration des galeries vers votre compte. Veuillez contacter le support."
+      "migrationFailed": "Échec de la migration des galeries vers votre compte. Veuillez contacter le support.",
+      "noLongerActive": "Cette galerie n'est plus active",
+      "incorrectPassword": "Mot de passe incorrect"
     },
     "generic": {
       "unexpected": "Une erreur inattendue s'est produite. Veuillez réessayer.",
       "networkError": "Erreur réseau. Vérifiez votre connexion.",
-      "retry": "Une erreur s'est produite. Veuillez réessayer."
+      "retry": "Une erreur s'est produite. Veuillez réessayer.",
+      "validationFailed": "Échec de la validation",
+      "invalidData": "Données invalides",
+      "invalidActionType": "Type d'action invalide",
+      "invalidEntityType": "Type d'entité invalide",
+      "unauthorized": "Non autorisé",
+      "internalServerError": "Erreur serveur interne",
+      "authenticationRequired": "Authentification requise",
+      "adminAccessRequired": "Accès administrateur requis",
+      "updateError": "Erreur lors de la mise à jour",
+      "serverError": "Erreur serveur",
+      "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard."
+    },
+    "profile": {
+      "fetchFailed": "Échec de la récupération du profil",
+      "updateFailed": "Échec de la mise à jour du profil",
+      "notFound": "Profil non trouvé"
     }
   },
   "footer": {
-    "tagline": "Livraison photo HD pour les créateurs exigeants.",
+    "tagline": "Galeries de livraison photo professionnelles. Sans compression, qualité originale.",
     "product": "Produit",
     "platform": "Plateforme",
     "company": "Entreprise",
@@ -618,6 +923,125 @@
       "title": "Envie de garder vos galeries ?",
       "description": "Créez un compte gratuit pour accéder à vos galeries depuis n'importe quel appareil, obtenir plus de stockage et débloquer les fonctionnalités premium.",
       "cta": "Créer mon compte"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend | Galeries de Livraison Photo Professionnelles (Sans Compression)",
+      "description": "Galeries de livraison photo professionnelles sans compression. Votre travail est haut de gamme — votre livraison aussi. Qualité originale, zéro friction, aucun compte requis pour vos clients."
+    },
+    "pricing": {
+      "title": "Tarifs PikSend | Galeries de Livraison Photo Professionnelles — Commencez Gratuitement",
+      "description": "Galeries de livraison photo professionnelles sans compression. Plan gratuit pour commencer, Premium 9,99$/mois, Pro 25,99$/mois. Qualité originale, zéro friction."
+    },
+    "features": {
+      "title": "Fonctionnalités PikSend | Galeries de Livraison Photo Professionnelles — Sans Compression",
+      "description": "Galeries de livraison photo professionnelles sans compression. Qualité originale préservée, protégées par mot de passe, accès zéro friction. Mieux que WhatsApp, WeTransfer ou Pixieset."
+    },
+    "help": {
+      "title": "Centre d'Aide PikSend | FAQ Galeries de Livraison Photo Professionnelles",
+      "description": "Obtenez de l'aide avec les galeries de livraison photo professionnelles PikSend. Apprenez à créer des galeries, partager des photos sans compression, et livrer en qualité originale."
+    },
+    "contact": {
+      "title": "Contactez PikSend | Support Galeries de Livraison Photo Professionnelles",
+      "description": "Contactez PikSend pour le support des galeries de livraison photo professionnelles. Aide technique, demandes commerciales, partenariats. Réponse sous 24-48h."
+    },
+    "auth": {
+      "title": "Connexion | PikSend Galeries de Livraison Photo Professionnelles",
+      "description": "Connectez-vous à PikSend pour gérer vos galeries de livraison photo professionnelles. Qualité originale, sans compression, zéro friction pour vos clients."
+    },
+    "legal": {
+      "terms": {
+        "title": "Conditions d'utilisation - PikSend",
+        "description": "Consultez les conditions générales d'utilisation de PikSend."
+      },
+      "privacy": {
+        "title": "Politique de confidentialité - PikSend",
+        "description": "Découvrez comment PikSend protège vos données personnelles."
+      },
+      "cookies": {
+        "title": "Politique des cookies - PikSend",
+        "description": "Informations sur l'utilisation des cookies par PikSend."
+      },
+      "mentions": {
+        "title": "Mentions légales - PikSend",
+        "description": "Mentions légales et informations sur l'éditeur de PikSend."
+      }
+    },
+    "dashboard": {
+      "title": "Tableau de bord | PikSend",
+      "description": "Gérez vos galeries photo"
+    },
+    "newGallery": {
+      "title": "Nouvelle galerie | PikSend",
+      "description": "Créez une nouvelle galerie photo sécurisée"
+    },
+    "galleryDetails": {
+      "title": "Détails de la galerie | PikSend",
+      "description": "Gérez votre galerie photo"
+    },
+    "myGalleries": {
+      "title": "Mes galeries | PikSend",
+      "description": "Retrouvez vos galeries créées en tant qu'invité"
+    },
+    "error401": {
+      "title": "Non authentifié - 401 | PikSend",
+      "description": "Veuillez vous connecter pour accéder à cette page."
+    },
+    "error403": {
+      "title": "Accès refusé - 403 | PikSend",
+      "description": "Vous n'avez pas la permission d'accéder à cette ressource."
+    },
+    "error500": {
+      "title": "Erreur serveur - 500 | PikSend",
+      "description": "Une erreur serveur interne s'est produite. Veuillez réessayer plus tard."
+    },
+    "error503": {
+      "title": "Service indisponible - 503 | PikSend",
+      "description": "Le service est temporairement indisponible pour maintenance."
+    },
+    "pageNotFound": {
+      "title": "Page non trouvée",
+      "description": "La page que vous recherchez n'existe pas."
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "Limite de galeries atteinte",
+      "description": "Vous avez atteint le nombre maximum de galeries pour votre plan."
+    },
+    "storageLimit": {
+      "title": "Espace de stockage insuffisant",
+      "description": "Votre espace de stockage est plein ou insuffisant pour cette opération."
+    },
+    "imageLimit": {
+      "title": "Limite d'images atteinte",
+      "description": "Cette galerie a atteint le nombre maximum d'images pour votre plan."
+    },
+    "fileSize": {
+      "title": "Fichier trop volumineux",
+      "description": "La taille de ce fichier dépasse la limite autorisée par votre plan."
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "Galerie non trouvée",
+      "galleryNotAccessible": "Cette galerie n'est plus accessible",
+      "errorFetchingImages": "Erreur lors de la récupération des images",
+      "noImagesInGallery": "Aucune image dans cette galerie",
+      "errorCreatingArchive": "Erreur lors de la création de l'archive",
+      "errorDownloading": "Erreur lors du téléchargement",
+      "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard.",
+      "validationFailed": "Échec de la validation",
+      "registrationFailed": "Échec de l'inscription",
+      "accountCreatedSuccess": "Compte créé avec succès",
+      "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
+      "passwordResetEmailSent": "Si un compte existe avec cette adresse email, vous recevrez un lien de réinitialisation.",
+      "invalidData": "Données invalides",
+      "profileUpdateFailed": "Échec de la mise à jour du profil",
+      "profileFetchFailed": "Échec de la récupération du profil",
+      "updateError": "Erreur lors de la mise à jour",
+      "serverError": "Erreur serveur"
     }
   }
 }

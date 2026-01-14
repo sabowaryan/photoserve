@@ -42,8 +42,12 @@ export async function generateMetadata({ params }: GalleryViewPageProps): Promis
       views_count: 0,
       is_active: true,
       created_at: '',
-      updated_at: ''
-    } as any: undefined 
+      updated_at: '',
+      guest_session_id: null,
+      is_unlocked: false,
+      payment_type: 'free',
+      converted_at: null
+    } : undefined 
   });
 }
 

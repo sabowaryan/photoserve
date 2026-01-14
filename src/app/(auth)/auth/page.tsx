@@ -19,10 +19,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
+import { useTranslation } from '@/lib/i18n/context';
 import { z } from 'zod';
-
-const emailSchema = z.string().email({ message: 'Email invalide' });
-const passwordSchema = z.string().min(6, { message: 'Le mot de passe doit contenir au moins 6 caractères' });
 
 const GoogleLogo = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
@@ -36,6 +34,7 @@ const GoogleLogo = () => (
 type AuthTab = 'signin' | 'signup';
 
 function AuthContent() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<AuthTab>('signin');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +53,9 @@ function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
+
+  const emailSchema = z.string().email({ message: t('auth.errors.invalidEmail') });
+  const passwordSchema = z.string().min(6, { message: t('auth.errors.passwordTooShort') });
 
   const passwordStrength = useMemo(() => {
     const pass = formData.password;
@@ -74,10 +76,10 @@ function AuthContent() {
   };
 
   const getStrengthLabel = () => {
-    if (passwordStrength <= 25) return 'Faible';
-    if (passwordStrength <= 50) return 'Moyen';
-    if (passwordStrength <= 75) return 'Bon';
-    return 'Excellent';
+    if (passwordStrength <= 25) return t('auth.passwordStrength.weak');
+    if (passwordStrength <= 50) return t('auth.passwordStrength.medium');
+    if (passwordStrength <= 75) return t('auth.passwordStrength.good');
+    return t('auth.passwordStrength.excellent');
   };
 
   const getStrengthLabelColor = () => {
@@ -137,7 +139,7 @@ function AuthContent() {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error('Subscription redirect error:', error);
-      setError('Erreur lors de la redirection vers le paiement. Veuillez réessayer.');
+      setError(t('errors.payment.checkoutFailed'));
       router.push('/dashboard');
     }
   };
@@ -146,20 +148,20 @@ function AuthContent() {
     const errorParam = searchParams.get('error');
     if (errorParam) {
       if (errorParam === 'OAuthAccountNotLinked') {
-        setError('Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.');
+        setError(t('auth.errors.accountExists'));
       } else if (errorParam === 'OAuthCallback') {
-        setError('Erreur lors de la connexion avec Google. Veuillez réessayer.');
+        setError(t('auth.errors.oauthError'));
       } else {
-        setError('Une erreur est survenue lors de la connexion.');
+        setError(t('auth.errors.genericError'));
       }
     }
     
     const intent = searchParams.get('intent');
     if (intent === 'subscribe') {
-      setSuccess('Créez votre compte pour continuer vers le paiement.');
+      setSuccess(t('auth.success.accountCreated').replace('!', '.'));
       setActiveTab('signup');
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -190,15 +192,15 @@ function AuthContent() {
 
     if (activeTab === 'signup') {
       if (!formData.name) {
-        setError("Veuillez entrer votre nom.");
+        setError(t('auth.errors.nameRequired'));
         return;
       }
       if (formData.password !== formData.confirmPassword) {
-        setError("Les mots de passe ne correspondent pas.");
+        setError(t('auth.errors.passwordMismatch'));
         return;
       }
       if (!formData.agreeTerms) {
-        setError("Vous devez accepter les conditions d'utilisation.");
+        setError(t('auth.errors.termsRequired'));
         return;
       }
     }
@@ -215,7 +217,7 @@ function AuthContent() {
         });
 
         if (result?.error) {
-          setError('Email ou mot de passe incorrect');
+          setError(t('auth.errors.invalidCredentials'));
         } else {
           router.refresh();
         }
@@ -233,7 +235,7 @@ function AuthContent() {
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || 'Erreur lors de l\'inscription');
+          setError(data.error || t('auth.errors.signupFailed'));
           return;
         }
 
@@ -244,7 +246,7 @@ function AuthContent() {
         });
 
         if (signInResult?.error) {
-          setSuccess('Compte créé ! Vous pouvez maintenant vous connecter.');
+          setSuccess(t('auth.success.accountCreated'));
           setActiveTab('signin');
         } else {
           const intent = searchParams.get('intent');
@@ -260,7 +262,7 @@ function AuthContent() {
         }
       }
     } catch {
-      setError('Une erreur est survenue');
+      setError(t('auth.errors.genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -288,7 +290,7 @@ function AuthContent() {
         redirect: true,
       });
     } catch {
-      setError('Erreur lors de la connexion avec Google');
+      setError(t('auth.errors.googleFailed'));
       setIsLoading(false);
     }
   };
@@ -322,8 +324,8 @@ function AuthContent() {
                 <LogoIcon size={20} className="text-white" />
               </div>
               <div className="text-left">
-                <h1 className="text-lg font-bold text-white">PikSend</h1>
-                <p className="text-indigo-100/80 text-[10px]">Partage de photos HD</p>
+                <h1 className="text-lg font-bold text-white">{t('auth.title')}</h1>
+                <p className="text-indigo-100/80 text-[10px]">{t('common.hdPhotoSharing')}</p>
               </div>
             </div>
           </div>
@@ -340,7 +342,7 @@ function AuthContent() {
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
-                Connexion
+                {t('auth.tabs.signIn')}
               </button>
               <button
                 onClick={() => setActiveTab('signup')}
@@ -350,7 +352,7 @@ function AuthContent() {
                     : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
-                Inscription
+                {t('auth.tabs.signUp')}
               </button>
             </div>
 
@@ -375,7 +377,7 @@ function AuthContent() {
               {activeTab === 'signup' && (
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                    Nom
+                    {t('auth.form.name')}
                   </label>
                   <div className="relative group">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -387,7 +389,7 @@ function AuthContent() {
                       value={formData.name}
                       onChange={handleInputChange}
                       className="w-full pl-9 pr-3 py-2.5 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all outline-none text-sm text-slate-900 placeholder:text-slate-400"
-                      placeholder="Votre nom"
+                      placeholder={t('auth.form.namePlaceholder')}
                     />
                   </div>
                 </div>
@@ -396,7 +398,7 @@ function AuthContent() {
               {/* Email field */}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Email
+                  {t('auth.form.email')}
                 </label>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -409,7 +411,7 @@ function AuthContent() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all outline-none text-sm text-slate-900 placeholder:text-slate-400"
-                    placeholder="votre@email.com"
+                    placeholder={t('auth.form.emailPlaceholder')}
                   />
                 </div>
               </div>
@@ -418,14 +420,14 @@ function AuthContent() {
               <div className="space-y-1">
                 <div className="flex justify-between items-center ml-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    Mot de passe
+                    {t('auth.form.password')}
                   </label>
                   {activeTab === 'signin' && (
                     <Link 
                       href="/forgot-password"
                       className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
                     >
-                      Oublié ?
+                      {t('auth.form.forgotPassword')}
                     </Link>
                   )}
                 </div>
@@ -440,7 +442,7 @@ function AuthContent() {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="w-full pl-9 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all outline-none text-sm text-slate-900 placeholder:text-slate-400"
-                    placeholder="••••••••"
+                    placeholder={t('auth.form.passwordPlaceholder')}
                   />
                   <button 
                     type="button"
@@ -463,7 +465,7 @@ function AuthContent() {
                     <div className="flex justify-between mt-1">
                       <span className="text-[9px] font-bold text-slate-400 flex items-center gap-1">
                         <ShieldCheck size={10} />
-                        Sécurité
+                        {t('auth.passwordStrength.label')}
                       </span>
                       <span className={`text-[9px] font-bold ${getStrengthLabelColor()}`}>
                         {getStrengthLabel()}
@@ -477,7 +479,7 @@ function AuthContent() {
               {activeTab === 'signup' && (
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                    Confirmer
+                    {t('auth.form.confirmPassword')}
                   </label>
                   <div className="relative group">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -490,7 +492,7 @@ function AuthContent() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       className="w-full pl-9 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all outline-none text-sm text-slate-900 placeholder:text-slate-400"
-                      placeholder="••••••••"
+                      placeholder={t('auth.form.passwordPlaceholder')}
                     />
                     <button 
                       type="button"
@@ -515,10 +517,10 @@ function AuthContent() {
                     className="w-4 h-4 mt-0.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
                   />
                   <label htmlFor="agreeTerms" className="text-[10px] text-slate-500 leading-relaxed cursor-pointer">
-                    J&apos;accepte les{' '}
-                    <Link href="/legal/terms" className="text-indigo-600 font-bold hover:underline">CGU</Link>
-                    {' '}et la{' '}
-                    <Link href="/legal/privacy" className="text-indigo-600 font-bold hover:underline">Politique de confidentialité</Link>
+                    {t('auth.form.agreeTerms')}{' '}
+                    <Link href="/legal/terms" className="text-indigo-600 font-bold hover:underline">{t('auth.form.termsLink')}</Link>
+                    {' '}{t('auth.form.andThe')}{' '}
+                    <Link href="/legal/privacy" className="text-indigo-600 font-bold hover:underline">{t('auth.form.privacyLink')}</Link>
                   </label>
                 </div>
               )}
@@ -533,7 +535,7 @@ function AuthContent() {
                   <Loader2 className="animate-spin" size={16} />
                 ) : (
                   <>
-                    <span>{activeTab === 'signin' ? 'Se connecter' : 'Créer mon compte'}</span>
+                    <span>{activeTab === 'signin' ? t('auth.buttons.signIn') : t('auth.buttons.signUp')}</span>
                     <ArrowRight size={14} />
                   </>
                 )}
@@ -548,7 +550,7 @@ function AuthContent() {
               <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-wider">
                 <span className="bg-white px-3 text-slate-400 flex items-center gap-1">
                   <Sparkles size={10} className="text-indigo-400" />
-                  ou
+                  {t('common.or')}
                 </span>
               </div>
             </div>
@@ -560,7 +562,7 @@ function AuthContent() {
               className="w-full flex items-center justify-center gap-2 py-2.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-indigo-300 transition-all text-sm font-medium text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <GoogleLogo />
-              <span>Google</span>
+              <span>{t('common.google')}</span>
             </button>
           </div>
         </div>
@@ -582,7 +584,7 @@ export default function AuthPage() {
           <div className="p-3 bg-indigo-100 rounded-xl">
             <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
           </div>
-          <p className="text-xs font-medium text-slate-400">Chargement...</p>
+          <p className="text-xs font-medium text-slate-400">Loading...</p>
         </div>
       </div>
     }>

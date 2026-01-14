@@ -109,6 +109,8 @@ export interface PlanLimits {
   max_images_per_gallery: number;
   max_image_size_mb: number;
   max_expiration_days: number;
+  can_download_zip: boolean;
+  has_custom_branding: boolean;
 }
 
 export interface SubscriptionPlanLimits extends PlanLimits {
@@ -188,7 +190,8 @@ export type PageType =
 export type StructuredDataType = 
   | 'Organization'
   | 'FAQPage'
-  | 'ImageGallery';
+  | 'ImageGallery'
+  | 'SoftwareApplication';
 
 export interface FAQ {
   question: string;

@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ",
+    "success": "نجاح",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "close": "إغلاق",
+    "open": "فتح",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "view": "عرض",
+    "download": "تنزيل",
+    "upload": "رفع",
+    "share": "مشاركة",
+    "copy": "نسخ",
+    "copied": "تم النسخ!",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "and": "و",
+    "all": "الكل",
+    "none": "لا شيء",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "language": "اللغة",
+    "account": "الحساب",
+    "menu": "القائمة",
+    "actions": "الإجراءات",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "expired": "منتهي الصلاحية",
+    "status": "الحالة",
+    "type": "النوع",
+    "allTypes": "جميع الأنواع",
+    "guest": "زائر",
+    "converted": "محوّل",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "filters": "المرشحات",
+    "shortcuts": "اختصارات:",
+    "from": "من",
+    "to": "إلى",
+    "days7": "7 أيام",
+    "days30": "30 يوم",
+    "days90": "90 يوم",
+    "last7Days": "آخر 7 أيام",
+    "last30Days": "آخر 30 يوم",
+    "last90Days": "آخر 90 يوم",
+    "thisYear": "هذا العام",
+    "today": "اليوم",
+    "views": "المشاهدات",
+    "images": "الصور",
+    "storage": "التخزين",
+    "expiration": "انتهاء الصلاحية",
+    "creation": "الإنشاء",
+    "galleries": "المعارض",
+    "totalViews": "إجمالي المشاهدات",
+    "offer": "الخطة",
+    "searchPlaceholder": "بحث...",
+    "newest": "الأحدث",
+    "oldest": "الأقدم",
+    "mostViews": "الأكثر مشاهدة",
+    "leastViews": "الأقل مشاهدة",
+    "expiresLast": "ينتهي لاحقاً",
+    "expiresSoon": "ينتهي قريباً",
+    "free": "مجاني",
+    "newGallery": "معرض جديد",
+    "galleryLimitReached": "تم الوصول لحد المعارض",
+    "insufficientStorage": "مساحة التخزين غير كافية",
+    "upgradeToHigherPlan": "قم بالترقية إلى خطة أعلى للمتابعة",
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "signingOut": "جارٍ تسجيل الخروج...",
+    "getStarted": "ابدأ الآن",
+    "send": "إرسال",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "subject": "الموضوع",
+    "message": "الرسالة",
+    "yourName": "اسمك",
+    "yourEmail": "your@email.com",
+    "messageSubject": "موضوع رسالتك",
+    "describeRequest": "صف طلبك...",
+    "messageSent": "تم إرسال الرسالة!",
+    "weWillReply24h": "سنرد خلال 24-48 ساعة.",
+    "weWillReplyShortly": "سنرد في أقرب وقت ممكن.",
+    "responseTime": "وقت الاستجابة",
+    "businessHours24to48": "24 إلى 48 ساعة عمل",
+    "location": "الموقع",
+    "contactUs": "اتصل بنا",
+    "generalQuestions": "أسئلة عامة",
+    "technicalIssues": "مشاكل تقنية",
+    "support": "الدعم",
+    "help": "المساعدة",
+    "faqAndGuides": "الأسئلة الشائعة والأدلة",
+    "helpCenter": "مركز المساعدة",
+    "findAnswers": "ابحث عن إجابات لأسئلتك",
+    "sendUsMessage": "أرسل لنا رسالة",
+    "terms": "الشروط",
+    "termsOfUse": "شروط الاستخدام",
+    "privacyPolicy": "سياسة الخصوصية",
+    "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+    "legalNotice": "إشعار قانوني",
+    "features": "الميزات",
+    "pricing": "الأسعار",
+    "zeroCompression": "بدون ضغط",
+    "fullySecure": "محمي بكلمة مرور",
+    "readyIn2Min": "إعداد في 30 ثانية",
+    "hdQuality": "الجودة الأصلية",
+    "noCompression": "بدون ضغط",
+    "instantDelivery": "تسليم احترافي",
+    "secureUniqueLink": "وصول بدون احتكاك",
+    "exampleWeddingSession": "جلسة تصوير زفاف",
+    "examplePhotosHd": "24 صورة • عالية الدقة",
+    "downloads": "التنزيلات",
+    "info": "معلومات",
+    "security": "الأمان",
+    "photos": "الصور",
+    "exampleTitle": "مثال: زفاف أحمد وسارة",
+    "generateTitle": "إنشاء عنوان",
+    "passwordProtection": "حماية بكلمة مرور",
+    "onlyPeopleWithPassword": "فقط الأشخاص الذين لديهم كلمة المرور يمكنهم الوصول إلى معرضك",
+    "enterPassword": "أدخل كلمة المرور",
+    "expectedStorage": "التخزين المتوقع",
+    "expirationDuration": "مدة الصلاحية",
+    "setGalleryValidity": "تعيين صلاحية المعرض",
+    "saveChanges": "حفظ التغييرات",
+    "galleryTitle": "عنوان المعرض",
+    "galleryName": "اسم معرضك",
+    "secureGalleryAccess": "تأمين الوصول إلى معرضك",
+    "newPassword": "كلمة مرور جديدة",
+    "day1": "يوم واحد",
+    "days3": "3 أيام",
+    "days7Full": "7 أيام",
+    "days14": "14 يوم",
+    "days30Full": "30 يوم",
+    "days60": "60 يوم",
+    "days90Full": "90 يوم",
+    "days180": "180 يوم",
+    "year1": "سنة واحدة",
+    "galleryDetails": "تفاصيل المعرض",
+    "manageYourGallery": "إدارة معرض الصور الخاص بك",
+    "guestSessionId": "معرف جلسة الزائر",
+    "paymentType": "نوع الدفع:",
+    "unlocked": "مفتوح:",
+    "createdAsGuest": "تم الإنشاء كزائر",
+    "paymentCompleted": "تم الدفع",
+    "convertedToUserAccount": "تم التحويل إلى حساب مستخدم",
+    "noUserAccount": "لا يوجد حساب مستخدم",
+    "recentActivity": "النشاط الأخير",
+    "upgradeLevel": "الترقية إلى المستوى التالي",
+    "quickHelp": "مساعدة سريعة",
+    "myGalleries": "معارضي",
+    "myProfile": "ملفي الشخصي",
+    "accountInfo": "معلومات الحساب",
+    "manageAccountAccess": "إدارة الوصول إلى حسابك",
+    "emailAndPassword": "البريد الإلكتروني وكلمة المرور",
+    "loginMethod": "طريقة تسجيل الدخول",
+    "subscription": "الاشتراك",
+    "choosePlanForNeeds": "اختر الخطة التي تناسب احتياجاتك",
+    "cloudinaryHdStripe": "بنية Cloudinary عالية الدقة • دفع آمن عبر Stripe",
+    "discoverPiksend": "اكتشف PikSend",
+    "forActivePhotographers": "للمصورين النشطين",
+    "forProfessionals": "للمحترفين",
+    "forDemandingProfessionals": "للمحترفين المتطلبين",
+    "testHdDelivery": "اختبر تسليم الصور عالية الدقة",
+    "originalQuality": "الجودة الأصلية",
+    "customizableDuration": "مدة قابلة للتخصيص",
+    "prioritySupport": "دعم ذو أولوية",
+    "linkExpired": "انتهت صلاحية الرابط",
+    "linkNoLongerValid": "هذا الرابط لم يعد صالحاً",
+    "atLeast6Characters": "6 أحرف على الأقل",
+    "confirmYourPassword": "تأكيد كلمة المرور",
+    "reset": "إعادة تعيين",
+    "passwordMinLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    "hdPhotoSharing": "مشاركة الصور عالية الدقة",
+    "google": "Google",
+    "users": "المستخدمون",
+    "registeredAccounts": "الحسابات المسجلة",
+    "activeGalleries": "المعارض النشطة",
+    "storageUsed": "التخزين المستخدم",
+    "totalSpaceConsumed": "إجمالي المساحة المستهلكة",
+    "conversionRate": "معدل التحويل",
+    "payingUsers": "المستخدمون المدفوعون",
+    "userGrowth": "نمو المستخدمين",
+    "newUsersPerDay": "المستخدمون الجدد يومياً",
+    "storageEvolution": "تطور التخزين",
+    "totalStorageUsedMb": "إجمالي التخزين المستخدم (ميجابايت)",
+    "subscriptionConversions": "تحويلات الاشتراك",
+    "planUpgradesInPeriod": "ترقيات الخطة في الفترة",
+    "searchByTitleOrSlug": "البحث بالعنوان أو الرابط...",
+    "searchByEmailOrName": "البحث بالبريد الإلكتروني أو الاسم...",
+    "allPlans": "جميع الخطط",
+    "allAdmins": "جميع المسؤولين",
+    "allActions": "جميع الإجراءات",
+    "suspended": "معلق",
+    "suspendUser": "تعليق المستخدم",
+    "reactivateUser": "إعادة تنشيط المستخدم",
+    "exampleViolation": "مثال: انتهاك شروط الخدمة",
+    "analytics": "التحليلات",
+    "subscriptions": "الاشتراكات",
+    "auditLog": "سجل التدقيق",
+    "galleryNotFound": "المعرض غير موجود",
+    "galleryNotAccessible": "هذا المعرض لم يعد متاحاً",
+    "errorFetchingImages": "خطأ في جلب الصور",
+    "noImagesInGallery": "لا توجد صور في هذا المعرض",
+    "errorCreatingArchive": "خطأ في إنشاء الأرشيف",
+    "errorDownloading": "خطأ في التنزيل",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "الرئيسية",
+    "features": "الميزات",
+    "pricing": "الأسعار",
+    "help": "المساعدة",
+    "contact": "اتصل بنا",
+    "dashboard": "لوحة التحكم",
+    "settings": "الإعدادات",
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "getStarted": "ابدأ الآن",
+    "menu": "القائمة",
+    "contactUs": "اتصل بنا"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "معارض تسليم الصور الاحترافية",
+    "title": "عملك راقٍ.",
+    "titleHighlight": "تسليمك يجب أن يكون كذلك.",
+    "subtitle": "معارض تسليم الصور الاحترافية مع",
+    "subtitleHighlight": "بدون ضغط.",
+    "subtitleEnd": "جودة أصلية، بدون احتكاك، لا حاجة لحساب للزوار.",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "أنشئ معرضي",
+      "secondary": "شاهد كيف يعمل"
     },
-    "tagline": "",
+    "tagline": "بدون ضغط • جودة أصلية • بدون احتكاك",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "مصورون",
+      "galleries": "معارض تم تسليمها",
+      "photos": "جودة أصلية",
+      "satisfaction": "الرضا"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "لا تدع الخوارزمية تدمر بكسلاتك",
+      "title": "واتساب يضغط صورك",
+      "titleHighlight": "حتى 70%.",
+      "paragraph1": "تقضي ساعات في إتقان كل التفاصيل. صورك جاهزة للتسليم الاحترافي.",
+      "paragraph1Highlight": "ثم تأتي لحظة المشاركة.",
+      "paragraph2": "واتساب، WeTransfer، Google Drive — جميعها تضر بعملك. ضغط، ملفات ZIP عمياء، أزرار 'طلب الوصول'.",
+      "paragraph2Highlight": "عملاؤك يستحقون الأفضل.",
+      "paragraph3": "معارض تسليم الصور الاحترافية يجب أن تحافظ على",
+      "paragraph3Highlight": "الجودة الأصلية،",
+      "paragraph3End": "لا أن تدمرها.",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — بدون ضغط",
+        "originalSpec": "24 ميجابكسل • 6000×4000 بكسل",
+        "originalDesc": "جودة أصلية محفوظة، معرض احترافي",
+        "classic": "واتساب / WeTransfer",
+        "classicSpec": "1600×1067 بكسل • -70%",
+        "classicDesc": "ضغط، ZIP أعمى، بدون معاينة"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "تسليم الصور الاحترافي",
+      "title": "الجسر الأنيق.",
+      "subtitle": "بساطة WeTransfer تلتقي بأناقة معرض الاستوديو.",
+      "subtitleHighlight": "جودة أصلية، بدون احتكاك.",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "بدون ضغط",
+          "title": "الجودة الأصلية",
+          "desc": "لا تدع الخوارزمية تدمر بكسلاتك. كل صورة تُسلم تماماً كما صدّرتها."
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "بدون احتكاك",
+          "title": "لا حاجة لحساب",
+          "desc": "لا أزرار 'طلب الوصول'. لا تسجيل للعملاء. شارك رابطاً، يدخلون فوراً."
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30 ثانية",
+          "title": "معرض احترافي",
+          "desc": "معرض احترافي في 30 ثانية، ليس 30 دقيقة. معاينة مرئية، ليس ملف ZIP أعمى."
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "معارض تسليم الصور الاحترافية",
+      "titleHighlight": "في انتظارك.",
+      "subtitle": "انضم إلى أكثر من 500 مصور يسلمون الجودة الأصلية لعملائهم. بدون ضغط، بدون احتكاك.",
+      "button": "أنشئ معرضي المجاني",
+      "note": "لا حاجة لبطاقة • بدون ضغط • جودة أصلية"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "منصة مشاركة الصور المحبوبة من المبدعين.",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حساب"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "الاسم الكامل",
+      "namePlaceholder": "أحمد محمد",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "your@email.com",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "forgotPassword": "نسيت؟",
+      "rememberMe": "تذكرني",
+      "agreeTerms": "أوافق على",
+      "termsLink": "شروط الخدمة",
+      "andThe": "و",
+      "privacyLink": "سياسة الخصوصية"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "الأمان",
+      "weak": "ضعيف",
+      "medium": "متوسط",
+      "good": "جيد",
+      "excellent": "ممتاز"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حسابي",
+      "google": "تسجيل الدخول بـ Google"
     },
-    "divider": "",
+    "divider": "وصول سريع",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "بريد إلكتروني غير صالح",
+      "passwordTooShort": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+      "passwordMismatch": "كلمات المرور غير متطابقة",
+      "nameRequired": "يرجى إدخال اسمك.",
+      "termsRequired": "يجب قبول شروط الخدمة.",
+      "invalidCredentials": "بريد إلكتروني أو كلمة مرور غير صالحة",
+      "signupFailed": "خطأ أثناء التسجيل",
+      "googleFailed": "خطأ في تسجيل الدخول بـ Google",
+      "accountExists": "يوجد حساب بهذا البريد الإلكتروني. سجل الدخول بكلمة المرور.",
+      "oauthError": "خطأ في تسجيل الدخول بـ Google. يرجى المحاولة مرة أخرى.",
+      "genericError": "حدث خطأ",
+      "accountCreationError": "خطأ في إنشاء الحساب",
+      "profileCreationError": "خطأ في إنشاء الملف الشخصي",
+      "resetLinkInvalid": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية",
+      "passwordUpdateError": "خطأ في تحديث كلمة المرور",
+      "resetEmailError": "خطأ في إرسال بريد إعادة التعيين"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.",
+      "passwordReset": "تم إعادة تعيين كلمة المرور بنجاح!"
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور",
+      "subtitle": "أدخل بريدك الإلكتروني لتلقي رابط إعادة التعيين",
+      "sendLink": "إرسال رابط إعادة التعيين",
+      "emailSentTo": "تم إرسال البريد إلى:",
+      "backToLogin": "العودة لتسجيل الدخول"
+    },
+    "resetPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "subtitle": "أدخل كلمة المرور الجديدة",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "resetButton": "إعادة تعيين كلمة المرور"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "لوحة التحكم",
+    "greeting": "مرحباً،",
+    "subtitle": "إليك نظرة عامة على أدائك وإدارة المعارض الآمنة.",
+    "newGallery": "معرض جديد",
+    "quotaReached": "تم الوصول للحصة",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "الخطة الحالية",
+      "storage": "التخزين",
+      "galleries": "المعارض",
+      "totalViews": "إجمالي المشاهدات",
+      "usage": "الاستخدام",
+      "volume": "الحجم",
+      "vsLastMonth": "مقارنة بـ {{count}} الشهر الماضي"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "مجاني",
+      "premium": "مميز",
+      "pro": "احترافي"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "المعارض",
+      "search": "البحث عن معرض...",
+      "noResults": "لم يتم العثور على معرض",
+      "noResultsQuery": "لا توجد نتائج لـ \"{{query}}\"",
+      "emptyState": "ابدأ بإنشاء أول معرض صور لك.",
+      "createFirst": "أنشئ معرضي الأول"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "الأحدث",
+      "oldest": "الأقدم",
+      "mostViews": "الأكثر مشاهدة",
+      "leastViews": "الأقل مشاهدة",
+      "expiresLast": "ينتهي لاحقاً",
+      "expiresSoon": "ينتهي قريباً"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "النشاط الأخير",
+      "galleryCreated": "تم إنشاء المعرض \"{{title}}\""
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "إنشاء معرض",
+      "titleLabel": "عنوان المعرض",
+      "titlePlaceholder": "معرض صوري",
+      "uploadLabel": "رفع الصور",
+      "uploadHint": "اسحب وأفلت أو انقر للاختيار",
+      "maxFiles": "{{count}} صورة كحد أقصى",
+      "maxSize": "{{size}} ميجابايت كحد أقصى لكل صورة",
+      "allowedTypes": "JPG، PNG، WebP مقبولة",
+      "creating": "جارٍ الإنشاء...",
+      "submit": "إنشاء المعرض"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "مشاهدات",
+      "images": "صور",
+      "expires": "ينتهي",
+      "expired": "منتهي",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "shareLink": "مشاركة الرابط",
+      "copyLink": "نسخ الرابط",
+      "linkCopied": "تم نسخ الرابط!",
+      "download": "تنزيل الكل",
+      "delete": "حذف المعرض",
+      "settings": "الإعدادات",
+      "content": "المحتوى"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "تنزيل الكل",
+      "downloadSelected": "تنزيل المحدد",
+      "selectAll": "تحديد الكل",
+      "deselectAll": "إلغاء تحديد الكل",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "passwordSubmit": "الوصول للمعرض",
+      "passwordError": "كلمة مرور غير صحيحة",
+      "expired": "انتهت صلاحية هذا المعرض",
+      "expiredMessage": "المعرض الذي تبحث عنه لم يعد متاحاً."
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "معرض مجاني",
+      "expiresIn": "ينتهي خلال {{hours}} ساعة"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "مدعوم من",
+      "tagline": "تسليم صور عالية الدقة للمبدعين المتطلبين",
+      "creatorPrompt": "هل أنت منشئ هذا المعرض؟",
+      "creatorDescription": "ادخل إلى لوحة التحكم لإدارة مشاركاتك واشتراكاتك.",
+      "accessDashboard": "الوصول للوحة التحكم",
+      "createGallery": "أنشئ معرضك",
+      "createDescription": "شارك صورك بالجودة الأصلية، بدون ضغط.",
+      "learnMore": "اعرف المزيد",
+      "photos": "صور",
+      "expiresOn": "ينتهي في"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "تم فتح المعرض!",
+      "subtitle": "تم الدفع بنجاح",
+      "benefitsTitle": "ما ستحصل عليه",
+      "benefit1": "تمت إزالة العلامات المائية",
+      "benefit2": "تم التمديد إلى {days} يوم",
+      "benefit3": "تم تفعيل التنزيل عالي الدقة",
+      "createAccountTitle": "هل تريد إدارة معرضك؟",
+      "createAccountDesc": "أنشئ حساباً مجانياً للوصول إلى لوحة التحكم وتتبع المشاهدات وإدارة معارضك.",
+      "createAccountBtn": "إنشاء حسابي",
+      "continueBtn": "المتابعة بدون حساب"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "لا تفقد معرضك!",
+      "subtitle": "متبقي {hours} ساعة قبل انتهاء الصلاحية",
+      "cta": "فتح"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "تسليم صور احترافي في 30 ثانية",
+      "subtitle": "بدون ضغط. لا حاجة لحساب. معارض بجودة أصلية.",
+      "dropzone": "أفلت صورك هنا",
+      "dropzoneHint": "أو انقر لاختيار الملفات",
+      "uploading": "جارٍ الرفع...",
+      "processing": "جارٍ المعالجة...",
+      "complete": "اكتمل الرفع!"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "معرضك جاهز!",
+      "subtitle": "اختر كيف تريد مشاركته",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "ابقه مجانياً",
+          "price": "$0",
+          "description": "ينتهي خلال 24 ساعة",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "وصول 24 ساعة",
+            "1": "علامة PikSend المائية",
+            "2": "مشاركة أساسية"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "افتح هذا المعرض",
+          "price": "$2.99",
+          "description": "دفعة واحدة",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "وصول 30 يوم",
+            "1": "بدون علامة مائية",
+            "2": "تنزيل عالي الدقة",
+            "3": "عنوان مخصص"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "اشترك بالمميز",
+          "price": "$9.99/شهر",
+          "description": "أفضل قيمة",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50 معرض",
+            "1": "5 جيجابايت تخزين",
+            "2": "بدون علامات مائية",
+            "3": "دعم ذو أولوية"
           },
-          "recommended": ""
+          "recommended": "موصى به"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "أسعار بسيطة",
+    "title": "اختر خطتك",
+    "subtitle": "صور عالية الدقة بدون ضغط. ابدأ مجاناً.",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "yearlyDiscount": "وفر 20%",
+    "perMonth": "/شهر",
+    "perYear": "/سنة",
+    "currentPlan": "الخطة الحالية",
+    "selectPlan": "اختر الخطة",
+    "upgrade": "ترقية",
+    "downgrade": "تخفيض",
+    "popular": "شائع",
+    "equivalent": "أي",
+    "needHelp": "تحتاج مساعدة؟",
+    "priceNote": "الأسعار بالدولار الأمريكي. إلغاء في أي وقت.",
+    "faqTitle": "الأسئلة الشائعة",
+    "faq": {
+      "changePlan": {
+        "question": "هل يمكنني تغيير الخطة؟",
+        "answer": "نعم، غيّر في أي وقت. الفواتير محسوبة بالتناسب."
+      },
+      "quality": {
+        "question": "هل الجودة محفوظة في جميع الخطط؟",
+        "answer": "نعم، 100% جودة أصلية. بدون ضغط."
+      },
+      "yearly": {
+        "question": "كيف يعمل الاشتراك السنوي؟",
+        "answer": "ادفع 12 شهراً مقدماً ووفر 20%."
+      },
+      "cancel": {
+        "question": "ماذا لو ألغيت؟",
+        "answer": "يبقى الوصول نشطاً حتى نهاية الفترة المدفوعة، ثم الخطة المجانية."
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "مجاني",
+        "description": "مثالي للبدء",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3 معارض",
+          "20 ميجابايت تخزين",
+          "انتهاء صلاحية 7 أيام",
+          "دعم أساسي"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "مميز",
+        "description": "للمصورين النشطين",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20 معرض",
+          "500 ميجابايت تخزين",
+          "انتهاء صلاحية 30 يوم",
+          "دعم ذو أولوية",
+          "علامة تجارية مخصصة"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "احترافي",
+        "description": "للمحترفين",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "معارض غير محدودة",
+          "5 جيجابايت تخزين",
+          "انتهاء صلاحية 90 يوم",
+          "دعم 24/7",
+          "علامة تجارية مخصصة",
+          "تحليلات"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "الإعدادات",
+    "subtitle": "إدارة حسابك وتفضيلاتك",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "الملف الشخصي",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "save": "حفظ التغييرات",
+      "saved": "تم تحديث الملف الشخصي!",
+      "saveError": "خطأ في حفظ الملف الشخصي"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "الاشتراك",
+      "currentPlan": "الخطة الحالية",
+      "manage": "إدارة الاشتراك",
+      "upgrade": "ترقية الخطة",
+      "cancel": "إلغاء الاشتراك"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "منطقة الخطر",
+      "deleteAccount": "حذف الحساب",
+      "deleteWarning": "هذا الإجراء لا رجعة فيه. سيتم حذف جميع بياناتك نهائياً."
+    },
+    "signOut": {
+      "title": "تسجيل الخروج",
+      "description": "إنهاء جلستك",
+      "button": "تسجيل الخروج",
+      "signingOut": "جارٍ تسجيل الخروج..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "لوحة التحكم",
+      "users": "المستخدمون",
+      "galleries": "المعارض",
+      "subscriptions": "الاشتراكات",
+      "analytics": "التحليلات",
+      "auditLogs": "سجلات التدقيق"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "لوحة التحكم",
+      "subtitle": "نظرة عامة على منصة PikSend",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "المستخدمون",
+        "usersSubtitle": "الحسابات المسجلة",
+        "activeGalleries": "المعارض النشطة",
+        "totalGalleries": "{{count}} إجمالي",
+        "storage": "التخزين المستخدم",
+        "storageSubtitle": "إجمالي المساحة المستهلكة",
+        "conversionRate": "معدل التحويل",
+        "conversionSubtitle": "المستخدمون المدفوعون"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "المستخدمون",
+      "subtitle": "إدارة مستخدمي المنصة",
+      "search": "البحث عن مستخدمين...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "plan": "الخطة",
+        "galleries": "المعارض",
+        "storage": "التخزين",
+        "status": "الحالة",
+        "actions": "الإجراءات",
+        "registration": "التسجيل",
+        "currentPlan": "الخطة الحالية",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "نشط",
+        "suspended": "معلق"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "عرض",
+        "suspend": "تعليق",
+        "reactivate": "إعادة تنشيط",
+        "changePlan": "تغيير الخطة"
+      },
+      "totalUsers": "إجمالي المستخدمين",
+      "userReactivated": "تم إعادة تنشيط المستخدم",
+      "userSuspended": "تم تعليق المستخدم",
+      "planUpdated": "تم تحديث خطة المستخدم"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "المعارض",
+      "subtitle": "إدارة جميع المعارض",
+      "search": "البحث عن معارض...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "العنوان",
+        "owner": "المالك",
+        "type": "النوع",
+        "images": "الصور",
+        "views": "المشاهدات",
+        "status": "الحالة",
+        "expires": "ينتهي",
+        "actions": "الإجراءات"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "زائر",
+        "user": "مستخدم",
+        "converted": "محوّل"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "نشط",
+        "expired": "منتهي",
+        "deactivated": "معطل"
+      },
+      "totalGalleries": "إجمالي المعارض",
+      "galleryDeactivated": "تم تعطيل المعرض"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "الاشتراكات",
+      "subtitle": "إدارة اشتراكات المستخدمين",
+      "totalSubscribers": "إجمالي المشتركين",
+      "premiumCount": "مميز",
+      "proCount": "احترافي",
+      "activeCount": "نشط",
+      "upgraded": "تمت ترقية الاشتراك",
+      "cancelled": "تم إلغاء الاشتراك"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "التحليلات",
+      "subtitle": "إحصائيات واتجاهات المنصة",
+      "newRegistrations": "التسجيلات الجديدة",
+      "galleriesCreated": "المعارض المنشأة",
+      "totalActivities": "إجمالي الأنشطة"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "سجلات التدقيق",
+      "subtitle": "سجل نشاط النظام",
+      "totalEntries": "إجمالي الإدخالات",
+      "modifications": "التعديلات"
+    },
+    "header": {
+      "signOut": "تسجيل الخروج",
+      "signingOut": "جارٍ تسجيل الخروج..."
+    },
+    "recentActivity": {
+      "title": "النشاط الأخير"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "المصادقة مطلوبة",
+      "message": "يجب تسجيل الدخول للوصول إلى هذه الصفحة. سجل الدخول أو أنشئ حساباً للمتابعة.",
+      "info": "يتيح لك PikSend إنشاء ومشاركة معارض صور آمنة. سجل مجاناً للبدء!",
+      "signIn": "تسجيل الدخول",
+      "signUp": "إنشاء حساب",
+      "home": "العودة للرئيسية",
+      "possibleReasons": "الأسباب المحتملة:",
+      "reason1": "انتهت صلاحية جلستك",
+      "reason2": "لم تسجل الدخول",
+      "reason3": "تم تعليق حسابك"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "الوصول مرفوض",
+      "message": "ليس لديك إذن للوصول إلى هذه الصفحة.",
+      "home": "العودة للرئيسية",
+      "suggestions": "اقتراحات:",
+      "suggestion1": "تحقق من أن لديك الأذونات الصحيحة",
+      "suggestion2": "اتصل بالمسؤول إذا كنت تعتقد أن هذا خطأ"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "الصفحة غير موجودة",
+      "message": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+      "home": "العودة للرئيسية",
+      "suggestions": "اقتراحات",
+      "suggestion1": "تحقق من إملاء الرابط",
+      "suggestion2": "قد يكون المعرض قد انتهت صلاحيته",
+      "suggestion3": "الرابط الذي اتبعته قد يكون قديماً",
+      "previousPage": "الصفحة السابقة"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "خطأ في الخادم",
+      "message": "حدث خطأ من جانبنا. يرجى المحاولة لاحقاً.",
+      "retry": "إعادة المحاولة",
+      "home": "العودة للرئيسية",
+      "possibleReasons": "الأسباب المحتملة:",
+      "reason1": "حمل زائد مؤقت على الخادم",
+      "reason2": "صيانة جارية",
+      "reason3": "خطأ غير متوقع",
+      "retryLater": "يرجى المحاولة مرة أخرى بعد بضع دقائق",
+      "problemPersists": "المشكلة مستمرة؟",
+      "contactSupport": "اتصل بالدعم"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "الخدمة غير متاحة",
+      "message": "نقوم حالياً بإجراء صيانة. يرجى العودة قريباً.",
+      "home": "العودة للرئيسية",
+      "temporarilyUnavailable": "الخدمة غير متاحة مؤقتاً",
+      "autoRefresh": "تحديث تلقائي",
+      "inSeconds": "خلال {{seconds}} ثانية",
+      "statusPage": "تابع حالة خدمتنا على"
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "الملف كبير جداً. الحد الأقصى {{size}} ميجابايت لكل صورة.",
+      "invalidFileType": "نوع ملف غير صالح. يرجى رفع صور JPG أو PNG أو WebP.",
+      "tooManyFiles": "ملفات كثيرة جداً. الحد الأقصى {{count}} صورة لمعارض الزوار.",
+      "noFiles": "يرجى اختيار صورة واحدة على الأقل للرفع.",
+      "networkError": "فشل الرفع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+      "galleryCreationFailed": "فشل إنشاء المعرض. يرجى المحاولة مرة أخرى.",
+      "uploadFailed": "فشل رفع الصورة. يرجى المحاولة مرة أخرى."
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "فشل الدفع. يرجى المحاولة مرة أخرى.",
+      "declined": "تم رفض الدفع. يرجى تجربة طريقة دفع مختلفة.",
+      "sessionExpired": "انتهت صلاحية الجلسة. يرجى المحاولة مرة أخرى.",
+      "checkoutFailed": "فشل بدء الدفع. يرجى المحاولة مرة أخرى.",
+      "invalidAmount": "مبلغ دفع غير صالح.",
+      "stripeError": "خطأ في معالجة الدفع: {{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "انتهت صلاحية جلستك. قد لا تتمكن من الوصول إلى معارضك.",
+      "invalid": "جلسة غير صالحة. يرجى تحديث الصفحة.",
+      "creationFailed": "فشل إنشاء الجلسة. يرجى المحاولة مرة أخرى."
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "المعرض غير موجود.",
+      "expired": "انتهت صلاحية هذا المعرض ولم يعد متاحاً.",
+      "accessDenied": "ليس لديك حق الوصول إلى هذا المعرض.",
+      "migrationFailed": "فشل نقل المعارض إلى حسابك. يرجى الاتصال بالدعم.",
+      "noLongerActive": "هذا المعرض لم يعد نشطاً",
+      "incorrectPassword": "كلمة مرور غير صحيحة"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+      "retry": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "validationFailed": "فشل التحقق",
+      "invalidData": "بيانات غير صالحة",
+      "invalidActionType": "نوع إجراء غير صالح",
+      "invalidEntityType": "نوع كيان غير صالح",
+      "unauthorized": "غير مصرح",
+      "internalServerError": "خطأ داخلي في الخادم",
+      "authenticationRequired": "المصادقة مطلوبة",
+      "adminAccessRequired": "مطلوب وصول المسؤول",
+      "updateError": "خطأ أثناء التحديث",
+      "serverError": "خطأ في الخادم",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+    },
+    "profile": {
+      "fetchFailed": "فشل جلب الملف الشخصي",
+      "updateFailed": "فشل تحديث الملف الشخصي",
+      "notFound": "الملف الشخصي غير موجود"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "تسليم صور عالية الدقة للمبدعين المتطلبين.",
+    "product": "المنتج",
+    "platform": "المنصة",
+    "company": "الشركة",
+    "legal": "قانوني",
+    "officialContact": "الاتصال الرسمي",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "الميزات",
+      "pricing": "الأسعار",
+      "help": "مركز المساعدة",
+      "contact": "اتصل بنا",
+      "terms": "الشروط",
+      "privacy": "الخصوصية",
+      "mentions": "إشعار قانوني"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "الهوية الوطنية",
+      "taxNumber": "الرقم الضريبي"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "ملكية حصرية لـ",
+    "country": "جمهورية الكونغو الديمقراطية",
+    "copyright": "© {{year}} PikSend. جميع الحقوق محفوظة."
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "مرحباً بك في PikSend",
+      "description": "أسهل طريقة لمشاركة صورك بالجودة الأصلية."
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "ارفع صورك",
+      "description": "اسحب وأفلت صورك عالية الدقة أو انقر لاختيار الملفات."
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "خصص معرضك",
+      "description": "أضف عنواناً وقم بتكوين إعدادات المشاركة."
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "شارك مع عملائك",
+      "description": "احصل على رابط فريد لمشاركة معرضك فوراً."
     },
-    "skip": "",
-    "finish": ""
+    "skip": "تخطي",
+    "finish": "ابدأ الآن"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "معارضي",
+    "subtitle": "المعارض المنشأة خلال هذه الجلسة",
+    "createNew": "إنشاء جديد",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "لا توجد معارض بعد",
+      "description": "لم تنشئ أي معارض خلال هذه الجلسة. أنشئ معرضك الأول لمشاركة صورك.",
+      "cta": "أنشئ معرضي الأول"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "احفظ روابطك!",
+      "description": "هذه المعارض مرتبطة بمتصفحك. إذا مسحت بياناتك أو غيرت الجهاز، ستفقد الوصول. أنشئ حساباً للاحتفاظ بها للأبد."
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "مفتوح",
+      "expired": "منتهي"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "هل تريد الاحتفاظ بمعارضك؟",
+      "description": "أنشئ حساباً مجانياً للوصول إلى معارضك من أي جهاز، والحصول على مساحة تخزين أكبر، وفتح الميزات المميزة.",
+      "cta": "إنشاء حسابي"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – تسليم صور عالية الدقة بدون فقدان الجودة",
+      "description": "شارك صورك بالجودة الأصلية. بدون ضغط، معارض آمنة، انتهاء صلاحية تلقائي."
+    },
+    "pricing": {
+      "title": "أسعار PikSend - من المجاني إلى الاحترافي",
+      "description": "ابدأ مجاناً بـ 3 معارض. قم بالترقية إلى المميز أو الاحترافي لمزيد من الميزات."
+    },
+    "features": {
+      "title": "ميزات PikSend",
+      "description": "100% جودة محفوظة، معارض آمنة، انتهاء صلاحية تلقائي. اكتشف جميع الميزات."
+    },
+    "help": {
+      "title": "مركز مساعدة PikSend",
+      "description": "أدلة وأسئلة شائعة ودعم تقني لاستخدام PikSend."
+    },
+    "contact": {
+      "title": "اتصل بـ PikSend",
+      "description": "لديك سؤال؟ فريقنا هنا للمساعدة."
+    },
+    "auth": {
+      "title": "تسجيل الدخول إلى PikSend",
+      "description": "الوصول إلى معارض الصور الآمنة الخاصة بك."
+    },
+    "legal": {
+      "terms": {
+        "title": "شروط الخدمة - PikSend",
+        "description": "اقرأ شروط الخدمة العامة لـ PikSend."
+      },
+      "privacy": {
+        "title": "سياسة الخصوصية - PikSend",
+        "description": "تعرف على كيفية حماية PikSend لبياناتك الشخصية."
+      },
+      "cookies": {
+        "title": "سياسة ملفات تعريف الارتباط - PikSend",
+        "description": "معلومات حول استخدام ملفات تعريف الارتباط بواسطة PikSend."
+      },
+      "mentions": {
+        "title": "إشعار قانوني - PikSend",
+        "description": "معلومات قانونية حول ناشر PikSend."
+      }
+    },
+    "dashboard": {
+      "title": "لوحة التحكم | PikSend",
+      "description": "إدارة معارض الصور الخاصة بك"
+    },
+    "newGallery": {
+      "title": "معرض جديد | PikSend",
+      "description": "إنشاء معرض صور آمن جديد"
+    },
+    "galleryDetails": {
+      "title": "تفاصيل المعرض | PikSend",
+      "description": "إدارة معرض الصور الخاص بك"
+    },
+    "myGalleries": {
+      "title": "معارضي | PikSend",
+      "description": "ابحث عن معارضك المنشأة كزائر"
+    },
+    "error401": {
+      "title": "غير مصادق - 401 | PikSend",
+      "description": "يرجى تسجيل الدخول للوصول إلى هذه الصفحة."
+    },
+    "error403": {
+      "title": "الوصول مرفوض - 403 | PikSend",
+      "description": "ليس لديك إذن للوصول إلى هذا المورد."
+    },
+    "error500": {
+      "title": "خطأ في الخادم - 500 | PikSend",
+      "description": "حدث خطأ داخلي في الخادم. يرجى المحاولة لاحقاً."
+    },
+    "error503": {
+      "title": "الخدمة غير متاحة - 503 | PikSend",
+      "description": "الخدمة غير متاحة مؤقتاً للصيانة."
+    },
+    "pageNotFound": {
+      "title": "الصفحة غير موجودة",
+      "description": "الصفحة التي تبحث عنها غير موجودة."
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "تم الوصول لحد المعارض",
+      "description": "لقد وصلت إلى الحد الأقصى لعدد المعارض في خطتك."
+    },
+    "storageLimit": {
+      "title": "مساحة التخزين غير كافية",
+      "description": "مساحة التخزين لديك ممتلئة أو غير كافية لهذه العملية."
+    },
+    "imageLimit": {
+      "title": "تم الوصول لحد الصور",
+      "description": "وصل هذا المعرض إلى الحد الأقصى لعدد الصور في خطتك."
+    },
+    "fileSize": {
+      "title": "الملف كبير جداً",
+      "description": "حجم الملف يتجاوز الحد المسموح به في خطتك."
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "المعرض غير موجود",
+      "galleryNotAccessible": "هذا المعرض لم يعد متاحاً",
+      "errorFetchingImages": "خطأ في جلب الصور",
+      "noImagesInGallery": "لا توجد صور في هذا المعرض",
+      "errorCreatingArchive": "خطأ في إنشاء الأرشيف",
+      "errorDownloading": "خطأ في التنزيل",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
+      "validationFailed": "فشل التحقق",
+      "registrationFailed": "فشل التسجيل",
+      "accountCreatedSuccess": "تم إنشاء الحساب بنجاح",
+      "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+      "passwordResetEmailSent": "إذا كان هناك حساب بهذا البريد الإلكتروني، ستتلقى رابط إعادة التعيين.",
+      "invalidData": "بيانات غير صالحة",
+      "profileUpdateFailed": "فشل تحديث الملف الشخصي",
+      "profileFetchFailed": "فشل جلب الملف الشخصي",
+      "updateError": "خطأ أثناء التحديث",
+      "serverError": "خطأ في الخادم"
     }
   }
 }

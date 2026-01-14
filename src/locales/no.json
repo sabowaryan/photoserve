@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "Laster...",
+    "error": "En feil oppstod",
+    "success": "Suksess",
+    "cancel": "Avbryt",
+    "confirm": "Bekreft",
+    "save": "Lagre",
+    "delete": "Slett",
+    "edit": "Rediger",
+    "close": "Lukk",
+    "open": "Åpne",
+    "back": "Tilbake",
+    "next": "Neste",
+    "previous": "Forrige",
+    "search": "Søk",
+    "filter": "Filtrer",
+    "sort": "Sorter",
+    "view": "Vis",
+    "download": "Last ned",
+    "upload": "Last opp",
+    "share": "Del",
+    "copy": "Kopier",
+    "copied": "Kopiert!",
+    "yes": "Ja",
+    "no": "Nei",
+    "or": "eller",
+    "and": "og",
+    "all": "Alle",
+    "none": "Ingen",
+    "required": "Påkrevd",
+    "optional": "Valgfritt",
+    "language": "Språk",
+    "account": "Konto",
+    "menu": "Meny",
+    "actions": "Handlinger",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "expired": "Utløpt",
+    "status": "Status",
+    "type": "Type",
+    "allTypes": "Alle typer",
+    "guest": "Gjest",
+    "converted": "Konvertert",
+    "startDate": "Startdato",
+    "endDate": "Sluttdato",
+    "filters": "Filtre",
+    "shortcuts": "Snarveier:",
+    "from": "Fra",
+    "to": "Til",
+    "days7": "7d",
+    "days30": "30d",
+    "days90": "90d",
+    "last7Days": "Siste 7 dager",
+    "last30Days": "Siste 30 dager",
+    "last90Days": "Siste 90 dager",
+    "thisYear": "I år",
+    "today": "I dag",
+    "views": "Visninger",
+    "images": "Bilder",
+    "storage": "Lagring",
+    "expiration": "Utløp",
+    "creation": "Opprettet",
+    "galleries": "Gallerier",
+    "totalViews": "Totale visninger",
+    "offer": "Plan",
+    "searchPlaceholder": "Søk...",
+    "newest": "Nyeste",
+    "oldest": "Eldste",
+    "mostViews": "Flest visninger",
+    "leastViews": "Færrest visninger",
+    "expiresLast": "Utløper sist",
+    "expiresSoon": "Utløper snart",
+    "free": "Gratis",
+    "newGallery": "Nytt galleri",
+    "galleryLimitReached": "Gallerigrense nådd",
+    "insufficientStorage": "Utilstrekkelig lagringsplass",
+    "upgradeToHigherPlan": "Oppgrader til en høyere plan for å fortsette",
+    "dashboard": "Kontrollpanel",
+    "settings": "Innstillinger",
+    "signIn": "Logg inn",
+    "signOut": "Logg ut",
+    "signingOut": "Logger ut...",
+    "getStarted": "Kom i gang",
+    "send": "Send",
+    "name": "Navn",
+    "email": "E-post",
+    "subject": "Emne",
+    "message": "Melding",
+    "yourName": "Ditt navn",
+    "yourEmail": "din@epost.no",
+    "messageSubject": "Emne for meldingen din",
+    "describeRequest": "Beskriv forespørselen din...",
+    "messageSent": "Melding sendt!",
+    "weWillReply24h": "Vi svarer innen 24-48 timer.",
+    "weWillReplyShortly": "Vi svarer så snart som mulig.",
+    "responseTime": "Svartid",
+    "businessHours24to48": "24 til 48 arbeidstimer",
+    "location": "Sted",
+    "contactUs": "Kontakt oss",
+    "generalQuestions": "Generelle spørsmål",
+    "technicalIssues": "Tekniske problemer",
+    "support": "Support",
+    "help": "Hjelp",
+    "faqAndGuides": "FAQ og guider",
+    "helpCenter": "Hjelpesenter",
+    "findAnswers": "Finn svar på spørsmålene dine",
+    "sendUsMessage": "Send oss en melding",
+    "terms": "Vilkår",
+    "termsOfUse": "Bruksvilkår",
+    "privacyPolicy": "Personvernpolicy",
+    "cookiePolicy": "Informasjonskapselpolicy",
+    "legalNotice": "Juridisk informasjon",
+    "features": "Funksjoner",
+    "pricing": "Priser",
+    "zeroCompression": "Ingen komprimering",
+    "fullySecure": "Passordbeskyttet",
+    "readyIn2Min": "30 sekunders oppsett",
+    "hdQuality": "Originalkvalitet",
+    "noCompression": "Ingen komprimering",
+    "instantDelivery": "Profesjonell levering",
+    "secureUniqueLink": "Null friksjon tilgang",
+    "exampleWeddingSession": "Bryllupsfotografering",
+    "examplePhotosHd": "24 bilder • HD",
+    "downloads": "Nedlastinger",
+    "info": "Info",
+    "security": "Sikkerhet",
+    "photos": "Bilder",
+    "exampleTitle": "F.eks: Marie & Johans bryllup",
+    "generateTitle": "Generer en tittel",
+    "passwordProtection": "Passordbeskyttelse",
+    "onlyPeopleWithPassword": "Bare personer med passordet kan få tilgang til galleriet ditt",
+    "enterPassword": "Skriv inn et passord",
+    "expectedStorage": "Forventet lagring",
+    "expirationDuration": "Gyldighetsperiode",
+    "setGalleryValidity": "Angi galleriets gyldighet",
+    "saveChanges": "Lagre endringer",
+    "galleryTitle": "Gallerititel",
+    "galleryName": "Ditt gallerinavn",
+    "secureGalleryAccess": "Sikker tilgang til galleriet ditt",
+    "newPassword": "Nytt passord",
+    "day1": "1 dag",
+    "days3": "3 dager",
+    "days7Full": "7 dager",
+    "days14": "14 dager",
+    "days30Full": "30 dager",
+    "days60": "60 dager",
+    "days90Full": "90 dager",
+    "days180": "180 dager",
+    "year1": "1 år",
+    "galleryDetails": "Galleriinformasjon",
+    "manageYourGallery": "Administrer fotogalleriet ditt",
+    "guestSessionId": "Gjestesesjons-ID",
+    "paymentType": "Betalingstype:",
+    "unlocked": "Låst opp:",
+    "createdAsGuest": "Opprettet som gjest",
+    "paymentCompleted": "Betaling fullført",
+    "convertedToUserAccount": "Konvertert til brukerkonto",
+    "noUserAccount": "Ingen brukerkonto",
+    "recentActivity": "Nylig aktivitet",
+    "upgradeLevel": "Oppgrader til neste nivå",
+    "quickHelp": "Rask hjelp",
+    "myGalleries": "Mine gallerier",
+    "myProfile": "Min profil",
+    "accountInfo": "Kontoinformasjon",
+    "manageAccountAccess": "Administrer tilgang til kontoen din",
+    "emailAndPassword": "E-post og passord",
+    "loginMethod": "Innloggingsmetode",
+    "subscription": "Abonnement",
+    "choosePlanForNeeds": "Velg planen som passer dine behov",
+    "cloudinaryHdStripe": "Cloudinary HD-infrastruktur • Sikker Stripe-betaling",
+    "discoverPiksend": "For å oppdage PikSend",
+    "forActivePhotographers": "For aktive fotografer",
+    "forProfessionals": "For profesjonelle",
+    "forDemandingProfessionals": "For krevende profesjonelle",
+    "testHdDelivery": "Test HD-fotolevering",
+    "originalQuality": "Originalkvalitet",
+    "customizableDuration": "Tilpassbar varighet",
+    "prioritySupport": "Prioritert support",
+    "linkExpired": "Lenken har utløpt",
+    "linkNoLongerValid": "Denne lenken er ikke lenger gyldig",
+    "atLeast6Characters": "Minst 6 tegn",
+    "confirmYourPassword": "Bekreft passordet ditt",
+    "reset": "Tilbakestill",
+    "passwordMinLength": "Passordet må være minst 6 tegn",
+    "hdPhotoSharing": "HD-fotodeling",
+    "google": "Google",
+    "users": "Brukere",
+    "registeredAccounts": "Registrerte kontoer",
+    "activeGalleries": "Aktive gallerier",
+    "storageUsed": "Brukt lagringsplass",
+    "totalSpaceConsumed": "Totalt forbrukt plass",
+    "conversionRate": "Konverteringsrate",
+    "payingUsers": "Betalende brukere",
+    "userGrowth": "Brukervekst",
+    "newUsersPerDay": "Nye brukere per dag",
+    "storageEvolution": "Lagringsutvikling",
+    "totalStorageUsedMb": "Totalt brukt lagringsplass (MB)",
+    "subscriptionConversions": "Abonnementskonverteringer",
+    "planUpgradesInPeriod": "Planoppgraderinger i perioden",
+    "searchByTitleOrSlug": "Søk etter tittel eller slug...",
+    "searchByEmailOrName": "Søk etter e-post eller navn...",
+    "allPlans": "Alle planer",
+    "allAdmins": "Alle administratorer",
+    "allActions": "Alle handlinger",
+    "suspended": "Suspendert",
+    "suspendUser": "Suspender bruker",
+    "reactivateUser": "Reaktiver bruker",
+    "exampleViolation": "F.eks: Brudd på bruksvilkår",
+    "analytics": "Analyse",
+    "subscriptions": "Abonnementer",
+    "auditLog": "Revisjonslogg",
+    "galleryNotFound": "Galleri ikke funnet",
+    "galleryNotAccessible": "Dette galleriet er ikke lenger tilgjengelig",
+    "errorFetchingImages": "Feil ved henting av bilder",
+    "noImagesInGallery": "Ingen bilder i dette galleriet",
+    "errorCreatingArchive": "Feil ved opprettelse av arkiv",
+    "errorDownloading": "Feil ved nedlasting",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "Hjem",
+    "features": "Funksjoner",
+    "pricing": "Priser",
+    "help": "Hjelp",
+    "contact": "Kontakt",
+    "dashboard": "Kontrollpanel",
+    "settings": "Innstillinger",
+    "signIn": "Logg inn",
+    "signOut": "Logg ut",
+    "getStarted": "Kom i gang",
+    "menu": "Meny",
+    "contactUs": "Kontakt oss"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "Profesjonelle fotoleveringsgallerier",
+    "title": "Arbeidet ditt er førsteklasses.",
+    "titleHighlight": "Leveringen din bør også være det.",
+    "subtitle": "Profesjonelle fotoleveringsgallerier",
+    "subtitleHighlight": "uten komprimering.",
+    "subtitleEnd": "Originalkvalitet, null friksjon, ingen konto kreves for gjester.",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "Opprett mitt galleri",
+      "secondary": "Se hvordan det fungerer"
     },
-    "tagline": "",
+    "tagline": "Ingen komprimering • Originalkvalitet • Null friksjon",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "Fotografer",
+      "galleries": "Leverte gallerier",
+      "photos": "Originalkvalitet",
+      "satisfaction": "Tilfredshet"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "Ikke la en algoritme ødelegge pikslene dine",
+      "title": "WhatsApp komprimerer bildene dine",
+      "titleHighlight": "opptil 70%.",
+      "paragraph1": "Du bruker timer på å perfeksjonere hver detalj. Bildene dine er klare for profesjonell levering.",
+      "paragraph1Highlight": "Så kommer delingsøyeblikket.",
+      "paragraph2": "WhatsApp, WeTransfer, Google Drive — alle kompromitterer arbeidet ditt. Komprimering, blinde ZIP-filer, 'Be om tilgang'-knapper.",
+      "paragraph2Highlight": "Kundene dine fortjener bedre.",
+      "paragraph3": "Profesjonelle fotoleveringsgallerier bør bevare",
+      "paragraph3Highlight": "originalkvalitet,",
+      "paragraph3End": "ikke ødelegge den.",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — Ingen komprimering",
+        "originalSpec": "24 MP • 6000×4000px",
+        "originalDesc": "Originalkvalitet bevart, profesjonelt galleri",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "Komprimering, blind ZIP, ingen forhåndsvisning"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "Profesjonell fotolevering",
+      "title": "Den elegante broen.",
+      "subtitle": "WeTransfers enkelhet møter studiogalleriets eleganse.",
+      "subtitleHighlight": "Originalkvalitet, null friksjon.",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "Ingen komprimering",
+          "title": "Originalkvalitet",
+          "desc": "Ikke la en algoritme ødelegge pikslene dine. Hvert bilde leveres nøyaktig slik du eksporterte det."
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "Null friksjon",
+          "title": "Ingen konto kreves",
+          "desc": "Ingen 'Be om tilgang'-knapper. Ingen registreringer for kunder. Del en lenke, de er inne umiddelbart."
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30 sekunder",
+          "title": "Profesjonelt galleri",
+          "desc": "Proffgalleri på 30 sekunder, ikke 30 minutter. Visuell forhåndsvisning, ikke en blind ZIP-fil."
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "Profesjonelle fotoleverings-",
+      "titleHighlight": "gallerier venter.",
+      "subtitle": "Bli med 500+ fotografer som leverer originalkvalitet til kundene sine. Ingen komprimering, null friksjon.",
+      "button": "Opprett mitt gratis galleri",
+      "note": "Ingen kort kreves • Ingen komprimering • Originalkvalitet"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "Fotodelingsplattformen som kreative elsker.",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "Logg inn",
+      "signUp": "Registrer"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "Fullt navn",
+      "namePlaceholder": "Johan Hansen",
+      "email": "E-postadresse",
+      "emailPlaceholder": "din@epost.no",
+      "password": "Passord",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Bekreft passord",
+      "forgotPassword": "Glemt?",
+      "rememberMe": "Husk meg",
+      "agreeTerms": "Jeg godtar",
+      "termsLink": "Bruksvilkårene",
+      "andThe": "og",
+      "privacyLink": "Personvernpolicyen"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "Sikkerhet",
+      "weak": "Svak",
+      "medium": "Middels",
+      "good": "Bra",
+      "excellent": "Utmerket"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "Logg inn",
+      "signUp": "Opprett min konto",
+      "google": "Logg inn med Google"
     },
-    "divider": "",
+    "divider": "Rask tilgang",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "Ugyldig e-post",
+      "passwordTooShort": "Passordet må være minst 6 tegn",
+      "passwordMismatch": "Passordene samsvarer ikke",
+      "nameRequired": "Vennligst skriv inn navnet ditt.",
+      "termsRequired": "Du må godta bruksvilkårene.",
+      "invalidCredentials": "Ugyldig e-post eller passord",
+      "signupFailed": "Feil under registrering",
+      "googleFailed": "Feil ved innlogging med Google",
+      "accountExists": "En konto finnes allerede med denne e-posten. Logg inn med passordet ditt.",
+      "oauthError": "Feil ved innlogging med Google. Prøv igjen.",
+      "genericError": "En feil oppstod",
+      "accountCreationError": "Feil ved opprettelse av konto",
+      "profileCreationError": "Feil ved opprettelse av profil",
+      "resetLinkInvalid": "Tilbakestillingslenken er ugyldig eller har utløpt",
+      "passwordUpdateError": "Feil ved oppdatering av passord",
+      "resetEmailError": "Feil ved sending av tilbakestillings-e-post"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "Konto opprettet! Du kan nå logge inn.",
+      "passwordReset": "Passordet er tilbakestilt!"
+    },
+    "forgotPassword": {
+      "title": "Glemt passord",
+      "subtitle": "Skriv inn e-posten din for å motta en tilbakestillingslenke",
+      "sendLink": "Send tilbakestillingslenke",
+      "emailSentTo": "E-post sendt til:",
+      "backToLogin": "Tilbake til innlogging"
+    },
+    "resetPassword": {
+      "title": "Tilbakestill passord",
+      "subtitle": "Skriv inn ditt nye passord",
+      "newPassword": "Nytt passord",
+      "confirmPassword": "Bekreft passord",
+      "resetButton": "Tilbakestill passord"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "Kontrollpanel",
+    "greeting": "Hei,",
+    "subtitle": "Her er en oversikt over ytelsen din og sikker galleriadministrasjon.",
+    "newGallery": "Nytt galleri",
+    "quotaReached": "Kvote nådd",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "Nåværende plan",
+      "storage": "Lagring",
+      "galleries": "Gallerier",
+      "totalViews": "Totale visninger",
+      "usage": "Bruk",
+      "volume": "Volum",
+      "vsLastMonth": "sammenlignet med {{count}} forrige måned"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "Gratis",
+      "premium": "Premium",
+      "pro": "Pro"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "Gallerier",
+      "search": "Søk etter et galleri...",
+      "noResults": "Ingen gallerier funnet",
+      "noResultsQuery": "Ingen resultater for \"{{query}}\"",
+      "emptyState": "Start med å opprette ditt første fotogalleri.",
+      "createFirst": "Opprett mitt første galleri"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "Nyeste",
+      "oldest": "Eldste",
+      "mostViews": "Flest visninger",
+      "leastViews": "Færrest visninger",
+      "expiresLast": "Utløper sist",
+      "expiresSoon": "Utløper snart"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "Nylig aktivitet",
+      "galleryCreated": "Galleri \"{{title}}\" opprettet"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "Opprett galleri",
+      "titleLabel": "Gallerititel",
+      "titlePlaceholder": "Mitt fotogalleri",
+      "uploadLabel": "Last opp bilder",
+      "uploadHint": "Dra og slipp eller klikk for å velge",
+      "maxFiles": "Maksimalt {{count}} bilder",
+      "maxSize": "Maksimalt {{size}}MB per bilde",
+      "allowedTypes": "JPG, PNG, WebP aksepteres",
+      "creating": "Oppretter...",
+      "submit": "Opprett galleri"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "visninger",
+      "images": "bilder",
+      "expires": "Utløper",
+      "expired": "Utløpt",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "shareLink": "Del lenke",
+      "copyLink": "Kopier lenke",
+      "linkCopied": "Lenke kopiert!",
+      "download": "Last ned alle",
+      "delete": "Slett galleri",
+      "settings": "Innstillinger",
+      "content": "Innhold"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "Last ned alle",
+      "downloadSelected": "Last ned valgte",
+      "selectAll": "Velg alle",
+      "deselectAll": "Fjern alle valg",
+      "passwordRequired": "Passord kreves",
+      "passwordPlaceholder": "Skriv inn passord",
+      "passwordSubmit": "Åpne galleri",
+      "passwordError": "Feil passord",
+      "expired": "Dette galleriet har utløpt",
+      "expiredMessage": "Galleriet du leter etter er ikke lenger tilgjengelig."
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "Gratis galleri",
+      "expiresIn": "Utløper om {{hours}} timer"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "Drevet av",
+      "tagline": "HD-fotolevering for krevende skapere",
+      "creatorPrompt": "Er du skaperen av dette galleriet?",
+      "creatorDescription": "Gå til kontrollpanelet ditt for å administrere delinger og abonnementer.",
+      "accessDashboard": "Gå til mitt kontrollpanel",
+      "createGallery": "Opprett ditt galleri",
+      "createDescription": "Del bildene dine i originalkvalitet, uten komprimering.",
+      "learnMore": "Les mer",
+      "photos": "bilder",
+      "expiresOn": "Utløper den"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "Galleri låst opp!",
+      "subtitle": "Betalingen din var vellykket",
+      "benefitsTitle": "Hva du får",
+      "benefit1": "Vannmerker fjernet",
+      "benefit2": "Forlenget til {days} dager",
+      "benefit3": "HD-nedlastinger aktivert",
+      "createAccountTitle": "Vil du administrere galleriet ditt?",
+      "createAccountDesc": "Opprett en gratis konto for å få tilgang til kontrollpanelet, spore visninger og administrere galleriene dine.",
+      "createAccountBtn": "Opprett min konto",
+      "continueBtn": "Fortsett uten konto"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "Ikke mist galleriet ditt!",
+      "subtitle": "Bare {hours}t igjen før utløp",
+      "cta": "Lås opp"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "Del bildene dine umiddelbart",
+      "subtitle": "Ingen konto kreves. Last opp og del på sekunder.",
+      "dropzone": "Slipp bildene dine her",
+      "dropzoneHint": "eller klikk for å velge filer",
+      "uploading": "Laster opp...",
+      "processing": "Behandler...",
+      "complete": "Opplasting fullført!"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "Galleriet ditt er klart!",
+      "subtitle": "Velg hvordan du vil dele det",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Behold det gratis",
+          "price": "0 kr",
+          "description": "Utløper om 24 timer",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24t tilgang",
+            "1": "PikSend-vannmerke",
+            "2": "Grunnleggende deling"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Lås opp dette galleriet",
+          "price": "29 kr",
+          "description": "Engangsbetaling",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30 dagers tilgang",
+            "1": "Ingen vannmerke",
+            "2": "HD-nedlastinger",
+            "3": "Tilpasset tittel"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Bli Premium",
+          "price": "99 kr/mnd",
+          "description": "Beste verdi",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50 gallerier",
+            "1": "5 GB lagring",
+            "2": "Ingen vannmerker",
+            "3": "Prioritert support"
           },
-          "recommended": ""
+          "recommended": "Anbefalt"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "Enkel prissetting",
+    "title": "Velg din plan",
+    "subtitle": "HD-bilder uten komprimering. Start gratis.",
+    "monthly": "Månedlig",
+    "yearly": "Årlig",
+    "yearlyDiscount": "Spar 20%",
+    "perMonth": "/måned",
+    "perYear": "/år",
+    "currentPlan": "Nåværende plan",
+    "selectPlan": "Velg plan",
+    "upgrade": "Oppgrader",
+    "downgrade": "Nedgrader",
+    "popular": "Populær",
+    "equivalent": "dvs.",
+    "needHelp": "Trenger du hjelp?",
+    "priceNote": "Priser i NOK. Avslutt når som helst.",
+    "faqTitle": "FAQ",
+    "faq": {
+      "changePlan": {
+        "question": "Kan jeg bytte plan?",
+        "answer": "Ja, bytt når som helst. Fakturering justeres proporsjonalt."
+      },
+      "quality": {
+        "question": "Bevares kvaliteten på alle planer?",
+        "answer": "Ja, 100% originalkvalitet. Ingen komprimering."
+      },
+      "yearly": {
+        "question": "Hvordan fungerer årlig betaling?",
+        "answer": "Betal 12 måneder på forhånd og spar 20%."
+      },
+      "cancel": {
+        "question": "Hvis jeg avslutter?",
+        "answer": "Tilgang forblir aktiv til slutten av betalt periode, deretter Gratis-plan."
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "Gratis",
+        "description": "Perfekt for å komme i gang",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3 gallerier",
+          "20 MB lagring",
+          "7 dagers utløp",
+          "Grunnleggende support"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "Premium",
+        "description": "For aktive fotografer",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20 gallerier",
+          "500 MB lagring",
+          "30 dagers utløp",
+          "Prioritert support",
+          "Tilpasset merkevarebygging"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "Pro",
+        "description": "For profesjonelle",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "Ubegrensede gallerier",
+          "5 GB lagring",
+          "90 dagers utløp",
+          "24/7 support",
+          "Tilpasset merkevarebygging",
+          "Analyse"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "Innstillinger",
+    "subtitle": "Administrer kontoen og preferansene dine",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "Profil",
+      "name": "Navn",
+      "email": "E-post",
+      "save": "Lagre endringer",
+      "saved": "Profil oppdatert!",
+      "saveError": "Feil ved lagring av profil"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "Abonnement",
+      "currentPlan": "Nåværende plan",
+      "manage": "Administrer abonnement",
+      "upgrade": "Oppgrader plan",
+      "cancel": "Avslutt abonnement"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "Faresone",
+      "deleteAccount": "Slett konto",
+      "deleteWarning": "Denne handlingen er irreversibel. All din data vil bli permanent slettet."
+    },
+    "signOut": {
+      "title": "Logg ut",
+      "description": "Avslutt økten din",
+      "button": "Logg ut",
+      "signingOut": "Logger ut..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "Kontrollpanel",
+      "users": "Brukere",
+      "galleries": "Gallerier",
+      "subscriptions": "Abonnementer",
+      "analytics": "Analyse",
+      "auditLogs": "Revisjonslogger"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "Kontrollpanel",
+      "subtitle": "Oversikt over PikSend-plattformen",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "Brukere",
+        "usersSubtitle": "Registrerte kontoer",
+        "activeGalleries": "Aktive gallerier",
+        "totalGalleries": "{{count}} totalt",
+        "storage": "Brukt lagringsplass",
+        "storageSubtitle": "Totalt forbrukt plass",
+        "conversionRate": "Konverteringsrate",
+        "conversionSubtitle": "Betalende brukere"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "Brukere",
+      "subtitle": "Administrer plattformens brukere",
+      "search": "Søk brukere...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "Navn",
+        "email": "E-post",
+        "plan": "Plan",
+        "galleries": "Gallerier",
+        "storage": "Lagring",
+        "status": "Status",
+        "actions": "Handlinger",
+        "registration": "Registrering",
+        "currentPlan": "Nåværende plan",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "Aktiv",
+        "suspended": "Suspendert"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "Vis",
+        "suspend": "Suspender",
+        "reactivate": "Reaktiver",
+        "changePlan": "Endre plan"
+      },
+      "totalUsers": "totalt antall brukere",
+      "userReactivated": "Bruker reaktivert",
+      "userSuspended": "Bruker suspendert",
+      "planUpdated": "Brukerens plan oppdatert"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "Gallerier",
+      "subtitle": "Administrer alle gallerier",
+      "search": "Søk gallerier...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "Tittel",
+        "owner": "Eier",
+        "type": "Type",
+        "images": "Bilder",
+        "views": "Visninger",
+        "status": "Status",
+        "expires": "Utløper",
+        "actions": "Handlinger"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "Gjest",
+        "user": "Bruker",
+        "converted": "Konvertert"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "Aktiv",
+        "expired": "Utløpt",
+        "deactivated": "Deaktivert"
+      },
+      "totalGalleries": "totalt antall gallerier",
+      "galleryDeactivated": "Galleri deaktivert"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "Abonnementer",
+      "subtitle": "Administrer brukerabonnementer",
+      "totalSubscribers": "Totalt antall abonnenter",
+      "premiumCount": "Premium",
+      "proCount": "Pro",
+      "activeCount": "Aktive",
+      "upgraded": "Abonnement oppgradert",
+      "cancelled": "Abonnement avsluttet"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "Analyse",
+      "subtitle": "Plattformstatistikk og trender",
+      "newRegistrations": "Nye registreringer",
+      "galleriesCreated": "Opprettede gallerier",
+      "totalActivities": "Totale aktiviteter"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "Revisjonslogger",
+      "subtitle": "Systemaktivitetshistorikk",
+      "totalEntries": "Totalt antall oppføringer",
+      "modifications": "Endringer"
+    },
+    "header": {
+      "signOut": "Logg ut",
+      "signingOut": "Logger ut..."
+    },
+    "recentActivity": {
+      "title": "Nylig aktivitet"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "Autentisering kreves",
+      "message": "Du må være logget inn for å få tilgang til denne siden. Logg inn eller opprett en konto for å fortsette.",
+      "info": "PikSend lar deg opprette og dele sikre fotogallerier. Registrer deg gratis for å komme i gang!",
+      "signIn": "Logg inn",
+      "signUp": "Opprett en konto",
+      "home": "Tilbake til startsiden",
+      "possibleReasons": "Mulige årsaker:",
+      "reason1": "Økten din har utløpt",
+      "reason2": "Du er ikke logget inn",
+      "reason3": "Kontoen din har blitt suspendert"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Tilgang nektet",
+      "message": "Du har ikke tillatelse til å få tilgang til denne siden.",
+      "home": "Tilbake til startsiden",
+      "suggestions": "Forslag:",
+      "suggestion1": "Sjekk at du har riktige tillatelser",
+      "suggestion2": "Kontakt administratoren hvis du tror dette er en feil"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Siden ble ikke funnet",
+      "message": "Siden du leter etter finnes ikke eller har blitt flyttet.",
+      "home": "Tilbake til startsiden",
+      "suggestions": "Forslag",
+      "suggestion1": "Sjekk URL-stavingen",
+      "suggestion2": "Galleriet kan ha utløpt",
+      "suggestion3": "Lenken du fulgte kan være utdatert",
+      "previousPage": "Forrige side"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "Serverfeil",
+      "message": "Noe gikk galt på vår side. Prøv igjen senere.",
+      "retry": "Prøv igjen",
+      "home": "Tilbake til startsiden",
+      "possibleReasons": "Mulige årsaker:",
+      "reason1": "Midlertidig serveroverbelastning",
+      "reason2": "Vedlikehold pågår",
+      "reason3": "Uventet feil",
+      "retryLater": "Prøv igjen om noen minutter",
+      "problemPersists": "Problemet vedvarer?",
+      "contactSupport": "Kontakt support"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Tjenesten utilgjengelig",
+      "message": "Vi utfører for øyeblikket vedlikehold. Kom tilbake snart.",
+      "home": "Tilbake til startsiden",
+      "temporarilyUnavailable": "Tjenesten midlertidig utilgjengelig",
+      "autoRefresh": "Automatisk oppdatering",
+      "inSeconds": "om {{seconds}} sekunder",
+      "statusPage": "Følg vår tjenestestatus på"
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "Filen er for stor. Maksimalt {{size}}MB per bilde.",
+      "invalidFileType": "Ugyldig filtype. Last opp JPG, PNG eller WebP-bilder.",
+      "tooManyFiles": "For mange filer. Maksimalt {{count}} bilder for gjestegallerier.",
+      "noFiles": "Velg minst ett bilde å laste opp.",
+      "networkError": "Opplasting mislyktes. Sjekk tilkoblingen din og prøv igjen.",
+      "galleryCreationFailed": "Kunne ikke opprette galleri. Prøv igjen.",
+      "uploadFailed": "Kunne ikke laste opp bilde. Prøv igjen."
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "Betaling mislyktes. Prøv igjen.",
+      "declined": "Betaling avvist. Prøv en annen betalingsmetode.",
+      "sessionExpired": "Økten har utløpt. Prøv igjen.",
+      "checkoutFailed": "Kunne ikke starte kassen. Prøv igjen.",
+      "invalidAmount": "Ugyldig betalingsbeløp.",
+      "stripeError": "Betalingsbehandlingsfeil: {{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "Økten din har utløpt. Galleriene dine er kanskje ikke lenger tilgjengelige.",
+      "invalid": "Ugyldig økt. Oppdater siden.",
+      "creationFailed": "Kunne ikke opprette økt. Prøv igjen."
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "Galleri ikke funnet.",
+      "expired": "Dette galleriet har utløpt og er ikke lenger tilgjengelig.",
+      "accessDenied": "Du har ikke tilgang til dette galleriet.",
+      "migrationFailed": "Kunne ikke migrere gallerier til kontoen din. Kontakt support.",
+      "noLongerActive": "Dette galleriet er ikke lenger aktivt",
+      "incorrectPassword": "Feil passord"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "En uventet feil oppstod. Prøv igjen.",
+      "networkError": "Nettverksfeil. Sjekk tilkoblingen din.",
+      "retry": "Noe gikk galt. Prøv igjen.",
+      "validationFailed": "Validering mislyktes",
+      "invalidData": "Ugyldige data",
+      "invalidActionType": "Ugyldig handlingstype",
+      "invalidEntityType": "Ugyldig entitetstype",
+      "unauthorized": "Uautorisert",
+      "internalServerError": "Intern serverfeil",
+      "authenticationRequired": "Autentisering kreves",
+      "adminAccessRequired": "Administratortilgang kreves",
+      "updateError": "Feil under oppdatering",
+      "serverError": "Serverfeil",
+      "tooManyAttempts": "For mange forsøk. Prøv igjen senere."
+    },
+    "profile": {
+      "fetchFailed": "Kunne ikke hente profil",
+      "updateFailed": "Kunne ikke oppdatere profil",
+      "notFound": "Profil ikke funnet"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "HD-fotolevering for krevende skapere.",
+    "product": "Produkt",
+    "platform": "Plattform",
+    "company": "Selskap",
+    "legal": "Juridisk",
+    "officialContact": "Offisiell kontakt",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "Funksjoner",
+      "pricing": "Priser",
+      "help": "Hjelpesenter",
+      "contact": "Kontakt",
+      "terms": "Vilkår",
+      "privacy": "Personvern",
+      "mentions": "Juridisk informasjon"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "Nasjonal ID",
+      "taxNumber": "Skattenummer"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "Eksklusiv eiendom av",
+    "country": "Den demokratiske republikken Kongo",
+    "copyright": "© {{year}} PikSend. Alle rettigheter forbeholdt."
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "Velkommen til PikSend",
+      "description": "Den enkleste måten å dele bildene dine i originalkvalitet."
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "Last opp bildene dine",
+      "description": "Dra og slipp HD-bildene dine eller klikk for å velge filer."
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "Tilpass galleriet ditt",
+      "description": "Legg til en tittel og konfigurer delingsinnstillingene dine."
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "Del med kundene dine",
+      "description": "Få en unik lenke for å dele galleriet ditt umiddelbart."
     },
-    "skip": "",
-    "finish": ""
+    "skip": "Hopp over",
+    "finish": "Kom i gang"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "Mine gallerier",
+    "subtitle": "Gallerier opprettet under denne økten",
+    "createNew": "Opprett nytt",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "Ingen gallerier ennå",
+      "description": "Du har ikke opprettet noen gallerier under denne økten. Opprett ditt første galleri for å dele bildene dine.",
+      "cta": "Opprett mitt første galleri"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "Lagre lenkene dine!",
+      "description": "Disse galleriene er knyttet til nettleseren din. Hvis du sletter dataene dine eller bytter enhet, mister du tilgangen. Opprett en konto for å beholde dem for alltid."
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "Låst opp",
+      "expired": "Utløpt"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "Vil du beholde galleriene dine?",
+      "description": "Opprett en gratis konto for å få tilgang til galleriene dine fra hvilken som helst enhet, få mer lagring og låse opp premiumfunksjoner.",
+      "cta": "Opprett min konto"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – HD-fotolevering uten kvalitetstap",
+      "description": "Del bildene dine i originalkvalitet. Ingen komprimering, sikre gallerier, automatisk utløp."
+    },
+    "pricing": {
+      "title": "PikSend-priser - Fra gratis til Pro",
+      "description": "Start gratis med 3 gallerier. Oppgrader til Premium eller Pro for flere funksjoner."
+    },
+    "features": {
+      "title": "PikSend-funksjoner",
+      "description": "100% bevart kvalitet, sikre gallerier, automatisk utløp. Oppdag alle funksjoner."
+    },
+    "help": {
+      "title": "PikSend Hjelpesenter",
+      "description": "Guider, FAQ og teknisk support for å bruke PikSend."
+    },
+    "contact": {
+      "title": "Kontakt PikSend",
+      "description": "Har du et spørsmål? Teamet vårt er her for å hjelpe."
+    },
+    "auth": {
+      "title": "PikSend Innlogging",
+      "description": "Få tilgang til dine sikre fotogallerier."
+    },
+    "legal": {
+      "terms": {
+        "title": "Bruksvilkår - PikSend",
+        "description": "Les de generelle bruksvilkårene for PikSend."
+      },
+      "privacy": {
+        "title": "Personvernpolicy - PikSend",
+        "description": "Lær hvordan PikSend beskytter dine personopplysninger."
+      },
+      "cookies": {
+        "title": "Informasjonskapselpolicy - PikSend",
+        "description": "Informasjon om PikSends bruk av informasjonskapsler."
+      },
+      "mentions": {
+        "title": "Juridisk informasjon - PikSend",
+        "description": "Juridisk informasjon om PikSends utgiver."
+      }
+    },
+    "dashboard": {
+      "title": "Kontrollpanel | PikSend",
+      "description": "Administrer fotogalleriene dine"
+    },
+    "newGallery": {
+      "title": "Nytt galleri | PikSend",
+      "description": "Opprett et nytt sikkert fotogalleri"
+    },
+    "galleryDetails": {
+      "title": "Galleriinformasjon | PikSend",
+      "description": "Administrer fotogalleriet ditt"
+    },
+    "myGalleries": {
+      "title": "Mine gallerier | PikSend",
+      "description": "Finn galleriene dine opprettet som gjest"
+    },
+    "error401": {
+      "title": "Ikke autentisert - 401 | PikSend",
+      "description": "Logg inn for å få tilgang til denne siden."
+    },
+    "error403": {
+      "title": "Tilgang nektet - 403 | PikSend",
+      "description": "Du har ikke tillatelse til å få tilgang til denne ressursen."
+    },
+    "error500": {
+      "title": "Serverfeil - 500 | PikSend",
+      "description": "En intern serverfeil oppstod. Prøv igjen senere."
+    },
+    "error503": {
+      "title": "Tjenesten utilgjengelig - 503 | PikSend",
+      "description": "Tjenesten er midlertidig utilgjengelig for vedlikehold."
+    },
+    "pageNotFound": {
+      "title": "Siden ble ikke funnet",
+      "description": "Siden du leter etter finnes ikke."
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "Gallerigrense nådd",
+      "description": "Du har nådd det maksimale antallet gallerier for planen din."
+    },
+    "storageLimit": {
+      "title": "Utilstrekkelig lagringsplass",
+      "description": "Lagringsplassen din er full eller utilstrekkelig for denne operasjonen."
+    },
+    "imageLimit": {
+      "title": "Bildegrense nådd",
+      "description": "Dette galleriet har nådd det maksimale antallet bilder for planen din."
+    },
+    "fileSize": {
+      "title": "Filen er for stor",
+      "description": "Filstørrelsen overskrider grensen tillatt av planen din."
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "Galleri ikke funnet",
+      "galleryNotAccessible": "Dette galleriet er ikke lenger tilgjengelig",
+      "errorFetchingImages": "Feil ved henting av bilder",
+      "noImagesInGallery": "Ingen bilder i dette galleriet",
+      "errorCreatingArchive": "Feil ved opprettelse av arkiv",
+      "errorDownloading": "Feil ved nedlasting",
+      "tooManyAttempts": "For mange forsøk. Prøv igjen senere.",
+      "validationFailed": "Validering mislyktes",
+      "registrationFailed": "Registrering mislyktes",
+      "accountCreatedSuccess": "Konto opprettet",
+      "passwordResetSuccess": "Passord tilbakestilt",
+      "passwordResetEmailSent": "Hvis en konto finnes med denne e-postadressen, vil du motta en tilbakestillingslenke.",
+      "invalidData": "Ugyldige data",
+      "profileUpdateFailed": "Kunne ikke oppdatere profil",
+      "profileFetchFailed": "Kunne ikke hente profil",
+      "updateError": "Feil under oppdatering",
+      "serverError": "Serverfeil"
     }
   }
 }

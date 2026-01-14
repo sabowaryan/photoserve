@@ -16,7 +16,7 @@ export async function PATCH(request: Request) {
     const validatedData = updateProfileSchema.safeParse(body);
     if (!validatedData.success) {
       return NextResponse.json(
-        { error: "Invalid data", details: validatedData.error.issues },
+        { error: "api.errors.invalidData", code: "INVALID_DATA", details: validatedData.error.issues },
         { status: 400 }
       );
     }
@@ -37,7 +37,7 @@ export async function PATCH(request: Request) {
     if (error) {
       console.error("Error updating profile:", error);
       return NextResponse.json(
-        { error: "Failed to update profile" },
+        { error: "api.errors.profileUpdateFailed", code: "PROFILE_UPDATE_FAILED" },
         { status: 500 }
       );
     }
@@ -61,7 +61,7 @@ export async function GET() {
     if (error) {
       console.error("Error fetching profile:", error);
       return NextResponse.json(
-        { error: "Failed to fetch profile" },
+        { error: "api.errors.profileFetchFailed", code: "PROFILE_FETCH_FAILED" },
         { status: 500 }
       );
     }

@@ -5,98 +5,100 @@ import { useState } from 'react';
 import { Check, Crown, Zap, Sparkles, ArrowRight, HelpCircle } from 'lucide-react';
 import { PricingButton } from '@/components/pricing/pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
+import { useTranslation } from '@/lib/i18n/context';
 import { PLAN_PRICING, PLAN_LIMITS } from '@/config/plans';
-
-const PLANS = [
-  {
-    key: 'free' as const,
-    name: 'Gratuit',
-    description: 'Testez la livraison photos HD',
-    icon: Sparkles,
-    iconBg: 'bg-slate-100',
-    iconColor: 'text-slate-600',
-    popular: false,
-    cta: 'Commencer',
-  },
-  {
-    key: 'premium' as const,
-    name: 'Premium',
-    description: 'Pour photographes actifs',
-    icon: Crown,
-    iconBg: 'bg-amber-100',
-    iconColor: 'text-amber-600',
-    popular: true,
-    cta: 'Choisir',
-  },
-  {
-    key: 'pro' as const,
-    name: 'Pro',
-    description: 'Pour professionnels exigeants',
-    icon: Zap,
-    iconBg: 'bg-indigo-100',
-    iconColor: 'text-indigo-600',
-    popular: false,
-    cta: 'Choisir',
-  },
-];
-
-function getFeatures(planKey: 'free' | 'premium' | 'pro') {
-  const limits = PLAN_LIMITS[planKey];
-  const storage = limits.storage_limit_mb >= 1024 
-    ? `${limits.storage_limit_mb / 1024} Go` 
-    : `${limits.storage_limit_mb} Mo`;
-  
-  return [
-    { text: `${storage} stockage`, included: true },
-    { text: `${limits.max_galleries} galeries`, included: true },
-    { text: `${limits.max_images_per_gallery} photos/galerie`, included: true },
-    { text: `Expiration ${limits.max_expiration_days}j`, included: true },
-    { text: 'Qualité originale', included: true },
-    { text: 'Durée personnalisable', included: planKey !== 'free' },
-    { text: 'Support prioritaire', included: planKey === 'pro' },
-  ];
-}
-
-const FAQ_ITEMS = [
-  {
-    question: 'Puis-je changer de plan ?',
-    answer: 'Oui, changez à tout moment. La facturation est ajustée au prorata.',
-  },
-  {
-    question: 'Qualité préservée sur tous les plans ?',
-    answer: 'Oui, 100% de la qualité originale. Zéro compression.',
-  },
-  {
-    question: 'Comment fonctionne l\'annuel ?',
-    answer: 'Payez 12 mois d\'avance et économisez 20%.',
-  },
-  {
-    question: 'Si j\'annule ?',
-    answer: 'Accès actif jusqu\'à la fin de la période payée, puis plan Gratuit.',
-  },
-];
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
   const { plan: currentPlan } = useSubscription();
+  const { t } = useTranslation();
+
+  const PLANS = [
+    {
+      key: 'free' as const,
+      name: t('pricing.plans.free.name'),
+      description: t('common.testHdDelivery'),
+      icon: Sparkles,
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-600',
+      popular: false,
+      cta: t('common.getStarted'),
+    },
+    {
+      key: 'premium' as const,
+      name: t('pricing.plans.premium.name'),
+      description: t('common.forActivePhotographers'),
+      icon: Crown,
+      iconBg: 'bg-amber-100',
+      iconColor: 'text-amber-600',
+      popular: true,
+      cta: t('pricing.selectPlan'),
+    },
+    {
+      key: 'pro' as const,
+      name: t('pricing.plans.pro.name'),
+      description: t('common.forDemandingProfessionals'),
+      icon: Zap,
+      iconBg: 'bg-indigo-100',
+      iconColor: 'text-indigo-600',
+      popular: false,
+      cta: t('pricing.selectPlan'),
+    },
+  ];
+
+  function getFeatures(planKey: 'free' | 'premium' | 'pro') {
+    const limits = PLAN_LIMITS[planKey];
+    const storage = limits.storage_limit_mb >= 1024 
+      ? `${limits.storage_limit_mb / 1024} Go` 
+      : `${limits.storage_limit_mb} Mo`;
+    
+    return [
+      { text: `${storage} ${t('common.storage').toLowerCase()}`, included: true },
+      { text: `${limits.max_galleries} ${t('common.galleries').toLowerCase()}`, included: true },
+      { text: `${limits.max_images_per_gallery} ${t('common.photos').toLowerCase()}/${t('common.galleries').toLowerCase().slice(0, -1)}`, included: true },
+      { text: `${t('common.expiration')} ${limits.max_expiration_days}j`, included: true },
+      { text: t('common.originalQuality'), included: true },
+      { text: t('common.customizableDuration'), included: planKey !== 'free' },
+      { text: t('common.prioritySupport'), included: planKey === 'pro' },
+    ];
+  }
+
+  const FAQ_ITEMS = [
+    {
+      question: t('pricing.faq.changePlan.question'),
+      answer: t('pricing.faq.changePlan.answer'),
+    },
+    {
+      question: t('pricing.faq.quality.question'),
+      answer: t('pricing.faq.quality.answer'),
+    },
+    {
+      question: t('pricing.faq.yearly.question'),
+      answer: t('pricing.faq.yearly.answer'),
+    },
+    {
+      question: t('pricing.faq.cancel.question'),
+      answer: t('pricing.faq.cancel.answer'),
+    },
+  ];
 
   const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
     if (pricing.monthlyPrice === 0) return '$0';
     const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
-    return `$${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
+    return `${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
   };
 
   const getPeriod = (planKey: 'free' | 'premium' | 'pro') => {
-    if (PLAN_PRICING[planKey].monthlyPrice === 0) return '/mois';
-    return isYearly ? '/an' : '/mois';
+    if (PLAN_PRICING[planKey].monthlyPrice === 0) return t('pricing.perMonth');
+    return isYearly ? t('pricing.perYear') : t('pricing.perMonth');
   };
 
   const getMonthlyEquivalent = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
     if (!isYearly || pricing.monthlyPrice === 0) return null;
     const monthlyEquivalent = pricing.yearlyPrice / 12;
-    return `$${monthlyEquivalent.toFixed(2)}/mois`;
+    return `${monthlyEquivalent.toFixed(2)}${t('pricing.perMonth')}`;
   };
 
   const getSavings = (planKey: 'free' | 'premium' | 'pro') => {
@@ -118,13 +120,13 @@ export default function PricingPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold mb-4">
             <Sparkles size={12} />
-            Tarifs transparents
+            {t('pricing.badge')}
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-            Choisissez votre plan
+            {t('pricing.title')}
           </h1>
           <p className="text-slate-500 text-sm max-w-lg mx-auto mb-5">
-            Photos HD sans compression. Commencez gratuitement.
+            {t('pricing.subtitle')}
           </p>
 
           {/* Billing Toggle */}
@@ -137,7 +139,7 @@ export default function PricingPage() {
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
-              Mensuel
+              {t('pricing.monthly')}
             </button>
             <button
               onClick={() => setIsYearly(true)}
@@ -147,7 +149,7 @@ export default function PricingPage() {
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
-              Annuel
+              {t('pricing.yearly')}
               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
                 isYearly ? 'bg-white/20' : 'bg-emerald-100 text-emerald-700'
               }`}>
@@ -178,7 +180,7 @@ export default function PricingPage() {
                 {plan.popular && (
                   <div className="absolute -top-px left-1/2 -translate-x-1/2">
                     <div className="px-2.5 py-0.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-[10px] font-bold rounded-b-lg">
-                      Populaire
+                      {t('pricing.popular')}
                     </div>
                   </div>
                 )}
@@ -197,10 +199,10 @@ export default function PricingPage() {
                     <span className="text-slate-500 text-sm">{getPeriod(plan.key)}</span>
                   </div>
                   {monthlyEquivalent && (
-                    <p className="text-xs text-slate-400">soit {monthlyEquivalent}</p>
+                    <p className="text-xs text-slate-400">{t('pricing.equivalent')} {monthlyEquivalent}</p>
                   )}
                   {savings && (
-                    <p className="text-[10px] text-emerald-600 font-medium">-${savings}/an</p>
+                    <p className="text-[10px] text-emerald-600 font-medium">-${savings}/{t('pricing.perYear').replace('/', '')}</p>
                   )}
                 </div>
 
@@ -247,7 +249,7 @@ export default function PricingPage() {
             <div className="w-8 h-8 mx-auto bg-indigo-100 rounded-xl flex items-center justify-center mb-2">
               <HelpCircle size={16} className="text-indigo-600" />
             </div>
-            <h2 className="text-lg font-bold text-slate-900">FAQ</h2>
+            <h2 className="text-lg font-bold text-slate-900">{t('pricing.faqTitle')}</h2>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
@@ -266,13 +268,13 @@ export default function PricingPage() {
         {/* Footer Note */}
         <div className="text-center mt-8 space-y-1">
           <p className="text-slate-500 text-xs">
-            Besoin d&apos;aide ?{' '}
+            {t('pricing.needHelp')}{' '}
             <Link href="/contact" className="text-indigo-600 font-medium hover:underline inline-flex items-center gap-0.5">
-              Contactez-nous <ArrowRight size={10} />
+              {t('common.contactUs')} <ArrowRight size={10} />
             </Link>
           </p>
           <p className="text-slate-400 text-[10px]">
-            Prix en USD. Annulation possible à tout moment.
+            {t('pricing.priceNote')}
           </p>
         </div>
       </div>

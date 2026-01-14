@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!validatedFields.success) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: 'api.errors.validationFailed',
           code: 'VALIDATION_ERROR',
           details: validatedFields.error.issues,
         },
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         {
-          error: result.error || 'Registration failed',
+          error: result.error || 'api.errors.registrationFailed',
           code: 'REGISTRATION_FAILED',
         },
         { status: 400 }
@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Compte créé avec succès',
+        message: 'api.errors.accountCreatedSuccess',
+        messageKey: 'api.errors.accountCreatedSuccess',
         user: {
           id: result.user!.id,
           email: result.user!.email,

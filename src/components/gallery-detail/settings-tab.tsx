@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {  Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Crown } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface DurationOption {
   value: number;
@@ -36,6 +37,7 @@ export function SettingsTab({
   saveSuccess,
   onSave
 }: SettingsTabProps) {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -48,7 +50,7 @@ export function SettingsTab({
             <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-violet-500 rounded-xl text-white shadow-lg">
               <Type size={18} />
             </div>
-            <span className="font-bold text-slate-900">Titre de la galerie</span>
+            <span className="font-bold text-slate-900">{t('common.galleryTitle')}</span>
           </div>
           
           <input 
@@ -56,7 +58,7 @@ export function SettingsTab({
             className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
             value={title} 
             onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="Nom de votre galerie"
+            placeholder={t('common.galleryName')}
           />
         </div>
 
@@ -67,8 +69,8 @@ export function SettingsTab({
               <Lock size={18} />
             </div>
             <div>
-              <span className="font-bold text-slate-900">Protection par mot de passe</span>
-              <p className="text-xs text-slate-500 mt-0.5">Sécurisez l&apos;accès à votre galerie</p>
+              <span className="font-bold text-slate-900">{t('common.passwordProtection')}</span>
+              <p className="text-xs text-slate-500 mt-0.5">{t('common.secureGalleryAccess')}</p>
             </div>
           </div>
           
@@ -78,7 +80,7 @@ export function SettingsTab({
               className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none pr-12 font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all" 
               value={password} 
               onChange={(e) => onPasswordChange(e.target.value)}
-              placeholder="Nouveau mot de passe"
+              placeholder={t('common.newPassword')}
             />
             <button 
               type="button"
@@ -100,8 +102,8 @@ export function SettingsTab({
               <Clock size={18} />
             </div>
             <div>
-              <span className="font-bold text-slate-900">Durée d&apos;expiration</span>
-              <p className="text-xs text-slate-500 mt-0.5">Définissez la validité de la galerie</p>
+              <span className="font-bold text-slate-900">{t('common.expirationDuration')}</span>
+              <p className="text-xs text-slate-500 mt-0.5">{t('common.setGalleryValidity')}</p>
             </div>
           </div>
           
@@ -127,7 +129,7 @@ export function SettingsTab({
               className="mt-4 flex items-center gap-2 p-3 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-xl text-sm font-bold text-indigo-600 hover:from-indigo-100 hover:to-violet-100 transition-all"
             >
               <Crown size={16} />
-              Passez à Premium pour modifier la durée
+              {t('pricing.upgrade')} {t('dashboard.plans.premium')}
             </Link>
           )}
         </div>
@@ -142,7 +144,7 @@ export function SettingsTab({
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles size={16} className="text-amber-400" />
-              <span className="text-sm font-bold text-white/70">Enregistrer les modifications</span>
+              <span className="text-sm font-bold text-white/70">{t('common.saveChanges')}</span>
             </div>
             
             <button 
@@ -157,17 +159,17 @@ export function SettingsTab({
               {isUpdating ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  Mise à jour...
+                  {t('common.loading')}
                 </>
               ) : saveSuccess ? (
                 <>
                   <CheckCircle2 size={18} />
-                  Sauvegardé !
+                  {t('settings.profile.saved')}
                 </>
               ) : (
                 <>
                   <Save size={18} />
-                  Appliquer les changements
+                  {t('common.save')}
                 </>
               )}
             </button>

@@ -74,8 +74,9 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                 </span>
               </div>
               
-              {/* Main Headline */}
+              {/* Main Headline - H1 with primary SEO keyword */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 delay-100">
+                <span className="sr-only">Professional Photo Delivery Galleries — </span>
                 {t('landing.title')}{' '}
                 <span className="relative inline-block">
                   <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
@@ -116,15 +117,15 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 animate-in fade-in slide-in-from-bottom-4 delay-500">
                 <div className="flex items-center gap-1.5 text-slate-500">
                   <Check size={14} className="text-emerald-500" />
-                  <span className="text-[10px] font-bold">Zéro compression</span>
+                  <span className="text-[10px] font-bold">{t('common.zeroCompression')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-500">
                   <Shield size={14} className="text-indigo-500" />
-                  <span className="text-[10px] font-bold">100% sécurisé</span>
+                  <span className="text-[10px] font-bold">{t('common.fullySecure')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-500">
                   <Zap size={14} className="text-amber-500" />
-                  <span className="text-[10px] font-bold">Prêt en 2 min</span>
+                  <span className="text-[10px] font-bold">{t('common.readyIn2Min')}</span>
                 </div>
               </div>
             </div>
@@ -141,13 +142,13 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                         <ImageIcon size={14} />
                       </div>
                       <div>
-                        <p className="text-xs font-black text-slate-900">Séance Photo Mariage</p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">24 photos • HD</p>
+                        <p className="text-xs font-black text-slate-900">{t('common.exampleWeddingSession')}</p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{t('common.examplePhotosHd')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-[8px] font-black uppercase tracking-wider">Active</span>
+                      <span className="text-[8px] font-black uppercase tracking-wider">{t('common.active')}</span>
                     </div>
                   </div>
                   
@@ -183,12 +184,12 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                     <div className="flex items-center gap-3">
                       <div className="text-center">
                         <p className="text-sm font-black text-slate-900">847</p>
-                        <p className="text-[8px] font-bold text-slate-400 uppercase">Vues</p>
+                        <p className="text-[8px] font-bold text-slate-400 uppercase">{t('common.views')}</p>
                       </div>
                       <div className="w-px h-6 bg-slate-200" />
                       <div className="text-center">
                         <p className="text-sm font-black text-slate-900">156</p>
-                        <p className="text-[8px] font-bold text-slate-400 uppercase">Downloads</p>
+                        <p className="text-[8px] font-bold text-slate-400 uppercase">{t('common.downloads')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-0.5">
@@ -206,8 +207,8 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                       <Check size={12} className="text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-slate-900">Qualité HD</p>
-                      <p className="text-[8px] text-slate-400 font-bold">0% compression</p>
+                      <p className="text-[10px] font-black text-slate-900">{t('common.hdQuality')}</p>
+                      <p className="text-[8px] text-slate-400 font-bold">{t('common.noCompression')}</p>
                     </div>
                   </div>
                 </div>
@@ -216,8 +217,8 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                   <div className="flex items-center gap-1.5">
                     <Zap size={14} />
                     <div>
-                      <p className="text-[10px] font-black">Livraison instantanée</p>
-                      <p className="text-[8px] text-white/70 font-bold">Lien unique sécurisé</p>
+                      <p className="text-[10px] font-black">{t('common.instantDelivery')}</p>
+                      <p className="text-[8px] text-white/70 font-bold">{t('common.secureUniqueLink')}</p>
                     </div>
                   </div>
                 </div>
@@ -292,21 +293,37 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
         </div>
       </section>
 
-      {/* PROBLEM SECTION */}
-      <section className="py-12 md:py-16 bg-slate-900 text-white relative overflow-hidden">
+      {/* PROBLEM SECTION - SEO: "Don't let an algorithm destroy your pixels" */}
+      <section className="py-10 md:py-14 bg-gradient-to-b from-slate-900 to-slate-800 text-white relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-rose-500/10 rounded-full blur-[80px]" />
+          <div className="absolute bottom-0 right-1/4 w-[150px] h-[150px] bg-indigo-500/10 rounded-full blur-[60px]" />
+        </div>
+        
         <div className="container mx-auto px-4 max-w-5xl relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12">
-            <div className="lg:w-1/2">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[9px] font-black uppercase tracking-widest mb-3">
-                <AlertTriangle size={10} /> {t('landing.problem.badge')}
+          <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-10">
+            {/* Left Column - Text Content */}
+            <div className="lg:w-1/2 text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[8px] font-black uppercase tracking-widest mb-3">
+                <AlertTriangle size={9} />
+                <span>{t('landing.problem.badge')}</span>
               </div>
-              <h2 className="text-2xl md:text-4xl font-black mb-4 leading-[1.1]">
+              
+              {/* H2 - SEO keyword: WhatsApp compresses photos */}
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 leading-[1.15] tracking-tight">
                 {t('landing.problem.title')}{' '}
-                <span className="text-rose-500 underline decoration-rose-500/30">
+                <span className="relative inline-block text-rose-400">
                   {t('landing.problem.titleHighlight')}
+                  <svg className="absolute -bottom-0.5 left-0 w-full h-1.5 text-rose-500/30" viewBox="0 0 200 8" preserveAspectRatio="none">
+                    <path d="M0,6 Q50,0 100,6 T200,6" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                  </svg>
                 </span>
               </h2>
-              <div className="space-y-3 text-slate-400 font-medium text-xs md:text-sm leading-relaxed">
+              
+              {/* Paragraphs */}
+              <div className="space-y-2.5 text-slate-400 font-medium text-[11px] md:text-xs leading-relaxed max-w-md mx-auto lg:mx-0">
                 <p>
                   {t('landing.problem.paragraph1')}{' '}
                   <span className="text-white font-bold">{t('landing.problem.paragraph1Highlight')}</span>
@@ -322,30 +339,34 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
               </div>
             </div>
             
-            <div className="lg:w-1/2 w-full">
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 md:p-6 shadow-xl space-y-4">
-                <div className="bg-indigo-600/10 border border-indigo-500/30 p-4 md:p-5 rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold text-indigo-400">{t('landing.problem.comparison.original')}</p>
-                    <TrendingUp size={16} className="text-indigo-400" />
+            {/* Right Column - Comparison Card */}
+            <div className="lg:w-1/2 w-full max-w-sm mx-auto lg:max-w-none">
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-5 shadow-lg space-y-3">
+                {/* PikSend - Original Quality */}
+                <div className="bg-indigo-600/10 border border-indigo-500/20 p-3 md:p-4 rounded-lg group hover:bg-indigo-600/15 transition-colors">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-wider">{t('landing.problem.comparison.original')}</p>
+                    <TrendingUp size={14} className="text-indigo-400" />
                   </div>
-                  <p className="text-lg md:text-xl font-black text-white tracking-tight">{t('landing.problem.comparison.originalSpec')}</p>
-                  <p className="text-[9px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
+                  <p className="text-base md:text-lg font-black text-white tracking-tight">{t('landing.problem.comparison.originalSpec')}</p>
+                  <p className="text-[8px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
                     {t('landing.problem.comparison.originalDesc')}
                   </p>
                 </div>
                 
+                {/* Divider */}
                 <div className="flex justify-center">
-                  <div className="w-px h-6 bg-slate-700/50" />
+                  <div className="w-px h-4 bg-slate-700/50" />
                 </div>
                 
-                <div className="bg-rose-600/10 border border-rose-500/30 p-4 md:p-5 rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold text-rose-400">{t('landing.problem.comparison.classic')}</p>
-                    <Minus size={16} className="text-rose-400" />
+                {/* WhatsApp/WeTransfer - Compressed */}
+                <div className="bg-rose-600/10 border border-rose-500/20 p-3 md:p-4 rounded-lg group hover:bg-rose-600/15 transition-colors">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[9px] font-bold text-rose-400 uppercase tracking-wider">{t('landing.problem.comparison.classic')}</p>
+                    <Minus size={14} className="text-rose-400" />
                   </div>
-                  <p className="text-lg md:text-xl font-black text-white tracking-tight opacity-50">{t('landing.problem.comparison.classicSpec')}</p>
-                  <p className="text-[9px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
+                  <p className="text-base md:text-lg font-black text-white tracking-tight opacity-50">{t('landing.problem.comparison.classicSpec')}</p>
+                  <p className="text-[8px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
                     {t('landing.problem.comparison.classicDesc')}
                   </p>
                 </div>

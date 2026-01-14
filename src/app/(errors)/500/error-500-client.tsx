@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import { ServerCrash, RefreshCw, Home, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function Error500Client() {
+  const { t } = useTranslation();
+  
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -27,11 +30,10 @@ export default function Error500Client() {
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
-            Erreur interne du serveur
+            {t('errors.500.title')}
           </h2>
           <p className="text-base text-muted-foreground">
-            Nous rencontrons des difficultés techniques. 
-            Notre équipe a été notifiée et travaille à résoudre le problème.
+            {t('errors.500.message')}
           </p>
         </div>
 
@@ -39,10 +41,10 @@ export default function Error500Client() {
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 space-y-2">
           <div className="flex items-center justify-center gap-2">
             <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-destructive">Service temporairement indisponible</span>
+            <span className="text-sm font-medium text-destructive">{t('errors.503.temporarilyUnavailable')}</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Veuillez réessayer dans quelques minutes
+            {t('errors.500.retryLater')}
           </p>
         </div>
 
@@ -50,12 +52,12 @@ export default function Error500Client() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button onClick={handleRefresh} size="sm" className="gap-2">
             <RefreshCw className="w-4 h-4" />
-            Réessayer
+            {t('errors.500.retry')}
           </Button>
           <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
+              {t('errors.500.home')}
             </Link>
           </Button>
         </div>
@@ -63,12 +65,12 @@ export default function Error500Client() {
         {/* Support */}
         <div className="pt-3 border-t border-border">
           <p className="text-sm text-muted-foreground mb-2">
-            Le problème persiste ?
+            {t('errors.500.problemPersists')}
           </p>
           <Button variant="ghost" size="sm" asChild className="gap-2">
             <a href="mailto:support@piksend.com">
               <Mail className="w-3.5 h-3.5" />
-              Contacter le support
+              {t('errors.500.contactSupport')}
             </a>
           </Button>
         </div>

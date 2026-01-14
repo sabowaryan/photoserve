@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "加载中...",
+    "error": "发生错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "close": "关闭",
+    "open": "打开",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "view": "查看",
+    "download": "下载",
+    "upload": "上传",
+    "share": "分享",
+    "copy": "复制",
+    "copied": "已复制！",
+    "yes": "是",
+    "no": "否",
+    "or": "或",
+    "and": "和",
+    "all": "全部",
+    "none": "无",
+    "required": "必填",
+    "optional": "可选",
+    "language": "语言",
+    "account": "账户",
+    "menu": "菜单",
+    "actions": "操作",
+    "active": "活跃",
+    "inactive": "未激活",
+    "expired": "已过期",
+    "status": "状态",
+    "type": "类型",
+    "allTypes": "所有类型",
+    "guest": "访客",
+    "converted": "已转换",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "filters": "筛选器",
+    "shortcuts": "快捷方式：",
+    "from": "从",
+    "to": "到",
+    "days7": "7天",
+    "days30": "30天",
+    "days90": "90天",
+    "last7Days": "最近7天",
+    "last30Days": "最近30天",
+    "last90Days": "最近90天",
+    "thisYear": "今年",
+    "today": "今天",
+    "views": "浏览量",
+    "images": "图片",
+    "storage": "存储空间",
+    "expiration": "过期",
+    "creation": "创建",
+    "galleries": "相册",
+    "totalViews": "总浏览量",
+    "offer": "套餐",
+    "searchPlaceholder": "搜索...",
+    "newest": "最新",
+    "oldest": "最早",
+    "mostViews": "浏览最多",
+    "leastViews": "浏览最少",
+    "expiresLast": "最晚过期",
+    "expiresSoon": "即将过期",
+    "free": "免费",
+    "newGallery": "新建相册",
+    "galleryLimitReached": "已达相册上限",
+    "insufficientStorage": "存储空间不足",
+    "upgradeToHigherPlan": "升级到更高套餐以继续",
+    "dashboard": "控制台",
+    "settings": "设置",
+    "signIn": "登录",
+    "signOut": "退出",
+    "signingOut": "正在退出...",
+    "getStarted": "开始使用",
+    "send": "发送",
+    "name": "姓名",
+    "email": "邮箱",
+    "subject": "主题",
+    "message": "消息",
+    "yourName": "您的姓名",
+    "yourEmail": "your@email.com",
+    "messageSubject": "消息主题",
+    "describeRequest": "描述您的请求...",
+    "messageSent": "消息已发送！",
+    "weWillReply24h": "我们将在24-48小时内回复。",
+    "weWillReplyShortly": "我们将尽快回复。",
+    "responseTime": "响应时间",
+    "businessHours24to48": "24至48个工作小时",
+    "location": "位置",
+    "contactUs": "联系我们",
+    "generalQuestions": "一般问题",
+    "technicalIssues": "技术问题",
+    "support": "支持",
+    "help": "帮助",
+    "faqAndGuides": "常见问题和指南",
+    "helpCenter": "帮助中心",
+    "findAnswers": "查找问题答案",
+    "sendUsMessage": "给我们留言",
+    "terms": "条款",
+    "termsOfUse": "使用条款",
+    "privacyPolicy": "隐私政策",
+    "cookiePolicy": "Cookie政策",
+    "legalNotice": "法律声明",
+    "features": "功能",
+    "pricing": "定价",
+    "zeroCompression": "零压缩",
+    "fullySecure": "密码保护",
+    "readyIn2Min": "30秒设置",
+    "hdQuality": "原始品质",
+    "noCompression": "零压缩",
+    "instantDelivery": "专业交付",
+    "secureUniqueLink": "零摩擦访问",
+    "exampleWeddingSession": "婚礼摄影",
+    "examplePhotosHd": "24张照片 • 高清",
+    "downloads": "下载",
+    "info": "信息",
+    "security": "安全",
+    "photos": "照片",
+    "exampleTitle": "例如：小明和小红的婚礼",
+    "generateTitle": "生成标题",
+    "passwordProtection": "密码保护",
+    "onlyPeopleWithPassword": "只有拥有密码的人才能访问您的相册",
+    "enterPassword": "输入密码",
+    "expectedStorage": "预计存储空间",
+    "expirationDuration": "有效期",
+    "setGalleryValidity": "设置相册有效期",
+    "saveChanges": "保存更改",
+    "galleryTitle": "相册标题",
+    "galleryName": "您的相册名称",
+    "secureGalleryAccess": "保护相册访问",
+    "newPassword": "新密码",
+    "day1": "1天",
+    "days3": "3天",
+    "days7Full": "7天",
+    "days14": "14天",
+    "days30Full": "30天",
+    "days60": "60天",
+    "days90Full": "90天",
+    "days180": "180天",
+    "year1": "1年",
+    "galleryDetails": "相册详情",
+    "manageYourGallery": "管理您的照片相册",
+    "guestSessionId": "访客会话ID",
+    "paymentType": "支付类型：",
+    "unlocked": "已解锁：",
+    "createdAsGuest": "以访客身份创建",
+    "paymentCompleted": "支付完成",
+    "convertedToUserAccount": "已转换为用户账户",
+    "noUserAccount": "无用户账户",
+    "recentActivity": "最近活动",
+    "upgradeLevel": "升级到下一级",
+    "quickHelp": "快速帮助",
+    "myGalleries": "我的相册",
+    "myProfile": "我的资料",
+    "accountInfo": "账户信息",
+    "manageAccountAccess": "管理账户访问",
+    "emailAndPassword": "邮箱和密码",
+    "loginMethod": "登录方式",
+    "subscription": "订阅",
+    "choosePlanForNeeds": "选择适合您需求的套餐",
+    "cloudinaryHdStripe": "Cloudinary高清基础设施 • 安全的Stripe支付",
+    "discoverPiksend": "了解PikSend",
+    "forActivePhotographers": "适合活跃的摄影师",
+    "forProfessionals": "适合专业人士",
+    "forDemandingProfessionals": "适合要求严格的专业人士",
+    "testHdDelivery": "测试高清照片交付",
+    "originalQuality": "原始品质",
+    "customizableDuration": "可自定义时长",
+    "prioritySupport": "优先支持",
+    "linkExpired": "链接已过期",
+    "linkNoLongerValid": "此链接已失效",
+    "atLeast6Characters": "至少6个字符",
+    "confirmYourPassword": "确认您的密码",
+    "reset": "重置",
+    "passwordMinLength": "密码至少需要6个字符",
+    "hdPhotoSharing": "高清照片分享",
+    "google": "Google",
+    "users": "用户",
+    "registeredAccounts": "注册账户",
+    "activeGalleries": "活跃相册",
+    "storageUsed": "已用存储空间",
+    "totalSpaceConsumed": "总使用空间",
+    "conversionRate": "转化率",
+    "payingUsers": "付费用户",
+    "userGrowth": "用户增长",
+    "newUsersPerDay": "每日新用户",
+    "storageEvolution": "存储空间变化",
+    "totalStorageUsedMb": "总使用存储空间（MB）",
+    "subscriptionConversions": "订阅转化",
+    "planUpgradesInPeriod": "期间内套餐升级",
+    "searchByTitleOrSlug": "按标题或链接搜索...",
+    "searchByEmailOrName": "按邮箱或姓名搜索...",
+    "allPlans": "所有套餐",
+    "allAdmins": "所有管理员",
+    "allActions": "所有操作",
+    "suspended": "已暂停",
+    "suspendUser": "暂停用户",
+    "reactivateUser": "重新激活用户",
+    "exampleViolation": "例如：违反服务条款",
+    "analytics": "分析",
+    "subscriptions": "订阅",
+    "auditLog": "审计日志",
+    "galleryNotFound": "未找到相册",
+    "galleryNotAccessible": "此相册已无法访问",
+    "errorFetchingImages": "获取图片时出错",
+    "noImagesInGallery": "此相册中没有图片",
+    "errorCreatingArchive": "创建压缩包时出错",
+    "errorDownloading": "下载时出错",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "首页",
+    "features": "功能",
+    "pricing": "定价",
+    "help": "帮助",
+    "contact": "联系",
+    "dashboard": "控制台",
+    "settings": "设置",
+    "signIn": "登录",
+    "signOut": "退出",
+    "getStarted": "开始使用",
+    "menu": "菜单",
+    "contactUs": "联系我们"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "专业照片交付相册",
+    "title": "您的作品是高端的。",
+    "titleHighlight": "您的交付也应如此。",
+    "subtitle": "专业照片交付相册，",
+    "subtitleHighlight": "零压缩。",
+    "subtitleEnd": "原始品质，零摩擦，访客无需账户。",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "创建我的相册",
+      "secondary": "了解工作原理"
     },
-    "tagline": "",
+    "tagline": "零压缩 • 原始品质 • 零摩擦",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "摄影师",
+      "galleries": "已交付相册",
+      "photos": "原始品质",
+      "satisfaction": "满意度"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "别让算法破坏您的像素",
+      "title": "WhatsApp压缩您的照片",
+      "titleHighlight": "高达70%。",
+      "paragraph1": "您花费数小时完善每一个细节。您的照片已准备好专业交付。",
+      "paragraph1Highlight": "然后到了分享的时刻。",
+      "paragraph2": "WhatsApp、WeTransfer、Google Drive——它们都会损害您的作品。压缩、盲目ZIP、'请求访问'按钮。",
+      "paragraph2Highlight": "您的客户值得更好的。",
+      "paragraph3": "专业照片交付相册应该保留",
+      "paragraph3Highlight": "原始品质，",
+      "paragraph3End": "而不是破坏它。",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — 零压缩",
+        "originalSpec": "2400万像素 • 6000×4000px",
+        "originalDesc": "原始品质保留，专业相册",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "压缩、盲目ZIP、无预览"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "专业照片交付",
+      "title": "优雅的桥梁。",
+      "subtitle": "WeTransfer的简洁与工作室相册的优雅相遇。",
+      "subtitleHighlight": "原始品质，零摩擦。",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "零压缩",
+          "title": "原始品质",
+          "desc": "别让算法破坏您的像素。每张照片都按您导出的原样交付。"
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "零摩擦",
+          "title": "无需账户",
+          "desc": "没有'请求访问'按钮。客户无需注册。分享链接，即刻访问。"
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30秒",
+          "title": "专业相册",
+          "desc": "30秒创建专业相册，而非30分钟。可视预览，而非盲目ZIP文件。"
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "专业照片交付",
+      "titleHighlight": "相册等待着您。",
+      "subtitle": "加入500多位向客户交付原始品质的摄影师。零压缩，零摩擦。",
+      "button": "创建我的免费相册",
+      "note": "无需信用卡 • 零压缩 • 原始品质"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "创作者喜爱的照片分享平台。",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "登录",
+      "signUp": "注册"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "姓名",
+      "namePlaceholder": "张三",
+      "email": "邮箱地址",
+      "emailPlaceholder": "your@email.com",
+      "password": "密码",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "确认密码",
+      "forgotPassword": "忘记密码？",
+      "rememberMe": "记住我",
+      "agreeTerms": "我同意",
+      "termsLink": "服务条款",
+      "andThe": "和",
+      "privacyLink": "隐私政策"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "安全性",
+      "weak": "弱",
+      "medium": "中等",
+      "good": "良好",
+      "excellent": "优秀"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "登录",
+      "signUp": "创建账户",
+      "google": "使用Google登录"
     },
-    "divider": "",
+    "divider": "快速访问",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "邮箱无效",
+      "passwordTooShort": "密码至少需要6个字符",
+      "passwordMismatch": "密码不匹配",
+      "nameRequired": "请输入您的姓名。",
+      "termsRequired": "您必须接受服务条款。",
+      "invalidCredentials": "邮箱或密码无效",
+      "signupFailed": "注册时出错",
+      "googleFailed": "Google登录出错",
+      "accountExists": "此邮箱已存在账户。请使用密码登录。",
+      "oauthError": "Google登录出错。请重试。",
+      "genericError": "发生错误",
+      "accountCreationError": "创建账户时出错",
+      "profileCreationError": "创建资料时出错",
+      "resetLinkInvalid": "重置链接无效或已过期",
+      "passwordUpdateError": "更新密码时出错",
+      "resetEmailError": "发送重置邮件时出错"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "账户已创建！您现在可以登录了。",
+      "passwordReset": "密码重置成功！"
+    },
+    "forgotPassword": {
+      "title": "忘记密码",
+      "subtitle": "输入您的邮箱以接收重置链接",
+      "sendLink": "发送重置链接",
+      "emailSentTo": "邮件已发送至：",
+      "backToLogin": "返回登录"
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "subtitle": "输入您的新密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认密码",
+      "resetButton": "重置密码"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "控制台",
+    "greeting": "您好，",
+    "subtitle": "这是您的业绩概览和安全相册管理。",
+    "newGallery": "新建相册",
+    "quotaReached": "已达配额",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "当前套餐",
+      "storage": "存储空间",
+      "galleries": "相册",
+      "totalViews": "总浏览量",
+      "usage": "使用量",
+      "volume": "容量",
+      "vsLastMonth": "对比上月{{count}}"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "免费",
+      "premium": "高级",
+      "pro": "专业"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "相册",
+      "search": "搜索相册...",
+      "noResults": "未找到相册",
+      "noResultsQuery": "没有\"{{query}}\"的结果",
+      "emptyState": "从创建您的第一个照片相册开始。",
+      "createFirst": "创建我的第一个相册"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "最新",
+      "oldest": "最早",
+      "mostViews": "浏览最多",
+      "leastViews": "浏览最少",
+      "expiresLast": "最晚过期",
+      "expiresSoon": "即将过期"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "最近活动",
+      "galleryCreated": "相册\"{{title}}\"已创建"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "创建相册",
+      "titleLabel": "相册标题",
+      "titlePlaceholder": "我的照片相册",
+      "uploadLabel": "上传照片",
+      "uploadHint": "拖放或点击选择",
+      "maxFiles": "最多{{count}}张照片",
+      "maxSize": "每张图片最大{{size}}MB",
+      "allowedTypes": "支持JPG、PNG、WebP",
+      "creating": "创建中...",
+      "submit": "创建相册"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "浏览量",
+      "images": "图片",
+      "expires": "过期",
+      "expired": "已过期",
+      "active": "活跃",
+      "inactive": "未激活",
+      "shareLink": "分享链接",
+      "copyLink": "复制链接",
+      "linkCopied": "链接已复制！",
+      "download": "全部下载",
+      "delete": "删除相册",
+      "settings": "设置",
+      "content": "内容"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "全部下载",
+      "downloadSelected": "下载选中",
+      "selectAll": "全选",
+      "deselectAll": "取消全选",
+      "passwordRequired": "需要密码",
+      "passwordPlaceholder": "输入密码",
+      "passwordSubmit": "访问相册",
+      "passwordError": "密码错误",
+      "expired": "此相册已过期",
+      "expiredMessage": "您查找的相册已不可用。"
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "免费相册",
+      "expiresIn": "{{hours}}小时后过期"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "由以下提供支持",
+      "tagline": "为要求严格的创作者提供高清照片交付",
+      "creatorPrompt": "您是此相册的创建者吗？",
+      "creatorDescription": "访问您的控制台以管理分享和订阅。",
+      "accessDashboard": "访问我的控制台",
+      "createGallery": "创建您的相册",
+      "createDescription": "以原始品质分享您的照片，无压缩。",
+      "learnMore": "了解更多",
+      "photos": "照片",
+      "expiresOn": "过期日期"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "相册已解锁！",
+      "subtitle": "您的支付已成功",
+      "benefitsTitle": "您将获得",
+      "benefit1": "水印已移除",
+      "benefit2": "延长至{days}天",
+      "benefit3": "高清下载已启用",
+      "createAccountTitle": "想要管理您的相册吗？",
+      "createAccountDesc": "创建免费账户以访问控制台、跟踪浏览量并管理相册。",
+      "createAccountBtn": "创建我的账户",
+      "continueBtn": "不创建账户继续"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "不要失去您的相册！",
+      "subtitle": "距离过期还有{hours}小时",
+      "cta": "解锁"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "30秒专业照片交付",
+      "subtitle": "零压缩。无需账户。原始品质相册。",
+      "dropzone": "将照片拖放到这里",
+      "dropzoneHint": "或点击选择文件",
+      "uploading": "上传中...",
+      "processing": "处理中...",
+      "complete": "上传完成！"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "您的相册已准备就绪！",
+      "subtitle": "选择您想要的分享方式",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "保持免费",
+          "price": "$0",
+          "description": "24小时后过期",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24小时访问",
+            "1": "PikSend水印",
+            "2": "基本分享"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "解锁此相册",
+          "price": "$2.99",
+          "description": "一次性付款",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30天访问",
+            "1": "无水印",
+            "2": "高清下载",
+            "3": "自定义标题"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "升级高级版",
+          "price": "$9.99/月",
+          "description": "最佳价值",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50个相册",
+            "1": "5 GB存储空间",
+            "2": "无水印",
+            "3": "优先支持"
           },
-          "recommended": ""
+          "recommended": "推荐"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "简单定价",
+    "title": "选择您的套餐",
+    "subtitle": "无压缩的高清照片。免费开始。",
+    "monthly": "月付",
+    "yearly": "年付",
+    "yearlyDiscount": "节省20%",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "currentPlan": "当前套餐",
+    "selectPlan": "选择套餐",
+    "upgrade": "升级",
+    "downgrade": "降级",
+    "popular": "热门",
+    "equivalent": "即",
+    "needHelp": "需要帮助？",
+    "priceNote": "价格以美元计。随时取消。",
+    "faqTitle": "常见问题",
+    "faq": {
+      "changePlan": {
+        "question": "我可以更换套餐吗？",
+        "answer": "可以，随时更换。费用按比例计算。"
+      },
+      "quality": {
+        "question": "所有套餐都保持品质吗？",
+        "answer": "是的，100%原始品质。零压缩。"
+      },
+      "yearly": {
+        "question": "年付如何运作？",
+        "answer": "预付12个月，节省20%。"
+      },
+      "cancel": {
+        "question": "如果我取消会怎样？",
+        "answer": "访问权限保持到付费期结束，然后转为免费套餐。"
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "免费",
+        "description": "完美的入门选择",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3个相册",
+          "20 MB存储空间",
+          "7天有效期",
+          "基本支持"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "高级",
+        "description": "适合活跃的摄影师",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20个相册",
+          "500 MB存储空间",
+          "30天有效期",
+          "优先支持",
+          "自定义品牌"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "专业",
+        "description": "适合专业人士",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "无限相册",
+          "5 GB存储空间",
+          "90天有效期",
+          "24/7支持",
+          "自定义品牌",
+          "数据分析"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "设置",
+    "subtitle": "管理您的账户和偏好设置",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "个人资料",
+      "name": "姓名",
+      "email": "邮箱",
+      "save": "保存更改",
+      "saved": "个人资料已更新！",
+      "saveError": "保存个人资料时出错"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "订阅",
+      "currentPlan": "当前套餐",
+      "manage": "管理订阅",
+      "upgrade": "升级套餐",
+      "cancel": "取消订阅"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "危险区域",
+      "deleteAccount": "删除账户",
+      "deleteWarning": "此操作不可逆。您的所有数据将被永久删除。"
+    },
+    "signOut": {
+      "title": "退出登录",
+      "description": "结束您的会话",
+      "button": "退出登录",
+      "signingOut": "正在退出..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "控制台",
+      "users": "用户",
+      "galleries": "相册",
+      "subscriptions": "订阅",
+      "analytics": "分析",
+      "auditLogs": "审计日志"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "控制台",
+      "subtitle": "PikSend平台概览",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "用户",
+        "usersSubtitle": "注册账户",
+        "activeGalleries": "活跃相册",
+        "totalGalleries": "共{{count}}个",
+        "storage": "已用存储空间",
+        "storageSubtitle": "总使用空间",
+        "conversionRate": "转化率",
+        "conversionSubtitle": "付费用户"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "用户",
+      "subtitle": "管理平台用户",
+      "search": "搜索用户...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "姓名",
+        "email": "邮箱",
+        "plan": "套餐",
+        "galleries": "相册",
+        "storage": "存储空间",
+        "status": "状态",
+        "actions": "操作",
+        "registration": "注册时间",
+        "currentPlan": "当前套餐",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "活跃",
+        "suspended": "已暂停"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "查看",
+        "suspend": "暂停",
+        "reactivate": "重新激活",
+        "changePlan": "更换套餐"
+      },
+      "totalUsers": "总用户数",
+      "userReactivated": "用户已重新激活",
+      "userSuspended": "用户已暂停",
+      "planUpdated": "用户套餐已更新"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "相册",
+      "subtitle": "管理所有相册",
+      "search": "搜索相册...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "标题",
+        "owner": "所有者",
+        "type": "类型",
+        "images": "图片",
+        "views": "浏览量",
+        "status": "状态",
+        "expires": "过期",
+        "actions": "操作"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "访客",
+        "user": "用户",
+        "converted": "已转换"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "活跃",
+        "expired": "已过期",
+        "deactivated": "已停用"
+      },
+      "totalGalleries": "总相册数",
+      "galleryDeactivated": "相册已停用"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "订阅",
+      "subtitle": "管理用户订阅",
+      "totalSubscribers": "总订阅者",
+      "premiumCount": "高级",
+      "proCount": "专业",
+      "activeCount": "活跃",
+      "upgraded": "订阅已升级",
+      "cancelled": "订阅已取消"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "分析",
+      "subtitle": "平台统计和趋势",
+      "newRegistrations": "新注册",
+      "galleriesCreated": "已创建相册",
+      "totalActivities": "总活动"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "审计日志",
+      "subtitle": "系统活动历史",
+      "totalEntries": "总条目",
+      "modifications": "修改"
+    },
+    "header": {
+      "signOut": "退出登录",
+      "signingOut": "正在退出..."
+    },
+    "recentActivity": {
+      "title": "最近活动"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "需要身份验证",
+      "message": "您必须登录才能访问此页面。请登录或创建账户以继续。",
+      "info": "PikSend允许您创建和分享安全的照片相册。免费注册即可开始！",
+      "signIn": "登录",
+      "signUp": "创建账户",
+      "home": "返回首页",
+      "possibleReasons": "可能的原因：",
+      "reason1": "您的会话已过期",
+      "reason2": "您未登录",
+      "reason3": "您的账户已被暂停"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "访问被拒绝",
+      "message": "您没有权限访问此页面。",
+      "home": "返回首页",
+      "suggestions": "建议：",
+      "suggestion1": "检查您是否拥有正确的权限",
+      "suggestion2": "如果您认为这是错误，请联系管理员"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "页面未找到",
+      "message": "您查找的页面不存在或已被移动。",
+      "home": "返回首页",
+      "suggestions": "建议",
+      "suggestion1": "检查URL拼写",
+      "suggestion2": "相册可能已过期",
+      "suggestion3": "您访问的链接可能已过时",
+      "previousPage": "上一页"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "服务器错误",
+      "message": "我们这边出了问题。请稍后重试。",
+      "retry": "重试",
+      "home": "返回首页",
+      "possibleReasons": "可能的原因：",
+      "reason1": "服务器暂时过载",
+      "reason2": "正在进行维护",
+      "reason3": "意外错误",
+      "retryLater": "请几分钟后重试",
+      "problemPersists": "问题仍然存在？",
+      "contactSupport": "联系支持"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "服务不可用",
+      "message": "我们目前正在进行维护。请稍后再来。",
+      "home": "返回首页",
+      "temporarilyUnavailable": "服务暂时不可用",
+      "autoRefresh": "自动刷新",
+      "inSeconds": "{{seconds}}秒后",
+      "statusPage": "关注我们的服务状态："
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "文件太大。每张图片最大{{size}}MB。",
+      "invalidFileType": "文件类型无效。请上传JPG、PNG或WebP图片。",
+      "tooManyFiles": "文件太多。访客相册最多{{count}}张图片。",
+      "noFiles": "请至少选择一张图片上传。",
+      "networkError": "上传失败。请检查您的连接并重试。",
+      "galleryCreationFailed": "创建相册失败。请重试。",
+      "uploadFailed": "上传图片失败。请重试。"
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "支付失败。请重试。",
+      "declined": "支付被拒绝。请尝试其他支付方式。",
+      "sessionExpired": "会话已过期。请重试。",
+      "checkoutFailed": "启动结账失败。请重试。",
+      "invalidAmount": "支付金额无效。",
+      "stripeError": "支付处理错误：{{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "您的会话已过期。您的相册可能无法再访问。",
+      "invalid": "会话无效。请刷新页面。",
+      "creationFailed": "创建会话失败。请重试。"
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "未找到相册。",
+      "expired": "此相册已过期，不再可用。",
+      "accessDenied": "您无权访问此相册。",
+      "migrationFailed": "将相册迁移到您的账户失败。请联系支持。",
+      "noLongerActive": "此相册已不再活跃",
+      "incorrectPassword": "密码错误"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "发生意外错误。请重试。",
+      "networkError": "网络错误。请检查您的连接。",
+      "retry": "出了点问题。请重试。",
+      "validationFailed": "验证失败",
+      "invalidData": "数据无效",
+      "invalidActionType": "操作类型无效",
+      "invalidEntityType": "实体类型无效",
+      "unauthorized": "未授权",
+      "internalServerError": "内部服务器错误",
+      "authenticationRequired": "需要身份验证",
+      "adminAccessRequired": "需要管理员权限",
+      "updateError": "更新时出错",
+      "serverError": "服务器错误",
+      "tooManyAttempts": "尝试次数过多。请稍后重试。"
+    },
+    "profile": {
+      "fetchFailed": "获取个人资料失败",
+      "updateFailed": "更新个人资料失败",
+      "notFound": "未找到个人资料"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "为要求严格的创作者提供高清照片交付。",
+    "product": "产品",
+    "platform": "平台",
+    "company": "公司",
+    "legal": "法律",
+    "officialContact": "官方联系方式",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "功能",
+      "pricing": "定价",
+      "help": "帮助中心",
+      "contact": "联系",
+      "terms": "条款",
+      "privacy": "隐私",
+      "mentions": "法律声明"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "国家ID",
+      "taxNumber": "税号"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "独家所有",
+    "country": "刚果民主共和国",
+    "copyright": "© {{year}} PikSend。保留所有权利。"
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "欢迎使用PikSend",
+      "description": "以原始品质分享照片的最简单方式。"
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "上传您的照片",
+      "description": "拖放您的高清照片或点击选择文件。"
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "自定义您的相册",
+      "description": "添加标题并配置分享设置。"
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "与客户分享",
+      "description": "获取唯一链接，即时分享您的相册。"
     },
-    "skip": "",
-    "finish": ""
+    "skip": "跳过",
+    "finish": "开始使用"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "我的相册",
+    "subtitle": "此会话中创建的相册",
+    "createNew": "新建",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "还没有相册",
+      "description": "您在此会话中还没有创建任何相册。创建您的第一个相册来分享照片。",
+      "cta": "创建我的第一个相册"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "保存您的链接！",
+      "description": "这些相册与您的浏览器关联。如果您清除数据或更换设备，将失去访问权限。创建账户以永久保存。"
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "已解锁",
+      "expired": "已过期"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "想要保留您的相册吗？",
+      "description": "创建免费账户，从任何设备访问相册，获得更多存储空间，解锁高级功能。",
+      "cta": "创建我的账户"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – 无品质损失的高清照片交付",
+      "description": "以原始品质分享您的照片。零压缩，安全相册，自动过期。"
+    },
+    "pricing": {
+      "title": "PikSend定价 - 从免费到专业",
+      "description": "免费开始，3个相册。升级到高级或专业版获得更多功能。"
+    },
+    "features": {
+      "title": "PikSend功能",
+      "description": "100%品质保留，安全相册，自动过期。了解所有功能。"
+    },
+    "help": {
+      "title": "PikSend帮助中心",
+      "description": "使用PikSend的指南、常见问题和技术支持。"
+    },
+    "contact": {
+      "title": "联系PikSend",
+      "description": "有问题？我们的团队随时为您提供帮助。"
+    },
+    "auth": {
+      "title": "PikSend登录",
+      "description": "访问您的安全照片相册。"
+    },
+    "legal": {
+      "terms": {
+        "title": "服务条款 - PikSend",
+        "description": "阅读PikSend的一般服务条款。"
+      },
+      "privacy": {
+        "title": "隐私政策 - PikSend",
+        "description": "了解PikSend如何保护您的个人数据。"
+      },
+      "cookies": {
+        "title": "Cookie政策 - PikSend",
+        "description": "关于PikSend使用Cookie的信息。"
+      },
+      "mentions": {
+        "title": "法律声明 - PikSend",
+        "description": "关于PikSend发布者的法律信息。"
+      }
+    },
+    "dashboard": {
+      "title": "控制台 | PikSend",
+      "description": "管理您的照片相册"
+    },
+    "newGallery": {
+      "title": "新建相册 | PikSend",
+      "description": "创建新的安全照片相册"
+    },
+    "galleryDetails": {
+      "title": "相册详情 | PikSend",
+      "description": "管理您的照片相册"
+    },
+    "myGalleries": {
+      "title": "我的相册 | PikSend",
+      "description": "查找您作为访客创建的相册"
+    },
+    "error401": {
+      "title": "未认证 - 401 | PikSend",
+      "description": "请登录以访问此页面。"
+    },
+    "error403": {
+      "title": "访问被拒绝 - 403 | PikSend",
+      "description": "您没有权限访问此资源。"
+    },
+    "error500": {
+      "title": "服务器错误 - 500 | PikSend",
+      "description": "发生内部服务器错误。请稍后重试。"
+    },
+    "error503": {
+      "title": "服务不可用 - 503 | PikSend",
+      "description": "服务因维护暂时不可用。"
+    },
+    "pageNotFound": {
+      "title": "页面未找到",
+      "description": "您查找的页面不存在。"
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "已达相册上限",
+      "description": "您已达到套餐的最大相册数量。"
+    },
+    "storageLimit": {
+      "title": "存储空间不足",
+      "description": "您的存储空间已满或不足以进行此操作。"
+    },
+    "imageLimit": {
+      "title": "已达图片上限",
+      "description": "此相册已达到套餐的最大图片数量。"
+    },
+    "fileSize": {
+      "title": "文件太大",
+      "description": "文件大小超过套餐允许的限制。"
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "未找到相册",
+      "galleryNotAccessible": "此相册已无法访问",
+      "errorFetchingImages": "获取图片时出错",
+      "noImagesInGallery": "此相册中没有图片",
+      "errorCreatingArchive": "创建压缩包时出错",
+      "errorDownloading": "下载时出错",
+      "tooManyAttempts": "尝试次数过多。请稍后重试。",
+      "validationFailed": "验证失败",
+      "registrationFailed": "注册失败",
+      "accountCreatedSuccess": "账户创建成功",
+      "passwordResetSuccess": "密码重置成功",
+      "passwordResetEmailSent": "如果此邮箱地址存在账户，您将收到重置链接。",
+      "invalidData": "数据无效",
+      "profileUpdateFailed": "更新个人资料失败",
+      "profileFetchFailed": "获取个人资料失败",
+      "updateError": "更新时出错",
+      "serverError": "服务器错误"
     }
   }
 }

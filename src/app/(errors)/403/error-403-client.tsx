@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import { ShieldX, Home, LogIn, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function Error403Client() {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-orange-500/5 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center space-y-6">
@@ -23,29 +26,24 @@ export default function Error403Client() {
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
-            Accès refusé
+            {t('errors.403.title')}
           </h2>
           <p className="text-base text-muted-foreground">
-            Vous n&apos;avez pas les permissions nécessaires pour accéder à cette page 
-            ou cette ressource est protégée.
+            {t('errors.403.message')}
           </p>
         </div>
 
         {/* Reasons */}
         <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 text-left space-y-2">
-          <p className="text-sm font-medium text-foreground">Raisons possibles :</p>
+          <p className="text-sm font-medium text-foreground">{t('errors.403.suggestions')}</p>
           <ul className="text-sm text-muted-foreground space-y-1.5">
             <li className="flex items-start gap-2">
               <span className="text-orange-500">•</span>
-              Vous n&apos;êtes pas connecté à votre compte
+              {t('errors.403.suggestion1')}
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500">•</span>
-              Votre abonnement ne donne pas accès à cette fonctionnalité
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-500">•</span>
-              Cette galerie n&apos;est pas la vôtre
+              {t('errors.403.suggestion2')}
             </li>
           </ul>
         </div>
@@ -55,13 +53,13 @@ export default function Error403Client() {
           <Button asChild size="sm" className="gap-2">
             <Link href="/auth">
               <LogIn className="w-4 h-4" />
-              Se connecter
+              {t('common.signIn')}
             </Link>
           </Button>
           <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
+              {t('errors.403.home')}
             </Link>
           </Button>
         </div>
@@ -74,7 +72,7 @@ export default function Error403Client() {
           className="gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          Page précédente
+          {t('errors.404.previousPage')}
         </Button>
       </div>
     </div>

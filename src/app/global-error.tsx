@@ -1,7 +1,49 @@
 'use client';
 
 import { ServerCrash, RefreshCw, Home, Mail } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+// Since global-error can't use React context, we need to get translations directly
+// This is a fallback for when the app crashes before context is available
+interface Translations {
+  title: string;
+  message: string;
+  temporarilyUnavailable: string;
+  retryLater: string;
+  retry: string;
+  home: string;
+  problemPersists: string;
+  contactSupport: string;
+}
+
+const DEFAULT_TRANSLATIONS: Translations = {
+  title: 'Critical Error',
+  message: 'An unexpected error occurred. Our team has been notified and is working to resolve the issue.',
+  temporarilyUnavailable: 'Service temporarily unavailable',
+  retryLater: 'Please try again in a few minutes',
+  retry: 'Try again',
+  home: 'Back to home',
+  problemPersists: 'Problem persists?',
+  contactSupport: 'Contact support',
+};
+
+const translations: Record<string, Translations> = {
+  en: DEFAULT_TRANSLATIONS,
+  fr: {
+    title: 'Erreur critique',
+    message: 'Une erreur inattendue s\'est produite. Notre équipe a été notifiée et travaille à résoudre le problème.',
+    temporarilyUnavailable: 'Service temporairement indisponible',
+    retryLater: 'Veuillez réessayer dans quelques minutes',
+    retry: 'Réessayer',
+    home: 'Retour à l\'accueil',
+    problemPersists: 'Le problème persiste ?',
+    contactSupport: 'Contacter le support',
+  },
+};
+
+const getTranslations = (locale: string): Translations => {
+  return translations[locale] ?? DEFAULT_TRANSLATIONS;
+};
 
 export default function GlobalError({
   error,
@@ -10,13 +52,23 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [locale, setLocale] = useState('en');
+
   useEffect(() => {
+    // Try to get locale from localStorage or navigator
+    const storedLocale = typeof window !== 'undefined' 
+      ? localStorage.getItem('piksend-locale') || navigator.language.split('-')[0]
+      : 'en';
+    setLocale(storedLocale === 'fr' ? 'fr' : 'en');
+    
     // Log the error to an error reporting service
     console.error(error);
   }, [error]);
 
+  const t = getTranslations(locale);
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <body>
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-50 to-red-50 flex items-center justify-center p-4">
           <div className="max-w-2xl w-full text-center space-y-6">
@@ -35,11 +87,10 @@ export default function GlobalError({
             {/* Message */}
             <div className="space-y-2">
               <h2 className="text-2xl font-bold text-slate-900">
-                Erreur critique
+                {t.title}
               </h2>
               <p className="text-base text-slate-600">
-                Une erreur inattendue s&apos;est produite. 
-                Notre équipe a été notifiée et travaille à résoudre le problème.
+                {t.message}
               </p>
             </div>
 
@@ -47,10 +98,10 @@ export default function GlobalError({
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 space-y-2">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-red-600">Service temporairement indisponible</span>
+                <span className="text-sm font-medium text-red-600">{t.temporarilyUnavailable}</span>
               </div>
               <p className="text-sm text-slate-600">
-                Veuillez réessayer dans quelques minutes
+                {t.retryLater}
               </p>
             </div>
 
@@ -61,28 +112,28 @@ export default function GlobalError({
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm bg-slate-900 text-white rounded-md hover:bg-slate-800 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
-                Réessayer
+                {t.retry}
               </button>
               <a 
                 href="/"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm border border-slate-300 bg-white text-slate-900 rounded-md hover:bg-slate-50 transition-colors"
               >
                 <Home className="w-4 h-4" />
-                Retour à l&apos;accueil
+                {t.home}
               </a>
             </div>
 
             {/* Support */}
             <div className="pt-3 border-t border-slate-200">
               <p className="text-sm text-slate-600 mb-2">
-                Le problème persiste ?
+                {t.problemPersists}
               </p>
               <a 
                 href="mailto:support@piksend.com"
                 className="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
               >
                 <Mail className="w-3.5 h-3.5" />
-                Contacter le support
+                {t.contactSupport}
               </a>
             </div>
           </div>

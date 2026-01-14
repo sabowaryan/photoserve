@@ -19,65 +19,64 @@ import {
   ChevronDown,
   TrendingUp,
   Sparkles,
+  RefreshCw,
 } from "lucide-react";
 import { GalleryCard } from "@/components/dashboard/gallery-card";
 import { SidebarSection } from "@/components/dashboard/sidebar-section";
 import { OnboardingGuide } from "@/components/dashboard/onboarding-guide";
-
-interface Gallery {
-  id: string;
-  title: string;
-  unique_slug: string;
-  expires_at: string;
-  views_count: number;
-  is_active: boolean;
-  created_at: string;
-  image_count?: number;
-}
-
-interface Profile {
-  id: string;
-  email: string;
-  name: string | null;
-  subscription_plan: "free" | "premium" | "pro";
-  storage_used_mb: number;
-  storage_limit_mb: number;
-  max_galleries: number;
-  onboarding_completed: boolean | null;
-}
+import { DashboardSkeleton } from "@/components/skeletons/dashboard-skeleton";
+import { LoadingButton } from "@/components/ui/loading-button";
+import { useTranslation } from "@/lib/i18n/context";
+import { useDashboardData } from "@/hooks/use-dashboard-data";
 
 interface DashboardClientProps {
-  profile: Profile | null;
-  galleries: Gallery[];
-  userName: string;
+  userEmail: string;
 }
 
 type SortOption = 'created_at_desc' | 'created_at_asc' | 'views_count_desc' | 'views_count_asc' | 'expires_at_desc' | 'expires_at_asc';
 
-const SORT_LABELS: Record<SortOption, { label: string; icon: React.ReactNode }> = {
-  created_at_desc: { label: 'Plus récentes', icon: <Calendar size={14} /> },
-  created_at_asc: { label: 'Plus anciennes', icon: <Calendar size={14} /> },
-  views_count_desc: { label: 'Plus de vues', icon: <Eye size={14} /> },
-  views_count_asc: { label: 'Moins de vues', icon: <Eye size={14} /> },
-  expires_at_desc: { label: 'Expiration lointaine', icon: <Clock size={14} /> },
-  expires_at_asc: { label: 'Expiration proche', icon: <Clock size={14} /> },
+const SORT_KEYS: Record<SortOption, { labelKey: string; icon: React.ReactNode }> = {
+  created_at_desc: { labelKey: 'dashboard.sort.newest', icon: <Calendar size={14} /> },
+  created_at_asc: { labelKey: 'dashboard.sort.oldest', icon: <Calendar size={14} /> },
+  views_count_desc: { labelKey: 'dashboard.sort.mostViews', icon: <Eye size={14} /> },
+  views_count_asc: { labelKey: 'dashboard.sort.leastViews', icon: <Eye size={14} /> },
+  expires_at_desc: { labelKey: 'dashboard.sort.expiresLast', icon: <Clock size={14} /> },
+  expires_at_asc: { labelKey: 'dashboard.sort.expiresSoon', icon: <Clock size={14} /> },
 };
 
-export function DashboardClient({ profile, galleries, userName }: DashboardClientProps) {
+/**
+ * Dashboard Client Component
+ * 
+ * Uses SWR for client-side data fetching to avoid blocking the initial render.
+ * Displays skeleton during loading and error state with retry option.
+ * 
+ * Requirements: 2.2, 2.3, 2.4
+ */
+export function DashboardClient({ userEmail }: DashboardClientProps) {
+  const { t } = useTranslation();
   const router = useRouter();
+  
+  // Client-side data fetching with SWR
+  const { profile, galleries, isLoading, error, mutate } = useDashboardData();
+  
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("created_at_desc");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Derive userName from profile or email
+  const userName = profile?.name || userEmail.split("@")[0] || "";
 
   useEffect(() => {
     const shouldShowOnboarding = 
       !profile?.onboarding_completed && 
-      galleries.length === 0;
+      galleries.length === 0 &&
+      !isLoading;
     setShowOnboarding(shouldShowOnboarding);
-  }, [profile?.onboarding_completed, galleries.length]);
+  }, [profile?.onboarding_completed, galleries.length, isLoading]);
 
   const handleOnboardingComplete = async () => {
     setShowOnboarding(false);
@@ -87,6 +86,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ onboarding_completed: true }),
       });
+      mutate(); // Revalidate data after update
     } catch (error) {
       console.error("Failed to update onboarding status:", error);
     }
@@ -100,9 +100,27 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ onboarding_completed: true }),
       });
+      mutate(); // Revalidate data after update
     } catch (error) {
       console.error("Failed to update onboarding status:", error);
     }
+  };
+
+  // Calculate stats
+  const stats = useMemo(() => ({
+    totalGalleries: galleries.length,
+    totalImages: galleries.reduce((sum, g) => sum + (g.image_count || 0), 0),
+    totalViews: galleries.reduce((sum, g) => sum + g.views_count, 0),
+    storageUsed: profile?.storage_used_mb || 0,
+    storageLimit: profile?.storage_limit_mb || 20,
+    maxGalleries: profile?.max_galleries || 3,
+  }), [galleries, profile]);
+
+  const isGalleryLimitReached = stats.totalGalleries >= stats.maxGalleries;
+
+  const handleNavigateToNewGallery = () => {
+    setIsNavigating(true);
+    router.push("/dashboard/gallery/new");
   };
 
   useEffect(() => {
@@ -121,7 +139,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
       
       if (key === "n" && !isGalleryLimitReached) {
         e.preventDefault();
-        router.push("/dashboard/gallery/new");
+        handleNavigateToNewGallery();
       } else if (key === "s") {
         e.preventDefault();
         searchInputRef.current?.focus();
@@ -130,7 +148,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [router]);
+  }, [router, isGalleryLimitReached]);
 
   const sortedAndFilteredGalleries = useMemo(() => {
     let result = galleries.filter((g) =>
@@ -159,63 +177,92 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
     return result;
   }, [galleries, searchQuery, sortBy]);
 
-  const stats = {
-    totalGalleries: galleries.length,
-    totalImages: galleries.reduce((sum, g) => sum + (g.image_count || 0), 0),
-    totalViews: galleries.reduce((sum, g) => sum + g.views_count, 0),
-    storageUsed: profile?.storage_used_mb || 0,
-    storageLimit: profile?.storage_limit_mb || 20,
-    maxGalleries: profile?.max_galleries || 3,
-  };
+  // Calculate view trends
+  const viewsTrend = useMemo(() => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+    const recentGalleries = galleries.filter(g => new Date(g.created_at) >= thirtyDaysAgo);
+    const olderGalleries = galleries.filter(g => {
+      const createdAt = new Date(g.created_at);
+      return createdAt >= sixtyDaysAgo && createdAt < thirtyDaysAgo;
+    });
 
-  const recentGalleries = galleries.filter(g => new Date(g.created_at) >= thirtyDaysAgo);
-  const olderGalleries = galleries.filter(g => {
-    const createdAt = new Date(g.created_at);
-    return createdAt >= sixtyDaysAgo && createdAt < thirtyDaysAgo;
-  });
+    const recentViews = recentGalleries.reduce((sum, g) => sum + g.views_count, 0);
+    const olderViews = olderGalleries.reduce((sum, g) => sum + g.views_count, 0);
 
-  const recentViews = recentGalleries.reduce((sum, g) => sum + g.views_count, 0);
-  const olderViews = olderGalleries.reduce((sum, g) => sum + g.views_count, 0);
+    let trend = { value: "+0%", positive: true };
+    let previousMonthViews = Math.floor(stats.totalViews * 0.89);
 
-  let viewsTrend = { value: "+0%", positive: true };
-  let previousMonthViews = Math.floor(stats.totalViews * 0.89);
+    if (olderViews > 0) {
+      const percentChange = ((recentViews - olderViews) / olderViews) * 100;
+      const isPositive = percentChange >= 0;
+      trend = {
+        value: `${isPositive ? '+' : ''}${percentChange.toFixed(1)}%`,
+        positive: isPositive
+      };
+      previousMonthViews = olderViews;
+    } else if (recentViews > 0) {
+      trend = { value: "+100%", positive: true };
+      previousMonthViews = 0;
+    }
 
-  if (olderViews > 0) {
-    const percentChange = ((recentViews - olderViews) / olderViews) * 100;
-    const isPositive = percentChange >= 0;
-    viewsTrend = {
-      value: `${isPositive ? '+' : ''}${percentChange.toFixed(1)}%`,
-      positive: isPositive
-    };
-    previousMonthViews = olderViews;
-  } else if (recentViews > 0) {
-    viewsTrend = { value: "+100%", positive: true };
-    previousMonthViews = 0;
-  }
+    return { trend, previousMonthViews };
+  }, [galleries, stats.totalViews]);
 
-  const isGalleryLimitReached = stats.totalGalleries >= stats.maxGalleries;
-
-  const activities = galleries.slice(0, 5).map((g) => ({
-    id: g.id,
-    type: "created" as const,
-    title: `Galerie "${g.title}" créée`,
-    timestamp: g.created_at,
-  }));
+  const activities = useMemo(() => 
+    galleries.slice(0, 5).map((g) => ({
+      id: g.id,
+      type: "created" as const,
+      title: t('dashboard.activity.galleryCreated', { title: g.title }),
+      timestamp: g.created_at,
+    })), [galleries, t]);
 
   const planConfig = {
-    free: { label: "Gratuit", color: "slate", gradient: "from-slate-500 to-slate-600" },
-    premium: { label: "Premium", color: "indigo", gradient: "from-indigo-500 to-violet-600" },
-    pro: { label: "Pro", color: "purple", gradient: "from-purple-500 to-pink-600" },
+    free: { labelKey: "dashboard.plans.free", color: "slate", gradient: "from-slate-500 to-slate-600" },
+    premium: { labelKey: "dashboard.plans.premium", color: "indigo", gradient: "from-indigo-500 to-violet-600" },
+    pro: { labelKey: "dashboard.plans.pro", color: "purple", gradient: "from-purple-500 to-pink-600" },
   };
 
   const currentPlan = planConfig[profile?.subscription_plan || "free"];
+  const currentPlanLabel = t(currentPlan.labelKey);
 
   const storagePercent = (stats.storageUsed / stats.storageLimit) * 100;
   const galleriesPercent = (stats.totalGalleries / stats.maxGalleries) * 100;
+
+  // Show skeleton during loading (Requirements: 2.3)
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  // Show error state with retry option (Requirements: 2.4)
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-18 pb-10 font-['Plus_Jakarta_Sans']">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center text-rose-500 mb-4">
+              <AlertCircle size={32} />
+            </div>
+            <h3 className="text-lg font-black text-slate-900 mb-1.5">
+              {t('common.errorLoading') || 'Error loading data'}
+            </h3>
+            <p className="text-slate-500 font-medium text-sm mb-5 max-w-xs">
+              {t('common.errorLoadingDescription') || 'Something went wrong while loading your dashboard. Please try again.'}
+            </p>
+            <button
+              onClick={() => mutate()}
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25"
+            >
+              <RefreshCw size={16} />
+              {t('common.retry') || 'Retry'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-18 pb-10 font-['Plus_Jakarta_Sans']">
@@ -244,19 +291,20 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                 <div className="space-y-1.5">
                   <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 rounded-full border border-indigo-100">
                     <Sparkles size={10} className="text-indigo-500" />
-                    <span className="text-[9px] font-bold text-indigo-600">Tableau de bord</span>
+                    <span className="text-[9px] font-bold text-indigo-600">{t('dashboard.badge')}</span>
                   </div>
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    Bonjour, <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">{userName}</span> 👋
+                    {t('dashboard.greeting')} <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">{userName}</span> 👋
                   </h1>
                   <p className="text-slate-500 font-medium text-[11px] max-w-md">
-                    Gérez vos galeries et suivez vos performances en temps réel.
+                    {t('dashboard.subtitle')}
                   </p>
                 </div>
 
-                <button
-                  onClick={() => router.push("/dashboard/gallery/new")}
+                <LoadingButton
+                  onClick={handleNavigateToNewGallery}
                   disabled={isGalleryLimitReached}
+                  isLoading={isNavigating}
                   className={`group flex items-center gap-1.5 px-4 py-2.5 font-bold text-xs rounded-xl transition-all ${
                     isGalleryLimitReached
                       ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -264,17 +312,17 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                   }`}
                 >
                   <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-                  <span>Nouvelle galerie</span>
+                  <span>{t('dashboard.newGallery')}</span>
                   {!isGalleryLimitReached && (
                     <kbd className="hidden sm:inline px-1 py-0.5 bg-white/20 rounded text-[9px] font-mono">N</kbd>
                   )}
-                </button>
+                </LoadingButton>
               </div>
 
               {isGalleryLimitReached && (
                 <div className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg border border-amber-100">
                   <AlertCircle size={12} />
-                  <span className="text-[10px] font-bold">Limite de galeries atteinte</span>
+                  <span className="text-[10px] font-bold">{t('common.galleryLimitReached')}</span>
                 </div>
               )}
             </header>
@@ -288,11 +336,11 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                     <Zap size={14} />
                   </div>
                   <span className={`px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider bg-${currentPlan.color}-50 text-${currentPlan.color}-600 border border-${currentPlan.color}-100`}>
-                    {currentPlan.label}
+                    {currentPlanLabel}
                   </span>
                 </div>
-                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Offre</p>
-                <p className="text-base font-black text-slate-900">{currentPlan.label}</p>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.offer')}</p>
+                <p className="text-base font-black text-slate-900">{currentPlanLabel}</p>
               </div>
 
               {/* Storage Card */}
@@ -305,7 +353,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                     {storagePercent.toFixed(0)}%
                   </span>
                 </div>
-                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Stockage</p>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.storage')}</p>
                 <div className="flex items-baseline gap-0.5">
                   <span className="text-base font-black text-slate-900">{stats.storageUsed.toFixed(1)}</span>
                   <span className="text-[10px] text-slate-400 font-medium">/ {stats.storageLimit} Mo</span>
@@ -328,7 +376,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                     {galleriesPercent.toFixed(0)}%
                   </span>
                 </div>
-                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Galeries</p>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.galleries')}</p>
                 <div className="flex items-baseline gap-0.5">
                   <span className="text-base font-black text-slate-900">{stats.totalGalleries}</span>
                   <span className="text-[10px] text-slate-400 font-medium">/ {stats.maxGalleries}</span>
@@ -350,15 +398,15 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                       <Eye size={14} />
                     </div>
                     <span className={`flex items-center gap-0.5 px-1 py-0.5 rounded-full text-[8px] font-bold ${
-                      viewsTrend.positive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                      viewsTrend.trend.positive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                     }`}>
                       <TrendingUp size={8} />
-                      {viewsTrend.value}
+                      {viewsTrend.trend.value}
                     </span>
                   </div>
-                  <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Vues totales</p>
+                  <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.totalViews')}</p>
                   <p className="text-base font-black text-white">{stats.totalViews.toLocaleString()}</p>
-                  <p className="text-[8px] text-slate-500 mt-0.5">vs {previousMonthViews.toLocaleString()} le mois dernier</p>
+                  <p className="text-[8px] text-slate-500 mt-0.5">{t('dashboard.stats.vsLastMonth', { count: viewsTrend.previousMonthViews.toLocaleString() })}</p>
                 </div>
               </div>
             </div>
@@ -368,7 +416,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
               {/* Toolbar */}
               <div className="px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-base font-black text-slate-900">Mes galeries</h2>
+                  <h2 className="text-base font-black text-slate-900">{t('common.myGalleries')}</h2>
                   <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full">
                     {galleries.length}
                   </span>
@@ -381,7 +429,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                     <input
                       ref={searchInputRef}
                       type="text"
-                      placeholder="Rechercher..."
+                      placeholder={t('common.searchPlaceholder')}
                       className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -412,13 +460,13 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                       className="flex items-center gap-1.5 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 transition-all"
                     >
                       <ArrowUpDown size={12} />
-                      <span className="hidden sm:inline">{SORT_LABELS[sortBy].label}</span>
+                      <span className="hidden sm:inline">{t(SORT_KEYS[sortBy].labelKey)}</span>
                       <ChevronDown size={10} className={`transition-transform ${isSortMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isSortMenuOpen && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50 animate-in slide-in-from-top-2">
-                        {(Object.keys(SORT_LABELS) as SortOption[]).map((option) => (
+                        {(Object.keys(SORT_KEYS) as SortOption[]).map((option) => (
                           <button
                             key={option}
                             onClick={() => { setSortBy(option); setIsSortMenuOpen(false); }}
@@ -426,8 +474,8 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                               sortBy === option ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'
                             }`}
                           >
-                            {SORT_LABELS[option].icon}
-                            {SORT_LABELS[option].label}
+                            {SORT_KEYS[option].icon}
+                            {t(SORT_KEYS[option].labelKey)}
                           </button>
                         ))}
                       </div>
@@ -440,7 +488,7 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
               <div className="p-4">
                 {sortedAndFilteredGalleries.length > 0 ? (
                   <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" : "space-y-2.5"}>
-                    {sortedAndFilteredGalleries.map((gallery) => (
+                    {sortedAndFilteredGalleries.map((gallery, index) => (
                       <GalleryCard
                         key={gallery.id}
                         id={gallery.id}
@@ -449,10 +497,11 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                         expiresAt={gallery.expires_at}
                         viewsCount={gallery.views_count}
                         isActive={gallery.is_active}
-                        imageUrl={(gallery as any).imageUrl}
+                        imageUrl={gallery.imageUrl}
                         imageCount={gallery.image_count}
                         createdAt={gallery.created_at}
                         isListView={viewMode === "list"}
+                        priority={index < 4}
                       />
                     ))}
                   </div>
@@ -462,21 +511,22 @@ export function DashboardClient({ profile, galleries, userName }: DashboardClien
                       <UploadCloud size={32} />
                     </div>
                     <h3 className="text-lg font-black text-slate-900 mb-1.5">
-                      {searchQuery ? 'Aucun résultat' : 'Aucune galerie'}
+                      {searchQuery ? t('dashboard.galleriesSection.noResults') : t('dashboard.galleriesSection.emptyState')}
                     </h3>
                     <p className="text-slate-500 font-medium text-xs mb-5 max-w-xs">
                       {searchQuery
-                        ? `Aucune galerie ne correspond à "${searchQuery}"`
-                        : "Créez votre première galerie pour commencer à partager vos photos."}
+                        ? t('dashboard.galleriesSection.noResultsQuery', { query: searchQuery })
+                        : t('dashboard.galleriesSection.emptyState')}
                     </p>
                     {!searchQuery && !isGalleryLimitReached && (
-                      <button
-                        onClick={() => router.push("/dashboard/gallery/new")}
+                      <LoadingButton
+                        onClick={handleNavigateToNewGallery}
+                        isLoading={isNavigating}
                         className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/25"
                       >
                         <Plus size={16} />
-                        Créer une galerie
-                      </button>
+                        {t('dashboard.galleriesSection.createFirst')}
+                      </LoadingButton>
                     )}
                   </div>
                 )}

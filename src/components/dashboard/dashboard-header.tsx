@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { Settings, X, Home, Bell, Menu, Crown, HelpCircle, ExternalLink, ChevronRight, Zap, Plus } from "lucide-react";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { SignOutButton } from "@/app/(dashboard)/dashboard/sign-out-button";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface DashboardHeaderProps {
   userName: string;
@@ -16,6 +17,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHeaderProps) {
+  const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
@@ -40,21 +42,21 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
 
   const planConfig = {
     free: { 
-      label: "Gratuit", 
+      labelKey: "dashboard.plans.free", 
       bg: "bg-slate-100", 
       text: "text-slate-700", 
       gradient: "from-slate-400 to-slate-500",
       icon: Zap
     },
     premium: { 
-      label: "Premium", 
+      labelKey: "dashboard.plans.premium", 
       bg: "bg-indigo-50", 
       text: "text-indigo-700", 
       gradient: "from-indigo-500 to-violet-600",
       icon: Crown
     },
     pro: { 
-      label: "Pro", 
+      labelKey: "dashboard.plans.pro", 
       bg: "bg-purple-50", 
       text: "text-purple-700", 
       gradient: "from-purple-500 to-pink-600",
@@ -63,6 +65,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
   };
 
   const currentPlan = planConfig[userPlan];
+  const currentPlanLabel = t(currentPlan.labelKey);
   const PlanIcon = currentPlan.icon;
 
   return (
@@ -97,7 +100,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   }`}
                 >
                   <Home size={16} />
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
                 <Link
                   href="/settings"
@@ -108,7 +111,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   }`}
                 >
                   <Settings size={16} />
-                  Paramètres
+                  {t('nav.settings')}
                 </Link>
               </nav>
 
@@ -147,7 +150,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                       {userName}
                     </p>
                     <span className={`text-[10px] font-bold uppercase tracking-wider ${currentPlan.text}`}>
-                      {currentPlan.label}
+                      {currentPlanLabel}
                     </span>
                   </div>
                 </Link>
@@ -208,7 +211,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                     <div className="flex items-center gap-1 mt-0.5">
                       <PlanIcon size={10} className="text-white/80" />
                       <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                        {currentPlan.label}
+                        {currentPlanLabel}
                       </span>
                     </div>
                   </div>
@@ -224,7 +227,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                 className="flex items-center justify-center gap-1.5 w-full py-2.5 bg-white rounded-lg shadow-lg border border-slate-100 font-bold text-sm text-indigo-600 hover:bg-indigo-50 transition-all"
               >
                 <Plus size={16} />
-                Nouvelle galerie
+                {t('dashboard.newGallery')}
               </Link>
             </div>
 
@@ -247,7 +250,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   <div className={`p-1.5 rounded-md ${isDashboardActive ? 'bg-indigo-100' : 'bg-slate-100 group-hover:bg-indigo-50'}`}>
                     <Home size={14} className={isDashboardActive ? 'text-indigo-600' : 'text-slate-500 group-hover:text-indigo-500'} />
                   </div>
-                  <span>Dashboard</span>
+                  <span>{t('nav.dashboard')}</span>
                 </div>
                 <ChevronRight size={14} className="text-slate-300" />
               </Link>
@@ -265,7 +268,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   <div className={`p-1.5 rounded-md ${isSettingsActive ? 'bg-indigo-100' : 'bg-slate-100 group-hover:bg-indigo-50'}`}>
                     <Settings size={14} className={isSettingsActive ? 'text-indigo-600' : 'text-slate-500 group-hover:text-indigo-500'} />
                   </div>
-                  <span>Paramètres</span>
+                  <span>{t('nav.settings')}</span>
                 </div>
                 <ChevronRight size={14} className="text-slate-300" />
               </Link>
@@ -277,15 +280,15 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   <div className="relative">
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <Crown size={14} />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">Premium</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">{t('dashboard.plans.premium')}</span>
                     </div>
-                    <p className="font-bold text-sm mb-2">Débloquez plus de fonctionnalités</p>
+                    <p className="font-bold text-sm mb-2">{t('common.upgradeLevel')}</p>
                     <Link
                       href="/settings?upgrade=true"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center justify-center gap-1.5 w-full py-2 bg-white text-indigo-600 font-bold text-xs rounded-lg hover:bg-white/90 transition-all"
                     >
-                      Voir les offres
+                      {t('pricing.selectPlan')}
                       <ExternalLink size={12} />
                     </Link>
                   </div>
@@ -295,14 +298,14 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
               {/* Help Section */}
               <div className="mt-4 pt-4 border-t border-slate-200">
                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider px-2.5 mb-2">
-                  Aide
+                  {t('common.help')}
                 </p>
                 <a
                   href="#"
                   className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-white hover:text-slate-700 transition-all"
                 >
                   <HelpCircle size={14} />
-                  <span className="text-xs font-medium">Centre d'aide</span>
+                  <span className="text-xs font-medium">{t('common.helpCenter')}</span>
                 </a>
               </div>
             </nav>

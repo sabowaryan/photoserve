@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "Ladataan...",
+    "error": "Tapahtui virhe",
+    "success": "Onnistui",
+    "cancel": "Peruuta",
+    "confirm": "Vahvista",
+    "save": "Tallenna",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "close": "Sulje",
+    "open": "Avaa",
+    "back": "Takaisin",
+    "next": "Seuraava",
+    "previous": "Edellinen",
+    "search": "Hae",
+    "filter": "Suodata",
+    "sort": "Lajittele",
+    "view": "Näytä",
+    "download": "Lataa",
+    "upload": "Lähetä",
+    "share": "Jaa",
+    "copy": "Kopioi",
+    "copied": "Kopioitu!",
+    "yes": "Kyllä",
+    "no": "Ei",
+    "or": "tai",
+    "and": "ja",
+    "all": "Kaikki",
+    "none": "Ei mitään",
+    "required": "Pakollinen",
+    "optional": "Valinnainen",
+    "language": "Kieli",
+    "account": "Tili",
+    "menu": "Valikko",
+    "actions": "Toiminnot",
+    "active": "Aktiivinen",
+    "inactive": "Ei aktiivinen",
+    "expired": "Vanhentunut",
+    "status": "Tila",
+    "type": "Tyyppi",
+    "allTypes": "Kaikki tyypit",
+    "guest": "Vieras",
+    "converted": "Muunnettu",
+    "startDate": "Alkamispäivä",
+    "endDate": "Päättymispäivä",
+    "filters": "Suodattimet",
+    "shortcuts": "Pikavalinnat:",
+    "from": "Alkaen",
+    "to": "Asti",
+    "days7": "7pv",
+    "days30": "30pv",
+    "days90": "90pv",
+    "last7Days": "Viimeiset 7 päivää",
+    "last30Days": "Viimeiset 30 päivää",
+    "last90Days": "Viimeiset 90 päivää",
+    "thisYear": "Tänä vuonna",
+    "today": "Tänään",
+    "views": "Katselut",
+    "images": "Kuvat",
+    "storage": "Tallennustila",
+    "expiration": "Vanheneminen",
+    "creation": "Luotu",
+    "galleries": "Galleriat",
+    "totalViews": "Katselut yhteensä",
+    "offer": "Paketti",
+    "searchPlaceholder": "Hae...",
+    "newest": "Uusin",
+    "oldest": "Vanhin",
+    "mostViews": "Eniten katseluja",
+    "leastViews": "Vähiten katseluja",
+    "expiresLast": "Vanhenee viimeisenä",
+    "expiresSoon": "Vanhenee pian",
+    "free": "Ilmainen",
+    "newGallery": "Uusi galleria",
+    "galleryLimitReached": "Galleriaraja saavutettu",
+    "insufficientStorage": "Riittämätön tallennustila",
+    "upgradeToHigherPlan": "Päivitä korkeampaan pakettiin jatkaaksesi",
+    "dashboard": "Hallintapaneeli",
+    "settings": "Asetukset",
+    "signIn": "Kirjaudu sisään",
+    "signOut": "Kirjaudu ulos",
+    "signingOut": "Kirjaudutaan ulos...",
+    "getStarted": "Aloita",
+    "send": "Lähetä",
+    "name": "Nimi",
+    "email": "Sähköposti",
+    "subject": "Aihe",
+    "message": "Viesti",
+    "yourName": "Nimesi",
+    "yourEmail": "sinun@sahkoposti.fi",
+    "messageSubject": "Viestisi aihe",
+    "describeRequest": "Kuvaile pyyntösi...",
+    "messageSent": "Viesti lähetetty!",
+    "weWillReply24h": "Vastaamme 24-48 tunnin kuluessa.",
+    "weWillReplyShortly": "Vastaamme mahdollisimman pian.",
+    "responseTime": "Vastausaika",
+    "businessHours24to48": "24-48 työtuntia",
+    "location": "Sijainti",
+    "contactUs": "Ota yhteyttä",
+    "generalQuestions": "Yleiset kysymykset",
+    "technicalIssues": "Tekniset ongelmat",
+    "support": "Tuki",
+    "help": "Ohje",
+    "faqAndGuides": "UKK ja oppaat",
+    "helpCenter": "Ohjekeskus",
+    "findAnswers": "Löydä vastauksia kysymyksiisi",
+    "sendUsMessage": "Lähetä meille viesti",
+    "terms": "Ehdot",
+    "termsOfUse": "Käyttöehdot",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "cookiePolicy": "Evästekäytäntö",
+    "legalNotice": "Oikeudellinen ilmoitus",
+    "features": "Ominaisuudet",
+    "pricing": "Hinnoittelu",
+    "zeroCompression": "Ei pakkausta",
+    "fullySecure": "Salasanasuojattu",
+    "readyIn2Min": "30 sekunnin asennus",
+    "hdQuality": "Alkuperäislaatu",
+    "noCompression": "Ei pakkausta",
+    "instantDelivery": "Ammattimainen toimitus",
+    "secureUniqueLink": "Nolla kitkaa pääsy",
+    "exampleWeddingSession": "Hääkuvaus",
+    "examplePhotosHd": "24 kuvaa • HD",
+    "downloads": "Lataukset",
+    "info": "Tiedot",
+    "security": "Turvallisuus",
+    "photos": "Kuvat",
+    "exampleTitle": "Esim: Marian & Johanneksen häät",
+    "generateTitle": "Luo otsikko",
+    "passwordProtection": "Salasanasuojaus",
+    "onlyPeopleWithPassword": "Vain salasanan tietävät voivat käyttää galleriaasi",
+    "enterPassword": "Syötä salasana",
+    "expectedStorage": "Odotettu tallennustila",
+    "expirationDuration": "Voimassaoloaika",
+    "setGalleryValidity": "Aseta gallerian voimassaolo",
+    "saveChanges": "Tallenna muutokset",
+    "galleryTitle": "Gallerian otsikko",
+    "galleryName": "Galleriasi nimi",
+    "secureGalleryAccess": "Turvallinen pääsy galleriaasi",
+    "newPassword": "Uusi salasana",
+    "day1": "1 päivä",
+    "days3": "3 päivää",
+    "days7Full": "7 päivää",
+    "days14": "14 päivää",
+    "days30Full": "30 päivää",
+    "days60": "60 päivää",
+    "days90Full": "90 päivää",
+    "days180": "180 päivää",
+    "year1": "1 vuosi",
+    "galleryDetails": "Gallerian tiedot",
+    "manageYourGallery": "Hallitse kuvagalleriaasi",
+    "guestSessionId": "Vierasistunnon tunnus",
+    "paymentType": "Maksutyyppi:",
+    "unlocked": "Avattu:",
+    "createdAsGuest": "Luotu vieraana",
+    "paymentCompleted": "Maksu suoritettu",
+    "convertedToUserAccount": "Muunnettu käyttäjätiliksi",
+    "noUserAccount": "Ei käyttäjätiliä",
+    "recentActivity": "Viimeaikainen toiminta",
+    "upgradeLevel": "Päivitä seuraavalle tasolle",
+    "quickHelp": "Pikaohje",
+    "myGalleries": "Omat galleriat",
+    "myProfile": "Oma profiili",
+    "accountInfo": "Tilitiedot",
+    "manageAccountAccess": "Hallitse tilisi käyttöoikeuksia",
+    "emailAndPassword": "Sähköposti ja salasana",
+    "loginMethod": "Kirjautumistapa",
+    "subscription": "Tilaus",
+    "choosePlanForNeeds": "Valitse tarpeisiisi sopiva paketti",
+    "cloudinaryHdStripe": "Cloudinary HD-infrastruktuuri • Turvallinen Stripe-maksu",
+    "discoverPiksend": "Tutustu PikSendiin",
+    "forActivePhotographers": "Aktiivisille valokuvaajille",
+    "forProfessionals": "Ammattilaisille",
+    "forDemandingProfessionals": "Vaativille ammattilaisille",
+    "testHdDelivery": "Testaa HD-kuvien toimitus",
+    "originalQuality": "Alkuperäinen laatu",
+    "customizableDuration": "Mukautettava kesto",
+    "prioritySupport": "Ensisijainen tuki",
+    "linkExpired": "Linkki on vanhentunut",
+    "linkNoLongerValid": "Tämä linkki ei ole enää voimassa",
+    "atLeast6Characters": "Vähintään 6 merkkiä",
+    "confirmYourPassword": "Vahvista salasanasi",
+    "reset": "Nollaa",
+    "passwordMinLength": "Salasanan on oltava vähintään 6 merkkiä",
+    "hdPhotoSharing": "HD-kuvien jakaminen",
+    "google": "Google",
+    "users": "Käyttäjät",
+    "registeredAccounts": "Rekisteröidyt tilit",
+    "activeGalleries": "Aktiiviset galleriat",
+    "storageUsed": "Käytetty tallennustila",
+    "totalSpaceConsumed": "Kokonaiskulutus",
+    "conversionRate": "Konversioaste",
+    "payingUsers": "Maksavat käyttäjät",
+    "userGrowth": "Käyttäjäkasvu",
+    "newUsersPerDay": "Uudet käyttäjät päivässä",
+    "storageEvolution": "Tallennustilan kehitys",
+    "totalStorageUsedMb": "Käytetty tallennustila yhteensä (MB)",
+    "subscriptionConversions": "Tilauskonversiot",
+    "planUpgradesInPeriod": "Pakettipäivitykset jaksolla",
+    "searchByTitleOrSlug": "Hae otsikolla tai slugilla...",
+    "searchByEmailOrName": "Hae sähköpostilla tai nimellä...",
+    "allPlans": "Kaikki paketit",
+    "allAdmins": "Kaikki ylläpitäjät",
+    "allActions": "Kaikki toiminnot",
+    "suspended": "Keskeytetty",
+    "suspendUser": "Keskeytä käyttäjä",
+    "reactivateUser": "Aktivoi käyttäjä uudelleen",
+    "exampleViolation": "Esim: Käyttöehtojen rikkominen",
+    "analytics": "Analytiikka",
+    "subscriptions": "Tilaukset",
+    "auditLog": "Tarkastusloki",
+    "galleryNotFound": "Galleriaa ei löytynyt",
+    "galleryNotAccessible": "Tämä galleria ei ole enää käytettävissä",
+    "errorFetchingImages": "Virhe kuvien haussa",
+    "noImagesInGallery": "Ei kuvia tässä galleriassa",
+    "errorCreatingArchive": "Virhe arkiston luomisessa",
+    "errorDownloading": "Virhe latauksessa",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "Etusivu",
+    "features": "Ominaisuudet",
+    "pricing": "Hinnoittelu",
+    "help": "Ohje",
+    "contact": "Yhteystiedot",
+    "dashboard": "Hallintapaneeli",
+    "settings": "Asetukset",
+    "signIn": "Kirjaudu sisään",
+    "signOut": "Kirjaudu ulos",
+    "getStarted": "Aloita",
+    "menu": "Valikko",
+    "contactUs": "Ota yhteyttä"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "Ammattimaiset kuvatoimituspalvelut",
+    "title": "Työsi on huippuluokkaa.",
+    "titleHighlight": "Toimituksesi pitäisi olla myös.",
+    "subtitle": "Ammattimaiset kuvatoimituspalvelut",
+    "subtitleHighlight": "ilman pakkausta.",
+    "subtitleEnd": "Alkuperäinen laatu, nolla kitkaa, ei tiliä vaadittu vierailta.",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "Luo galleria",
+      "secondary": "Katso miten se toimii"
     },
-    "tagline": "",
+    "tagline": "Ei pakkausta • Alkuperäinen laatu • Nolla kitkaa",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "Valokuvaajia",
+      "galleries": "Toimitettuja gallerioita",
+      "photos": "Alkuperäinen laatu",
+      "satisfaction": "Tyytyväisyys"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "Älä anna algoritmin tuhota pikseleitäsi",
+      "title": "WhatsApp pakkaa kuvasi",
+      "titleHighlight": "jopa 70%.",
+      "paragraph1": "Käytät tunteja jokaisen yksityiskohdan viimeistelyyn. Kuvasi ovat valmiita ammattimaiseen toimitukseen.",
+      "paragraph1Highlight": "Sitten tulee jakamisen hetki.",
+      "paragraph2": "WhatsApp, WeTransfer, Google Drive — ne kaikki vaarantavat työsi. Pakkaus, sokeat ZIP-tiedostot, 'Pyydä käyttöoikeutta' -painikkeet.",
+      "paragraph2Highlight": "Asiakkaasi ansaitsevat parempaa.",
+      "paragraph3": "Ammattimaisten kuvatoimituspalveluiden tulisi säilyttää",
+      "paragraph3Highlight": "alkuperäinen laatu,",
+      "paragraph3End": "ei tuhota sitä.",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — Ei pakkausta",
+        "originalSpec": "24 MP • 6000×4000px",
+        "originalDesc": "Alkuperäinen laatu säilytetty, ammattimainen galleria",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "Pakkaus, sokea ZIP, ei esikatselua"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "Ammattimainen kuvatoimitus",
+      "title": "Elegantti silta.",
+      "subtitle": "WeTransferin yksinkertaisuus kohtaa studiogallerian eleganssin.",
+      "subtitleHighlight": "Alkuperäinen laatu, nolla kitkaa.",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "Ei pakkausta",
+          "title": "Alkuperäinen laatu",
+          "desc": "Älä anna algoritmin tuhota pikseleitäsi. Jokainen kuva toimitetaan täsmälleen sellaisena kuin veit sen."
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "Nolla kitkaa",
+          "title": "Ei tiliä vaadittu",
+          "desc": "Ei 'Pyydä käyttöoikeutta' -painikkeita. Ei rekisteröitymistä asiakkaille. Jaa linkki, he pääsevät heti sisään."
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30 sekuntia",
+          "title": "Ammattimainen galleria",
+          "desc": "Ammattimaiset galleriat 30 sekunnissa, ei 30 minuutissa. Visuaalinen esikatselu, ei sokeaa ZIP-tiedostoa."
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "Ammattimaiset kuvatoimituspalvelut",
+      "titleHighlight": "odottavat.",
+      "subtitle": "Liity yli 500 valokuvaajan joukkoon, jotka toimittavat alkuperäistä laatua asiakkailleen. Ei pakkausta, nolla kitkaa.",
+      "button": "Luo ilmainen galleria",
+      "note": "Ei korttia tarvita • Ei pakkausta • Alkuperäinen laatu"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "Kuvienjakoalusta, jota luovat rakastavat.",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "Kirjaudu sisään",
+      "signUp": "Rekisteröidy"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "Koko nimi",
+      "namePlaceholder": "Matti Meikäläinen",
+      "email": "Sähköpostiosoite",
+      "emailPlaceholder": "sinun@sahkoposti.fi",
+      "password": "Salasana",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Vahvista salasana",
+      "forgotPassword": "Unohtuiko?",
+      "rememberMe": "Muista minut",
+      "agreeTerms": "Hyväksyn",
+      "termsLink": "Käyttöehdot",
+      "andThe": "ja",
+      "privacyLink": "Tietosuojakäytännön"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "Turvallisuus",
+      "weak": "Heikko",
+      "medium": "Keskitaso",
+      "good": "Hyvä",
+      "excellent": "Erinomainen"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "Kirjaudu sisään",
+      "signUp": "Luo tilini",
+      "google": "Kirjaudu Googlella"
     },
-    "divider": "",
+    "divider": "Pikakäyttö",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "Virheellinen sähköposti",
+      "passwordTooShort": "Salasanan on oltava vähintään 6 merkkiä",
+      "passwordMismatch": "Salasanat eivät täsmää",
+      "nameRequired": "Anna nimesi.",
+      "termsRequired": "Sinun on hyväksyttävä käyttöehdot.",
+      "invalidCredentials": "Virheellinen sähköposti tai salasana",
+      "signupFailed": "Virhe rekisteröinnissä",
+      "googleFailed": "Virhe Google-kirjautumisessa",
+      "accountExists": "Tili on jo olemassa tällä sähköpostilla. Kirjaudu salasanallasi.",
+      "oauthError": "Virhe Google-kirjautumisessa. Yritä uudelleen.",
+      "genericError": "Tapahtui virhe",
+      "accountCreationError": "Virhe tilin luomisessa",
+      "profileCreationError": "Virhe profiilin luomisessa",
+      "resetLinkInvalid": "Nollauslinkki on virheellinen tai vanhentunut",
+      "passwordUpdateError": "Virhe salasanan päivityksessä",
+      "resetEmailError": "Virhe nollaussähköpostin lähettämisessä"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "Tili luotu! Voit nyt kirjautua sisään.",
+      "passwordReset": "Salasana nollattu onnistuneesti!"
+    },
+    "forgotPassword": {
+      "title": "Unohtunut salasana",
+      "subtitle": "Syötä sähköpostisi saadaksesi nollauslinkin",
+      "sendLink": "Lähetä nollauslinkki",
+      "emailSentTo": "Sähköposti lähetetty:",
+      "backToLogin": "Takaisin kirjautumiseen"
+    },
+    "resetPassword": {
+      "title": "Nollaa salasana",
+      "subtitle": "Syötä uusi salasanasi",
+      "newPassword": "Uusi salasana",
+      "confirmPassword": "Vahvista salasana",
+      "resetButton": "Nollaa salasana"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "Hallintapaneeli",
+    "greeting": "Hei,",
+    "subtitle": "Tässä on yleiskatsaus suorituskykyysi ja turvalliseen gallerianhallintaan.",
+    "newGallery": "Uusi galleria",
+    "quotaReached": "Kiintiö täynnä",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "Nykyinen paketti",
+      "storage": "Tallennustila",
+      "galleries": "Galleriat",
+      "totalViews": "Katselut yhteensä",
+      "usage": "Käyttö",
+      "volume": "Volyymi",
+      "vsLastMonth": "verrattuna {{count}} viime kuussa"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "Ilmainen",
+      "premium": "Premium",
+      "pro": "Pro"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "Galleriat",
+      "search": "Hae galleriaa...",
+      "noResults": "Gallerioita ei löytynyt",
+      "noResultsQuery": "Ei tuloksia haulle \"{{query}}\"",
+      "emptyState": "Aloita luomalla ensimmäinen kuvagalleriasi.",
+      "createFirst": "Luo ensimmäinen galleria"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "Uusin",
+      "oldest": "Vanhin",
+      "mostViews": "Eniten katseluja",
+      "leastViews": "Vähiten katseluja",
+      "expiresLast": "Vanhenee viimeisenä",
+      "expiresSoon": "Vanhenee pian"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "Viimeaikainen toiminta",
+      "galleryCreated": "Galleria \"{{title}}\" luotu"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "Luo galleria",
+      "titleLabel": "Gallerian otsikko",
+      "titlePlaceholder": "Kuvagalleriani",
+      "uploadLabel": "Lataa kuvia",
+      "uploadHint": "Vedä ja pudota tai klikkaa valitaksesi",
+      "maxFiles": "Enintään {{count}} kuvaa",
+      "maxSize": "Enintään {{size}}MB per kuva",
+      "allowedTypes": "JPG, PNG, WebP hyväksytään",
+      "creating": "Luodaan...",
+      "submit": "Luo galleria"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "katselua",
+      "images": "kuvaa",
+      "expires": "Vanhenee",
+      "expired": "Vanhentunut",
+      "active": "Aktiivinen",
+      "inactive": "Ei aktiivinen",
+      "shareLink": "Jaa linkki",
+      "copyLink": "Kopioi linkki",
+      "linkCopied": "Linkki kopioitu!",
+      "download": "Lataa kaikki",
+      "delete": "Poista galleria",
+      "settings": "Asetukset",
+      "content": "Sisältö"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "Lataa kaikki",
+      "downloadSelected": "Lataa valitut",
+      "selectAll": "Valitse kaikki",
+      "deselectAll": "Poista valinnat",
+      "passwordRequired": "Salasana vaaditaan",
+      "passwordPlaceholder": "Syötä salasana",
+      "passwordSubmit": "Avaa galleria",
+      "passwordError": "Väärä salasana",
+      "expired": "Tämä galleria on vanhentunut",
+      "expiredMessage": "Etsimäsi galleria ei ole enää käytettävissä."
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "Ilmainen galleria",
+      "expiresIn": "Vanhenee {{hours}} tunnin kuluttua"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "Palvelun tarjoaa",
+      "tagline": "HD-kuvien toimitus vaativille luojille",
+      "creatorPrompt": "Oletko tämän gallerian luoja?",
+      "creatorDescription": "Siirry hallintapaneeliin hallitaksesi jakojasi ja tilauksiasi.",
+      "accessDashboard": "Siirry hallintapaneeliin",
+      "createGallery": "Luo oma galleria",
+      "createDescription": "Jaa kuvasi alkuperäisessä laadussa, ilman pakkausta.",
+      "learnMore": "Lue lisää",
+      "photos": "kuvaa",
+      "expiresOn": "Vanhenee"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "Galleria avattu!",
+      "subtitle": "Maksusi onnistui",
+      "benefitsTitle": "Mitä saat",
+      "benefit1": "Vesileimat poistettu",
+      "benefit2": "Jatkettu {days} päivään",
+      "benefit3": "HD-lataukset käytössä",
+      "createAccountTitle": "Haluatko hallita galleriaasi?",
+      "createAccountDesc": "Luo ilmainen tili päästäksesi hallintapaneeliin, seurataksesi katseluja ja hallitaksesi gallerioitasi.",
+      "createAccountBtn": "Luo tilini",
+      "continueBtn": "Jatka ilman tiliä"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "Älä menetä galleriaasi!",
+      "subtitle": "Vain {hours}t jäljellä ennen vanhenemista",
+      "cta": "Avaa"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "Ammattimainen kuvatoimitus 30 sekunnissa",
+      "subtitle": "Ei pakkausta. Ei tiliä vaadittu. Alkuperäisen laadun galleriat.",
+      "dropzone": "Pudota kuvasi tähän",
+      "dropzoneHint": "tai klikkaa valitaksesi tiedostoja",
+      "uploading": "Ladataan...",
+      "processing": "Käsitellään...",
+      "complete": "Lataus valmis!"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "Galleriasi on valmis!",
+      "subtitle": "Valitse miten haluat jakaa sen",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Pidä ilmaisena",
+          "price": "0 €",
+          "description": "Vanhenee 24 tunnissa",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24h käyttöoikeus",
+            "1": "PikSend-vesileima",
+            "2": "Perusjako"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Avaa tämä galleria",
+          "price": "2,99 €",
+          "description": "Kertamaksu",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30 päivän käyttöoikeus",
+            "1": "Ei vesileimaa",
+            "2": "HD-lataukset",
+            "3": "Mukautettu otsikko"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "Siirry Premiumiin",
+          "price": "9,99 €/kk",
+          "description": "Paras arvo",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50 galleriaa",
+            "1": "5 GB tallennustilaa",
+            "2": "Ei vesileimoja",
+            "3": "Ensisijainen tuki"
           },
-          "recommended": ""
+          "recommended": "Suositeltu"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "Selkeä hinnoittelu",
+    "title": "Valitse pakettisi",
+    "subtitle": "HD-kuvat ilman pakkausta. Aloita ilmaiseksi.",
+    "monthly": "Kuukausittain",
+    "yearly": "Vuosittain",
+    "yearlyDiscount": "Säästä 20%",
+    "perMonth": "/kk",
+    "perYear": "/vuosi",
+    "currentPlan": "Nykyinen paketti",
+    "selectPlan": "Valitse paketti",
+    "upgrade": "Päivitä",
+    "downgrade": "Alenna",
+    "popular": "Suosittu",
+    "equivalent": "eli",
+    "needHelp": "Tarvitsetko apua?",
+    "priceNote": "Hinnat euroissa. Peruuta milloin tahansa.",
+    "faqTitle": "UKK",
+    "faq": {
+      "changePlan": {
+        "question": "Voinko vaihtaa pakettia?",
+        "answer": "Kyllä, vaihda milloin tahansa. Laskutus suhteutetaan."
+      },
+      "quality": {
+        "question": "Säilyykö laatu kaikissa paketeissa?",
+        "answer": "Kyllä, 100% alkuperäinen laatu. Ei pakkausta."
+      },
+      "yearly": {
+        "question": "Miten vuosimaksu toimii?",
+        "answer": "Maksa 12 kuukautta etukäteen ja säästä 20%."
+      },
+      "cancel": {
+        "question": "Jos peruutan?",
+        "answer": "Käyttöoikeus säilyy maksetun jakson loppuun, sitten Ilmainen-paketti."
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "Ilmainen",
+        "description": "Täydellinen aloittamiseen",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3 galleriaa",
+          "20 MB tallennustilaa",
+          "7 päivän vanheneminen",
+          "Perustuki"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "Premium",
+        "description": "Aktiivisille valokuvaajille",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20 galleriaa",
+          "500 MB tallennustilaa",
+          "30 päivän vanheneminen",
+          "Ensisijainen tuki",
+          "Mukautettu brändäys"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "Pro",
+        "description": "Ammattilaisille",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "Rajattomat galleriat",
+          "5 GB tallennustilaa",
+          "90 päivän vanheneminen",
+          "24/7 tuki",
+          "Mukautettu brändäys",
+          "Analytiikka"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "Asetukset",
+    "subtitle": "Hallitse tiliäsi ja asetuksiasi",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "Profiili",
+      "name": "Nimi",
+      "email": "Sähköposti",
+      "save": "Tallenna muutokset",
+      "saved": "Profiili päivitetty!",
+      "saveError": "Virhe profiilin tallentamisessa"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "Tilaus",
+      "currentPlan": "Nykyinen paketti",
+      "manage": "Hallitse tilausta",
+      "upgrade": "Päivitä paketti",
+      "cancel": "Peruuta tilaus"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "Vaaravyöhyke",
+      "deleteAccount": "Poista tili",
+      "deleteWarning": "Tämä toiminto on peruuttamaton. Kaikki tietosi poistetaan pysyvästi."
+    },
+    "signOut": {
+      "title": "Kirjaudu ulos",
+      "description": "Lopeta istuntosi",
+      "button": "Kirjaudu ulos",
+      "signingOut": "Kirjaudutaan ulos..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "Hallintapaneeli",
+      "users": "Käyttäjät",
+      "galleries": "Galleriat",
+      "subscriptions": "Tilaukset",
+      "analytics": "Analytiikka",
+      "auditLogs": "Tarkastuslokit"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "Hallintapaneeli",
+      "subtitle": "PikSend-alustan yleiskatsaus",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "Käyttäjät",
+        "usersSubtitle": "Rekisteröidyt tilit",
+        "activeGalleries": "Aktiiviset galleriat",
+        "totalGalleries": "{{count}} yhteensä",
+        "storage": "Käytetty tallennustila",
+        "storageSubtitle": "Kokonaiskulutus",
+        "conversionRate": "Konversioaste",
+        "conversionSubtitle": "Maksavat käyttäjät"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "Käyttäjät",
+      "subtitle": "Hallitse alustan käyttäjiä",
+      "search": "Hae käyttäjiä...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "Nimi",
+        "email": "Sähköposti",
+        "plan": "Paketti",
+        "galleries": "Galleriat",
+        "storage": "Tallennustila",
+        "status": "Tila",
+        "actions": "Toiminnot",
+        "registration": "Rekisteröinti",
+        "currentPlan": "Nykyinen paketti",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "Aktiivinen",
+        "suspended": "Keskeytetty"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "Näytä",
+        "suspend": "Keskeytä",
+        "reactivate": "Aktivoi uudelleen",
+        "changePlan": "Vaihda paketti"
+      },
+      "totalUsers": "käyttäjää yhteensä",
+      "userReactivated": "Käyttäjä aktivoitu uudelleen",
+      "userSuspended": "Käyttäjä keskeytetty",
+      "planUpdated": "Käyttäjän paketti päivitetty"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "Galleriat",
+      "subtitle": "Hallitse kaikkia gallerioita",
+      "search": "Hae gallerioita...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "Otsikko",
+        "owner": "Omistaja",
+        "type": "Tyyppi",
+        "images": "Kuvat",
+        "views": "Katselut",
+        "status": "Tila",
+        "expires": "Vanhenee",
+        "actions": "Toiminnot"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "Vieras",
+        "user": "Käyttäjä",
+        "converted": "Muunnettu"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "Aktiivinen",
+        "expired": "Vanhentunut",
+        "deactivated": "Deaktivoitu"
+      },
+      "totalGalleries": "galleriaa yhteensä",
+      "galleryDeactivated": "Galleria deaktivoitu"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "Tilaukset",
+      "subtitle": "Hallitse käyttäjätilauksia",
+      "totalSubscribers": "Tilaajia yhteensä",
+      "premiumCount": "Premium",
+      "proCount": "Pro",
+      "activeCount": "Aktiivisia",
+      "upgraded": "Tilaus päivitetty",
+      "cancelled": "Tilaus peruutettu"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "Analytiikka",
+      "subtitle": "Alustan tilastot ja trendit",
+      "newRegistrations": "Uudet rekisteröinnit",
+      "galleriesCreated": "Luodut galleriat",
+      "totalActivities": "Toimintoja yhteensä"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "Tarkastuslokit",
+      "subtitle": "Järjestelmän toimintahistoria",
+      "totalEntries": "Merkintöjä yhteensä",
+      "modifications": "Muutokset"
+    },
+    "header": {
+      "signOut": "Kirjaudu ulos",
+      "signingOut": "Kirjaudutaan ulos..."
+    },
+    "recentActivity": {
+      "title": "Viimeaikainen toiminta"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "Tunnistautuminen vaaditaan",
+      "message": "Sinun on kirjauduttava sisään päästäksesi tälle sivulle. Kirjaudu sisään tai luo tili jatkaaksesi.",
+      "info": "PikSend antaa sinun luoda ja jakaa turvallisia kuvagallerioita. Rekisteröidy ilmaiseksi aloittaaksesi!",
+      "signIn": "Kirjaudu sisään",
+      "signUp": "Luo tili",
+      "home": "Takaisin etusivulle",
+      "possibleReasons": "Mahdolliset syyt:",
+      "reason1": "Istuntosi on vanhentunut",
+      "reason2": "Et ole kirjautunut sisään",
+      "reason3": "Tilisi on keskeytetty"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Pääsy estetty",
+      "message": "Sinulla ei ole oikeutta käyttää tätä sivua.",
+      "home": "Takaisin etusivulle",
+      "suggestions": "Ehdotuksia:",
+      "suggestion1": "Tarkista, että sinulla on oikeat käyttöoikeudet",
+      "suggestion2": "Ota yhteyttä ylläpitäjään, jos uskot tämän olevan virhe"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Sivua ei löytynyt",
+      "message": "Etsimääsi sivua ei ole olemassa tai se on siirretty.",
+      "home": "Takaisin etusivulle",
+      "suggestions": "Ehdotuksia",
+      "suggestion1": "Tarkista URL-osoitteen kirjoitusasu",
+      "suggestion2": "Galleria on saattanut vanhentua",
+      "suggestion3": "Seuraamasi linkki saattaa olla vanhentunut",
+      "previousPage": "Edellinen sivu"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "Palvelinvirhe",
+      "message": "Jokin meni pieleen meidän päässämme. Yritä myöhemmin uudelleen.",
+      "retry": "Yritä uudelleen",
+      "home": "Takaisin etusivulle",
+      "possibleReasons": "Mahdolliset syyt:",
+      "reason1": "Tilapäinen palvelimen ylikuormitus",
+      "reason2": "Huolto käynnissä",
+      "reason3": "Odottamaton virhe",
+      "retryLater": "Yritä uudelleen muutaman minuutin kuluttua",
+      "problemPersists": "Ongelma jatkuu?",
+      "contactSupport": "Ota yhteyttä tukeen"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "Palvelu ei käytettävissä",
+      "message": "Suoritamme parhaillaan huoltoa. Palaa pian.",
+      "home": "Takaisin etusivulle",
+      "temporarilyUnavailable": "Palvelu tilapäisesti poissa käytöstä",
+      "autoRefresh": "Automaattinen päivitys",
+      "inSeconds": "{{seconds}} sekunnin kuluttua",
+      "statusPage": "Seuraa palvelumme tilaa osoitteessa"
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "Tiedosto on liian suuri. Enintään {{size}}MB per kuva.",
+      "invalidFileType": "Virheellinen tiedostotyyppi. Lataa JPG, PNG tai WebP-kuvia.",
+      "tooManyFiles": "Liian monta tiedostoa. Enintään {{count}} kuvaa vierasgallerioille.",
+      "noFiles": "Valitse vähintään yksi kuva ladattavaksi.",
+      "networkError": "Lataus epäonnistui. Tarkista yhteytesi ja yritä uudelleen.",
+      "galleryCreationFailed": "Gallerian luominen epäonnistui. Yritä uudelleen.",
+      "uploadFailed": "Kuvan lataus epäonnistui. Yritä uudelleen."
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "Maksu epäonnistui. Yritä uudelleen.",
+      "declined": "Maksu hylätty. Kokeile toista maksutapaa.",
+      "sessionExpired": "Istunto on vanhentunut. Yritä uudelleen.",
+      "checkoutFailed": "Kassan käynnistäminen epäonnistui. Yritä uudelleen.",
+      "invalidAmount": "Virheellinen maksusumma.",
+      "stripeError": "Maksun käsittelyvirhe: {{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "Istuntosi on vanhentunut. Galleriasi eivät ehkä ole enää käytettävissä.",
+      "invalid": "Virheellinen istunto. Päivitä sivu.",
+      "creationFailed": "Istunnon luominen epäonnistui. Yritä uudelleen."
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "Galleriaa ei löytynyt.",
+      "expired": "Tämä galleria on vanhentunut eikä ole enää käytettävissä.",
+      "accessDenied": "Sinulla ei ole pääsyä tähän galleriaan.",
+      "migrationFailed": "Gallerioiden siirto tilillesi epäonnistui. Ota yhteyttä tukeen.",
+      "noLongerActive": "Tämä galleria ei ole enää aktiivinen",
+      "incorrectPassword": "Väärä salasana"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "Odottamaton virhe tapahtui. Yritä uudelleen.",
+      "networkError": "Verkkovirhe. Tarkista yhteytesi.",
+      "retry": "Jokin meni pieleen. Yritä uudelleen.",
+      "validationFailed": "Validointi epäonnistui",
+      "invalidData": "Virheelliset tiedot",
+      "invalidActionType": "Virheellinen toimintotyyppi",
+      "invalidEntityType": "Virheellinen entiteettityyppi",
+      "unauthorized": "Luvaton",
+      "internalServerError": "Sisäinen palvelinvirhe",
+      "authenticationRequired": "Tunnistautuminen vaaditaan",
+      "adminAccessRequired": "Ylläpitäjän käyttöoikeus vaaditaan",
+      "updateError": "Virhe päivityksessä",
+      "serverError": "Palvelinvirhe",
+      "tooManyAttempts": "Liian monta yritystä. Yritä myöhemmin uudelleen."
+    },
+    "profile": {
+      "fetchFailed": "Profiilin haku epäonnistui",
+      "updateFailed": "Profiilin päivitys epäonnistui",
+      "notFound": "Profiilia ei löytynyt"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "HD-kuvien toimitus vaativille luojille.",
+    "product": "Tuote",
+    "platform": "Alusta",
+    "company": "Yritys",
+    "legal": "Oikeudellinen",
+    "officialContact": "Virallinen yhteystieto",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "Ominaisuudet",
+      "pricing": "Hinnoittelu",
+      "help": "Ohjekeskus",
+      "contact": "Yhteystiedot",
+      "terms": "Ehdot",
+      "privacy": "Tietosuoja",
+      "mentions": "Oikeudellinen ilmoitus"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "Kansallinen tunnus",
+      "taxNumber": "Veronumero"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "Yksinomainen omaisuus",
+    "country": "Kongon demokraattinen tasavalta",
+    "copyright": "© {{year}} PikSend. Kaikki oikeudet pidätetään."
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "Tervetuloa PikSendiin",
+      "description": "Helpoin tapa jakaa kuvasi alkuperäisessä laadussa."
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "Lataa kuvasi",
+      "description": "Vedä ja pudota HD-kuvasi tai klikkaa valitaksesi tiedostoja."
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "Mukauta galleriasi",
+      "description": "Lisää otsikko ja määritä jakamisasetuksesi."
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "Jaa asiakkaillesi",
+      "description": "Saat yksilöllisen linkin jakaaksesi galleriasi välittömästi."
     },
-    "skip": "",
-    "finish": ""
+    "skip": "Ohita",
+    "finish": "Aloita"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "Omat galleriat",
+    "subtitle": "Tämän istunnon aikana luodut galleriat",
+    "createNew": "Luo uusi",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "Ei gallerioita vielä",
+      "description": "Et ole luonut gallerioita tämän istunnon aikana. Luo ensimmäinen galleriasi jakaaksesi kuviasi.",
+      "cta": "Luo ensimmäinen galleria"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "Tallenna linkkisi!",
+      "description": "Nämä galleriat on linkitetty selaimeesi. Jos tyhjennät tietosi tai vaihdat laitetta, menetät pääsyn. Luo tili säilyttääksesi ne ikuisesti."
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "Avattu",
+      "expired": "Vanhentunut"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "Haluatko säilyttää galleriasi?",
+      "description": "Luo ilmainen tili päästäksesi gallerioihisi miltä tahansa laitteelta, saadaksesi lisää tallennustilaa ja avataksesi premium-ominaisuudet.",
+      "cta": "Luo tilini"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – HD-kuvien toimitus ilman laadun heikkenemistä",
+      "description": "Jaa kuvasi alkuperäisessä laadussa. Ei pakkausta, turvalliset galleriat, automaattinen vanheneminen."
+    },
+    "pricing": {
+      "title": "PikSend-hinnoittelu - Ilmaisesta Prohon",
+      "description": "Aloita ilmaiseksi 3 gallerialla. Päivitä Premiumiin tai Prohon saadaksesi lisää ominaisuuksia."
+    },
+    "features": {
+      "title": "PikSend-ominaisuudet",
+      "description": "100% säilynyt laatu, turvalliset galleriat, automaattinen vanheneminen. Tutustu kaikkiin ominaisuuksiin."
+    },
+    "help": {
+      "title": "PikSend Ohjekeskus",
+      "description": "Oppaat, UKK ja tekninen tuki PikSendin käyttöön."
+    },
+    "contact": {
+      "title": "Ota yhteyttä PikSendiin",
+      "description": "Onko sinulla kysyttävää? Tiimimme on täällä auttamassa."
+    },
+    "auth": {
+      "title": "PikSend Kirjautuminen",
+      "description": "Pääse turvallisiin kuvagallerioihisi."
+    },
+    "legal": {
+      "terms": {
+        "title": "Käyttöehdot - PikSend",
+        "description": "Lue PikSendin yleiset käyttöehdot."
+      },
+      "privacy": {
+        "title": "Tietosuojakäytäntö - PikSend",
+        "description": "Opi miten PikSend suojaa henkilötietojasi."
+      },
+      "cookies": {
+        "title": "Evästekäytäntö - PikSend",
+        "description": "Tietoa PikSendin evästeiden käytöstä."
+      },
+      "mentions": {
+        "title": "Oikeudellinen ilmoitus - PikSend",
+        "description": "Oikeudellista tietoa PikSendin julkaisijasta."
+      }
+    },
+    "dashboard": {
+      "title": "Hallintapaneeli | PikSend",
+      "description": "Hallitse kuvagallerioitasi"
+    },
+    "newGallery": {
+      "title": "Uusi galleria | PikSend",
+      "description": "Luo uusi turvallinen kuvagalleria"
+    },
+    "galleryDetails": {
+      "title": "Gallerian tiedot | PikSend",
+      "description": "Hallitse kuvagalleriaasi"
+    },
+    "myGalleries": {
+      "title": "Omat galleriat | PikSend",
+      "description": "Löydä vieraana luomasi galleriat"
+    },
+    "error401": {
+      "title": "Ei tunnistautunut - 401 | PikSend",
+      "description": "Kirjaudu sisään päästäksesi tälle sivulle."
+    },
+    "error403": {
+      "title": "Pääsy estetty - 403 | PikSend",
+      "description": "Sinulla ei ole oikeutta käyttää tätä resurssia."
+    },
+    "error500": {
+      "title": "Palvelinvirhe - 500 | PikSend",
+      "description": "Sisäinen palvelinvirhe tapahtui. Yritä myöhemmin uudelleen."
+    },
+    "error503": {
+      "title": "Palvelu ei käytettävissä - 503 | PikSend",
+      "description": "Palvelu on tilapäisesti poissa käytöstä huollon vuoksi."
+    },
+    "pageNotFound": {
+      "title": "Sivua ei löytynyt",
+      "description": "Etsimääsi sivua ei ole olemassa."
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "Galleriaraja saavutettu",
+      "description": "Olet saavuttanut pakettisi maksimigalleriamäärän."
+    },
+    "storageLimit": {
+      "title": "Riittämätön tallennustila",
+      "description": "Tallennustilasi on täynnä tai riittämätön tälle toiminnolle."
+    },
+    "imageLimit": {
+      "title": "Kuvaraja saavutettu",
+      "description": "Tämä galleria on saavuttanut pakettisi maksimikuvamäärän."
+    },
+    "fileSize": {
+      "title": "Tiedosto on liian suuri",
+      "description": "Tiedostokoko ylittää pakettisi salliman rajan."
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "Galleriaa ei löytynyt",
+      "galleryNotAccessible": "Tämä galleria ei ole enää käytettävissä",
+      "errorFetchingImages": "Virhe kuvien haussa",
+      "noImagesInGallery": "Ei kuvia tässä galleriassa",
+      "errorCreatingArchive": "Virhe arkiston luomisessa",
+      "errorDownloading": "Virhe latauksessa",
+      "tooManyAttempts": "Liian monta yritystä. Yritä myöhemmin uudelleen.",
+      "validationFailed": "Validointi epäonnistui",
+      "registrationFailed": "Rekisteröinti epäonnistui",
+      "accountCreatedSuccess": "Tili luotu onnistuneesti",
+      "passwordResetSuccess": "Salasana nollattu onnistuneesti",
+      "passwordResetEmailSent": "Jos tili on olemassa tällä sähköpostiosoitteella, saat nollauslinkin.",
+      "invalidData": "Virheelliset tiedot",
+      "profileUpdateFailed": "Profiilin päivitys epäonnistui",
+      "profileFetchFailed": "Profiilin haku epäonnistui",
+      "updateError": "Virhe päivityksessä",
+      "serverError": "Palvelinvirhe"
     }
   }
 }

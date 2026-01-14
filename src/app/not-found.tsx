@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import { Search, Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function NotFound() {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative Orbs */}
@@ -30,29 +33,28 @@ export default function NotFound() {
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-slate-900">
-            Page introuvable
+            {t('errors.404.title')}
           </h2>
           <p className="text-base text-slate-600">
-            Désolé, la page que vous recherchez n&apos;existe pas, a été déplacée 
-            ou n&apos;est temporairement plus disponible.
+            {t('errors.404.message')}
           </p>
         </div>
 
         {/* Suggestions */}
         <div className="bg-white/60 backdrop-blur-xl border border-indigo-100 rounded-xl p-4 text-left space-y-2 shadow-lg shadow-indigo-500/5">
-          <p className="text-sm font-medium text-slate-900">Suggestions :</p>
+          <p className="text-sm font-medium text-slate-900">{t('errors.404.suggestions')}:</p>
           <ul className="text-sm text-slate-600 space-y-1.5">
             <li className="flex items-start gap-2">
               <span className="text-indigo-600">•</span>
-              Vérifiez l&apos;orthographe de l&apos;URL
+              {t('errors.404.suggestion1')}
             </li>
             <li className="flex items-start gap-2">
               <span className="text-indigo-600">•</span>
-              La galerie a peut-être expiré
+              {t('errors.404.suggestion2')}
             </li>
             <li className="flex items-start gap-2">
               <span className="text-indigo-600">•</span>
-              Le lien que vous avez suivi est peut-être obsolète
+              {t('errors.404.suggestion3')}
             </li>
           </ul>
         </div>
@@ -62,7 +64,7 @@ export default function NotFound() {
           <Button asChild size="sm" className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
+              {t('errors.404.home')}
             </Link>
           </Button>
           <Button 
@@ -72,7 +74,7 @@ export default function NotFound() {
             className="gap-2 border-indigo-200 hover:bg-indigo-50"
           >
             <ArrowLeft className="w-4 h-4" />
-            Page précédente
+            {t('errors.404.previousPage')}
           </Button>
         </div>
       </div>

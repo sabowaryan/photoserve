@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       const response = NextResponse.json(
         {
-          error: 'Trop de tentatives. Veuillez réessayer plus tard.',
+          error: 'api.errors.tooManyAttempts',
           code: 'RATE_LIMIT_EXCEEDED',
           details: {
             retryAfterSeconds: rateLimitResult.retryAfterSeconds,

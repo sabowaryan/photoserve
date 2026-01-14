@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { Construction, RefreshCw, Home, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/lib/i18n/context';
 
 export default function Error503Client() {
+  const { t } = useTranslation();
   const [countdown, setCountdown] = useState(60);
 
   useEffect(() => {
@@ -44,11 +46,10 @@ export default function Error503Client() {
         {/* Message */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
-            Service temporairement indisponible
+            {t('errors.503.title')}
           </h2>
           <p className="text-base text-muted-foreground">
-            Nous effectuons actuellement une maintenance pour améliorer nos services. 
-            Nous serons de retour très bientôt !
+            {t('errors.503.message')}
           </p>
         </div>
 
@@ -56,13 +57,13 @@ export default function Error503Client() {
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-center gap-2">
             <Clock className="w-4 h-4 text-yellow-600" />
-            <span className="text-sm font-medium text-yellow-600">Actualisation automatique</span>
+            <span className="text-sm font-medium text-yellow-600">{t('errors.503.autoRefresh')}</span>
           </div>
           <div className="text-3xl font-bold text-foreground">
             {countdown}s
           </div>
           <p className="text-sm text-muted-foreground">
-            La page sera automatiquement rechargée
+            {t('errors.503.inSeconds', { seconds: countdown.toString() })}
           </p>
         </div>
 
@@ -78,19 +79,19 @@ export default function Error503Client() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button onClick={handleRefresh} size="sm" className="gap-2">
             <RefreshCw className="w-4 h-4" />
-            Réessayer maintenant
+            {t('errors.500.retry')}
           </Button>
           <Button variant="outline" size="sm" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Retour à l&apos;accueil
+              {t('errors.503.home')}
             </Link>
           </Button>
         </div>
 
         {/* Status page link */}
         <p className="text-sm text-muted-foreground">
-          Suivez l&apos;état de nos services sur{' '}
+          {t('errors.503.statusPage')}{' '}
           <a 
             href="https://status.piksend.com" 
             target="_blank"

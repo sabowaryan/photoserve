@@ -1,623 +1,1047 @@
 {
   "common": {
-    "loading": "",
-    "error": "",
-    "success": "",
-    "cancel": "",
-    "confirm": "",
-    "save": "",
-    "delete": "",
-    "edit": "",
-    "close": "",
-    "open": "",
-    "back": "",
-    "next": "",
-    "previous": "",
-    "search": "",
-    "filter": "",
-    "sort": "",
-    "view": "",
-    "download": "",
-    "upload": "",
-    "share": "",
-    "copy": "",
-    "copied": "",
-    "yes": "",
-    "no": "",
-    "or": "",
-    "and": "",
-    "all": "",
-    "none": "",
-    "required": "",
-    "optional": "",
-    "language": "",
-    "account": "",
-    "menu": ""
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "close": "閉じる",
+    "open": "開く",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並べ替え",
+    "view": "表示",
+    "download": "ダウンロード",
+    "upload": "アップロード",
+    "share": "共有",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "yes": "はい",
+    "no": "いいえ",
+    "or": "または",
+    "and": "および",
+    "all": "すべて",
+    "none": "なし",
+    "required": "必須",
+    "optional": "任意",
+    "language": "言語",
+    "account": "アカウント",
+    "menu": "メニュー",
+    "actions": "アクション",
+    "active": "アクティブ",
+    "inactive": "非アクティブ",
+    "expired": "期限切れ",
+    "status": "ステータス",
+    "type": "タイプ",
+    "allTypes": "すべてのタイプ",
+    "guest": "ゲスト",
+    "converted": "変換済み",
+    "startDate": "開始日",
+    "endDate": "終了日",
+    "filters": "フィルター",
+    "shortcuts": "ショートカット：",
+    "from": "から",
+    "to": "まで",
+    "days7": "7日",
+    "days30": "30日",
+    "days90": "90日",
+    "last7Days": "過去7日間",
+    "last30Days": "過去30日間",
+    "last90Days": "過去90日間",
+    "thisYear": "今年",
+    "today": "今日",
+    "views": "閲覧数",
+    "images": "画像",
+    "storage": "ストレージ",
+    "expiration": "有効期限",
+    "creation": "作成日",
+    "galleries": "ギャラリー",
+    "totalViews": "総閲覧数",
+    "offer": "プラン",
+    "searchPlaceholder": "検索...",
+    "newest": "新しい順",
+    "oldest": "古い順",
+    "mostViews": "閲覧数が多い順",
+    "leastViews": "閲覧数が少ない順",
+    "expiresLast": "期限が遅い順",
+    "expiresSoon": "期限が近い順",
+    "free": "無料",
+    "newGallery": "新規ギャラリー",
+    "galleryLimitReached": "ギャラリー上限に達しました",
+    "insufficientStorage": "ストレージ容量が不足しています",
+    "upgradeToHigherPlan": "続行するには上位プランにアップグレードしてください",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "signIn": "ログイン",
+    "signOut": "ログアウト",
+    "signingOut": "ログアウト中...",
+    "getStarted": "始める",
+    "send": "送信",
+    "name": "名前",
+    "email": "メールアドレス",
+    "subject": "件名",
+    "message": "メッセージ",
+    "yourName": "お名前",
+    "yourEmail": "your@email.com",
+    "messageSubject": "メッセージの件名",
+    "describeRequest": "リクエストを説明してください...",
+    "messageSent": "メッセージを送信しました！",
+    "weWillReply24h": "24〜48時間以内に返信いたします。",
+    "weWillReplyShortly": "できるだけ早く返信いたします。",
+    "responseTime": "応答時間",
+    "businessHours24to48": "24〜48営業時間",
+    "location": "所在地",
+    "contactUs": "お問い合わせ",
+    "generalQuestions": "一般的な質問",
+    "technicalIssues": "技術的な問題",
+    "support": "サポート",
+    "help": "ヘルプ",
+    "faqAndGuides": "FAQとガイド",
+    "helpCenter": "ヘルプセンター",
+    "findAnswers": "質問への回答を見つける",
+    "sendUsMessage": "メッセージを送る",
+    "terms": "利用規約",
+    "termsOfUse": "利用規約",
+    "privacyPolicy": "プライバシーポリシー",
+    "cookiePolicy": "Cookieポリシー",
+    "legalNotice": "法的通知",
+    "features": "機能",
+    "pricing": "料金",
+    "zeroCompression": "圧縮なし",
+    "fullySecure": "パスワード保護",
+    "readyIn2Min": "30秒セットアップ",
+    "hdQuality": "オリジナル品質",
+    "noCompression": "圧縮なし",
+    "instantDelivery": "プロフェッショナル配信",
+    "secureUniqueLink": "ゼロフリクションアクセス",
+    "exampleWeddingSession": "ウェディング撮影",
+    "examplePhotosHd": "24枚 • HD",
+    "downloads": "ダウンロード",
+    "info": "情報",
+    "security": "セキュリティ",
+    "photos": "写真",
+    "exampleTitle": "例：太郎と花子の結婚式",
+    "generateTitle": "タイトルを生成",
+    "passwordProtection": "パスワード保護",
+    "onlyPeopleWithPassword": "パスワードを知っている人だけがギャラリーにアクセスできます",
+    "enterPassword": "パスワードを入力",
+    "expectedStorage": "予想ストレージ",
+    "expirationDuration": "有効期間",
+    "setGalleryValidity": "ギャラリーの有効期間を設定",
+    "saveChanges": "変更を保存",
+    "galleryTitle": "ギャラリータイトル",
+    "galleryName": "ギャラリー名",
+    "secureGalleryAccess": "ギャラリーへの安全なアクセス",
+    "newPassword": "新しいパスワード",
+    "day1": "1日",
+    "days3": "3日",
+    "days7Full": "7日",
+    "days14": "14日",
+    "days30Full": "30日",
+    "days60": "60日",
+    "days90Full": "90日",
+    "days180": "180日",
+    "year1": "1年",
+    "galleryDetails": "ギャラリー詳細",
+    "manageYourGallery": "フォトギャラリーを管理",
+    "guestSessionId": "ゲストセッションID",
+    "paymentType": "支払いタイプ：",
+    "unlocked": "解除済み：",
+    "createdAsGuest": "ゲストとして作成",
+    "paymentCompleted": "支払い完了",
+    "convertedToUserAccount": "ユーザーアカウントに変換済み",
+    "noUserAccount": "ユーザーアカウントなし",
+    "recentActivity": "最近のアクティビティ",
+    "upgradeLevel": "次のレベルにアップグレード",
+    "quickHelp": "クイックヘルプ",
+    "myGalleries": "マイギャラリー",
+    "myProfile": "マイプロフィール",
+    "accountInfo": "アカウント情報",
+    "manageAccountAccess": "アカウントへのアクセスを管理",
+    "emailAndPassword": "メールとパスワード",
+    "loginMethod": "ログイン方法",
+    "subscription": "サブスクリプション",
+    "choosePlanForNeeds": "ニーズに合ったプランを選択",
+    "cloudinaryHdStripe": "Cloudinary HDインフラ • 安全なStripe決済",
+    "discoverPiksend": "PikSendを発見",
+    "forActivePhotographers": "アクティブなフォトグラファー向け",
+    "forProfessionals": "プロフェッショナル向け",
+    "forDemandingProfessionals": "要求の厳しいプロフェッショナル向け",
+    "testHdDelivery": "HD写真配信をテスト",
+    "originalQuality": "オリジナル品質",
+    "customizableDuration": "カスタマイズ可能な期間",
+    "prioritySupport": "優先サポート",
+    "linkExpired": "リンクの有効期限が切れました",
+    "linkNoLongerValid": "このリンクは無効になりました",
+    "atLeast6Characters": "6文字以上",
+    "confirmYourPassword": "パスワードを確認",
+    "reset": "リセット",
+    "passwordMinLength": "パスワードは6文字以上必要です",
+    "hdPhotoSharing": "HD写真共有",
+    "google": "Google",
+    "users": "ユーザー",
+    "registeredAccounts": "登録アカウント",
+    "activeGalleries": "アクティブなギャラリー",
+    "storageUsed": "使用ストレージ",
+    "totalSpaceConsumed": "総消費容量",
+    "conversionRate": "コンバージョン率",
+    "payingUsers": "有料ユーザー",
+    "userGrowth": "ユーザー成長",
+    "newUsersPerDay": "1日あたりの新規ユーザー",
+    "storageEvolution": "ストレージ推移",
+    "totalStorageUsedMb": "総使用ストレージ（MB）",
+    "subscriptionConversions": "サブスクリプション変換",
+    "planUpgradesInPeriod": "期間中のプランアップグレード",
+    "searchByTitleOrSlug": "タイトルまたはスラッグで検索...",
+    "searchByEmailOrName": "メールまたは名前で検索...",
+    "allPlans": "すべてのプラン",
+    "allAdmins": "すべての管理者",
+    "allActions": "すべてのアクション",
+    "suspended": "停止中",
+    "suspendUser": "ユーザーを停止",
+    "reactivateUser": "ユーザーを再有効化",
+    "exampleViolation": "例：利用規約違反",
+    "analytics": "分析",
+    "subscriptions": "サブスクリプション",
+    "auditLog": "監査ログ",
+    "galleryNotFound": "ギャラリーが見つかりません",
+    "galleryNotAccessible": "このギャラリーはアクセスできなくなりました",
+    "errorFetchingImages": "画像の取得エラー",
+    "noImagesInGallery": "このギャラリーに画像がありません",
+    "errorCreatingArchive": "アーカイブ作成エラー",
+    "errorDownloading": "ダウンロードエラー",
+    "piksend": "PikSend"
   },
   "nav": {
-    "home": "",
-    "features": "",
-    "pricing": "",
-    "help": "",
-    "contact": "",
-    "dashboard": "",
-    "settings": "",
-    "signIn": "",
-    "signOut": "",
-    "getStarted": ""
+    "home": "ホーム",
+    "features": "機能",
+    "pricing": "料金",
+    "help": "ヘルプ",
+    "contact": "お問い合わせ",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "signIn": "ログイン",
+    "signOut": "ログアウト",
+    "getStarted": "始める",
+    "menu": "メニュー",
+    "contactUs": "お問い合わせ"
   },
   "landing": {
-    "badge": "",
-    "title": "",
-    "titleHighlight": "",
-    "subtitle": "",
-    "subtitleHighlight": "",
-    "subtitleEnd": "",
+    "badge": "プロフェッショナル写真配信ギャラリー",
+    "title": "あなたの作品はハイエンド。",
+    "titleHighlight": "配信もそうあるべき。",
+    "subtitle": "プロフェッショナル写真配信ギャラリー、",
+    "subtitleHighlight": "圧縮なし。",
+    "subtitleEnd": "オリジナル品質、ゼロフリクション、ゲストはアカウント不要。",
     "cta": {
-      "primary": "",
-      "secondary": ""
+      "primary": "ギャラリーを作成",
+      "secondary": "仕組みを見る"
     },
-    "tagline": "",
+    "tagline": "圧縮なし • オリジナル品質 • ゼロフリクション",
     "stats": {
-      "experts": "",
-      "galleries": "",
-      "photos": "",
-      "satisfaction": ""
+      "experts": "フォトグラファー",
+      "galleries": "配信ギャラリー",
+      "photos": "オリジナル品質",
+      "satisfaction": "満足度"
     },
     "problem": {
-      "badge": "",
-      "title": "",
-      "titleHighlight": "",
-      "paragraph1": "",
-      "paragraph1Highlight": "",
-      "paragraph2": "",
-      "paragraph2Highlight": "",
-      "paragraph3": "",
-      "paragraph3Highlight": "",
-      "paragraph3End": "",
+      "badge": "アルゴリズムにピクセルを破壊させない",
+      "title": "WhatsAppは写真を",
+      "titleHighlight": "最大70%圧縮します。",
+      "paragraph1": "あなたは細部の完成に何時間も費やします。写真はプロフェッショナル配信の準備完了です。",
+      "paragraph1Highlight": "そして共有の瞬間が来ます。",
+      "paragraph2": "WhatsApp、WeTransfer、Google Drive — すべてがあなたの作品を損なう。圧縮、ブラインドZIP、「アクセスをリクエスト」ボタン。",
+      "paragraph2Highlight": "クライアントはもっと良いものを受ける価値がある。",
+      "paragraph3": "プロフェッショナル写真配信ギャラリーは",
+      "paragraph3Highlight": "オリジナル品質を保持すべき、",
+      "paragraph3End": "破壊するのではなく。",
       "comparison": {
-        "original": "",
-        "originalSpec": "",
-        "originalDesc": "",
-        "classic": "",
-        "classicSpec": "",
-        "classicDesc": ""
+        "original": "PikSend — 圧縮なし",
+        "originalSpec": "24 MP • 6000×4000px",
+        "originalDesc": "オリジナル品質保持、プロフェッショナルギャラリー",
+        "classic": "WhatsApp / WeTransfer",
+        "classicSpec": "1600×1067px • -70%",
+        "classicDesc": "圧縮、ブラインドZIP、プレビューなし"
       }
     },
     "benefits": {
-      "badge": "",
-      "title": "",
-      "subtitle": "",
-      "subtitleHighlight": "",
+      "badge": "プロフェッショナル写真配信",
+      "title": "エレガントな架け橋。",
+      "subtitle": "WeTransferのシンプルさとスタジオギャラリーのエレガンスの融合。",
+      "subtitleHighlight": "オリジナル品質、ゼロフリクション。",
       "features": {
         "quality": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "圧縮なし",
+          "title": "オリジナル品質",
+          "desc": "アルゴリズムにピクセルを破壊させない。すべての写真がエクスポートしたままの状態で配信。"
         },
         "friction": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "ゼロフリクション",
+          "title": "アカウント不要",
+          "desc": "「アクセスをリクエスト」ボタンなし。クライアントの登録不要。リンクを共有すれば即座にアクセス。"
         },
         "gallery": {
-          "highlight": "",
-          "title": "",
-          "desc": ""
+          "highlight": "30秒",
+          "title": "プロフェッショナルギャラリー",
+          "desc": "30分ではなく30秒でプロギャラリー。ブラインドZIPではなくビジュアルプレビュー。"
         }
       }
     },
     "finalCta": {
-      "title": "",
-      "titleHighlight": "",
-      "subtitle": "",
-      "button": "",
-      "note": ""
+      "title": "プロフェッショナル写真配信",
+      "titleHighlight": "ギャラリーが待っています。",
+      "subtitle": "オリジナル品質をクライアントに届ける500人以上のフォトグラファーに参加。圧縮なし、ゼロフリクション。",
+      "button": "無料ギャラリーを作成",
+      "note": "カード不要 • 圧縮なし • オリジナル品質"
     }
   },
   "auth": {
-    "title": "",
-    "subtitle": "",
+    "title": "PikSend",
+    "subtitle": "クリエイターに愛される写真共有プラットフォーム。",
     "tabs": {
-      "signIn": "",
-      "signUp": ""
+      "signIn": "ログイン",
+      "signUp": "新規登録"
     },
     "form": {
-      "name": "",
-      "namePlaceholder": "",
-      "email": "",
-      "emailPlaceholder": "",
-      "password": "",
-      "passwordPlaceholder": "",
-      "confirmPassword": "",
-      "forgotPassword": "",
-      "rememberMe": "",
-      "agreeTerms": "",
-      "termsLink": "",
-      "andThe": "",
-      "privacyLink": ""
+      "name": "氏名",
+      "namePlaceholder": "山田太郎",
+      "email": "メールアドレス",
+      "emailPlaceholder": "your@email.com",
+      "password": "パスワード",
+      "passwordPlaceholder": "••••••••",
+      "confirmPassword": "パスワード確認",
+      "forgotPassword": "忘れた？",
+      "rememberMe": "ログイン状態を保持",
+      "agreeTerms": "同意します",
+      "termsLink": "利用規約",
+      "andThe": "および",
+      "privacyLink": "プライバシーポリシー"
     },
     "passwordStrength": {
-      "label": "",
-      "weak": "",
-      "medium": "",
-      "good": "",
-      "excellent": ""
+      "label": "セキュリティ",
+      "weak": "弱い",
+      "medium": "普通",
+      "good": "良い",
+      "excellent": "優秀"
     },
     "buttons": {
-      "signIn": "",
-      "signUp": "",
-      "google": ""
+      "signIn": "ログイン",
+      "signUp": "アカウントを作成",
+      "google": "Googleでログイン"
     },
-    "divider": "",
+    "divider": "クイックアクセス",
     "errors": {
-      "invalidEmail": "",
-      "passwordTooShort": "",
-      "passwordMismatch": "",
-      "nameRequired": "",
-      "termsRequired": "",
-      "invalidCredentials": "",
-      "signupFailed": "",
-      "googleFailed": "",
-      "accountExists": "",
-      "oauthError": "",
-      "genericError": ""
+      "invalidEmail": "無効なメールアドレス",
+      "passwordTooShort": "パスワードは6文字以上必要です",
+      "passwordMismatch": "パスワードが一致しません",
+      "nameRequired": "名前を入力してください。",
+      "termsRequired": "利用規約に同意する必要があります。",
+      "invalidCredentials": "メールアドレスまたはパスワードが無効です",
+      "signupFailed": "登録中にエラーが発生しました",
+      "googleFailed": "Googleログインでエラーが発生しました",
+      "accountExists": "このメールアドレスでアカウントが既に存在します。パスワードでログインしてください。",
+      "oauthError": "Googleログインでエラーが発生しました。もう一度お試しください。",
+      "genericError": "エラーが発生しました",
+      "accountCreationError": "アカウント作成エラー",
+      "profileCreationError": "プロフィール作成エラー",
+      "resetLinkInvalid": "リセットリンクが無効または期限切れです",
+      "passwordUpdateError": "パスワード更新エラー",
+      "resetEmailError": "リセットメール送信エラー"
     },
     "success": {
-      "accountCreated": ""
+      "accountCreated": "アカウントが作成されました！ログインできます。",
+      "passwordReset": "パスワードがリセットされました！"
+    },
+    "forgotPassword": {
+      "title": "パスワードを忘れた",
+      "subtitle": "リセットリンクを受け取るためにメールアドレスを入力",
+      "sendLink": "リセットリンクを送信",
+      "emailSentTo": "メール送信先：",
+      "backToLogin": "ログインに戻る"
+    },
+    "resetPassword": {
+      "title": "パスワードをリセット",
+      "subtitle": "新しいパスワードを入力",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "パスワード確認",
+      "resetButton": "パスワードをリセット"
     }
   },
   "dashboard": {
-    "badge": "",
-    "greeting": "",
-    "subtitle": "",
-    "newGallery": "",
-    "quotaReached": "",
+    "badge": "ダッシュボード",
+    "greeting": "こんにちは、",
+    "subtitle": "パフォーマンスの概要と安全なギャラリー管理です。",
+    "newGallery": "新規ギャラリー",
+    "quotaReached": "クォータに達しました",
     "stats": {
-      "currentPlan": "",
-      "storage": "",
-      "galleries": "",
-      "totalViews": "",
-      "usage": "",
-      "volume": "",
-      "vsLastMonth": ""
+      "currentPlan": "現在のプラン",
+      "storage": "ストレージ",
+      "galleries": "ギャラリー",
+      "totalViews": "総閲覧数",
+      "usage": "使用量",
+      "volume": "ボリューム",
+      "vsLastMonth": "先月の{{count}}と比較"
     },
     "plans": {
-      "free": "",
-      "premium": "",
-      "pro": ""
+      "free": "無料",
+      "premium": "プレミアム",
+      "pro": "プロ"
     },
     "galleriesSection": {
-      "title": "",
-      "search": "",
-      "noResults": "",
-      "noResultsQuery": "",
-      "emptyState": "",
-      "createFirst": ""
+      "title": "ギャラリー",
+      "search": "ギャラリーを検索...",
+      "noResults": "ギャラリーが見つかりません",
+      "noResultsQuery": "「{{query}}」の結果がありません",
+      "emptyState": "最初のフォトギャラリーを作成して始めましょう。",
+      "createFirst": "最初のギャラリーを作成"
     },
     "sort": {
-      "newest": "",
-      "oldest": "",
-      "mostViews": "",
-      "leastViews": "",
-      "expiresLast": "",
-      "expiresSoon": ""
+      "newest": "新しい順",
+      "oldest": "古い順",
+      "mostViews": "閲覧数が多い順",
+      "leastViews": "閲覧数が少ない順",
+      "expiresLast": "期限が遅い順",
+      "expiresSoon": "期限が近い順"
     },
     "activity": {
-      "title": "",
-      "galleryCreated": ""
+      "title": "最近のアクティビティ",
+      "galleryCreated": "ギャラリー「{{title}}」が作成されました"
     }
   },
   "gallery": {
     "create": {
-      "title": "",
-      "titleLabel": "",
-      "titlePlaceholder": "",
-      "uploadLabel": "",
-      "uploadHint": "",
-      "maxFiles": "",
-      "maxSize": "",
-      "allowedTypes": "",
-      "creating": "",
-      "submit": ""
+      "title": "ギャラリーを作成",
+      "titleLabel": "ギャラリータイトル",
+      "titlePlaceholder": "マイフォトギャラリー",
+      "uploadLabel": "写真をアップロード",
+      "uploadHint": "ドラッグ＆ドロップまたはクリックして選択",
+      "maxFiles": "最大{{count}}枚",
+      "maxSize": "1枚あたり最大{{size}}MB",
+      "allowedTypes": "JPG、PNG、WebP対応",
+      "creating": "作成中...",
+      "submit": "ギャラリーを作成"
     },
     "detail": {
-      "views": "",
-      "images": "",
-      "expires": "",
-      "expired": "",
-      "active": "",
-      "inactive": "",
-      "shareLink": "",
-      "copyLink": "",
-      "linkCopied": "",
-      "download": "",
-      "delete": "",
-      "settings": "",
-      "content": ""
+      "views": "閲覧",
+      "images": "画像",
+      "expires": "有効期限",
+      "expired": "期限切れ",
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "shareLink": "リンクを共有",
+      "copyLink": "リンクをコピー",
+      "linkCopied": "リンクをコピーしました！",
+      "download": "すべてダウンロード",
+      "delete": "ギャラリーを削除",
+      "settings": "設定",
+      "content": "コンテンツ"
     },
     "view": {
-      "downloadAll": "",
-      "downloadSelected": "",
-      "selectAll": "",
-      "deselectAll": "",
-      "passwordRequired": "",
-      "passwordPlaceholder": "",
-      "passwordSubmit": "",
-      "passwordError": "",
-      "expired": "",
-      "expiredMessage": ""
+      "downloadAll": "すべてダウンロード",
+      "downloadSelected": "選択をダウンロード",
+      "selectAll": "すべて選択",
+      "deselectAll": "選択解除",
+      "passwordRequired": "パスワードが必要です",
+      "passwordPlaceholder": "パスワードを入力",
+      "passwordSubmit": "ギャラリーを開く",
+      "passwordError": "パスワードが正しくありません",
+      "expired": "このギャラリーは期限切れです",
+      "expiredMessage": "お探しのギャラリーは利用できなくなりました。"
     },
     "watermark": {
-      "badge": "",
-      "expiresIn": ""
+      "badge": "無料ギャラリー",
+      "expiresIn": "{{hours}}時間後に期限切れ"
     },
     "publicFooter": {
-      "poweredBy": "",
-      "tagline": "",
-      "creatorPrompt": "",
-      "creatorDescription": "",
-      "accessDashboard": "",
-      "createGallery": "",
-      "createDescription": "",
-      "learnMore": "",
-      "photos": "",
-      "expiresOn": ""
+      "poweredBy": "Powered by",
+      "tagline": "こだわりのクリエイターのためのHD写真配信",
+      "creatorPrompt": "このギャラリーの作成者ですか？",
+      "creatorDescription": "ダッシュボードにアクセスして共有とサブスクリプションを管理。",
+      "accessDashboard": "ダッシュボードにアクセス",
+      "createGallery": "ギャラリーを作成",
+      "createDescription": "圧縮なしでオリジナル品質の写真を共有。",
+      "learnMore": "詳細を見る",
+      "photos": "枚",
+      "expiresOn": "有効期限"
     },
     "unlockSuccess": {
-      "title": "",
-      "subtitle": "",
-      "benefitsTitle": "",
-      "benefit1": "",
-      "benefit2": "",
-      "benefit3": "",
-      "createAccountTitle": "",
-      "createAccountDesc": "",
-      "createAccountBtn": "",
-      "continueBtn": ""
+      "title": "ギャラリーが解除されました！",
+      "subtitle": "お支払いが完了しました",
+      "benefitsTitle": "特典",
+      "benefit1": "ウォーターマーク削除",
+      "benefit2": "{days}日間に延長",
+      "benefit3": "HDダウンロード有効",
+      "createAccountTitle": "ギャラリーを管理しますか？",
+      "createAccountDesc": "無料アカウントを作成してダッシュボードにアクセス、閲覧数を追跡、ギャラリーを管理。",
+      "createAccountBtn": "アカウントを作成",
+      "continueBtn": "アカウントなしで続行"
     },
     "pricingReminder": {
-      "title": "",
-      "subtitle": "",
-      "cta": ""
+      "title": "ギャラリーを失わないで！",
+      "subtitle": "期限切れまであと{hours}時間",
+      "cta": "解除"
     }
   },
   "guest": {
     "upload": {
-      "title": "",
-      "subtitle": "",
-      "dropzone": "",
-      "dropzoneHint": "",
-      "uploading": "",
-      "processing": "",
-      "complete": ""
+      "title": "30秒でプロフェッショナル写真配信",
+      "subtitle": "圧縮なし。アカウント不要。オリジナル品質ギャラリー。",
+      "dropzone": "ここに写真をドロップ",
+      "dropzoneHint": "またはクリックしてファイルを選択",
+      "uploading": "アップロード中...",
+      "processing": "処理中...",
+      "complete": "アップロード完了！"
     },
     "pricing": {
-      "title": "",
-      "subtitle": "",
+      "title": "ギャラリーの準備ができました！",
+      "subtitle": "共有方法を選択",
       "options": {
         "free": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "無料のまま",
+          "price": "¥0",
+          "description": "24時間で期限切れ",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": ""
+            "0": "24時間アクセス",
+            "1": "PikSendウォーターマーク",
+            "2": "基本共有"
           }
         },
         "unlock": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "このギャラリーを解除",
+          "price": "¥450",
+          "description": "一回払い",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "30日間アクセス",
+            "1": "ウォーターマークなし",
+            "2": "HDダウンロード",
+            "3": "カスタムタイトル"
           }
         },
         "subscribe": {
-          "title": "",
-          "price": "",
-          "description": "",
+          "title": "プレミアムに",
+          "price": "¥1,500/月",
+          "description": "最もお得",
           "benefits": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": ""
+            "0": "50ギャラリー",
+            "1": "5 GBストレージ",
+            "2": "ウォーターマークなし",
+            "3": "優先サポート"
           },
-          "recommended": ""
+          "recommended": "おすすめ"
         }
       }
     }
   },
   "pricing": {
-    "badge": "",
-    "title": "",
-    "subtitle": "",
-    "monthly": "",
-    "yearly": "",
-    "yearlyDiscount": "",
-    "perMonth": "",
-    "perYear": "",
-    "currentPlan": "",
-    "selectPlan": "",
-    "upgrade": "",
-    "downgrade": "",
+    "badge": "シンプルな料金",
+    "title": "プランを選択",
+    "subtitle": "圧縮なしのHD写真。無料で始める。",
+    "monthly": "月額",
+    "yearly": "年額",
+    "yearlyDiscount": "20%オフ",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "currentPlan": "現在のプラン",
+    "selectPlan": "プランを選択",
+    "upgrade": "アップグレード",
+    "downgrade": "ダウングレード",
+    "popular": "人気",
+    "equivalent": "つまり",
+    "needHelp": "ヘルプが必要ですか？",
+    "priceNote": "価格は日本円。いつでもキャンセル可能。",
+    "faqTitle": "よくある質問",
+    "faq": {
+      "changePlan": {
+        "question": "プランを変更できますか？",
+        "answer": "はい、いつでも変更可能。請求は日割り計算されます。"
+      },
+      "quality": {
+        "question": "すべてのプランで品質は保持されますか？",
+        "answer": "はい、100%オリジナル品質。圧縮なし。"
+      },
+      "yearly": {
+        "question": "年額払いはどのように機能しますか？",
+        "answer": "12ヶ月分を前払いして20%節約。"
+      },
+      "cancel": {
+        "question": "キャンセルした場合は？",
+        "answer": "支払い期間終了までアクセス可能、その後無料プランに。"
+      }
+    },
     "plans": {
       "free": {
-        "name": "",
-        "description": "",
+        "name": "無料",
+        "description": "始めるのに最適",
         "features": [
-          "",
-          "",
-          "",
-          ""
+          "3ギャラリー",
+          "20 MBストレージ",
+          "7日間有効",
+          "基本サポート"
         ]
       },
       "premium": {
-        "name": "",
-        "description": "",
+        "name": "プレミアム",
+        "description": "アクティブなフォトグラファー向け",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          ""
+          "20ギャラリー",
+          "500 MBストレージ",
+          "30日間有効",
+          "優先サポート",
+          "カスタムブランディング"
         ]
       },
       "pro": {
-        "name": "",
-        "description": "",
+        "name": "プロ",
+        "description": "プロフェッショナル向け",
         "features": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
+          "無制限ギャラリー",
+          "5 GBストレージ",
+          "90日間有効",
+          "24/7サポート",
+          "カスタムブランディング",
+          "分析"
         ]
       }
     }
   },
   "settings": {
-    "title": "",
-    "subtitle": "",
+    "title": "設定",
+    "subtitle": "アカウントと設定を管理",
     "profile": {
-      "title": "",
-      "name": "",
-      "email": "",
-      "save": "",
-      "saved": ""
+      "title": "プロフィール",
+      "name": "名前",
+      "email": "メールアドレス",
+      "save": "変更を保存",
+      "saved": "プロフィールが更新されました！",
+      "saveError": "プロフィール保存エラー"
     },
     "subscription": {
-      "title": "",
-      "currentPlan": "",
-      "manage": "",
-      "upgrade": "",
-      "cancel": ""
+      "title": "サブスクリプション",
+      "currentPlan": "現在のプラン",
+      "manage": "サブスクリプションを管理",
+      "upgrade": "プランをアップグレード",
+      "cancel": "サブスクリプションをキャンセル"
     },
     "danger": {
-      "title": "",
-      "deleteAccount": "",
-      "deleteWarning": ""
+      "title": "危険ゾーン",
+      "deleteAccount": "アカウントを削除",
+      "deleteWarning": "この操作は取り消せません。すべてのデータが完全に削除されます。"
+    },
+    "signOut": {
+      "title": "ログアウト",
+      "description": "セッションを終了",
+      "button": "ログアウト",
+      "signingOut": "ログアウト中..."
     }
   },
   "admin": {
     "nav": {
-      "dashboard": "",
-      "users": "",
-      "galleries": "",
-      "subscriptions": "",
-      "analytics": "",
-      "auditLogs": ""
+      "dashboard": "ダッシュボード",
+      "users": "ユーザー",
+      "galleries": "ギャラリー",
+      "subscriptions": "サブスクリプション",
+      "analytics": "分析",
+      "auditLogs": "監査ログ"
     },
     "dashboard": {
-      "title": "",
-      "subtitle": "",
+      "title": "ダッシュボード",
+      "subtitle": "PikSendプラットフォームの概要",
       "stats": {
-        "users": "",
-        "usersSubtitle": "",
-        "activeGalleries": "",
-        "totalGalleries": "",
-        "storage": "",
-        "storageSubtitle": "",
-        "conversionRate": "",
-        "conversionSubtitle": ""
+        "users": "ユーザー",
+        "usersSubtitle": "登録アカウント",
+        "activeGalleries": "アクティブなギャラリー",
+        "totalGalleries": "合計{{count}}",
+        "storage": "使用ストレージ",
+        "storageSubtitle": "総消費容量",
+        "conversionRate": "コンバージョン率",
+        "conversionSubtitle": "有料ユーザー"
       }
     },
     "users": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "ユーザー",
+      "subtitle": "プラットフォームユーザーを管理",
+      "search": "ユーザーを検索...",
       "table": {
-        "name": "",
-        "email": "",
-        "plan": "",
-        "galleries": "",
-        "storage": "",
-        "status": "",
-        "actions": ""
+        "name": "名前",
+        "email": "メールアドレス",
+        "plan": "プラン",
+        "galleries": "ギャラリー",
+        "storage": "ストレージ",
+        "status": "ステータス",
+        "actions": "アクション",
+        "registration": "登録",
+        "currentPlan": "現在のプラン",
+        "stripe": "Stripe"
       },
       "status": {
-        "active": "",
-        "suspended": ""
+        "active": "アクティブ",
+        "suspended": "停止中"
       },
       "actions": {
-        "view": "",
-        "suspend": "",
-        "reactivate": ""
-      }
+        "view": "表示",
+        "suspend": "停止",
+        "reactivate": "再有効化",
+        "changePlan": "プラン変更"
+      },
+      "totalUsers": "総ユーザー数",
+      "userReactivated": "ユーザーが再有効化されました",
+      "userSuspended": "ユーザーが停止されました",
+      "planUpdated": "ユーザーのプランが更新されました"
     },
     "galleries": {
-      "title": "",
-      "subtitle": "",
-      "search": "",
+      "title": "ギャラリー",
+      "subtitle": "すべてのギャラリーを管理",
+      "search": "ギャラリーを検索...",
       "table": {
-        "title": "",
-        "owner": "",
-        "type": "",
-        "images": "",
-        "views": "",
-        "status": "",
-        "expires": "",
-        "actions": ""
+        "title": "タイトル",
+        "owner": "オーナー",
+        "type": "タイプ",
+        "images": "画像",
+        "views": "閲覧数",
+        "status": "ステータス",
+        "expires": "有効期限",
+        "actions": "アクション"
       },
       "types": {
-        "guest": "",
-        "user": "",
-        "converted": ""
+        "guest": "ゲスト",
+        "user": "ユーザー",
+        "converted": "変換済み"
       },
       "status": {
-        "active": "",
-        "expired": "",
-        "deactivated": ""
-      }
+        "active": "アクティブ",
+        "expired": "期限切れ",
+        "deactivated": "無効化"
+      },
+      "totalGalleries": "総ギャラリー数",
+      "galleryDeactivated": "ギャラリーが無効化されました"
     },
     "subscriptions": {
-      "title": "",
-      "subtitle": ""
+      "title": "サブスクリプション",
+      "subtitle": "ユーザーサブスクリプションを管理",
+      "totalSubscribers": "総購読者数",
+      "premiumCount": "プレミアム",
+      "proCount": "プロ",
+      "activeCount": "アクティブ",
+      "upgraded": "サブスクリプションがアップグレードされました",
+      "cancelled": "サブスクリプションがキャンセルされました"
     },
     "analytics": {
-      "title": "",
-      "subtitle": ""
+      "title": "分析",
+      "subtitle": "プラットフォーム統計とトレンド",
+      "newRegistrations": "新規登録",
+      "galleriesCreated": "作成されたギャラリー",
+      "totalActivities": "総アクティビティ"
     },
     "auditLogs": {
-      "title": "",
-      "subtitle": ""
+      "title": "監査ログ",
+      "subtitle": "システムアクティビティ履歴",
+      "totalEntries": "総エントリー数",
+      "modifications": "変更"
+    },
+    "header": {
+      "signOut": "ログアウト",
+      "signingOut": "ログアウト中..."
+    },
+    "recentActivity": {
+      "title": "最近のアクティビティ"
     }
   },
   "errors": {
     "401": {
-      "title": "",
-      "message": "",
-      "info": "",
-      "signIn": "",
-      "signUp": "",
-      "home": ""
+      "title": "認証が必要です",
+      "message": "このページにアクセスするにはログインが必要です。ログインまたはアカウントを作成して続行してください。",
+      "info": "PikSendでは安全なフォトギャラリーを作成・共有できます。無料で登録して始めましょう！",
+      "signIn": "ログイン",
+      "signUp": "アカウントを作成",
+      "home": "ホームに戻る",
+      "possibleReasons": "考えられる原因：",
+      "reason1": "セッションが期限切れです",
+      "reason2": "ログインしていません",
+      "reason3": "アカウントが停止されています"
     },
     "403": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "アクセスが拒否されました",
+      "message": "このページにアクセスする権限がありません。",
+      "home": "ホームに戻る",
+      "suggestions": "提案：",
+      "suggestion1": "正しい権限があるか確認してください",
+      "suggestion2": "これがエラーだと思われる場合は管理者に連絡してください"
     },
     "404": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "ページが見つかりません",
+      "message": "お探しのページは存在しないか、移動されました。",
+      "home": "ホームに戻る",
+      "suggestions": "提案",
+      "suggestion1": "URLのスペルを確認してください",
+      "suggestion2": "ギャラリーが期限切れの可能性があります",
+      "suggestion3": "フォローしたリンクが古い可能性があります",
+      "previousPage": "前のページ"
     },
     "500": {
-      "title": "",
-      "message": "",
-      "retry": "",
-      "home": ""
+      "title": "サーバーエラー",
+      "message": "サーバー側で問題が発生しました。後でもう一度お試しください。",
+      "retry": "再試行",
+      "home": "ホームに戻る",
+      "possibleReasons": "考えられる原因：",
+      "reason1": "一時的なサーバー過負荷",
+      "reason2": "メンテナンス中",
+      "reason3": "予期しないエラー",
+      "retryLater": "数分後にもう一度お試しください",
+      "problemPersists": "問題が続きますか？",
+      "contactSupport": "サポートに連絡"
     },
     "503": {
-      "title": "",
-      "message": "",
-      "home": ""
+      "title": "サービス利用不可",
+      "message": "現在メンテナンス中です。しばらくしてからお戻りください。",
+      "home": "ホームに戻る",
+      "temporarilyUnavailable": "サービスは一時的に利用できません",
+      "autoRefresh": "自動更新",
+      "inSeconds": "{{seconds}}秒後",
+      "statusPage": "サービスステータスはこちらで確認"
     },
     "upload": {
-      "fileTooLarge": "",
-      "invalidFileType": "",
-      "tooManyFiles": "",
-      "noFiles": "",
-      "networkError": "",
-      "galleryCreationFailed": "",
-      "uploadFailed": ""
+      "fileTooLarge": "ファイルが大きすぎます。1枚あたり最大{{size}}MB。",
+      "invalidFileType": "無効なファイルタイプ。JPG、PNG、またはWebP画像をアップロードしてください。",
+      "tooManyFiles": "ファイルが多すぎます。ゲストギャラリーは最大{{count}}枚。",
+      "noFiles": "アップロードする画像を少なくとも1枚選択してください。",
+      "networkError": "アップロードに失敗しました。接続を確認してもう一度お試しください。",
+      "galleryCreationFailed": "ギャラリーの作成に失敗しました。もう一度お試しください。",
+      "uploadFailed": "画像のアップロードに失敗しました。もう一度お試しください。"
     },
     "payment": {
-      "failed": "",
-      "declined": "",
-      "sessionExpired": "",
-      "checkoutFailed": "",
-      "invalidAmount": "",
-      "stripeError": ""
+      "failed": "支払いに失敗しました。もう一度お試しください。",
+      "declined": "支払いが拒否されました。別の支払い方法をお試しください。",
+      "sessionExpired": "セッションが期限切れです。もう一度お試しください。",
+      "checkoutFailed": "チェックアウトの開始に失敗しました。もう一度お試しください。",
+      "invalidAmount": "無効な支払い金額。",
+      "stripeError": "支払い処理エラー：{{message}}"
     },
     "session": {
-      "expired": "",
-      "invalid": "",
-      "creationFailed": ""
+      "expired": "セッションが期限切れです。ギャラリーにアクセスできなくなった可能性があります。",
+      "invalid": "無効なセッション。ページを更新してください。",
+      "creationFailed": "セッションの作成に失敗しました。もう一度お試しください。"
     },
     "gallery": {
-      "notFound": "",
-      "expired": "",
-      "accessDenied": "",
-      "migrationFailed": ""
+      "notFound": "ギャラリーが見つかりません。",
+      "expired": "このギャラリーは期限切れで利用できなくなりました。",
+      "accessDenied": "このギャラリーへのアクセス権がありません。",
+      "migrationFailed": "ギャラリーのアカウントへの移行に失敗しました。サポートにお問い合わせください。",
+      "noLongerActive": "このギャラリーはアクティブではなくなりました",
+      "incorrectPassword": "パスワードが正しくありません"
     },
     "generic": {
-      "unexpected": "",
-      "networkError": "",
-      "retry": ""
+      "unexpected": "予期しないエラーが発生しました。もう一度お試しください。",
+      "networkError": "ネットワークエラー。接続を確認してください。",
+      "retry": "問題が発生しました。もう一度お試しください。",
+      "validationFailed": "検証に失敗しました",
+      "invalidData": "無効なデータ",
+      "invalidActionType": "無効なアクションタイプ",
+      "invalidEntityType": "無効なエンティティタイプ",
+      "unauthorized": "未認証",
+      "internalServerError": "内部サーバーエラー",
+      "authenticationRequired": "認証が必要です",
+      "adminAccessRequired": "管理者アクセスが必要です",
+      "updateError": "更新中にエラーが発生しました",
+      "serverError": "サーバーエラー",
+      "tooManyAttempts": "試行回数が多すぎます。後でもう一度お試しください。"
+    },
+    "profile": {
+      "fetchFailed": "プロフィールの取得に失敗しました",
+      "updateFailed": "プロフィールの更新に失敗しました",
+      "notFound": "プロフィールが見つかりません"
     }
   },
   "footer": {
-    "tagline": "",
-    "product": "",
-    "platform": "",
-    "company": "",
-    "legal": "",
-    "officialContact": "",
+    "tagline": "こだわりのクリエイターのためのHD写真配信。",
+    "product": "製品",
+    "platform": "プラットフォーム",
+    "company": "会社",
+    "legal": "法的情報",
+    "officialContact": "公式連絡先",
     "links": {
-      "features": "",
-      "pricing": "",
-      "help": "",
-      "contact": "",
-      "terms": "",
-      "privacy": "",
-      "mentions": ""
+      "features": "機能",
+      "pricing": "料金",
+      "help": "ヘルプセンター",
+      "contact": "お問い合わせ",
+      "terms": "利用規約",
+      "privacy": "プライバシー",
+      "mentions": "法的通知"
     },
     "identifiers": {
-      "rccm": "",
-      "nationalId": "",
-      "taxNumber": ""
+      "rccm": "RCCM",
+      "nationalId": "国民ID",
+      "taxNumber": "税番号"
     },
-    "exclusiveProperty": "",
-    "country": "",
-    "copyright": ""
+    "exclusiveProperty": "独占所有",
+    "country": "コンゴ民主共和国",
+    "copyright": "© {{year}} PikSend. All rights reserved."
   },
   "onboarding": {
     "welcome": {
-      "title": "",
-      "description": ""
+      "title": "PikSendへようこそ",
+      "description": "オリジナル品質で写真を共有する最も簡単な方法。"
     },
     "upload": {
-      "title": "",
-      "description": ""
+      "title": "写真をアップロード",
+      "description": "HD写真をドラッグ＆ドロップするか、クリックしてファイルを選択。"
     },
     "customize": {
-      "title": "",
-      "description": ""
+      "title": "ギャラリーをカスタマイズ",
+      "description": "タイトルを追加し、共有設定を構成。"
     },
     "share": {
-      "title": "",
-      "description": ""
+      "title": "クライアントと共有",
+      "description": "ユニークなリンクを取得して即座にギャラリーを共有。"
     },
-    "skip": "",
-    "finish": ""
+    "skip": "スキップ",
+    "finish": "始める"
   },
   "myGalleries": {
-    "title": "",
-    "subtitle": "",
-    "createNew": "",
+    "title": "マイギャラリー",
+    "subtitle": "このセッション中に作成されたギャラリー",
+    "createNew": "新規作成",
     "empty": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "ギャラリーがありません",
+      "description": "このセッション中にギャラリーを作成していません。最初のギャラリーを作成して写真を共有しましょう。",
+      "cta": "最初のギャラリーを作成"
     },
     "warning": {
-      "title": "",
-      "description": ""
+      "title": "リンクを保存してください！",
+      "description": "これらのギャラリーはブラウザにリンクされています。データを消去したりデバイスを変更すると、アクセスできなくなります。アカウントを作成して永久に保存しましょう。"
     },
     "status": {
-      "unlocked": "",
-      "expired": ""
+      "unlocked": "解除済み",
+      "expired": "期限切れ"
     },
     "createAccount": {
-      "title": "",
-      "description": "",
-      "cta": ""
+      "title": "ギャラリーを保存しますか？",
+      "description": "無料アカウントを作成して、どのデバイスからでもギャラリーにアクセス、より多くのストレージを取得、プレミアム機能を解除。",
+      "cta": "アカウントを作成"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "PikSend – 品質劣化なしのHD写真配信",
+      "description": "オリジナル品質で写真を共有。圧縮なし、安全なギャラリー、自動期限切れ。"
+    },
+    "pricing": {
+      "title": "PikSend料金 - 無料からプロまで",
+      "description": "3ギャラリーで無料開始。プレミアムまたはプロにアップグレードしてより多くの機能を。"
+    },
+    "features": {
+      "title": "PikSend機能",
+      "description": "100%品質保持、安全なギャラリー、自動期限切れ。すべての機能を発見。"
+    },
+    "help": {
+      "title": "PikSendヘルプセンター",
+      "description": "PikSendを使用するためのガイド、FAQ、技術サポート。"
+    },
+    "contact": {
+      "title": "PikSendにお問い合わせ",
+      "description": "ご質問がありますか？チームがお手伝いします。"
+    },
+    "auth": {
+      "title": "PikSendログイン",
+      "description": "安全なフォトギャラリーにアクセス。"
+    },
+    "legal": {
+      "terms": {
+        "title": "利用規約 - PikSend",
+        "description": "PikSendの一般利用規約をお読みください。"
+      },
+      "privacy": {
+        "title": "プライバシーポリシー - PikSend",
+        "description": "PikSendがあなたの個人データをどのように保護するかを学びましょう。"
+      },
+      "cookies": {
+        "title": "Cookieポリシー - PikSend",
+        "description": "PikSendのCookie使用に関する情報。"
+      },
+      "mentions": {
+        "title": "法的通知 - PikSend",
+        "description": "PikSend発行者に関する法的情報。"
+      }
+    },
+    "dashboard": {
+      "title": "ダッシュボード | PikSend",
+      "description": "フォトギャラリーを管理"
+    },
+    "newGallery": {
+      "title": "新規ギャラリー | PikSend",
+      "description": "新しい安全なフォトギャラリーを作成"
+    },
+    "galleryDetails": {
+      "title": "ギャラリー詳細 | PikSend",
+      "description": "フォトギャラリーを管理"
+    },
+    "myGalleries": {
+      "title": "マイギャラリー | PikSend",
+      "description": "ゲストとして作成したギャラリーを見つける"
+    },
+    "error401": {
+      "title": "未認証 - 401 | PikSend",
+      "description": "このページにアクセスするにはログインしてください。"
+    },
+    "error403": {
+      "title": "アクセス拒否 - 403 | PikSend",
+      "description": "このリソースにアクセスする権限がありません。"
+    },
+    "error500": {
+      "title": "サーバーエラー - 500 | PikSend",
+      "description": "内部サーバーエラーが発生しました。後でもう一度お試しください。"
+    },
+    "error503": {
+      "title": "サービス利用不可 - 503 | PikSend",
+      "description": "メンテナンスのためサービスは一時的に利用できません。"
+    },
+    "pageNotFound": {
+      "title": "ページが見つかりません",
+      "description": "お探しのページは存在しません。"
+    }
+  },
+  "limits": {
+    "galleryLimit": {
+      "title": "ギャラリー上限に達しました",
+      "description": "プランの最大ギャラリー数に達しました。"
+    },
+    "storageLimit": {
+      "title": "ストレージ容量が不足しています",
+      "description": "ストレージ容量がいっぱいか、この操作には不十分です。"
+    },
+    "imageLimit": {
+      "title": "画像上限に達しました",
+      "description": "このギャラリーはプランの最大画像数に達しました。"
+    },
+    "fileSize": {
+      "title": "ファイルが大きすぎます",
+      "description": "ファイルサイズがプランで許可された制限を超えています。"
+    }
+  },
+  "api": {
+    "errors": {
+      "galleryNotFound": "ギャラリーが見つかりません",
+      "galleryNotAccessible": "このギャラリーはアクセスできなくなりました",
+      "errorFetchingImages": "画像の取得エラー",
+      "noImagesInGallery": "このギャラリーに画像がありません",
+      "errorCreatingArchive": "アーカイブ作成エラー",
+      "errorDownloading": "ダウンロードエラー",
+      "tooManyAttempts": "試行回数が多すぎます。後でもう一度お試しください。",
+      "validationFailed": "検証に失敗しました",
+      "registrationFailed": "登録に失敗しました",
+      "accountCreatedSuccess": "アカウントが正常に作成されました",
+      "passwordResetSuccess": "パスワードが正常にリセットされました",
+      "passwordResetEmailSent": "このメールアドレスでアカウントが存在する場合、リセットリンクが届きます。",
+      "invalidData": "無効なデータ",
+      "profileUpdateFailed": "プロフィールの更新に失敗しました",
+      "profileFetchFailed": "プロフィールの取得に失敗しました",
+      "updateError": "更新中にエラーが発生しました",
+      "serverError": "サーバーエラー"
     }
   }
 }

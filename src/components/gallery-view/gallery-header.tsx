@@ -1,9 +1,10 @@
 "use client";
 
-import { Download, Eye, Loader2, Share2, Calendar, ImageIcon, Check } from "lucide-react";
+import { Download, Eye, Share2, Calendar, ImageIcon, Check } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
+import { LoadingButton } from "@/components/ui/loading-button";
 
 interface GalleryHeaderProps {
   title: string;
@@ -105,20 +106,17 @@ export function GalleryHeader({
               </button>
               
               {/* Download button */}
-              <button 
+              <LoadingButton 
                 onClick={onDownloadAll}
                 disabled={isDownloading}
+                isLoading={isDownloading}
+                loadingText="Préparation..."
+                spinnerSize="sm"
                 className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-lg md:rounded-xl transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
               >
-                {isDownloading ? (
-                  <Loader2 className="animate-spin" size={14} />
-                ) : (
-                  <Download size={14} />
-                )}
-                <span className="hidden sm:inline">
-                  {isDownloading ? 'Préparation...' : 'Télécharger'}
-                </span>
-              </button>
+                <Download size={14} />
+                <span className="hidden sm:inline">Télécharger</span>
+              </LoadingButton>
             </div>
           </div>
           

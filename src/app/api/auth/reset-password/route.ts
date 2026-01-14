@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!validatedFields.success) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: 'api.errors.validationFailed',
           code: 'VALIDATION_ERROR',
           details: validatedFields.error.issues,
         },
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         {
-          error: result.error || 'Password reset failed',
+          error: result.error || 'api.errors.registrationFailed',
           code: 'RESET_FAILED',
         },
         { status: 400 }
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      message: 'Mot de passe réinitialisé avec succès',
+      message: 'api.errors.passwordResetSuccess',
+      messageKey: 'api.errors.passwordResetSuccess',
       success: true,
     });
   } catch (error) {

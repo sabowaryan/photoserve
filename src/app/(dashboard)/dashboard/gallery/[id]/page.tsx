@@ -1,14 +1,20 @@
 import { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
+import { getTranslation } from "@/lib/i18n/server";
+import { FALLBACK_LOCALE } from "@/lib/i18n/types";
 import { GalleryDetailClient } from "./gallery-detail-client";
 import { GalleryHero } from "@/components/gallery-detail";
 import { PLAN_LIMITS } from "@/config/plans";
 
-export const metadata: Metadata = {
-  title: "Détails de la galerie | PikSend",
-  description: "Gérez votre galerie photo",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  
+  return {
+    title: t('seo.galleryDetails.title'),
+    description: t('seo.galleryDetails.description'),
+  };
+}
 
 interface Gallery {
   id: string;

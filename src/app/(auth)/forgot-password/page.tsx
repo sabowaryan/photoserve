@@ -4,15 +4,17 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Loader2, ArrowLeft, CheckCircle2, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
+import { useTranslation } from '@/lib/i18n/context';
 import { z } from 'zod';
 
-const emailSchema = z.string().email({ message: 'Email invalide' });
-
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const emailSchema = z.string().email({ message: t('auth.errors.invalidEmail') });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,13 +41,13 @@ export default function ForgotPasswordPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Une erreur est survenue');
+        setError(data.error || t('auth.errors.genericError'));
         return;
       }
 
       setEmailSent(true);
     } catch {
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(t('auth.errors.genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -81,10 +83,10 @@ export default function ForgotPasswordPage() {
                 <LogoIcon size={28} />
               </div>
               <h1 className="text-lg font-bold text-white mb-1">
-                Mot de passe oublié
+                {t('auth.forgotPassword.title')}
               </h1>
               <p className="text-xs text-indigo-100/70">
-                {emailSent ? 'Vérifiez votre boîte mail' : 'Réinitialisez votre mot de passe'}
+                {emailSent ? t('auth.forgotPassword.emailSentTo').replace(':', '') : t('auth.forgotPassword.subtitle')}
               </p>
             </div>
           </div>
@@ -105,18 +107,18 @@ export default function ForgotPasswordPage() {
                   <CheckCircle2 size={28} className="text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Email envoyé à :</p>
+                  <p className="text-sm text-slate-600 mb-1">{t('auth.forgotPassword.emailSentTo')}</p>
                   <p className="text-sm font-bold text-indigo-600">{email}</p>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Cliquez sur le lien dans l&apos;email pour définir un nouveau mot de passe.
+                  {t('auth.resetPassword.subtitle')}
                 </p>
                 <Link 
                   href="/auth"
                   className="flex items-center justify-center gap-2 w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all"
                 >
                   <ArrowLeft size={14} />
-                  Retour à la connexion
+                  {t('auth.forgotPassword.backToLogin')}
                 </Link>
               </div>
             ) : (
@@ -125,14 +127,14 @@ export default function ForgotPasswordPage() {
                 <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-start gap-2">
                   <KeyRound size={16} className="text-indigo-500 flex-shrink-0 mt-0.5" />
                   <p className="text-xs text-indigo-700">
-                    Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                    {t('auth.forgotPassword.subtitle')}
                   </p>
                 </div>
 
                 {/* Email Input */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                    Adresse email
+                    {t('auth.form.email')}
                   </label>
                   <div className="relative group">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
@@ -143,7 +145,7 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                      placeholder="votre@email.com"
+                      placeholder={t('auth.form.emailPlaceholder')}
                       required
                     />
                   </div>
@@ -159,7 +161,7 @@ export default function ForgotPasswordPage() {
                     <Loader2 className="animate-spin" size={16} />
                   ) : (
                     <>
-                      <span>Envoyer le lien</span>
+                      <span>{t('auth.forgotPassword.sendLink')}</span>
                       <ArrowRight size={14} />
                     </>
                   )}
@@ -171,7 +173,7 @@ export default function ForgotPasswordPage() {
                   className="flex items-center justify-center gap-2 w-full py-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all"
                 >
                   <ArrowLeft size={14} />
-                  Retour à la connexion
+                  {t('auth.forgotPassword.backToLogin')}
                 </Link>
               </form>
             )}

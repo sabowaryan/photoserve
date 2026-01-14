@@ -2,6 +2,7 @@
 
 import { Activity, ChevronRight, Keyboard, HelpCircle, Zap } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface ActivityItem {
   id: string;
@@ -15,11 +16,9 @@ interface SidebarSectionProps {
 }
 
 export function SidebarSection({ activities = [] }: SidebarSectionProps) {
-  const displayActivities = activities.length > 0 ? activities : [
-    { id: '1', type: 'created' as const, title: 'Galerie "Mariage" créée', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-    { id: '2', type: 'viewed' as const, title: 'Galerie "Vacances" consultée', timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString() },
-    { id: '3', type: 'created' as const, title: 'Galerie "Portfolio" créée', timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() },
-  ];
+  const { t } = useTranslation();
+  
+  const displayActivities = activities.length > 0 ? activities : [];
 
   const getTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -43,7 +42,7 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
           <div className="p-1.5 bg-amber-50 rounded-md text-amber-600">
             <Activity size={14} />
           </div>
-          <h3 className="font-bold text-slate-900 text-xs">Activité récente</h3>
+          <h3 className="font-bold text-slate-900 text-xs">{t('common.recentActivity')}</h3>
         </div>
 
         <div className="space-y-3">
@@ -67,7 +66,7 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
 
         {displayActivities.length > 4 && (
           <button className="w-full mt-3 py-2 text-[10px] font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center gap-1">
-            Voir tout
+            {t('common.view')}
             <ChevronRight size={12} />
           </button>
         )}
@@ -83,15 +82,15 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
             <div className="p-1 bg-white/20 rounded-md">
               <Zap size={12} />
             </div>
-            <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">Premium</span>
+            <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{t('dashboard.plans.premium')}</span>
           </div>
-          <h4 className="font-black text-base mb-1.5">Passez au niveau supérieur</h4>
+          <h4 className="font-black text-base mb-1.5">{t('common.upgradeLevel')}</h4>
           <p className="text-white/70 text-[10px] font-medium leading-relaxed mb-3">
-            Plus de stockage, plus de galeries, zéro limite.
+            {t('pricing.plans.premium.description')}
           </p>
           <Link href="/settings">
             <button className="w-full py-2 bg-white text-indigo-600 font-bold text-xs rounded-lg hover:bg-white/90 transition-all shadow-lg">
-              Voir les offres
+              {t('pricing.selectPlan')}
             </button>
           </Link>
         </div>
@@ -103,7 +102,7 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
           <div className="p-1.5 bg-slate-200/50 rounded-md text-slate-500">
             <HelpCircle size={14} />
           </div>
-          <h3 className="font-bold text-slate-700 text-xs">Aide rapide</h3>
+          <h3 className="font-bold text-slate-700 text-xs">{t('common.quickHelp')}</h3>
         </div>
         
         <div className="space-y-1.5">
@@ -111,14 +110,14 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
             📖 Documentation
           </a>
           <a href="#" className="block px-2.5 py-1.5 text-[10px] font-medium text-slate-600 hover:bg-white hover:text-indigo-600 rounded-md transition-all">
-            💬 Contacter le support
+            💬 {t('common.support')}
           </a>
         </div>
 
         <div className="mt-3 pt-3 border-t border-slate-200">
           <div className="flex items-center justify-center gap-1.5 text-[9px] font-medium text-slate-400">
             <Keyboard size={10} />
-            <span>Raccourcis: <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 font-mono text-[8px]">N</kbd> <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 font-mono text-[8px]">S</kbd></span>
+            <span>{t('common.shortcuts')} <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 font-mono text-[8px]">N</kbd> <kbd className="px-1 py-0.5 bg-white rounded border border-slate-200 font-mono text-[8px]">S</kbd></span>
           </div>
         </div>
       </div>

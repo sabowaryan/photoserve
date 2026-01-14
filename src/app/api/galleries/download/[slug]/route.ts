@@ -33,7 +33,7 @@ export async function GET(
 
     if (galleryError || !gallery) {
       return NextResponse.json(
-        { error: 'Galerie non trouvée' },
+        { error: 'api.errors.galleryNotFound', code: 'GALLERY_NOT_FOUND' },
         { status: 404 }
       );
     }
@@ -42,7 +42,7 @@ export async function GET(
     const isExpired = new Date(gallery.expires_at) < new Date();
     if (!gallery.is_active || isExpired) {
       return NextResponse.json(
-        { error: 'Cette galerie n\'est plus accessible' },
+        { error: 'api.errors.galleryNotAccessible', code: 'GALLERY_NOT_ACCESSIBLE' },
         { status: 403 }
       );
     }
@@ -57,14 +57,14 @@ export async function GET(
     if (imagesError) {
       console.error('Error fetching images:', imagesError);
       return NextResponse.json(
-        { error: 'Erreur lors de la récupération des images' },
+        { error: 'api.errors.errorFetchingImages', code: 'ERROR_FETCHING_IMAGES' },
         { status: 500 }
       );
     }
 
     if (!images || images.length === 0) {
       return NextResponse.json(
-        { error: 'Aucune image dans cette galerie' },
+        { error: 'api.errors.noImagesInGallery', code: 'NO_IMAGES_IN_GALLERY' },
         { status: 404 }
       );
     }
@@ -75,7 +75,7 @@ export async function GET(
 
     if (!folder) {
       return NextResponse.json(
-        { error: 'Erreur lors de la création de l\'archive' },
+        { error: 'api.errors.errorCreatingArchive', code: 'ERROR_CREATING_ARCHIVE' },
         { status: 500 }
       );
     }
@@ -121,7 +121,7 @@ export async function GET(
   } catch (error) {
     console.error('Download error:', error);
     return NextResponse.json(
-      { error: 'Erreur lors du téléchargement' },
+      { error: 'api.errors.errorDownloading', code: 'ERROR_DOWNLOADING' },
       { status: 500 }
     );
   }

@@ -1,14 +1,20 @@
 import { Metadata } from 'next';
+import { getTranslation } from '@/lib/i18n/server';
+import { FALLBACK_LOCALE } from '@/lib/i18n/types';
 import Error401Client from './error-401-client';
 
-export const metadata: Metadata = {
-  title: 'Non authentifié - 401 | PikSend',
-  description: 'Veuillez vous connecter pour accéder à cette page.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  
+  return {
+    title: t('seo.error401.title'),
+    description: t('seo.error401.description'),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default function Error401Page() {
   return <Error401Client />;

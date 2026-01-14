@@ -270,7 +270,9 @@ export class AdminRepository implements IAdminRepository {
 
     const counts: Record<string, number> = {};
     (data || []).forEach((gallery) => {
-      counts[gallery.user_id] = (counts[gallery.user_id] || 0) + 1;
+      if (gallery.user_id) {
+        counts[gallery.user_id] = (counts[gallery.user_id] || 0) + 1;
+      }
     });
 
     return counts;
@@ -520,8 +522,8 @@ export class AdminRepository implements IAdminRepository {
   private determineGalleryType(gallery: {
     user_id: string | null;
     guest_session_id: string | null;
-    is_unlocked?: boolean;
-    payment_type?: string;
+    is_unlocked?: boolean | null;
+    payment_type?: string | null;
   }): GalleryType {
     // If no user_id and has guest_session_id -> Guest
     if (!gallery.user_id && gallery.guest_session_id) {
@@ -688,7 +690,7 @@ export class AdminRepository implements IAdminRepository {
     return {
       deletedImageIds,
       freedStorageMb,
-      ownerId: gallery.user_id,
+      ownerId: gallery.user_id ?? '',
     };
   }
 

@@ -5,6 +5,7 @@
  * @module lib/api/error-handler
  * Requirements: 9.6 - Consistent API Error Format
  * Requirements: 11.7 - Security Error Sanitization
+ * Requirements: 9.1 - API Error Localization
  */
 
 import { NextResponse } from 'next/server';
@@ -14,6 +15,9 @@ import { ZodError } from 'zod';
 /**
  * Standard API error response format
  * Format: { error: string, code?: string, details?: object }
+ * 
+ * Note: The 'error' field contains a translation key (e.g., 'api.errors.validationFailed')
+ * that the client can use to display localized error messages.
  */
 export interface ApiErrorResponse {
   error: string;
@@ -114,6 +118,9 @@ function sanitizeDetails(details: object | undefined): object | undefined {
  * - API keys and secrets
  * - Password hashes
  * 
+ * Localization: Error messages are returned as translation keys that the client
+ * can use to display localized error messages.
+ * 
  * @param error - The error to handle
  * @returns NextResponse with consistent error format
  */
@@ -125,7 +132,7 @@ export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
   if (error instanceof ZodError) {
     return NextResponse.json(
       {
-        error: 'Validation failed',
+        error: 'api.errors.validationFailed',
         code: 'VALIDATION_ERROR',
         details: error.issues,
       },
@@ -154,7 +161,7 @@ export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
   // Validates: Requirements 11.7 - Security Error Sanitization
   return NextResponse.json(
     {
-      error: 'An unexpected error occurred',
+      error: 'errors.generic.unexpected',
       code: 'INTERNAL_ERROR',
     },
     { status: 500 }

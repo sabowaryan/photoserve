@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Eye, Clock, ChevronRight, Calendar, AlertCircle, ImageIcon } from "lucide-react";
 import { GalleryActions } from "@/app/(dashboard)/dashboard/gallery-actions";
 
@@ -15,6 +16,7 @@ interface GalleryCardProps {
   imageCount?: number;
   createdAt?: string;
   isListView?: boolean;
+  priority?: boolean; // For LCP optimization - prioritize first visible cards
 }
 
 export function GalleryCard({
@@ -27,6 +29,7 @@ export function GalleryCard({
   imageCount,
   createdAt,
   isListView = false,
+  priority = false,
 }: GalleryCardProps) {
   const isExpired = new Date(expiresAt) < new Date();
 
@@ -70,9 +73,16 @@ export function GalleryCard({
     return (
       <div className="group bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-500/5 transition-all flex items-center gap-3">
         {/* Thumbnail */}
-        <div className="w-12 h-12 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0 border border-slate-50">
+        <div className="w-12 h-12 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0 border border-slate-50 relative">
           {imageUrl ? (
-            <img src={imageUrl} alt={title} className="w-full h-full object-cover" loading="lazy" />
+            <Image 
+              src={imageUrl} 
+              alt={title} 
+              fill
+              sizes="48px"
+              priority={priority}
+              className="object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-slate-300">
               <ImageIcon size={18} />
@@ -122,11 +132,13 @@ export function GalleryCard({
       {/* Image */}
       <div className="aspect-[16/10] bg-slate-100 relative overflow-hidden">
         {imageUrl ? (
-          <img 
+          <Image 
             src={imageUrl} 
             alt={title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-200">

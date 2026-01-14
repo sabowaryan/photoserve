@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Lock, Loader2, CheckCircle2, ArrowLeft, AlertCircle, Eye, EyeOff, ArrowRight, ShieldCheck, XCircle } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
+import { useTranslation } from '@/lib/i18n/context';
 import { z } from 'zod';
 
-const passwordSchema = z.string().min(6, { message: 'Le mot de passe doit contenir au moins 6 caractères' });
-
 function ResetPasswordContent() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,6 +20,8 @@ function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+
+  const passwordSchema = z.string().min(6, { message: t('auth.errors.passwordTooShort') });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +37,7 @@ function ResetPasswordContent() {
     }
 
     if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
+      setError(t('auth.errors.passwordMismatch'));
       return;
     }
 
@@ -51,13 +53,13 @@ function ResetPasswordContent() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Une erreur est survenue');
+        setError(data.error || t('auth.errors.genericError'));
         return;
       }
 
       setIsSuccess(true);
     } catch {
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(t('auth.errors.genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -74,26 +76,26 @@ function ResetPasswordContent() {
               <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3">
                 <XCircle size={28} className="text-rose-500" />
               </div>
-              <h1 className="text-lg font-bold text-white mb-1">Lien expiré</h1>
-              <p className="text-xs text-rose-100/70">Ce lien n&apos;est plus valide</p>
+              <h1 className="text-lg font-bold text-white mb-1">{t('common.linkExpired')}</h1>
+              <p className="text-xs text-rose-100/70">{t('common.linkNoLongerValid')}</p>
             </div>
           </div>
           <div className="p-5 space-y-3">
             <p className="text-sm text-slate-500 text-center">
-              Ce lien de réinitialisation a expiré ou n&apos;est plus valide.
+              {t('auth.errors.resetLinkInvalid')}
             </p>
             <Link 
               href="/forgot-password"
               className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl shadow-lg transition-all"
             >
-              Demander un nouveau lien
+              {t('auth.forgotPassword.sendLink')}
             </Link>
             <Link 
               href="/auth"
               className="flex items-center justify-center gap-2 w-full py-2.5 text-slate-500 hover:bg-slate-50 text-sm font-medium rounded-xl transition-all"
             >
               <ArrowLeft size={14} />
-              Retour à la connexion
+              {t('auth.forgotPassword.backToLogin')}
             </Link>
           </div>
         </div>
@@ -118,10 +120,10 @@ function ResetPasswordContent() {
               )}
             </div>
             <h1 className="text-lg font-bold text-white mb-1">
-              {isSuccess ? 'Mot de passe modifié' : 'Nouveau mot de passe'}
+              {isSuccess ? t('auth.success.passwordReset') : t('auth.resetPassword.title')}
             </h1>
             <p className="text-xs text-white/70">
-              {isSuccess ? 'Votre mot de passe a été mis à jour' : 'Choisissez un nouveau mot de passe'}
+              {isSuccess ? '' : t('auth.resetPassword.subtitle')}
             </p>
           </div>
         </div>
@@ -139,13 +141,13 @@ function ResetPasswordContent() {
           {isSuccess ? (
             <div className="text-center space-y-4">
               <p className="text-sm text-slate-500">
-                Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
+                {t('auth.forgotPassword.backToLogin')}
               </p>
               <button
                 onClick={() => router.push('/auth')}
                 className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl shadow-lg transition-all active:scale-[0.98]"
               >
-                Se connecter
+                {t('auth.buttons.signIn')}
                 <ArrowRight size={14} />
               </button>
             </div>
@@ -154,7 +156,7 @@ function ResetPasswordContent() {
               {/* Password Input */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                  Nouveau mot de passe
+                  {t('auth.resetPassword.newPassword')}
                 </label>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
@@ -165,7 +167,7 @@ function ResetPasswordContent() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-11 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    placeholder="Au moins 6 caractères"
+                    placeholder={t('common.atLeast6Characters')}
                     required
                   />
                   <button 
@@ -181,7 +183,7 @@ function ResetPasswordContent() {
               {/* Confirm Password Input */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                  Confirmer le mot de passe
+                  {t('auth.resetPassword.confirmPassword')}
                 </label>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
@@ -192,7 +194,7 @@ function ResetPasswordContent() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-11 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    placeholder="Confirmer votre mot de passe"
+                    placeholder={t('common.confirmYourPassword')}
                     required
                   />
                   <button 
@@ -215,7 +217,7 @@ function ResetPasswordContent() {
                   <Loader2 className="animate-spin" size={16} />
                 ) : (
                   <>
-                    <span>Réinitialiser</span>
+                    <span>{t('common.reset')}</span>
                     <ArrowRight size={14} />
                   </>
                 )}
@@ -251,7 +253,7 @@ export default function ResetPasswordPage() {
           <div className="p-3 bg-indigo-100 rounded-xl">
             <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
           </div>
-          <p className="text-sm font-medium text-slate-400">Chargement...</p>
+          <p className="text-sm font-medium text-slate-400">Loading...</p>
         </div>
       }>
         <ResetPasswordContent />
