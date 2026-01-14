@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         title: g.title,
         unique_slug: g.unique_slug,
         is_unlocked: g.is_unlocked,
-        payment_type: g.payment_type,
+        payment_type: g.payment_type as 'free' | 'one_time' | 'subscription',
         expires_at: g.expires_at,
         created_at: g.created_at,
       })),

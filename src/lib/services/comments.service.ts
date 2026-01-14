@@ -53,6 +53,7 @@ export class CommentsService implements ICommentsService {
     // Insert comment
     const commentData: CommentInsert = {
       image_id: imageId,
+      gallery_id: image.gallery_id,
       content: content.trim(),
       session_id: sessionId,
     };

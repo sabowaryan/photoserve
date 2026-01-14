@@ -49,7 +49,7 @@ async function getGalleryData(galleryId: string, userId: string) {
   }
 
   // Verify ownership
-  if (gallery.user_id !== userId) {
+  if ((gallery as any).user_id !== userId) {
     return null;
   }
 

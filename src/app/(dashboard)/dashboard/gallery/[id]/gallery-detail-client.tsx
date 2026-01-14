@@ -93,7 +93,7 @@ export function GalleryDetailClient({
   const [publicUrl, setPublicUrl] = useState(`/g/${gallery.unique_slug}`);
   
   // Gallery settings state
-  const [settings, setSettings] = useState<GallerySettings>(gallery.settings || {
+  const [settings, setSettings] = useState<GallerySettings>((gallery as any).settings || {
     enableFavorites: false,
     enableComments: false,
     enableDeadline: false,
@@ -215,7 +215,7 @@ export function GalleryDetailClient({
       }
       
       // Add settings to updates
-      if (JSON.stringify(settings) !== JSON.stringify(gallery.settings)) {
+      if (JSON.stringify(settings) !== JSON.stringify((gallery as any).settings)) {
         updates.settings = settings;
       }
 

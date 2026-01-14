@@ -64,7 +64,7 @@ export class AuditLogService implements IAuditLogService {
       action_type: actionType,
       entity_type: entityType,
       entity_id: entityId,
-      details,
+      details: details as any,
       ip_address: ipAddress ?? null,
     });
   }

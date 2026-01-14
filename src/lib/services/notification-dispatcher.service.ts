@@ -26,7 +26,7 @@ export class NotificationDispatcherService implements INotificationDispatcherSer
    * Get all push subscriptions for a user
    */
   private async getUserSubscriptions(userId: string): Promise<PushSubscription[]> {
-    const { data: subscriptions, error } = await this.supabase
+    const { data: subscriptions, error } = await (this.supabase as any)
       .from('push_subscriptions')
       .select('endpoint, p256dh, auth')
       .eq('user_id', userId);
@@ -36,7 +36,7 @@ export class NotificationDispatcherService implements INotificationDispatcherSer
       return [];
     }
 
-    return (subscriptions || []).map(sub => ({
+    return (subscriptions || []).map((sub: any) => ({
       endpoint: sub.endpoint,
       keys: {
         p256dh: sub.p256dh,
@@ -119,7 +119,7 @@ export class NotificationDispatcherService implements INotificationDispatcherSer
         .eq('id', galleryId)
         .single();
 
-      if (galleryError || !gallery) {
+      if (galleryError || !gallery || !gallery.user_id) {
         console.error('Gallery not found for notification:', galleryError);
         return;
       }
@@ -148,7 +148,7 @@ export class NotificationDispatcherService implements INotificationDispatcherSer
         .eq('id', galleryId)
         .single();
 
-      if (galleryError || !gallery) {
+      if (galleryError || !gallery || !gallery.user_id) {
         console.error('Gallery not found for notification:', galleryError);
         return;
       }

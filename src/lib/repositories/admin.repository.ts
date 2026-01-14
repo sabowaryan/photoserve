@@ -494,7 +494,7 @@ export class AdminRepository implements IAdminRepository {
         gallery_type: galleryType,
         guest_session_id: gallery.guest_session_id || null,
         is_unlocked: gallery.is_unlocked || false,
-        payment_type: gallery.payment_type || 'free',
+        payment_type: (gallery.payment_type as 'free' | 'one_time' | 'subscription') || 'free',
       };
     });
 
@@ -616,7 +616,7 @@ export class AdminRepository implements IAdminRepository {
       gallery_type: galleryType,
       guest_session_id: gallery.guest_session_id || null,
       is_unlocked: gallery.is_unlocked || false,
-      payment_type: gallery.payment_type || 'free',
+      payment_type: (gallery.payment_type as 'free' | 'one_time' | 'subscription') || 'free',
     };
   }
 

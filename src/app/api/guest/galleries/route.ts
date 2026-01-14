@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
       views_count: gallery.views_count ?? 0,
       image_count: gallery.images?.length ?? 0,
       is_unlocked: gallery.is_unlocked ?? false,
-      payment_type: gallery.payment_type ?? 'free',
+      payment_type: (gallery.payment_type as 'free' | 'one_time' | 'subscription') ?? 'free',
       thumbnail_url: gallery.images?.[0]?.cloudinary_url ?? null,
     }));
 

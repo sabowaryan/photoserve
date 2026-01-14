@@ -71,7 +71,7 @@ async function getGalleryData(galleryId: string, userId: string) {
   }
 
   // Verify ownership
-  if (gallery.user_id !== userId) {
+  if ((gallery as any).user_id !== userId) {
     return { gallery: null, images: [], profile: null };
   }
 
@@ -98,9 +98,9 @@ async function getGalleryData(galleryId: string, userId: string) {
   }
 
   return {
-    gallery: gallery as Gallery,
+    gallery: gallery as unknown as Gallery,
     images: (images || []) as GalleryImage[],
-    profile: profile as Profile | null,
+    profile: profile as unknown as Profile | null,
   };
 }
 

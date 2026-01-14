@@ -225,7 +225,7 @@ export class GalleryService implements IGalleryService {
     }
     
     if (settings !== undefined) {
-      updateData.settings = settings as unknown as Record<string, unknown>;
+      updateData.settings = settings as any;
     }
 
     return this.galleryRepository.update(id, updateData);

@@ -89,25 +89,25 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
   let brandColors = null;
   let ownerPlan: 'free' | 'premium' | 'pro' = 'free';
   
-  if (gallery.user_id) {
+  if ((gallery as any).user_id) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('branding, subscription_plan')
-      .eq('id', gallery.user_id)
+      .eq('id', (gallery as any).user_id)
       .maybeSingle();
     
     if (profile) {
-      ownerPlan = profile.subscription_plan || 'free';
+      ownerPlan = (profile as any).subscription_plan || 'free';
       
-      if (profile.branding) {
-        const branding = profile.branding as { brandColors?: { primary?: string; secondary?: string; accent?: string } };
+      if ((profile as any).branding) {
+        const branding = (profile as any).branding as { brandColors?: { primary?: string; secondary?: string; accent?: string } };
         brandColors = branding.brandColors || null;
       }
     }
   }
 
   // Parse gallery settings to get custom colors
-  const settings = gallery.settings as { customColors?: { primary?: string; secondary?: string; accent?: string } } | null;
+  const settings = (gallery as any).settings as { customColors?: { primary?: string; secondary?: string; accent?: string } } | null;
   const customColors = settings?.customColors || brandColors;
 
   // Generate CSS variables for custom colors
@@ -130,9 +130,9 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
           // has_password is true only if password_hash is non-empty
           has_password: !!gallery.password_hash && gallery.password_hash.length > 0,
           is_unlocked: gallery.is_unlocked ?? false,
-          payment_type: gallery.payment_type ?? 'free',
+          payment_type: (gallery.payment_type as 'free' | 'one_time' | 'subscription') ?? 'free',
           guest_session_id: gallery.guest_session_id ?? null,
-          settings: gallery.settings as any,
+          settings: (gallery as any).settings as any,
           owner_plan: ownerPlan,
         }}
         isExpired={isExpired}
