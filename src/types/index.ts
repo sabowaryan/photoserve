@@ -9,19 +9,9 @@ export type SubscriptionPlan = 'free' | 'premium' | 'pro';
 export type PaymentType = 'free' | 'one_time' | 'subscription';
 
 // Supported Locales for Translation System
-export type SupportedLocale = 'en' | 'fr';
-
-// Locale Configuration
-export interface LocaleConfig {
-  code: SupportedLocale;
-  name: string;
-  flag: string;
-}
-
-export const SUPPORTED_LOCALES: LocaleConfig[] = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-];
+// Re-export from i18n module for consistency across the application
+export type { SupportedLocale, LocaleConfig } from '@/lib/i18n/types';
+export { SUPPORTED_LOCALES } from '@/lib/i18n/types';
 
 // User Profile
 export interface Profile {

@@ -79,12 +79,19 @@ export class GalleryRepository implements IGalleryRepository {
   }
 
   /**
-   * Find all galleries for a user
+   * Find all galleries for a user with their images
    */
   async findByUserId(userId: string): Promise<Gallery[]> {
     const { data, error } = await this.supabase
       .from('galleries')
-      .select('*')
+      .select(`
+        *,
+        images (
+          id,
+          cloudinary_url,
+          order_index
+        )
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
