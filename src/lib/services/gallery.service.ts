@@ -185,7 +185,7 @@ export class GalleryService implements IGalleryService {
       throw new NotFoundError('Gallery'); // Don't reveal existence
     }
 
-    const { title, password, expirationDays } = validatedData.data;
+    const { title, password, expirationDays, settings } = validatedData.data;
 
     // Build update object
     const updateData: Partial<Gallery> = {};
@@ -222,6 +222,10 @@ export class GalleryService implements IGalleryService {
       const expiresAt = new Date(createdAt);
       expiresAt.setDate(expiresAt.getDate() + expirationDays);
       updateData.expires_at = expiresAt.toISOString();
+    }
+    
+    if (settings !== undefined) {
+      updateData.settings = settings as unknown as Record<string, unknown>;
     }
 
     return this.galleryRepository.update(id, updateData);
@@ -291,7 +295,7 @@ export class GalleryService implements IGalleryService {
       };
     }
 
-    // Note: View count is now incremented client-side after successful access
+    // Note: View count is incremented client-side after successful access
     // This allows tracking views for galleries with or without password
 
     // Get images for the gallery

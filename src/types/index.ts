@@ -30,6 +30,7 @@ export interface Profile {
   is_admin: boolean;
   is_suspended: boolean;
   onboarding_completed: boolean;
+  branding: ProfileBranding | null;
   created_at: string;
   updated_at: string;
 }
@@ -193,4 +194,200 @@ export interface SubscriptionStatus {
   plan: SubscriptionPlan;
   status: 'active' | 'canceled' | 'past_due' | 'trialing';
   currentPeriodEnd?: string;
+}
+
+// ============================================
+// PikSend Complete Features - Extended Types
+// ============================================
+
+// Image with metadata for enhanced gallery features
+export interface ImageWithMeta extends Image {
+  isFavorite?: boolean;
+  comments?: Comment[];
+  altText?: string;
+  qualityScore?: number;
+}
+
+// Comment on an image
+export interface Comment {
+  id: string;
+  imageId: string;
+  sessionId: string;
+  content: string;
+  createdAt: string;
+}
+
+// Gallery statistics for analytics
+export interface GalleryStats {
+  totalViews: number;
+  uniqueVisitors: number;
+  viewsByCountry: Record<string, number>;
+  viewsByDate: { date: string; count: number }[];
+  ctaClicks: number;
+  favoritesCount: number;
+  commentsCount: number;
+}
+
+// View metadata for analytics tracking
+export interface ViewMetadata {
+  ip?: string;
+  userAgent?: string;
+  countryCode?: string;
+}
+
+// Face detection result from AI
+export interface FaceDetection {
+  boundingBox: { x: number; y: number; width: number; height: number };
+  confidence: number;
+  embedding?: number[];
+}
+
+// Quality analysis result from AI
+export interface QualityAnalysis {
+  isBlurry: boolean;
+  hasClosedEyes: boolean;
+  isDuplicate: boolean;
+  duplicateOf?: string;
+  overallScore: number;
+}
+
+// Plan features matrix - defines what features are available per plan
+export interface PlanFeatures {
+  slideshow: boolean;
+  favorites: boolean;
+  comments: boolean;
+  detailedAnalytics: boolean;
+  ctaButton: boolean;
+  customWatermark: boolean;
+  bulkDownload: boolean;
+  paywall: boolean;
+  whiteLabel: boolean;
+  customDomain: boolean;
+  brandColors: boolean;
+  profilePage: boolean;
+  deadlineTimer: boolean;
+  leadMagnet: boolean;
+  videoCover: boolean;
+  audioGallery: boolean;
+  testimonials: boolean;
+  lightroomPlugin: boolean;
+  faceRecognition: boolean;
+  autoCaption: boolean;
+  smartCulling: boolean;
+}
+
+// CTA Button configuration
+export interface CTAButtonConfig {
+  text: string;
+  url: string;
+  style: 'primary' | 'secondary';
+}
+
+// Brand colors configuration
+export interface BrandColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+}
+
+// Gallery settings - extended configuration for galleries
+export interface GallerySettings {
+  enableFavorites: boolean;
+  enableComments: boolean;
+  enableDeadline: boolean;
+  deadlineDate?: string;
+  enableLeadMagnet: boolean;
+  ctaButton?: CTAButtonConfig;
+  videoCoverUrl?: string;
+  audioUrl?: string;
+  customColors?: BrandColors;
+  noindex: boolean;
+}
+
+// Profile branding configuration
+export interface ProfileBranding {
+  customLogo?: string;
+  customDomain?: string;
+  brandColors?: BrandColors;
+  profileSlug?: string;
+  profileBio?: string;
+}
+
+// Favorite record
+export interface Favorite {
+  id: string;
+  galleryId: string;
+  imageId: string;
+  sessionId: string;
+  createdAt: string;
+}
+
+// Favorite export for photographer
+export interface FavoriteExport {
+  galleryId: string;
+  galleryTitle: string;
+  favorites: {
+    imageId: string;
+    imageUrl: string;
+    addedAt: string;
+  }[];
+  exportedAt: string;
+}
+
+// Lead capture record
+export interface LeadCapture {
+  id: string;
+  galleryId: string;
+  email: string;
+  capturedAt: string;
+}
+
+// Testimonial record
+export interface Testimonial {
+  id: string;
+  galleryId: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  comment?: string;
+  authorName?: string;
+  isPublic: boolean;
+  createdAt: string;
+}
+
+// Gallery analytics record
+export interface GalleryAnalyticsRecord {
+  id: string;
+  galleryId: string;
+  visitorIp?: string;
+  countryCode?: string;
+  userAgent?: string;
+  viewedAt: string;
+}
+
+// Admin settings
+export interface AdminSettings {
+  stripeEnabled: boolean;
+  aiFeaturesEnabled: boolean;
+}
+
+// API Error codes for feature access
+export type FeatureErrorCode =
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'RATE_LIMITED'
+  | 'VALIDATION_ERROR'
+  | 'PAYMENT_REQUIRED'
+  | 'FEATURE_DISABLED'
+  | 'PLAN_LIMIT_EXCEEDED'
+  | 'INTERNAL_ERROR';
+
+// Feature access error response
+export interface FeatureAccessError {
+  error: string;
+  code: FeatureErrorCode;
+  details?: {
+    feature?: keyof PlanFeatures;
+    requiredPlan?: SubscriptionPlan;
+    [key: string]: unknown;
+  };
 }

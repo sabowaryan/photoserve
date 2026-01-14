@@ -332,6 +332,197 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          id: string
+          gallery_id: string
+          image_id: string
+          session_id: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          gallery_id: string
+          image_id: string
+          session_id: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          gallery_id?: string
+          image_id?: string
+          session_id?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "images"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      comments: {
+        Row: {
+          id: string
+          image_id: string
+          session_id: string
+          content: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          image_id: string
+          session_id: string
+          content: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          image_id?: string
+          session_id?: string
+          content?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "images"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      gallery_analytics: {
+        Row: {
+          id: string
+          gallery_id: string
+          visitor_ip: string | null
+          country_code: string | null
+          user_agent: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          gallery_id: string
+          visitor_ip?: string | null
+          country_code?: string | null
+          user_agent?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          gallery_id?: string
+          visitor_ip?: string | null
+          country_code?: string | null
+          user_agent?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_analytics_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      lead_captures: {
+        Row: {
+          id: string
+          gallery_id: string
+          email: string
+          captured_at: string | null
+        }
+        Insert: {
+          id?: string
+          gallery_id: string
+          email: string
+          captured_at?: string | null
+        }
+        Update: {
+          id?: string
+          gallery_id?: string
+          email?: string
+          captured_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_captures_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      testimonials: {
+        Row: {
+          id: string
+          gallery_id: string
+          rating: number
+          comment: string | null
+          author_name: string | null
+          is_public: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          gallery_id: string
+          rating: number
+          comment?: string | null
+          author_name?: string | null
+          is_public?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          gallery_id?: string
+          rating?: number
+          comment?: string | null
+          author_name?: string | null
+          is_public?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      admin_settings: {
+        Row: {
+          key: string
+          value: Json
+          updated_at: string | null
+        }
+        Insert: {
+          key: string
+          value: Json
+          updated_at?: string | null
+        }
+        Update: {
+          key?: string
+          value?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       galleries_public: {
@@ -435,3 +626,33 @@ export type GalleryPaymentInsert = TablesInsert<'gallery_payments'>
 export type GalleryPaymentUpdate = TablesUpdate<'gallery_payments'>
 export type PaymentType = Enums<'payment_type'>
 export type PaymentStatus = Enums<'payment_status'>
+
+// Favorites types
+export type Favorite = Tables<'favorites'>
+export type FavoriteInsert = TablesInsert<'favorites'>
+export type FavoriteUpdate = TablesUpdate<'favorites'>
+
+// Comments types
+export type Comment = Tables<'comments'>
+export type CommentInsert = TablesInsert<'comments'>
+export type CommentUpdate = TablesUpdate<'comments'>
+
+// Gallery Analytics types
+export type GalleryAnalytics = Tables<'gallery_analytics'>
+export type GalleryAnalyticsInsert = TablesInsert<'gallery_analytics'>
+export type GalleryAnalyticsUpdate = TablesUpdate<'gallery_analytics'>
+
+// Lead Captures types
+export type LeadCapture = Tables<'lead_captures'>
+export type LeadCaptureInsert = TablesInsert<'lead_captures'>
+export type LeadCaptureUpdate = TablesUpdate<'lead_captures'>
+
+// Testimonials types
+export type Testimonial = Tables<'testimonials'>
+export type TestimonialInsert = TablesInsert<'testimonials'>
+export type TestimonialUpdate = TablesUpdate<'testimonials'>
+
+// Admin Settings types
+export type AdminSetting = Tables<'admin_settings'>
+export type AdminSettingInsert = TablesInsert<'admin_settings'>
+export type AdminSettingUpdate = TablesUpdate<'admin_settings'>

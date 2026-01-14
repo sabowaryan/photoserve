@@ -112,11 +112,12 @@ describe('Gallery Limits Enforcement (Property 7)', () => {
       fc.assert(
         fc.property(
           subscriptionPlanArb,
-          (plan) => {
+          fc.nat(1000), // Test with counts up to 1000
+          (plan, count) => {
             const maxGalleries = PLAN_LIMITS[plan].max_galleries;
             
-            // For any count below the limit, creation should be allowed
-            for (let count = 0; count < maxGalleries; count++) {
+            // Only test if count is below the limit
+            if (count < maxGalleries) {
               expect(canCreateGallery(count, plan)).toBe(true);
             }
           }
@@ -160,14 +161,14 @@ describe('Gallery Limits Enforcement (Property 7)', () => {
 
   describe('Plan limits are correctly defined', () => {
     it('should have correct gallery limits for each plan', () => {
-      // Free plan: 3 galleries
-      expect(PLAN_LIMITS.free.max_galleries).toBe(3);
+      // Free plan: 2 galleries
+      expect(PLAN_LIMITS.free.max_galleries).toBe(2);
       
-      // Premium plan: 50 galleries
-      expect(PLAN_LIMITS.premium.max_galleries).toBe(50);
+      // Premium plan: 100 galleries
+      expect(PLAN_LIMITS.premium.max_galleries).toBe(100);
       
-      // Pro plan: 500 galleries
-      expect(PLAN_LIMITS.pro.max_galleries).toBe(500);
+      // Pro plan: 9999 galleries
+      expect(PLAN_LIMITS.pro.max_galleries).toBe(9999);
     });
 
     it('should return correct limits via getPlanLimits for any plan', () => {

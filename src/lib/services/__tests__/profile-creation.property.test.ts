@@ -16,13 +16,13 @@ import { PLAN_LIMITS } from '@/config/plans';
 import { signUpSchema } from '@/lib/validators/auth.schema';
 import type { Profile } from '@/lib/supabase/types';
 
-// Free plan limits as defined in requirements
+// Free plan limits as defined in requirements (updated to match actual config)
 const FREE_PLAN_LIMITS = {
   subscription_plan: 'free' as const,
-  storage_limit_mb: 20,
-  max_galleries: 3,
-  max_images_per_gallery: 30,
-  max_image_size_mb: 1,
+  storage_limit_mb: 500,
+  max_galleries: 2,
+  max_images_per_gallery: 50,
+  max_image_size_mb: 25,
   storage_used_mb: 0,
 };
 
@@ -106,7 +106,7 @@ describe('Profile Creation on Signup (Property 2)', () => {
     );
   });
 
-  it('should create profile with correct free plan storage limit (20 MB)', () => {
+  it('should create profile with correct free plan storage limit (500 MB)', () => {
     fc.assert(
       fc.property(
         userIdArb,
@@ -115,15 +115,15 @@ describe('Profile Creation on Signup (Property 2)', () => {
         (userId, email, name) => {
           const profile = createProfileForNewUser(userId, email, name ?? null);
           
-          // Storage limit should be 20 MB for free plan
-          expect(profile.storage_limit_mb).toBe(20);
+          // Storage limit should be 500 MB for free plan
+          expect(profile.storage_limit_mb).toBe(500);
         }
       ),
       { numRuns: 100 }
     );
   });
 
-  it('should create profile with correct free plan gallery limit (3 galleries)', () => {
+  it('should create profile with correct free plan gallery limit (2 galleries)', () => {
     fc.assert(
       fc.property(
         userIdArb,
@@ -132,15 +132,15 @@ describe('Profile Creation on Signup (Property 2)', () => {
         (userId, email, name) => {
           const profile = createProfileForNewUser(userId, email, name ?? null);
           
-          // Max galleries should be 3 for free plan
-          expect(profile.max_galleries).toBe(3);
+          // Max galleries should be 2 for free plan
+          expect(profile.max_galleries).toBe(2);
         }
       ),
       { numRuns: 100 }
     );
   });
 
-  it('should create profile with correct free plan images per gallery limit (30 images)', () => {
+  it('should create profile with correct free plan images per gallery limit (50 images)', () => {
     fc.assert(
       fc.property(
         userIdArb,
@@ -149,15 +149,15 @@ describe('Profile Creation on Signup (Property 2)', () => {
         (userId, email, name) => {
           const profile = createProfileForNewUser(userId, email, name ?? null);
           
-          // Max images per gallery should be 30 for free plan
-          expect(profile.max_images_per_gallery).toBe(30);
+          // Max images per gallery should be 50 for free plan
+          expect(profile.max_images_per_gallery).toBe(50);
         }
       ),
       { numRuns: 100 }
     );
   });
 
-  it('should create profile with correct free plan image size limit (1 MB)', () => {
+  it('should create profile with correct free plan image size limit (25 MB)', () => {
     fc.assert(
       fc.property(
         userIdArb,
@@ -166,8 +166,8 @@ describe('Profile Creation on Signup (Property 2)', () => {
         (userId, email, name) => {
           const profile = createProfileForNewUser(userId, email, name ?? null);
           
-          // Max image size should be 1 MB for free plan
-          expect(profile.max_image_size_mb).toBe(1);
+          // Max image size should be 25 MB for free plan
+          expect(profile.max_image_size_mb).toBe(25);
         }
       ),
       { numRuns: 100 }

@@ -34,8 +34,8 @@ async function parseResponseBody(response: Response): Promise<ApiErrorResponse> 
  * Format: { error: string, code: string, details: ZodIssue[] }
  */
 function isValidValidationErrorFormat(body: ApiErrorResponse): boolean {
-  // 'error' field must be 'Validation failed'
-  if (body.error !== 'Validation failed') {
+  // 'error' field must be the i18n key for validation failed
+  if (body.error !== 'api.errors.validationFailed') {
     return false;
   }
   
@@ -107,8 +107,8 @@ describe('API Input Validation - Property 22', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.record({
-            title: fc.string({ minLength: 101, maxLength: 200 }), // Exceeds 100 char limit
-            password: fc.string({ minLength: 4, maxLength: 50 }),
+            title: fc.string({ minLength: 101, maxLength: 200 }).filter(s => s.trim().length > 100), // Exceeds 100 char limit after trim
+            password: fc.string({ minLength: 4, maxLength: 50 }).filter(s => s.trim().length >= 4),
             expirationDays: fc.integer({ min: 1, max: 365 }),
           }),
           async (input) => {
@@ -132,8 +132,13 @@ describe('API Input Validation - Property 22', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.record({
-            title: fc.string({ minLength: 1, maxLength: 100 }),
-            password: fc.string({ minLength: 1, maxLength: 3 }), // Less than 4 chars
+            title: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
+            password: fc.string({ minLength: 1, maxLength: 3 }).filter(s => {
+              const trimmed = s.trim();
+              // Password must be non-empty after trim and less than 4 chars (invalid)
+              // Empty string is allowed for galleries without password
+              return trimmed.length > 0 && trimmed.length < 4;
+            }),
             expirationDays: fc.integer({ min: 1, max: 365 }),
           }),
           async (input) => {
@@ -262,8 +267,12 @@ describe('API Input Validation - Property 22', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.record({
-            slug: fc.constant(''), // Empty slug is invalid
-            password: fc.string({ minLength: 1, maxLength: 50 }),
+            slug: fc.oneof(
+              fc.constant(''),
+              fc.constant('   '), // whitespace-only
+              fc.constant('  \t  ') // whitespace with tabs
+            ),
+            password: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
           }),
           async (input) => {
             const result = verifyPasswordSchema.safeParse(input);
@@ -286,8 +295,12 @@ describe('API Input Validation - Property 22', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.record({
-            slug: fc.string({ minLength: 1, maxLength: 50 }),
-            password: fc.constant(''), // Empty password is invalid
+            slug: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+            password: fc.oneof(
+              fc.constant(''),
+              fc.constant('   '), // whitespace-only
+              fc.constant('  \t  ') // whitespace with tabs
+            ),
           }),
           async (input) => {
             const result = verifyPasswordSchema.safeParse(input);
@@ -341,7 +354,11 @@ describe('API Input Validation - Property 22', () => {
             fc.constant({ id: '12345' }),
             fc.constant({ id: '' }),
             fc.record({ id: fc.string({ minLength: 1, maxLength: 30 }) })
-              .filter(obj => !obj.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i))
+              .filter(obj => {
+                const trimmed = obj.id.trim();
+                // Filter out valid UUIDs and ensure we have non-empty strings after trim
+                return trimmed.length > 0 && !trimmed.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+              })
           ),
           async (input) => {
             const result = galleryIdSchema.safeParse(input);
@@ -366,9 +383,13 @@ describe('API Input Validation - Property 22', () => {
       await fc.assert(
         fc.asyncProperty(
           fc.record({
-            email: fc.string({ minLength: 1, maxLength: 50 })
-              .filter(s => !s.includes('@') || !s.includes('.')), // Invalid email format
-            password: fc.string({ minLength: 8, maxLength: 50 }),
+            email: fc.oneof(
+              fc.constant(''),
+              fc.constant('   '), // whitespace-only
+              fc.constant('invalid'),
+              fc.constant('no-at-sign.com')
+            ),
+            password: fc.string({ minLength: 8, maxLength: 50 }).filter(s => s.trim().length >= 8),
           }),
           async (input) => {
             const result = signUpSchema.safeParse(input);
@@ -392,7 +413,14 @@ describe('API Input Validation - Property 22', () => {
         fc.asyncProperty(
           fc.record({
             email: fc.emailAddress(),
-            password: fc.string({ minLength: 1, maxLength: 7 }), // Less than 8 chars
+            password: fc.oneof(
+              fc.constant(''),
+              fc.constant('   '), // whitespace-only
+              fc.string({ minLength: 1, maxLength: 7 }).filter(s => {
+                const trimmed = s.trim();
+                return trimmed.length > 0 && trimmed.length < 8;
+              })
+            ),
           }),
           async (input) => {
             const result = signUpSchema.safeParse(input);
@@ -418,7 +446,7 @@ describe('API Input Validation - Property 22', () => {
         fc.asyncProperty(
           fc.record({
             email: fc.constant('invalid-email'), // Invalid email format
-            password: fc.string({ minLength: 1, maxLength: 50 }),
+            password: fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
           }),
           async (input) => {
             const result = signInSchema.safeParse(input);
@@ -442,7 +470,11 @@ describe('API Input Validation - Property 22', () => {
         fc.asyncProperty(
           fc.record({
             email: fc.emailAddress(),
-            password: fc.constant(''), // Empty password
+            password: fc.oneof(
+              fc.constant(''),
+              fc.constant('   '), // whitespace-only
+              fc.constant('  \t  ') // whitespace with tabs
+            ),
           }),
           async (input) => {
             const result = signInSchema.safeParse(input);
@@ -468,9 +500,9 @@ describe('API Input Validation - Property 22', () => {
         fc.asyncProperty(
           fc.oneof(
             fc.constant({ email: '' }),
-            fc.constant({ email: 'not-an-email' }),
-            fc.constant({ email: 'missing@domain' }),
-            fc.record({ email: fc.string({ minLength: 1, maxLength: 30 }).filter(s => !s.includes('@')) })
+            fc.constant({ email: '   ' }), // whitespace-only
+            fc.constant({ email: 'missing-at-sign.com' }),
+            fc.constant({ email: 'no-domain@' })
           ),
           async (input) => {
             const result = forgotPasswordSchema.safeParse(input);
@@ -512,8 +544,8 @@ describe('API Input Validation - Property 22', () => {
             // Must return 400 status
             expect(response.status).toBe(400);
             
-            // Must have consistent error format
-            expect(body.error).toBe('Validation failed');
+            // Must have consistent error format (i18n key)
+            expect(body.error).toBe('api.errors.validationFailed');
             expect(body.code).toBe('VALIDATION_ERROR');
             expect(Array.isArray(body.details)).toBe(true);
           }
@@ -561,7 +593,11 @@ describe('API Input Validation - Property 22', () => {
         fc.asyncProperty(
           fc.record({
             title: fc.constant(''), // Invalid: empty
-            password: fc.string({ minLength: 1, maxLength: 3 }), // Invalid: too short
+            password: fc.oneof(
+              fc.constant('!'), // 1 char - too short
+              fc.constant('ab'), // 2 chars - too short
+              fc.constant('xyz') // 3 chars - too short
+            ),
             expirationDays: fc.integer({ min: 366, max: 1000 }), // Invalid: too large
           }),
           async (input) => {
@@ -575,7 +611,7 @@ describe('API Input Validation - Property 22', () => {
               expect(response.status).toBe(400);
               expect(isValidValidationErrorFormat(body)).toBe(true);
               
-              // Should have multiple validation issues
+              // Should have multiple validation issues (title empty, password too short, expirationDays too large)
               const details = body.details as Array<{ path: string[]; message: string }>;
               expect(details.length).toBeGreaterThanOrEqual(2);
             }

@@ -112,7 +112,11 @@ export function GalleryHeader({
                 isLoading={isDownloading}
                 loadingText="Préparation..."
                 spinnerSize="sm"
-                className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-lg md:rounded-xl transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-white font-bold rounded-lg md:rounded-xl transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                style={{
+                  background: `linear-gradient(to right, var(--brand-primary, rgb(99 102 241)), var(--brand-secondary, rgb(139 92 246)))`,
+                  boxShadow: '0 10px 15px -3px rgba(var(--brand-primary, 99 102 241) / 0.25)',
+                }}
               >
                 <Download size={14} />
                 <span className="hidden sm:inline">Télécharger</span>

@@ -8,6 +8,8 @@ import { ProfileSection } from "./profile-section";
 import { SecuritySection } from "./security-section";
 import { SubscriptionSection } from "./subscription-section";
 import { SettingsScrollHandler } from "./settings-client";
+import { BrandingSection } from "@/components/settings/branding-section";
+import { PushNotificationSettings } from "@/components/settings/push-notification-settings";
 
 export const metadata: Metadata = generatePageMetadata("settings");
 
@@ -26,6 +28,20 @@ async function getProfile(userId: string) {
   }
 
   return profile;
+}
+
+async function updateProfileBranding(userId: string, branding: any) {
+  const { supabase } = await requireSupabaseClient();
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ branding } as any)
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Error updating branding:", error);
+    throw error;
+  }
 }
 
 export default async function SettingsPage() {
@@ -64,6 +80,19 @@ export default async function SettingsPage() {
         <div id="subscription-section" className="scroll-mt-28 transition-all duration-500">
           <SubscriptionSection currentPlan={currentPlan} profile={profile as any} />
         </div>
+
+        {/* Branding Section - Pro Plan Feature */}
+        <BrandingSection
+          initialBranding={((profile as any)?.branding) || {}}
+          userPlan={currentPlan}
+          onUpdate={async (branding) => {
+            "use server";
+            await updateProfileBranding(session.user.id, branding);
+          }}
+        />
+
+        {/* Push Notifications Section */}
+        <PushNotificationSettings />
 
         {/* Security Section */}
         <SecuritySection />

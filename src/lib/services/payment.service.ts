@@ -4,12 +4,24 @@
  * 
  * @module lib/services/payment.service
  * Requirements: 6.1, 6.5, 6.7 - Stripe integration for subscriptions
+ * Requirements: 4.4.1, 4.4.5 - Paywall with Stripe toggle from admin_settings
  */
 import { stripe, getPriceId, type StripePlan, type StripeBillingInterval } from '@/lib/stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 import type { SubscriptionStatus, SubscriptionPlan } from '@/types';
 import { AppError } from '@/lib/errors';
+
+/**
+ * Error thrown when Stripe is disabled by admin
+ * Requirements: 4.4.5 - Display message when Stripe is disabled
+ */
+export class StripeDisabledError extends AppError {
+  constructor() {
+    super('Payments are temporarily unavailable', 'STRIPE_DISABLED', 503);
+    this.name = 'StripeDisabledError';
+  }
+}
 
 /**
  * Payment Service Interface
@@ -25,6 +37,8 @@ export interface IPaymentService {
   ): Promise<string>;
   createPortalSession(customerId: string, returnUrl: string): Promise<string>;
   getSubscriptionStatus(userId: string): Promise<SubscriptionStatus | null>;
+  isStripeEnabled(): Promise<boolean>;
+  checkStripeEnabled(): Promise<void>;
 }
 
 /**
@@ -44,8 +58,51 @@ export class PaymentService implements IPaymentService {
   constructor(private supabase: SupabaseClient<Database>) {}
 
   /**
+   * Check if Stripe is enabled in admin settings
+   * Requirements: 4.4.5 - Check admin_settings for Stripe toggle
+   * 
+   * @returns true if Stripe is enabled, false otherwise
+   */
+  async isStripeEnabled(): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('admin_settings')
+      .select('value')
+      .eq('key', 'stripe_enabled')
+      .single();
+
+    if (error || !data) {
+      // Default to enabled if setting not found
+      return true;
+    }
+
+    // The value is stored as JSONB, could be boolean or string
+    const value = data.value;
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      return value === 'true';
+    }
+    return true;
+  }
+
+  /**
+   * Check if Stripe is enabled and throw error if not
+   * Requirements: 4.4.5 - Display message when Stripe is disabled
+   * 
+   * @throws StripeDisabledError if Stripe is disabled
+   */
+  async checkStripeEnabled(): Promise<void> {
+    const enabled = await this.isStripeEnabled();
+    if (!enabled) {
+      throw new StripeDisabledError();
+    }
+  }
+
+  /**
    * Create a Stripe Checkout session for subscription
    * Requirements: 6.1, 6.7 - Support monthly/yearly billing
+   * Requirements: 4.4.1, 4.4.5 - Check Stripe enabled before creating session
    * 
    * @param userId - The user's ID
    * @param userEmail - The user's email
@@ -63,6 +120,8 @@ export class PaymentService implements IPaymentService {
     successUrl: string,
     cancelUrl: string
   ): Promise<string> {
+    // Check if Stripe is enabled before proceeding
+    await this.checkStripeEnabled();
     // Get the price ID for the selected plan and interval
     const priceId = getPriceId(plan, interval);
 
@@ -135,12 +194,16 @@ export class PaymentService implements IPaymentService {
   /**
    * Create a Stripe Customer Portal session
    * Requirements: 6.5 - Customer portal for subscription management
+   * Requirements: 4.4.5 - Check Stripe enabled before creating session
    * 
    * @param customerId - The Stripe customer ID
    * @param returnUrl - URL to return to after portal session
    * @returns The portal session URL
    */
   async createPortalSession(customerId: string, returnUrl: string): Promise<string> {
+    // Check if Stripe is enabled before proceeding
+    await this.checkStripeEnabled();
+
     if (!customerId) {
       throw new AppError('No Stripe customer ID found', 'NO_CUSTOMER', 400);
     }

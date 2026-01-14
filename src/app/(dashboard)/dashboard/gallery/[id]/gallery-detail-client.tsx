@@ -16,6 +16,7 @@ import {
   SettingsTab,
 } from "@/components/gallery-detail";
 import { UpgradeModal } from "@/components/shared/upgrade-modal";
+import type { GallerySettings } from "@/types";
 
 interface Gallery {
   id: string;
@@ -28,6 +29,7 @@ interface Gallery {
   created_at: string;
   updated_at: string;
   user_id: string;
+  settings?: GallerySettings;
 }
 
 interface GalleryImage {
@@ -89,6 +91,15 @@ export function GalleryDetailClient({
   const [uploadQueue, setUploadQueue] = useState<UploadingFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [publicUrl, setPublicUrl] = useState(`/g/${gallery.unique_slug}`);
+  
+  // Gallery settings state
+  const [settings, setSettings] = useState<GallerySettings>(gallery.settings || {
+    enableFavorites: false,
+    enableComments: false,
+    enableDeadline: false,
+    enableLeadMagnet: false,
+    noindex: true,
+  });
   
   // Upgrade modal state
   const [upgradeModal, setUpgradeModal] = useState<{
@@ -202,6 +213,11 @@ export function GalleryDetailClient({
       if (expirationDays !== gallery.expiration_days && canChangeDuration) {
         updates.expiration_days = expirationDays;
       }
+      
+      // Add settings to updates
+      if (JSON.stringify(settings) !== JSON.stringify(gallery.settings)) {
+        updates.settings = settings;
+      }
 
       if (Object.keys(updates).length > 0) {
         const response = await fetch(`/api/galleries/${gallery.id}`, {
@@ -226,6 +242,11 @@ export function GalleryDetailClient({
       setIsUpdating(false);
     }
   };
+  
+  // Settings change handler
+  const handleSettingsChange = useCallback((newSettings: Partial<GallerySettings>) => {
+    setSettings(prev => ({ ...prev, ...newSettings }));
+  }, []);
 
   // Upload logic
   const processFiles = useCallback((files: File[]) => {
@@ -426,6 +447,9 @@ export function GalleryDetailClient({
           isUpdating={isUpdating}
           saveSuccess={saveSuccess}
           onSave={handleSaveSettings}
+          settings={settings}
+          onSettingsChange={handleSettingsChange}
+          userPlan={planName}
         />
       )}
 

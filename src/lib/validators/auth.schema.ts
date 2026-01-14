@@ -16,12 +16,14 @@ const sanitizeString = (val: string) => sanitizeForHtml(val);
  * Sign up schema - validates new user registration
  */
 export const signUpSchema = z.object({
-  email: z.email({ message: 'Adresse email invalide' }),
+  email: z.string().trim().email({ message: 'Adresse email invalide' }),
   password: z
     .string()
+    .trim()
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
   name: z
     .string()
+    .trim()
     .min(1, 'Le nom est requis')
     .max(100, 'Le nom est trop long')
     .transform(sanitizeString)
@@ -32,26 +34,27 @@ export const signUpSchema = z.object({
  * Sign in schema - validates user login
  */
 export const signInSchema = z.object({
-  email: z.email({ message: 'Adresse email invalide' }),
-  password: z.string().min(1, 'Le mot de passe est requis'),
+  email: z.string().trim().email({ message: 'Adresse email invalide' }),
+  password: z.string().trim().min(1, 'Le mot de passe est requis'),
 });
 
 /**
  * Forgot password schema - validates password reset request
  */
 export const forgotPasswordSchema = z.object({
-  email: z.email({ message: 'Adresse email invalide' }),
+  email: z.string().trim().email({ message: 'Adresse email invalide' }),
 });
 
 /**
  * Reset password schema - validates new password
  */
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, 'Token invalide'),
+  token: z.string().trim().min(1, 'Token invalide'),
   password: z
     .string()
+    .trim()
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().trim(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Les mots de passe ne correspondent pas',
   path: ['confirmPassword'],
@@ -61,11 +64,12 @@ export const resetPasswordSchema = z.object({
  * Update password schema - validates password change
  */
 export const updatePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Le mot de passe actuel est requis'),
+  currentPassword: z.string().trim().min(1, 'Le mot de passe actuel est requis'),
   newPassword: z
     .string()
+    .trim()
     .min(8, 'Le nouveau mot de passe doit contenir au moins 8 caractères'),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().trim(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: 'Les mots de passe ne correspondent pas',
   path: ['confirmPassword'],

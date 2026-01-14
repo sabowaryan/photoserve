@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft, ChevronRight, ExternalLink, Clock, ImageIcon, Eye, Calendar } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Clock, ImageIcon, Eye, Calendar, BarChart3 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface GalleryHeroProps {
   title: string;
@@ -11,6 +12,7 @@ interface GalleryHeroProps {
   createdAt: string;
   imageCount: number;
   isExpired: boolean;
+  galleryId: string;
 }
 
 export function GalleryHero({
@@ -21,7 +23,10 @@ export function GalleryHero({
   createdAt,
   imageCount,
   isExpired,
+  galleryId,
 }: GalleryHeroProps) {
+  const router = useRouter();
+  
   const formatDate = (dateStr: string) => {
     return new Intl.DateTimeFormat('fr-FR', {
       day: 'numeric',
@@ -94,8 +99,15 @@ export function GalleryHero({
               </p>
             </div>
 
-            {/* Action Button */}
-            <div className="shrink-0">
+            {/* Action Buttons */}
+            <div className="shrink-0 flex gap-2">
+              <button 
+                onClick={() => router.push(`/dashboard/gallery/${galleryId}/analytics`)}
+                className="group relative px-4 py-2.5 bg-white/10 backdrop-blur-md text-white font-bold text-sm rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+              >
+                <BarChart3 size={16} />
+                <span className="hidden sm:inline">Analytics</span>
+              </button>
               <button 
                 onClick={() => window.open(publicUrl, '_blank')}
                 className="group relative px-4 py-2.5 bg-white text-slate-900 font-bold text-sm rounded-xl hover:bg-slate-50 transition-all shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 overflow-hidden"

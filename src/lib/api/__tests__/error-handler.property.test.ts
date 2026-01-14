@@ -127,8 +127,8 @@ describe('API Error Handler - Consistent API Error Format (Property 24)', () => 
           // Generic errors should return 500
           expect(response.status).toBe(500);
           
-          // Must have error and code fields
-          expect(body.error).toBe('An unexpected error occurred');
+          // Must have error and code fields (returns i18n key)
+          expect(body.error).toBe('errors.generic.unexpected');
           expect(body.code).toBe('INTERNAL_ERROR');
         }
       ),
@@ -268,8 +268,8 @@ describe('API Error Handler - Consistent API Error Format (Property 24)', () => 
           // Should return 400 for validation errors
           expect(response.status).toBe(400);
           
-          // Should have proper error message and code
-          expect(body.error).toBe('Validation failed');
+          // Should have proper error message and code (returns i18n key)
+          expect(body.error).toBe('api.errors.validationFailed');
           expect(body.code).toBe('VALIDATION_ERROR');
           
           // Should have details with validation issues
@@ -365,10 +365,10 @@ describe('API Error Handler - Security Error Sanitization', () => {
           // Response should NOT contain sensitive information
           expect(containsSensitiveInfo(body)).toBe(false);
           
-          // Response should have generic error message
+          // Response should have generic error message (i18n key)
           expect(response.status).toBe(500);
           const json = JSON.parse(body);
-          expect(json.error).toBe('An unexpected error occurred');
+          expect(json.error).toBe('errors.generic.unexpected');
           expect(json.code).toBe('INTERNAL_ERROR');
         }
       ),

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Clock, Unlock } from "lucide-react";
+import { Clock, Unlock, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -14,12 +14,19 @@ import {
   Lightbox,
   DownloadModal,
 } from "@/components/gallery-view";
+import { DeadlineTimer } from "@/components/gallery-view/deadline-timer";
+import { LeadMagnetModal } from "@/components/gallery-view/lead-magnet-modal";
+import { Slideshow } from "@/components/gallery-view/slideshow";
+import { VideoCover } from "@/components/gallery-view/video-cover";
+import { AudioPlayer } from "@/components/gallery-view/audio-player";
 import { PricingModal } from "@/components/guest/pricing-modal";
 import { UnlockSuccessModal } from "@/components/guest/unlock-success-modal";
+import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import { clearPreservedUploadState } from "@/lib/guest/file-preservation";
 import { GuestSessionManager } from "@/lib/guest/session";
 import { useTranslation } from "@/lib/i18n/context";
-import type { PaymentType } from "@/types";
+import { hasFeatureAccess } from "@/config/plan-features";
+import type { PaymentType, GallerySettings, SubscriptionPlan, PlanFeatures } from "@/types";
 
 // Storage key for tracking pricing choices
 const PRICING_CHOICE_KEY = 'piksend_pricing_choices';
@@ -78,6 +85,12 @@ function hasFinalChoice(galleryId: string): boolean {
 interface GalleryImage {
   id: string;
   url: string;
+  cloudinary_url?: string;
+  gallery_id?: string;
+  cloudinary_public_id?: string;
+  file_size_mb?: number;
+  order_index?: number;
+  created_at?: string;
 }
 
 interface GalleryInfo {
@@ -90,6 +103,8 @@ interface GalleryInfo {
   is_unlocked: boolean;
   payment_type: PaymentType;
   guest_session_id: string | null;
+  settings?: GallerySettings;
+  owner_plan?: SubscriptionPlan;
 }
 
 interface GalleryViewClientProps {
@@ -117,7 +132,29 @@ export function GalleryViewClient({
   const [showUnlockSuccessModal, setShowUnlockSuccessModal] = useState(false);
   const [isGalleryOwner, setIsGalleryOwner] = useState(false);
   const [showPricingReminder, setShowPricingReminder] = useState(false);
+  const [showSlideshow, setShowSlideshow] = useState(false);
+  const [showLeadMagnet, setShowLeadMagnet] = useState(false);
+  const [hasSubmittedEmail, setHasSubmittedEmail] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [blockedFeature, setBlockedFeature] = useState<keyof PlanFeatures | null>(null);
   const viewTracked = useRef(false);
+
+  // Extract gallery settings and owner plan
+  const settings: Partial<GallerySettings> = initialGallery.settings || {};
+  const ownerPlan = initialGallery.owner_plan || 'free';
+  
+  // Check feature access based on owner's plan
+  const canUseSlideshow = hasFeatureAccess(ownerPlan, 'slideshow');
+  const canUseDeadlineTimer = hasFeatureAccess(ownerPlan, 'deadlineTimer');
+  const canUseLeadMagnet = hasFeatureAccess(ownerPlan, 'leadMagnet');
+  const canUseVideoCover = hasFeatureAccess(ownerPlan, 'videoCover');
+  const canUseAudioGallery = hasFeatureAccess(ownerPlan, 'audioGallery');
+  
+  // Apply feature gating to settings
+  const enableDeadline = canUseDeadlineTimer && settings.enableDeadline && settings.deadlineDate;
+  const enableLeadMagnet = canUseLeadMagnet && settings.enableLeadMagnet;
+  const videoCoverUrl = canUseVideoCover ? settings.videoCoverUrl : undefined;
+  const audioUrl = canUseAudioGallery ? settings.audioUrl : undefined;
 
   // Check if current user is the gallery owner (for guest galleries)
   useEffect(() => {
@@ -141,6 +178,29 @@ export function GalleryViewClient({
       setIsGalleryOwner(false);
     }
   }, [initialGallery.guest_session_id, initialGallery.id, initialGallery.is_unlocked, initialGallery.payment_type]);
+
+  // Check if we should show lead magnet modal
+  useEffect(() => {
+    if (!isAuthenticated || !enableLeadMagnet || hasSubmittedEmail) {
+      return;
+    }
+    
+    // Check if user has already submitted email for this gallery
+    const storageKey = `piksend_lead_${initialGallery.id}`;
+    const hasSubmitted = sessionStorage.getItem(storageKey);
+    
+    if (hasSubmitted) {
+      setHasSubmittedEmail(true);
+      return;
+    }
+    
+    // Show lead magnet after a short delay
+    const timer = setTimeout(() => {
+      setShowLeadMagnet(true);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, enableLeadMagnet, hasSubmittedEmail, initialGallery.id]);
 
   // Check if we should show pricing modal from URL params
   // Only show if user is the gallery owner
@@ -315,6 +375,56 @@ export function GalleryViewClient({
     setShowPricingModal(true);
   };
 
+  // Handle lead magnet submission
+  const handleLeadMagnetSubmit = async (email: string) => {
+    try {
+      const response = await fetch(`/api/galleries/${initialGallery.id}/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to capture email');
+      }
+
+      // Mark as submitted
+      const storageKey = `piksend_lead_${initialGallery.id}`;
+      sessionStorage.setItem(storageKey, 'true');
+      setHasSubmittedEmail(true);
+      setShowLeadMagnet(false);
+      toast.success("Merci ! Vous pouvez maintenant accéder à la galerie.");
+    } catch (error) {
+      console.error('Lead capture error:', error);
+      throw error;
+    }
+  };
+
+  // Handle lead magnet skip
+  const handleLeadMagnetSkip = () => {
+    setShowLeadMagnet(false);
+    // Mark as submitted to not show again
+    const storageKey = `piksend_lead_${initialGallery.id}`;
+    sessionStorage.setItem(storageKey, 'skipped');
+    setHasSubmittedEmail(true);
+  };
+
+  // Handle slideshow button click with feature gating
+  const handleSlideshowClick = () => {
+    if (!canUseSlideshow) {
+      setBlockedFeature('slideshow');
+      setShowUpgradeModal(true);
+      return;
+    }
+    setShowSlideshow(true);
+  };
+
+  // Handle upgrade modal close
+  const handleUpgradeModalClose = () => {
+    setShowUpgradeModal(false);
+    setBlockedFeature(null);
+  };
+
   // Calculate hours remaining for reminder
   const hoursRemaining = Math.max(0, Math.ceil(
     (new Date(initialGallery.expires_at).getTime() - Date.now()) / (1000 * 60 * 60)
@@ -340,12 +450,52 @@ export function GalleryViewClient({
   // Main gallery view
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 font-['Plus_Jakarta_Sans'] selection:bg-indigo-100 selection:text-indigo-900">
-      {/* Background decorations */}
+      {/* Video Cover Background */}
+      {videoCoverUrl && (
+        <VideoCover videoUrl={videoCoverUrl} />
+      )}
+
+      {/* Background decorations - use brand colors if available */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/3 to-violet-500/3 rounded-full blur-[200px]" />
+        <div 
+          className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] opacity-5"
+          style={{ backgroundColor: 'var(--brand-primary, rgb(99 102 241))' }}
+        />
+        <div 
+          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-5"
+          style={{ backgroundColor: 'var(--brand-secondary, rgb(139 92 246))' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[200px] opacity-3"
+          style={{ 
+            background: `linear-gradient(to bottom right, var(--brand-primary, rgb(99 102 241)), var(--brand-secondary, rgb(139 92 246)))` 
+          }}
+        />
       </div>
+
+      {/* Audio Player */}
+      {audioUrl && (
+        <AudioPlayer audioUrl={audioUrl} />
+      )}
+
+      {/* Slideshow */}
+      {showSlideshow && (
+        <Slideshow
+          images={initialGallery.images.map(img => ({
+            ...img,
+            cloudinary_url: img.url,
+            gallery_id: initialGallery.id,
+            cloudinary_public_id: '',
+            file_size_mb: 0,
+            order_index: 0,
+            created_at: '',
+          }))}
+          interval={5000}
+          onClose={() => setShowSlideshow(false)}
+          autoPlay={true}
+          showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
+        />
+      )}
 
       {/* Pricing Modal */}
       <PricingModal
@@ -368,6 +518,26 @@ export function GalleryViewClient({
         expiresAt={initialGallery.expires_at}
       />
 
+      {/* Upgrade Modal for blocked features */}
+      {showUpgradeModal && blockedFeature && (
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={handleUpgradeModalClose}
+          limitType="gallery"
+          currentPlan={ownerPlan}
+        />
+      )}
+
+      {/* Lead Magnet Modal */}
+      {showLeadMagnet && (
+        <LeadMagnetModal
+          galleryId={initialGallery.id}
+          galleryTitle={initialGallery.title}
+          onSubmit={handleLeadMagnetSubmit}
+          onSkip={handleLeadMagnetSkip}
+        />
+      )}
+
       {/* Download Modal */}
       {downloadModalUrl && (
         <DownloadModal
@@ -380,7 +550,15 @@ export function GalleryViewClient({
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <Lightbox
-          images={initialGallery.images}
+          images={initialGallery.images.map(img => ({
+            ...img,
+            cloudinary_url: img.url,
+            gallery_id: initialGallery.id,
+            cloudinary_public_id: '',
+            file_size_mb: 0,
+            order_index: 0,
+            created_at: '',
+          }))}
           currentIndex={lightboxIndex}
           title={initialGallery.title}
           onClose={() => setLightboxIndex(null)}
@@ -434,9 +612,40 @@ export function GalleryViewClient({
 
       {/* Main Content */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-32 md:pt-36 pb-16">
+        {/* Deadline Timer */}
+        {enableDeadline && settings.deadlineDate && (
+          <div className="mb-8 max-w-2xl mx-auto">
+            <DeadlineTimer
+              deadline={new Date(settings.deadlineDate)}
+              onExpired={() => {
+                toast.info("Le délai de sélection est expiré");
+              }}
+            />
+          </div>
+        )}
+
+        {/* Slideshow Button */}
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={handleSlideshowClick}
+            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
+          >
+            <Play className="w-5 h-5" fill="currentColor" />
+            <span>Lancer le diaporama</span>
+          </button>
+        </div>
+
         {/* Photo Grid */}
         <MasonryGrid
-          images={initialGallery.images}
+          images={initialGallery.images.map(img => ({
+            ...img,
+            cloudinary_url: img.url,
+            gallery_id: initialGallery.id,
+            cloudinary_public_id: '',
+            file_size_mb: 0,
+            order_index: 0,
+            created_at: '',
+          }))}
           onImageClick={setLightboxIndex}
           onDownload={handleDownloadSingle}
           showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
@@ -475,7 +684,18 @@ export function GalleryViewClient({
                 </Link>
                 <Link
                   href="/"
-                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-white text-[10px] font-bold rounded-lg transition-colors"
+                  style={{
+                    backgroundColor: 'var(--brand-primary, rgb(99 102 241))',
+                  }}
+                  onMouseEnter={(e) => {
+                    const primary = getComputedStyle(document.documentElement).getPropertyValue('--brand-primary') || 'rgb(99 102 241)';
+                    e.currentTarget.style.backgroundColor = primary.replace(')', ' / 0.9)').replace('rgb', 'rgba');
+                  }}
+                  onMouseLeave={(e) => {
+                    const primary = getComputedStyle(document.documentElement).getPropertyValue('--brand-primary') || 'rgb(99 102 241)';
+                    e.currentTarget.style.backgroundColor = primary;
+                  }}
                 >
                   {t('gallery.publicFooter.createGallery')}
                 </Link>

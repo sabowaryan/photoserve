@@ -41,6 +41,7 @@ export {
 export {
   PaymentService,
   createPaymentService,
+  StripeDisabledError,
   type IPaymentService,
   type CreateCheckoutInput,
 } from './payment.service';
@@ -91,3 +92,72 @@ export {
   type IGalleryMigrationService,
   type MigrationResult,
 } from './gallery-migration.service';
+
+// ZIP Download Service
+export {
+  ZipService,
+  createZipService,
+  type IZipService,
+  type ZipOptions,
+  type ZipResult,
+  type ProgressCallback,
+} from './zip.service';
+
+// Favorites Service
+export {
+  FavoritesService,
+  createFavoritesService,
+  type IFavoritesService,
+  type FavoriteExport,
+} from './favorites.service';
+
+// Comments Service
+export {
+  CommentsService,
+  createCommentsService,
+  type ICommentsService,
+} from './comments.service';
+
+// Analytics Service
+export {
+  AnalyticsService,
+  createAnalyticsService,
+  type IAnalyticsService,
+  type GalleryStats,
+  type ViewMetadata,
+} from './analytics.service';
+
+// Lead Capture Service
+export {
+  LeadCaptureService,
+  createLeadCaptureService,
+  type ILeadCaptureService,
+  type LeadCapture,
+} from './lead-capture.service';
+
+// QR Code Service
+export {
+  QRCodeService,
+  createQRCodeService,
+  type IQRCodeService,
+  type QRCodeOptions,
+  type QRCodeResult,
+} from './qrcode.service';
+
+// Notification Dispatcher Service
+export {
+  NotificationDispatcherService,
+  createNotificationDispatcherService,
+  type INotificationDispatcherService,
+} from './notification-dispatcher.service';
+
+// Push Notification Service (server-side only)
+export {
+  sendPushNotification,
+  sendCommentNotification,
+  sendFavoriteNotification,
+  sendExpirationNotification,
+  generateVapidKeys,
+  type PushSubscription,
+  type NotificationPayload,
+} from './push-notification.service';

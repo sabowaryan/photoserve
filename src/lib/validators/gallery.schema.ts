@@ -20,13 +20,19 @@ const sanitizeString = (val: string) => sanitizeForHtml(val);
 export const createGallerySchema = z.object({
   title: z
     .string()
+    .trim()
     .min(1, 'Le titre est requis')
     .max(100, 'Le titre ne peut pas dépasser 100 caractères')
     .transform(sanitizeString),
   password: z
     .string()
-    .min(4, 'Le mot de passe doit contenir au moins 4 caractères')
-    .max(50, 'Le mot de passe ne peut pas dépasser 50 caractères'),
+    .trim()
+    .refine(
+      (val) => val === '' || (val.length >= 4 && val.length <= 50),
+      {
+        message: 'Le mot de passe doit être vide ou contenir entre 4 et 50 caractères',
+      }
+    ),
   expirationDays: z
     .number()
     .int('Le nombre de jours doit être un entier')
@@ -41,20 +47,52 @@ export const createGallerySchema = z.object({
 export const updateGallerySchema = z.object({
   title: z
     .string()
+    .trim()
     .min(1, 'Le titre est requis')
     .max(100, 'Le titre ne peut pas dépasser 100 caractères')
     .transform(sanitizeString)
     .optional(),
   password: z
     .string()
-    .min(4, 'Le mot de passe doit contenir au moins 4 caractères')
-    .max(50, 'Le mot de passe ne peut pas dépasser 50 caractères')
+    .trim()
+    .refine(
+      (val) => val === '' || (val.length >= 4 && val.length <= 50),
+      {
+        message: 'Le mot de passe doit être vide ou contenir entre 4 et 50 caractères',
+      }
+    )
     .optional(),
   expirationDays: z
     .number()
     .int('Le nombre de jours doit être un entier')
     .min(1, 'La durée minimale est de 1 jour')
     .max(365, 'La durée maximale est de 365 jours')
+    .optional(),
+  settings: z
+    .object({
+      enableFavorites: z.boolean().optional(),
+      enableComments: z.boolean().optional(),
+      enableDeadline: z.boolean().optional(),
+      deadlineDate: z.string().optional(),
+      enableLeadMagnet: z.boolean().optional(),
+      ctaButton: z
+        .object({
+          text: z.string(),
+          url: z.string().url(),
+          style: z.enum(['primary', 'secondary']),
+        })
+        .optional(),
+      videoCoverUrl: z.string().url().optional(),
+      audioUrl: z.string().url().optional(),
+      customColors: z
+        .object({
+          primary: z.string(),
+          secondary: z.string(),
+          accent: z.string(),
+        })
+        .optional(),
+      noindex: z.boolean().optional(),
+    })
     .optional(),
 });
 
@@ -64,9 +102,11 @@ export const updateGallerySchema = z.object({
 export const verifyPasswordSchema = z.object({
   slug: z
     .string()
+    .trim()
     .min(1, 'Le slug est requis'),
   password: z
     .string()
+    .trim()
     .min(1, 'Le mot de passe est requis'),
 });
 
@@ -74,14 +114,14 @@ export const verifyPasswordSchema = z.object({
  * Gallery ID param schema - validates gallery ID in URL params
  */
 export const galleryIdSchema = z.object({
-  id: z.string().uuid('ID de galerie invalide'),
+  id: z.string().trim().uuid('ID de galerie invalide'),
 });
 
 /**
  * Gallery slug param schema - validates gallery slug in URL params
  */
 export const gallerySlugSchema = z.object({
-  slug: z.string().min(1, 'Le slug est requis'),
+  slug: z.string().trim().min(1, 'Le slug est requis'),
 });
 
 // Type exports

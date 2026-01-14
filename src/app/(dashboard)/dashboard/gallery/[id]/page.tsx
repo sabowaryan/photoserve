@@ -56,7 +56,7 @@ async function getGalleryData(galleryId: string, userId: string) {
   let galleryQuery = supabase
     .from("galleries")
     .select(
-      "id, title, unique_slug, expires_at, expiration_days, views_count, is_active, created_at, updated_at, user_id"
+      "id, title, unique_slug, expires_at, expiration_days, views_count, is_active, created_at, updated_at, user_id, settings"
     )
     .eq("id", galleryId);
 
@@ -156,6 +156,7 @@ export default async function GalleryDetailPage({
           createdAt={gallery.created_at}
           imageCount={images.length}
           isExpired={isExpired}
+          galleryId={gallery.id}
         />
 
         {/* Gallery Detail Client */}

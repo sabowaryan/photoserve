@@ -58,7 +58,7 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
   const supabase = createAdminClient();
   const { data: gallery, error } = await supabase
     .from('galleries')
-    .select('id, title, expires_at, views_count, is_active, password_hash, is_unlocked, payment_type, guest_session_id')
+    .select('id, title, expires_at, views_count, is_active, password_hash, is_unlocked, payment_type, guest_session_id, settings, user_id')
     .eq('unique_slug', slug)
     .maybeSingle();
 
@@ -85,23 +85,59 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
     }));
   }
 
+  // Fetch owner's subscription plan and branding if gallery has an owner
+  let brandColors = null;
+  let ownerPlan: 'free' | 'premium' | 'pro' = 'free';
+  
+  if (gallery.user_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('branding, subscription_plan')
+      .eq('id', gallery.user_id)
+      .maybeSingle();
+    
+    if (profile) {
+      ownerPlan = profile.subscription_plan || 'free';
+      
+      if (profile.branding) {
+        const branding = profile.branding as { brandColors?: { primary?: string; secondary?: string; accent?: string } };
+        brandColors = branding.brandColors || null;
+      }
+    }
+  }
+
+  // Parse gallery settings to get custom colors
+  const settings = gallery.settings as { customColors?: { primary?: string; secondary?: string; accent?: string } } | null;
+  const customColors = settings?.customColors || brandColors;
+
+  // Generate CSS variables for custom colors
+  const cssVariables = customColors ? {
+    '--brand-primary': customColors.primary || '#6366f1',
+    '--brand-secondary': customColors.secondary || '#8b5cf6',
+    '--brand-accent': customColors.accent || '#ec4899',
+  } : undefined;
+
   return (
-    <GalleryViewClient
-      slug={slug}
-      initialGallery={{
-        id: gallery.id,
-        title: gallery.title,
-        expires_at: gallery.expires_at,
-        views_count: gallery.views_count ?? 0,
-        images,
-        // has_password is true only if password_hash is non-empty
-        has_password: !!gallery.password_hash && gallery.password_hash.length > 0,
-        is_unlocked: gallery.is_unlocked ?? false,
-        payment_type: gallery.payment_type ?? 'free',
-        guest_session_id: gallery.guest_session_id ?? null,
-      }}
-      isExpired={isExpired}
-      isInactive={isInactive}
-    />
+    <div style={cssVariables as React.CSSProperties}>
+      <GalleryViewClient
+        slug={slug}
+        initialGallery={{
+          id: gallery.id,
+          title: gallery.title,
+          expires_at: gallery.expires_at,
+          views_count: gallery.views_count ?? 0,
+          images,
+          // has_password is true only if password_hash is non-empty
+          has_password: !!gallery.password_hash && gallery.password_hash.length > 0,
+          is_unlocked: gallery.is_unlocked ?? false,
+          payment_type: gallery.payment_type ?? 'free',
+          guest_session_id: gallery.guest_session_id ?? null,
+          settings: gallery.settings as any,
+          owner_plan: ownerPlan,
+        }}
+        isExpired={isExpired}
+        isInactive={isInactive}
+      />
+    </div>
   );
 }

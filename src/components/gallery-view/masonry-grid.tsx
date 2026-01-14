@@ -1,21 +1,33 @@
 "use client";
 
 import Image from "next/image";
-import { Maximize2, Download, ImageOff, Sparkles } from "lucide-react";
+import { Maximize2, Download, ImageOff, Sparkles, Heart } from "lucide-react";
 import { WatermarkOverlay } from "@/components/gallery/watermark-overlay";
 import { useState } from "react";
+import type { ImageWithMeta } from "@/types";
 
 // Number of images above the fold that should be prioritized for LCP optimization
 const ABOVE_FOLD_THRESHOLD = 4;
 
 interface MasonryGridProps {
-  images: { id: string; url: string }[];
+  images: ImageWithMeta[];
   onImageClick: (index: number) => void;
   onDownload: (url: string, e: React.MouseEvent) => void;
+  onFavorite?: (imageId: string) => void;
   showWatermark?: boolean;
+  showFavorites?: boolean;
+  favorites?: Set<string>;
 }
 
-export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = false }: MasonryGridProps) {
+export function MasonryGrid({ 
+  images, 
+  onImageClick, 
+  onDownload, 
+  onFavorite,
+  showWatermark = false,
+  showFavorites = false,
+  favorites = new Set()
+}: MasonryGridProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   if (images.length === 0) {
@@ -40,15 +52,15 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
         {images.map((img, index) => {
           const isHovered = hoveredIndex === index;
+          const isFavorite = favorites.has(img.id);
           
           return (
             <div 
               key={img.id}
-              onClick={() => onImageClick(index)}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
               className={`
-                group relative overflow-hidden cursor-zoom-in
+                group relative overflow-hidden
                 bg-slate-100 rounded-lg md:rounded-xl
                 transition-all duration-500 ease-out
                 aspect-square
@@ -56,18 +68,23 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
               `}
             >
               {/* Image - Using Next/Image for LCP optimization */}
-              <Image 
-                src={img.url} 
-                alt={`Photo ${index + 1}`}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                priority={index < ABOVE_FOLD_THRESHOLD}
-                className={`
-                  object-cover
-                  transition-transform duration-700 ease-out
-                  ${isHovered ? 'scale-105' : 'scale-100'}
-                `}
-              />
+              <div 
+                onClick={() => onImageClick(index)}
+                className="cursor-zoom-in w-full h-full"
+              >
+                <Image 
+                  src={img.cloudinary_url} 
+                  alt={`Photo ${index + 1}`}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  priority={index < ABOVE_FOLD_THRESHOLD}
+                  className={`
+                    object-cover
+                    transition-transform duration-700 ease-out
+                    ${isHovered ? 'scale-105' : 'scale-100'}
+                  `}
+                />
+              </div>
               
               {/* Watermark overlay */}
               <WatermarkOverlay visible={showWatermark} position="bottom-right" opacity={30} />
@@ -79,11 +96,11 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
                 ${isHovered ? 'opacity-100' : 'opacity-0'}
               `} />
               
-              {/* Top gradient for index badge */}
+              {/* Top gradient for index badge and favorite button */}
               <div className={`
                 absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-transparent
                 transition-opacity duration-300
-                ${isHovered ? 'opacity-100' : 'opacity-0'}
+                ${isHovered || isFavorite ? 'opacity-100' : 'opacity-0'}
               `} />
               
               {/* Index badge */}
@@ -97,6 +114,31 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
               `}>
                 #{index + 1}
               </div>
+              
+              {/* Favorite button - Requirements 3.1.1, 3.1.2 */}
+              {showFavorites && onFavorite && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onFavorite(img.id);
+                  }}
+                  className={`
+                    absolute top-2 right-2 md:top-3 md:right-3
+                    p-2 md:p-2.5
+                    bg-white/90 backdrop-blur-md rounded-full
+                    transition-all duration-300
+                    hover:scale-110
+                    ${isFavorite ? 'opacity-100 translate-y-0' : isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
+                  `}
+                  aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                >
+                  <Heart 
+                    size={16} 
+                    className={`transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : 'text-slate-400'}`}
+                    strokeWidth={2.5}
+                  />
+                </button>
+              )}
               
               {/* Center zoom icon */}
               <div className={`
@@ -125,10 +167,16 @@ export function MasonryGrid({ images, onImageClick, onDownload, showWatermark = 
                   <div className="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-md text-white text-[9px] md:text-[10px] font-bold">
                     HD
                   </div>
+                  {isFavorite && (
+                    <div className="px-2 py-0.5 bg-red-500/80 backdrop-blur-md rounded-md text-white text-[9px] md:text-[10px] font-bold flex items-center gap-1">
+                      <Heart size={10} className="fill-white" />
+                      Favori
+                    </div>
+                  )}
                 </div>
                 
                 <button 
-                  onClick={(e) => onDownload(img.url, e)}
+                  onClick={(e) => onDownload(img.cloudinary_url, e)}
                   className="p-2 md:p-2.5 bg-white hover:bg-indigo-500 text-slate-700 hover:text-white rounded-lg md:rounded-xl transition-all shadow-lg"
                 >
                   <Download size={14} strokeWidth={2.5} />
