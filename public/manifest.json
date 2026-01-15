@@ -1,7 +1,7 @@
 {
-  "name": "PikSend - Livrez vos photos en qualité originale",
+  "name": "PikSend | Professional Photo Delivery Galleries (No Compression)",
   "short_name": "PikSend",
-  "description": "Arrêtez de détruire vos photos avec WhatsApp. PikSend préserve 100% de la qualité originale. Galeries sécurisées par mot de passe pour photographes.",
+  "description": "Professional photo delivery galleries with no compression. Your work is high-end — your delivery should be too. Original quality, zero friction, no account required for guests.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,7 +9,7 @@
   "theme_color": "#7c3aed",
   "background_color": "#ffffff",
   "categories": ["photography", "productivity", "business"],
-  "lang": "fr",
+  "lang": "en",
   "dir": "ltr",
   "prefer_related_applications": false,
   "icons": [
@@ -61,7 +61,7 @@
     {
       "name": "Dashboard",
       "short_name": "Dashboard",
-      "description": "Accéder à votre tableau de bord",
+      "description": "Access your dashboard",
       "url": "/dashboard",
       "icons": [
         {
@@ -71,9 +71,9 @@
       ]
     },
     {
-      "name": "Nouvelle Galerie",
-      "short_name": "Nouvelle",
-      "description": "Créer une nouvelle galerie",
+      "name": "New Gallery",
+      "short_name": "New",
+      "description": "Create a new gallery",
       "url": "/dashboard/gallery/new",
       "icons": [
         {

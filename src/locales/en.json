@@ -738,6 +738,112 @@
       "galleriesCreated": "Galleries created",
       "totalActivities": "Total activities"
     },
+    "galleryAnalytics": {
+      "backToGallery": "Back to gallery",
+      "subtitle": "Statistics and performance of your gallery",
+      "tabs": {
+        "overview": "Overview",
+        "engagement": "Engagement",
+        "downloads": "Downloads",
+        "geography": "Geography"
+      },
+      "metrics": {
+        "totalViews": "Total views",
+        "visitors": "Visitors",
+        "unique": "Unique",
+        "downloads": "Downloads",
+        "interactions": "Interactions"
+      },
+      "viewsChart": {
+        "title": "Views over time",
+        "subtitle": "Last 30 days",
+        "views": "views",
+        "noData": "No data available",
+        "viewsWillAppear": "Views will appear here",
+        "total": "Total",
+        "avgPerDay": "Avg/day",
+        "peak": "Peak",
+        "vsPrevWeek": "vs prev. week",
+        "dailyViews": "Daily views",
+        "average": "Average"
+      },
+      "topImages": {
+        "title": "Popular photos",
+        "subtitle": "Top 5 most viewed",
+        "noData": "No data available",
+        "photosWillAppear": "Viewed photos will appear here",
+        "views": "views"
+      },
+      "eventsBreakdown": {
+        "title": "Breakdown",
+        "subtitle": "Interaction types",
+        "noEvents": "No events",
+        "interactionsWillAppear": "Interactions will appear here",
+        "totalInteractions": "Total interactions",
+        "lightboxOpen": "Photos viewed",
+        "downloadSingle": "Single download",
+        "downloadAll": "Download all",
+        "downloadSelection": "Selection download",
+        "downloadFavorites": "Favorites download",
+        "favoriteAdd": "Favorites +",
+        "favoriteRemove": "Favorites -",
+        "ctaClick": "CTA clicks",
+        "slideshowStart": "Slideshows",
+        "slideshowEnd": "Slideshow end"
+      },
+      "secondaryStats": {
+        "favorites": "Favorites",
+        "comments": "Comments",
+        "slideshows": "Slideshows",
+        "ctaClicks": "CTA clicks"
+      },
+      "engagement": {
+        "metricsTitle": "Engagement metrics",
+        "metricsSubtitle": "Sessions and interactions",
+        "avgTime": "Avg time",
+        "avgSessionDuration": "Average session duration",
+        "actionsPerSession": "Actions/session",
+        "interactionsPerVisit": "Interactions per visit",
+        "slideshows": "Slideshows",
+        "ctaClicks": "CTA clicks",
+        "ctaClicksDesc": "Clicks on action buttons",
+        "favoritesActivity": "Favorites activity",
+        "additionsAndRemovals": "Additions and removals",
+        "added": "Added",
+        "removed": "Removed",
+        "net": "Net",
+        "noData": "No data",
+        "statsWillAppear": "Statistics will appear after the first interactions"
+      },
+      "downloads": {
+        "byTypeTitle": "Downloads by type",
+        "byTypeSubtitle": "Download breakdown",
+        "noDownloads": "No downloads yet",
+        "singlePhotos": "Single photos",
+        "allPhotos": "All photos",
+        "selections": "Selections",
+        "favorites": "Favorites",
+        "downloadRate": "Download rate",
+        "visitorsWhoDownload": "Visitors who download",
+        "total": "Total"
+      },
+      "geography": {
+        "title": "Geographic distribution",
+        "subtitle": "Views by country",
+        "detailsByCountry": "Details by country",
+        "view": "view",
+        "views": "views",
+        "noData": "No geographic data",
+        "countriesWillAppear": "Countries will appear after the first visits",
+        "countries": "Countries",
+        "differentCountries": "different countries",
+        "geolocatedViews": "geolocated views",
+        "otherCountries": "other countries",
+        "rank1": "1st",
+        "rank2": "2nd",
+        "rank3": "3rd"
+      }
+    },
     "auditLogs": {
       "title": "Audit Logs",
       "subtitle": "System activity history",
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "Page Not Found",
       "description": "The page you're looking for doesn't exist."
+    },
+    "galleryAnalytics": {
+      "title": "Gallery Analytics | PikSend",
+      "description": "View detailed analytics for your gallery"
     }
   },
   "limits": {
@@ -1045,4 +1155,3 @@
     }
   }
 }
-

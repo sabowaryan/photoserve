@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "Senaste aktivitet"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "Tillbaka till galleriet",
+      "subtitle": "Statistik och prestanda för ditt galleri",
+      "tabs": {
+        "overview": "Översikt",
+        "engagement": "Engagemang",
+        "downloads": "Nedladdningar",
+        "geography": "Geografi"
+      },
+      "metrics": {
+        "totalViews": "Totala visningar",
+        "visitors": "Besökare",
+        "unique": "Unika",
+        "downloads": "Nedladdningar",
+        "interactions": "Interaktioner"
+      },
+      "viewsChart": {
+        "title": "Visningar över tid",
+        "subtitle": "Senaste 30 dagarna",
+        "views": "visningar",
+        "noData": "Ingen data tillgänglig",
+        "viewsWillAppear": "Visningar kommer att visas här",
+        "total": "Totalt",
+        "avgPerDay": "Snitt/dag",
+        "peak": "Topp",
+        "vsPrevWeek": "vs förra veckan",
+        "dailyViews": "Dagliga visningar",
+        "average": "Genomsnitt"
+      },
+      "topImages": {
+        "title": "Populära foton",
+        "subtitle": "Topp 5 mest visade",
+        "noData": "Ingen data tillgänglig",
+        "photosWillAppear": "Visade foton kommer att visas här",
+        "views": "visningar"
+      },
+      "eventsBreakdown": {
+        "title": "Fördelning",
+        "subtitle": "Interaktionstyper",
+        "noEvents": "Inga händelser",
+        "interactionsWillAppear": "Interaktioner kommer att visas här",
+        "totalInteractions": "Totala interaktioner",
+        "lightboxOpen": "Foton visade",
+        "downloadSingle": "Enskild nedladdning",
+        "downloadAll": "Ladda ner alla",
+        "downloadSelection": "Urval nedladdning",
+        "downloadFavorites": "Favoriter nedladdning",
+        "favoriteAdd": "Favoriter +",
+        "favoriteRemove": "Favoriter -",
+        "ctaClick": "CTA-klick",
+        "slideshowStart": "Bildspel",
+        "slideshowEnd": "Bildspel slut"
+      },
+      "secondaryStats": {
+        "favorites": "Favoriter",
+        "comments": "Kommentarer",
+        "slideshows": "Bildspel",
+        "ctaClicks": "CTA-klick"
+      },
+      "engagement": {
+        "metricsTitle": "Engagemangsmått",
+        "metricsSubtitle": "Sessioner och interaktioner",
+        "avgTime": "Snitt tid",
+        "avgSessionDuration": "Genomsnittlig sessionslängd",
+        "actionsPerSession": "Åtgärder/session",
+        "interactionsPerVisit": "Interaktioner per besök",
+        "slideshows": "Bildspel",
+        "ctaClicks": "CTA-klick",
+        "ctaClicksDesc": "Klick på åtgärdsknappar",
+        "favoritesActivity": "Favoritaktivitet",
+        "additionsAndRemovals": "Tillägg och borttagningar",
+        "added": "Tillagda",
+        "removed": "Borttagna",
+        "net": "Netto",
+        "noData": "Ingen data",
+        "statsWillAppear": "Statistik visas efter de första interaktionerna"
+      },
+      "downloads": {
+        "byTypeTitle": "Nedladdningar per typ",
+        "byTypeSubtitle": "Nedladdningsfördelning",
+        "noDownloads": "Inga nedladdningar ännu",
+        "singlePhotos": "Enskilda foton",
+        "allPhotos": "Alla foton",
+        "selections": "Urval",
+        "favorites": "Favoriter",
+        "downloadRate": "Nedladdningsfrekvens",
+        "visitorsWhoDownload": "Besökare som laddar ner",
+        "total": "Totalt"
+      },
+      "geography": {
+        "title": "Geografisk fördelning",
+        "subtitle": "Visningar per land",
+        "detailsByCountry": "Detaljer per land",
+        "view": "visning",
+        "views": "visningar",
+        "noData": "Ingen geografisk data",
+        "countriesWillAppear": "Länder visas efter de första besöken",
+        "countries": "Länder",
+        "differentCountries": "olika länder",
+        "geolocatedViews": "geolokaliserade visningar",
+        "otherCountries": "andra länder",
+        "rank1": "1:a",
+        "rank2": "2:a",
+        "rank3": "3:e"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "Sidan hittades inte",
       "description": "Sidan du letar efter finns inte."
+    },
+    "galleryAnalytics": {
+      "title": "Galleristatistik | PikSend",
+      "description": "Se detaljerad statistik för ditt galleri"
     }
   },
   "limits": {

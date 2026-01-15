@@ -1,382 +1,472 @@
-# Parcours Utilisateur : Configuration du Branding
+# Guide Utilisateur : Configuration du Branding Personnalisé
 
-## 🗺️ Vue d'ensemble du parcours
+## Vue d'ensemble
+
+Ce guide explique comment un photographe avec un **plan Pro** peut configurer son branding personnalisé (logo, couleurs, domaine) pour créer une expérience galerie entièrement white-label.
+
+## Prérequis
+
+✅ **Plan Pro actif** - Le branding personnalisé est réservé aux utilisateurs Pro  
+✅ **Compte vérifié** - Email confirmé  
+✅ **Accès au dashboard** - Connecté à `/dashboard`
+
+## Étape 1 : Accéder aux paramètres de branding
+
+### Navigation
 
 ```
-┌─────────────────┐
-│   Dashboard     │
-│   /dashboard    │
-└────────┬────────┘
-         │
-         │ Clic sur Settings
-         ▼
-┌─────────────────┐
-│   Settings      │
-│   /settings     │
-└────────┬────────┘
-         │
-         │ Scroll vers Branding
-         ▼
-┌─────────────────┐
-│  Branding       │
-│  Section        │
-└────────┬────────┘
-         │
-         ├─► Upload Logo
-         ├─► Choisir Couleurs
-         ├─► Configurer Domaine
-         │
-         │ Clic sur Save
-         ▼
-┌─────────────────┐
-│  Confirmation   │
-│  "Saved!"       │
-└────────┬────────┘
-         │
-         │ Retour Dashboard
-         ▼
-┌─────────────────┐
-│  Galeries avec  │
-│  Branding       │
-└─────────────────┘
+Dashboard → Paramètres (⚙️) → Section "Branding"
 ```
 
-## 📍 Étape par étape avec captures d'écran
+**URL directe** : `/dashboard/settings#branding`
 
-### Étape 1 : Dashboard
+### Interface
 
-**URL** : `/dashboard`
-
-**Ce que voit le photographe** :
 ```
-┌──────────────────────────────────────────────────────┐
-│  PikSend                    [Settings] [Profile] [⚙️] │
-├──────────────────────────────────────────────────────┤
-│                                                       │
-│  📊 Dashboard                                         │
-│                                                       │
-│  Mes Galeries                                         │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐                │
-│  │ Mariage │ │ Famille │ │ Event   │                │
-│  │ 45 imgs │ │ 32 imgs │ │ 67 imgs │                │
-│  └─────────┘ └─────────┘ └─────────┘                │
-│                                                       │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│  🎨 Branding                                │
+│  Customize your brand identity              │
+├─────────────────────────────────────────────┤
+│                                             │
+│  [Logo personnalisé]                        │
+│  [Domaine personnalisé]                     │
+│  [Couleurs de marque]                       │
+│                                             │
+│  [Enregistrer les paramètres]               │
+└─────────────────────────────────────────────┘
 ```
 
-**Actions disponibles** :
-- Cliquer sur **Settings** dans le header
-- Cliquer sur l'icône **⚙️**
-- Cliquer sur le **profil** puis Settings
+## Étape 2 : Uploader votre logo
+
+### Spécifications
+
+- **Formats acceptés** : PNG, JPG, JPEG, GIF, WebP
+- **Taille maximale** : 2 MB
+- **Dimensions recommandées** : 200x200px à 500x500px
+- **Fond transparent** : Recommandé (PNG)
+- **Ratio** : Carré ou horizontal (max 3:1)
+
+### Processus
+
+1. **Cliquer sur la zone d'upload**
+   ```
+   ┌─────────────────────────────────┐
+   │         📤                      │
+   │  Click to upload logo           │
+   │  PNG, JPG up to 2MB             │
+   └─────────────────────────────────┘
+   ```
+
+2. **Sélectionner votre fichier**
+   - Navigateur de fichiers s'ouvre
+   - Choisir votre logo
+   - Validation automatique
+
+3. **Prévisualisation**
+   ```
+   ┌─────────────────────┐
+   │  [Votre Logo]   ❌  │  ← Bouton supprimer
+   └─────────────────────┘
+   ```
+
+4. **Modifier/Supprimer**
+   - Cliquer sur ❌ pour supprimer
+   - Re-uploader pour remplacer
+
+### Où apparaît le logo ?
+
+✅ **Header de la galerie** - En haut à gauche  
+✅ **Lightbox** - Coin supérieur gauche  
+✅ **Formulaire de mot de passe** - Centré en haut  
+✅ **Diaporama** - Coin supérieur gauche  
+✅ **Footer** - Avec le nom de marque  
+
+### Exemple
+
+**Avant** (sans logo personnalisé):
+```
+┌─────────────────────────────────┐
+│ [PikSend Logo] Ma Galerie       │
+└─────────────────────────────────┘
+```
+
+**Après** (avec logo personnalisé):
+```
+┌─────────────────────────────────┐
+│ [Votre Logo] Ma Galerie         │
+└─────────────────────────────────┘
+```
+
+## Étape 3 : Configurer votre domaine personnalisé
+
+### Format accepté
+
+```
+✅ photos.johndoe.com
+✅ gallery.johndoe.com
+✅ johndoe.com
+✅ www.johndoe.com
+
+❌ https://photos.johndoe.com  (sera auto-corrigé)
+❌ photos.johndoe.com/gallery  (sera auto-corrigé)
+```
+
+### Processus
+
+1. **Entrer votre domaine**
+   ```
+   ┌─────────────────────────────────────┐
+   │ Custom Domain                       │
+   │ ┌─────────────────────────────────┐ │
+   │ │ photos.johndoe.com              │ │
+   │ └─────────────────────────────────┘ │
+   └─────────────────────────────────────┘
+   ```
+
+2. **Auto-normalisation**
+   - Le système enlève automatiquement `https://`, `www.`, chemins, etc.
+   - Validation en temps réel
+
+3. **Configuration DNS** (Important!)
+   ```
+   Type: CNAME
+   Nom: photos (ou votre sous-domaine)
+   Valeur: piksend.com
+   TTL: 3600
+   ```
+
+4. **Vérification**
+   - Contactez le support pour activer votre domaine
+   - Délai de propagation DNS : 24-48h
+
+### Utilisation du domaine
+
+Une fois configuré, vos liens de galerie utiliseront votre domaine :
+
+**Avant** :
+```
+https://piksend.com/g/abc123
+```
+
+**Après** :
+```
+https://photos.johndoe.com/g/abc123
+```
+
+### Extraction du nom de marque
+
+Le système extrait automatiquement votre nom de marque du domaine :
+
+| Domaine | Nom extrait | Utilisation |
+|---------|-------------|-------------|
+| `johndoe.com` | "Johndoe" | Footer, titre |
+| `photos.johndoe.com` | "Johndoe" | Footer, titre |
+| `studio-martin.com` | "Studio Martin" | Footer, titre |
+| `www.example.fr` | "Example" | Footer, titre |
+
+## Étape 4 : Choisir vos couleurs de marque
+
+### Interface de sélection
+
+```
+┌─────────────────────────────────────────────┐
+│ Primary Color                               │
+│ ┌───┐ ┌─────────────────────────────────┐  │
+│ │ ■ │ │ #6366f1                         │  │
+│ └───┘ └─────────────────────────────────┘  │
+│                                             │
+│ [Palette de 16 couleurs prédéfinies]       │
+│ ■ ■ ■ ■ ■ ■ ■ ■                            │
+│ ■ ■ ■ ■ ■ ■ ■ ■                            │
+└─────────────────────────────────────────────┘
+```
+
+### Méthodes de sélection
+
+#### 1. Palette prédéfinie
+
+Cliquer sur une des 16 couleurs proposées :
+
+```
+🔵 Indigo   🟣 Violet   🩷 Pink     🌹 Rose
+🔴 Red      🟠 Orange   🟡 Amber    🟡 Yellow
+🟢 Lime     🟢 Green    💚 Emerald  🩵 Teal
+🩵 Cyan     🔵 Sky      🔵 Blue     🔵 Indigo
+```
+
+#### 2. Code hexadécimal manuel
+
+Entrer directement le code couleur :
+
+```
+┌─────────────────────┐
+│ #FF6B6B             │  ← Votre code hex
+└─────────────────────┘
+```
+
+**Format** : `#RRGGBB` (6 caractères hexadécimaux)
+
+### Trois couleurs à configurer
+
+1. **Primary Color** (Couleur principale)
+   - Utilisée pour les boutons principaux
+   - Gradient de fond
+   - Éléments interactifs
+
+2. **Secondary Color** (Couleur secondaire)
+   - Complète la couleur principale
+   - Gradients
+   - Accents secondaires
+
+3. **Accent Color** (Couleur d'accent)
+   - Highlights
+   - Badges
+   - Éléments de mise en évidence
+
+### Prévisualisation en temps réel
+
+#### Mode Clair
+
+```
+┌─────────────────────────────────────┐
+│ Aperçu          [○────] Mode sombre │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │  [Télécharger tout]             │ │ ← Gradient avec vos couleurs
+│ │                                 │ │
+│ │  Vos couleurs de marque seront  │ │
+│ │  appliquées aux boutons...      │ │
+│ └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+```
+
+#### Mode Sombre (Toggle activé)
+
+```
+┌─────────────────────────────────────┐
+│ Aperçu          [────●] Mode sombre │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │  [Télécharger tout]             │ │ ← Couleurs éclaircies auto
+│ │                                 │ │
+│ │  En mode sombre, vos couleurs   │ │
+│ │  sont automatiquement...        │ │
+│ └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+```
+
+### Ajustement automatique en mode sombre
+
+**Important** : Vous n'avez pas besoin de configurer des couleurs séparées pour le mode sombre !
+
+Le système ajuste automatiquement vos couleurs :
+
+```
+Mode Clair          Mode Sombre (auto)
+#FF6B6B (Rouge)  →  #FF9999 (Rouge clair)
+#4ECDC4 (Turquoise) → #7EDDD6 (Turquoise clair)
+#FFE66D (Jaune)  →  #FFEE99 (Jaune clair)
+```
+
+**Algorithme** :
+1. Éclaircissement de 15% (mélange avec blanc)
+2. Augmentation de luminosité de 10%
+3. Augmentation de saturation de 10%
+
+**Résultat** : Vos couleurs restent reconnaissables mais sont optimisées pour la lisibilité sur fond sombre.
+
+## Étape 5 : Enregistrer vos paramètres
+
+### Bouton d'enregistrement
+
+```
+┌─────────────────────────────────────┐
+│  [Save Branding Settings]           │
+└─────────────────────────────────────┘
+```
+
+### Validation
+
+Le système vérifie :
+
+✅ **Logo** : Format et taille valides  
+✅ **Domaine** : Format correct (si fourni)  
+✅ **Couleurs** : Codes hex valides  
+
+### Confirmation
+
+```
+✅ Branding settings saved successfully!
+```
+
+### Propagation
+
+- **Logo** : Immédiat (toutes les galeries)
+- **Couleurs** : Immédiat (toutes les galeries)
+- **Domaine** : 24-48h (propagation DNS)
+
+## Étape 6 : Vérifier le résultat
+
+### Ouvrir une galerie
+
+1. Aller dans **Dashboard → Galeries**
+2. Cliquer sur une galerie
+3. Cliquer sur "Voir la galerie" ou copier le lien
+
+### Vérifications
+
+#### ✅ Logo personnalisé
+
+- Header : Logo visible en haut à gauche
+- Lightbox : Logo dans le coin
+- Footer : Logo avec nom de marque
+
+#### ✅ Couleurs de marque
+
+- Bouton "Télécharger tout" : Gradient avec vos couleurs
+- Bouton "Créer ma galerie" : Couleur primary
+- Décorations de fond : Vos couleurs en transparence
+
+#### ✅ Mode sombre
+
+- Cliquer sur l'icône 🌙 dans le header
+- Vérifier que les couleurs s'adaptent automatiquement
+- Vérifier la lisibilité
+
+#### ✅ Footer white-label
+
+**Plan Pro avec logo + domaine** :
+```
+┌─────────────────────────────────────┐
+│ [Votre Logo] Johndoe                │
+│              [Créer ma galerie]     │
+│ © 2026 johndoe.com - Tous droits... │
+└─────────────────────────────────────┘
+```
+
+**Plan Pro sans domaine** :
+```
+┌─────────────────────────────────────┐
+│ [Votre Logo] Galerie Professionnelle│
+│              [Créer ma galerie]     │
+│ © 2026 - Galerie sécurisée          │
+└─────────────────────────────────────┘
+```
+
+## Cas d'usage typiques
+
+### Photographe de mariage
+
+```
+Logo : Logo élégant avec initiales
+Domaine : photos.mariagejohndoe.com
+Primary : #D4AF37 (Or)
+Secondary : #F5F5DC (Beige)
+Accent : #8B7355 (Bronze)
+```
+
+### Studio photo commercial
+
+```
+Logo : Logo professionnel avec nom
+Domaine : gallery.studiophoto.com
+Primary : #2C3E50 (Bleu foncé)
+Secondary : #3498DB (Bleu clair)
+Accent : #E74C3C (Rouge)
+```
+
+### Photographe nature
+
+```
+Logo : Logo avec élément naturel
+Domaine : photos.naturephotography.com
+Primary : #27AE60 (Vert)
+Secondary : #16A085 (Turquoise)
+Accent : #F39C12 (Orange)
+```
+
+## Dépannage
+
+### Le logo ne s'affiche pas
+
+1. **Vérifier le format** : PNG, JPG uniquement
+2. **Vérifier la taille** : Max 2MB
+3. **Vider le cache** : Ctrl+F5 ou Cmd+Shift+R
+4. **Réessayer l'upload** : Supprimer et re-uploader
+
+### Le domaine ne fonctionne pas
+
+1. **Vérifier la configuration DNS** : Utiliser un outil comme `nslookup`
+2. **Attendre la propagation** : 24-48h nécessaires
+3. **Contacter le support** : Vérification manuelle possible
+4. **Vérifier le format** : Pas de https://, pas de chemin
+
+### Les couleurs ne s'appliquent pas
+
+1. **Vérifier le format hex** : Doit commencer par `#` et avoir 6 caractères
+2. **Enregistrer les paramètres** : Cliquer sur "Save"
+3. **Rafraîchir la galerie** : F5 ou recharger la page
+4. **Vider le cache** : Ctrl+F5
+
+### Le mode sombre ne fonctionne pas
+
+1. **Vérifier le plan** : Fonctionnalité disponible pour tous
+2. **Cliquer sur l'icône** : 🌙 dans le header de la galerie
+3. **Vérifier localStorage** : Clé `gallery-theme`
+4. **Essayer un autre navigateur** : Test de compatibilité
+
+## Limites et restrictions
+
+### Plan Free
+
+❌ Logo personnalisé  
+❌ Domaine personnalisé  
+❌ Couleurs de marque  
+✅ Logo PikSend  
+✅ Branding PikSend dans le footer  
+
+### Plan Premium
+
+❌ Logo personnalisé  
+❌ Domaine personnalisé  
+❌ Couleurs de marque  
+✅ Logo PikSend  
+✅ Branding PikSend dans le footer  
+
+### Plan Pro
+
+✅ Logo personnalisé  
+✅ Domaine personnalisé  
+✅ Couleurs de marque  
+✅ Footer white-label  
+✅ Branding complet  
+
+## Support
+
+### Documentation
+
+- 📄 [White-Label Branding](./white-label-branding.md) - Documentation technique
+- 📄 [Branding et Mode Sombre](./branding-dark-mode-integration.md) - Ajustement des couleurs
+- 📄 [Domaine Personnalisé](./custom-domain-implementation.md) - Configuration DNS
+
+### Contact
+
+- **Email** : support@piksend.com
+- **Chat** : Disponible dans le dashboard
+- **FAQ** : `/help/branding`
+
+## Conclusion
+
+Le branding personnalisé vous permet de créer une **expérience galerie entièrement white-label** qui reflète votre identité de marque. Avec le logo, le domaine et les couleurs personnalisés, vos clients ne verront que votre marque, pas PikSend.
+
+L'ajustement automatique des couleurs en mode sombre garantit que votre branding reste **lisible et esthétique** dans tous les contextes, sans configuration supplémentaire.
 
 ---
 
-### Étape 2 : Page Settings
-
-**URL** : `/settings`
-
-**Ce que voit le photographe** :
-```
-┌──────────────────────────────────────────────────────┐
-│  ⚙️ Settings                                          │
-├──────────────────────────────────────────────────────┤
-│                                                       │
-│  👤 Profile                                           │
-│  ┌─────────────────────────────────────────────┐    │
-│  │ Name: John Doe                               │    │
-│  │ Email: john@example.com                      │    │
-│  └─────────────────────────────────────────────┘    │
-│                                                       │
-│  💳 Subscription                                      │
-│  ┌─────────────────────────────────────────────┐    │
-│  │ Current Plan: Pro                            │    │
-│  │ [Manage Subscription]                        │    │
-│  └─────────────────────────────────────────────┘    │
-│                                                       │
-│  🎨 Branding                    ← NOUVELLE SECTION   │
-│  ┌─────────────────────────────────────────────┐    │
-│  │ Custom Logo                                  │    │
-│  │ ┌─────────────────────────────────────┐     │    │
-│  │ │  [📤 Click to upload logo]          │     │    │
-│  │ │  PNG, JPG up to 2MB                 │     │    │
-│  │ └─────────────────────────────────────┘     │    │
-│  │                                              │    │
-│  │ Custom Domain                                │    │
-│  │ ┌─────────────────────────────────────┐     │    │
-│  │ │ photos.yourdomain.com               │     │    │
-│  │ └─────────────────────────────────────┘     │    │
-│  │ Configure DNS: CNAME → piksend.com          │    │
-│  │                                              │    │
-│  │ Brand Colors                                 │    │
-│  │ Primary:   [🎨 #6366f1] ████████            │    │
-│  │ Secondary: [🎨 #8b5cf6] ████████            │    │
-│  │ Accent:    [🎨 #ec4899] ████████            │    │
-│  │                                              │    │
-│  │ [Save Branding Settings]                     │    │
-│  └─────────────────────────────────────────────┘    │
-│                                                       │
-│  🔔 Push Notifications                                │
-│  🔒 Security                                          │
-│                                                       │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-### Étape 3 : Upload du Logo
-
-**Action** : Clic sur la zone d'upload
-
-**Ce qui se passe** :
-```
-┌──────────────────────────────────────────────────────┐
-│  Custom Logo                                          │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  [Sélecteur de fichier s'ouvre]             │    │
-│  │                                              │    │
-│  │  📁 Mes Documents                            │    │
-│  │     logo.png                                 │    │
-│  │     logo-hd.jpg                              │    │
-│  │     brand.png                                │    │
-│  │                                              │    │
-│  │  [Ouvrir] [Annuler]                          │    │
-│  └─────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────┘
-```
-
-**Après sélection** :
-```
-┌──────────────────────────────────────────────────────┐
-│  Custom Logo                                          │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  ┌──────────────────┐                       │    │
-│  │  │                  │  ❌                    │    │
-│  │  │   [VOTRE LOGO]   │                       │    │
-│  │  │                  │                       │    │
-│  │  └──────────────────┘                       │    │
-│  │  Aperçu du logo                             │    │
-│  └─────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-### Étape 4 : Sélection des Couleurs
-
-**Action** : Clic sur un sélecteur de couleur
-
-**Ce qui se passe** :
-```
-┌──────────────────────────────────────────────────────┐
-│  Brand Colors                                         │
-│                                                       │
-│  Primary Color                                        │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  [🎨 Sélecteur ouvert]                       │    │
-│  │                                              │    │
-│  │  ┌────────────────────────────┐             │    │
-│  │  │ 🌈 Palette de couleurs     │             │    │
-│  │  │                            │             │    │
-│  │  │  [Gradient coloré]         │             │    │
-│  │  │                            │             │    │
-│  │  │  Hex: #6366f1              │             │    │
-│  │  │  RGB: 99, 102, 241         │             │    │
-│  │  │                            │             │    │
-│  │  │  Presets:                  │             │    │
-│  │  │  🔵 🟣 🔴 🟢 🟡 🟠         │             │    │
-│  │  │                            │             │    │
-│  │  │  [Appliquer]               │             │    │
-│  │  └────────────────────────────┘             │    │
-│  └─────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────┘
-```
-
-**Aperçu en temps réel** :
-```
-┌──────────────────────────────────────────────────────┐
-│  Aperçu                                               │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  Bouton avec votre couleur primaire         │    │
-│  │  ┌──────────────────────────────────┐       │    │
-│  │  │  [Télécharger la galerie]        │       │    │
-│  │  └──────────────────────────────────┘       │    │
-│  │                                              │    │
-│  │  Lien avec votre couleur                    │    │
-│  │  Voir plus de photos →                      │    │
-│  └─────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-### Étape 5 : Configuration du Domaine
-
-**Action** : Saisie du domaine
-
-**Ce qui se passe** :
-```
-┌──────────────────────────────────────────────────────┐
-│  Custom Domain                                        │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  photos.monsite.com                          │    │
-│  └─────────────────────────────────────────────┘    │
-│                                                       │
-│  📋 Instructions DNS :                                │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  1. Connectez-vous à votre hébergeur        │    │
-│  │  2. Accédez à la gestion DNS                │    │
-│  │  3. Ajoutez un enregistrement CNAME :       │    │
-│  │                                              │    │
-│  │     Type:  CNAME                             │    │
-│  │     Host:  photos                            │    │
-│  │     Value: piksend.com                       │    │
-│  │     TTL:   3600                              │    │
-│  │                                              │    │
-│  │  4. Sauvegardez et attendez 24-48h          │    │
-│  │                                              │    │
-│  │  [Copier la configuration]                   │    │
-│  └─────────────────────────────────────────────┘    │
-│                                                       │
-│  ⚠️ La vérification automatique arrive bientôt       │
-│  Contactez le support pour activer votre domaine     │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-### Étape 6 : Sauvegarde
-
-**Action** : Clic sur "Save Branding Settings"
-
-**Ce qui se passe** :
-```
-┌──────────────────────────────────────────────────────┐
-│  [Save Branding Settings]                             │
-│         ↓                                             │
-│  [Saving...]  ⏳                                      │
-│         ↓                                             │
-│  ✅ Branding settings saved successfully!            │
-└──────────────────────────────────────────────────────┘
-```
-
----
-
-### Étape 7 : Résultat dans les Galeries
-
-**URL** : `/g/abc123` (galerie publique)
-
-**Ce que voient les visiteurs** :
-```
-┌──────────────────────────────────────────────────────┐
-│  [VOTRE LOGO]                          [Télécharger] │
-│                                                       │
-│  Mariage de Sophie & Thomas                          │
-│  45 photos • Expire dans 30 jours                    │
-│                                                       │
-├──────────────────────────────────────────────────────┤
-│                                                       │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐                │
-│  │  Photo  │ │  Photo  │ │  Photo  │                │
-│  │    1    │ │    2    │ │    3    │                │
-│  └─────────┘ └─────────┘ └─────────┘                │
-│                                                       │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐                │
-│  │  Photo  │ │  Photo  │ │  Photo  │                │
-│  │    4    │ │    5    │ │    6    │                │
-│  └─────────┘ └─────────┘ └─────────┘                │
-│                                                       │
-│  [Bouton avec VOS couleurs]                          │
-│  ┌──────────────────────────────────────────┐       │
-│  │  Réserver votre séance photo →           │       │
-│  └──────────────────────────────────────────┘       │
-│                                                       │
-│  Liens avec VOS couleurs                             │
-│                                                       │
-└──────────────────────────────────────────────────────┘
-```
-
-**Avec domaine personnalisé** :
-```
-URL : https://photos.monsite.com/g/abc123
-      ↑
-      Votre domaine !
-```
-
-## 🎯 Points clés du parcours
-
-### ✅ Ce qui fonctionne maintenant
-
-1. **Accès facile** : Settings accessible depuis le header
-2. **Section Branding** : Visible dans la page Settings
-3. **Upload de logo** : Fonctionnel avec aperçu
-4. **Sélection de couleurs** : 3 couleurs personnalisables
-5. **Champ domaine** : Peut être saisi
-6. **Sauvegarde** : Modifications enregistrées en base de données
-7. **Application automatique** : Couleurs appliquées dans toutes les galeries
-
-### ⚠️ Ce qui nécessite une action manuelle
-
-1. **Vérification du domaine** : Pas encore automatique
-2. **Provisionnement SSL** : Nécessite intervention support
-3. **Activation du domaine** : Doit être fait manuellement
-
-### 🚀 Prochaines améliorations
-
-1. **Vérification DNS automatique** : Bouton "Verify Domain"
-2. **SSL automatique** : Via Cloudflare API
-3. **Aperçu en temps réel** : Voir le branding avant de sauvegarder
-4. **Templates** : Palettes de couleurs prédéfinies
-5. **Logo dans header** : Affichage automatique du logo uploadé
-
-## 📊 Statistiques d'utilisation
-
-### Temps estimé pour configurer le branding complet :
-
-- **Logo** : 2 minutes
-- **Couleurs** : 5 minutes
-- **Domaine** : 10 minutes (+ 24-48h pour DNS)
-- **Total** : ~15 minutes + attente DNS
-
-### Taux de complétion attendu :
-
-- **Logo** : 80% des utilisateurs Pro
-- **Couleurs** : 95% des utilisateurs Pro
-- **Domaine** : 40% des utilisateurs Pro (plus technique)
-
-## 🔄 Flux alternatifs
-
-### Si l'utilisateur n'a pas le Plan Pro :
-
-```
-Settings → Branding
-    ↓
-[Upgrade to Pro required]
-    ↓
-Clic sur "Upgrade"
-    ↓
-Page Pricing
-    ↓
-Sélection Plan Pro
-    ↓
-Paiement Stripe
-    ↓
-Retour Settings
-    ↓
-Branding débloqué ✅
-```
-
-### Si l'utilisateur veut tester avant d'acheter :
-
-```
-Settings → Branding
-    ↓
-[Pro Plan Required]
-    ↓
-Voir les exemples
-    ↓
-Décision d'upgrade
-```
-
----
-
-**Note** : Ce document sera mis à jour au fur et à mesure de l'implémentation des fonctionnalités manquantes.
+**Prochaines étapes** :
+1. ✅ Uploader votre logo
+2. ✅ Configurer votre domaine
+3. ✅ Choisir vos couleurs
+4. ✅ Enregistrer
+5. ✅ Vérifier le résultat
+6. ✅ Partager vos galeries avec votre branding !

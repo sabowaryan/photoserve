@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
-import { getTranslation } from "@/lib/i18n/server";
-import { FALLBACK_LOCALE } from "@/lib/i18n/types";
+import { getTranslation, getServerLocale } from "@/lib/i18n/server";
 import { GalleryDetailClient } from "./gallery-detail-client";
 import { GalleryHero } from "@/components/gallery-detail";
 import { PLAN_LIMITS } from "@/config/plans";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  const locale = await getServerLocale();
+  const t = (key: string) => getTranslation(locale, key);
   
   return {
     title: t('seo.galleryDetails.title'),
@@ -157,6 +157,7 @@ export default async function GalleryDetailPage({
           imageCount={images.length}
           isExpired={isExpired}
           galleryId={gallery.id}
+          userPlan={plan}
         />
 
         {/* Gallery Detail Client */}

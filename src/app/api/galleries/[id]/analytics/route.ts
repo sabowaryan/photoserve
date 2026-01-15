@@ -10,6 +10,7 @@ import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse, createNoContentResponse } from '@/lib/api/error-handler';
 import { getSupabaseClient, requireSupabaseClient } from '@/lib/auth';
 import { createAnalyticsService } from '@/lib/services/analytics.service';
+import { geolocationService } from '@/lib/services/geolocation.service';
 import { z } from 'zod';
 
 interface RouteParams {
@@ -25,6 +26,7 @@ const trackViewSchema = z.object({
   ip: z.string().optional(),
   userAgent: z.string().optional(),
   countryCode: z.string().length(2).optional(),
+  visitorId: z.string().optional(), // Fingerprint ID
 });
 
 /**
@@ -68,11 +70,23 @@ export async function POST(
       request.headers.get('user-agent') || 
       undefined;
 
+    // Get country code from IP if not provided
+    let countryCode = metadata.countryCode;
+    if (!countryCode && ip) {
+      try {
+        countryCode = await geolocationService.getCountryFromIP(ip) || undefined;
+      } catch (error) {
+        // Log error but don't fail the request
+        console.error('Geolocation error:', error);
+      }
+    }
+
     const analyticsService = createAnalyticsService(supabase);
     await analyticsService.trackView(galleryId, {
       ip,
       userAgent,
-      countryCode: metadata.countryCode,
+      countryCode,
+      visitorId: metadata.visitorId, // NEW: Fingerprint ID
     });
 
     return createNoContentResponse();

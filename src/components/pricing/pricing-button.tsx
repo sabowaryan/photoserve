@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { useRouter } from 'next/navigation';
 import { Loader2, Check, ArrowDown, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,7 +29,7 @@ export function PricingButton({
   children,
 }: PricingButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const router = useRouter();
 
   const isAuthenticated = status === 'authenticated' && !!session;

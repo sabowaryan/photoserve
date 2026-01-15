@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { LogOut, Loader2, Shield } from "lucide-react";
 import { LogoIcon } from "@/components/shared/logo";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { clearSessionCache } from "@/hooks/use-cached-session";
 
 interface AdminHeaderProps {
   adminName: string;
@@ -31,11 +32,14 @@ export function AdminHeader({ adminName, adminEmail }: AdminHeaderProps) {
       // Logout Supabase session
       await fetch("/api/auth/logout", { method: "POST" });
 
+      // Clear session cache
+      clearSessionCache();
+
       // Logout NextAuth (removes cookies)
-      await signOut({
-        redirect: true,
-        callbackUrl: "/",
-      });
+      await signOut({ redirect: false });
+
+      // Force un refresh complet pour vider tous les caches
+      window.location.href = "/";
     } catch (error) {
       console.error("Erreur déconnexion:", error);
       setIsLoggingOut(false);
@@ -53,7 +57,7 @@ export function AdminHeader({ adminName, adminEmail }: AdminHeaderProps) {
               <LogoIcon size={20} className="text-white hidden sm:block" />
             </div>
             <div className="flex flex-col">
-              <span className="font-black text-base sm:text-lg tracking-tight text-white">
+              <span className="font-black text-base sm:text-lg tracking-tight text-white" dir="ltr">
                 PikSend
               </span>
               <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold text-indigo-400">

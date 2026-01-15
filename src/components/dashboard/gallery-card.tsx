@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, Clock, ChevronRight, Calendar, AlertCircle, ImageIcon } from "lucide-react";
@@ -32,6 +33,19 @@ export function GalleryCard({
   priority = false,
 }: GalleryCardProps) {
   const isExpired = new Date(expiresAt) < new Date();
+  const [isTouched, setIsTouched] = useState(false);
+
+  // Handle touch for mobile - tap to show actions
+  const handleTouch = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setIsTouched(!isTouched);
+    // Auto-hide after 3 seconds
+    if (!isTouched) {
+      setTimeout(() => {
+        setIsTouched(false);
+      }, 3000);
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     return new Intl.DateTimeFormat('fr-FR', {
@@ -130,7 +144,10 @@ export function GalleryCard({
   return (
     <div className="group bg-white rounded-xl border border-slate-100 hover:border-indigo-100 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden h-full flex flex-col">
       {/* Image */}
-      <div className="aspect-[16/10] bg-slate-100 relative overflow-hidden">
+      <div 
+        className="aspect-[16/10] bg-slate-100 relative overflow-hidden"
+        onTouchStart={handleTouch}
+      >
         {imageUrl ? (
           <Image 
             src={imageUrl} 
@@ -151,8 +168,10 @@ export function GalleryCard({
           <StatusBadge />
         </div>
 
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-3">
+        {/* Hover/Touch Overlay */}
+        <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent transition-all duration-300 flex items-end justify-center pb-3 ${
+          isTouched ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}>
           <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-lg shadow-lg border border-white/50">
             <GalleryActions galleryId={id} gallerySlug={slug} galleryTitle={title} />
             <div className="w-px h-4 bg-slate-200" />

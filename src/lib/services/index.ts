@@ -127,6 +127,26 @@ export {
   type ViewMetadata,
 } from './analytics.service';
 
+// Geolocation Service
+export {
+  GeolocationService,
+  createGeolocationService,
+  geolocationService,
+  type IGeolocationService,
+  type GeolocationResult,
+} from './geolocation.service';
+
+// Events Service
+export {
+  EventsService,
+  createEventsService,
+  type IEventsService,
+  type EventType,
+  type EventData,
+  type TrackEventInput,
+  type EventStats,
+} from './events.service';
+
 // Lead Capture Service
 export {
   LeadCaptureService,
@@ -161,3 +181,19 @@ export {
   type PushSubscription,
   type NotificationPayload,
 } from './push-notification.service';
+
+// AI Service
+export {
+  AIService,
+  createAIService,
+  type IAIService,
+} from './ai.service';
+
+// Logo Upload Service
+export {
+  LogoUploadService,
+  createLogoUploadService,
+  type ILogoUploadService,
+  type LogoUploadResult,
+  type ValidationResult,
+} from './logo-upload.service';

@@ -12,6 +12,9 @@ interface SlideshowProps {
   onClose: () => void;
   autoPlay?: boolean;
   showWatermark?: boolean;
+  customLogo?: string | null;
+  onSlideshowStart?: (imageCount: number, interval: number) => void;
+  onSlideshowEnd?: (duration: number, imagesViewed: number) => void;
 }
 
 /**
@@ -28,11 +31,38 @@ export function Slideshow({
   interval = 5000, 
   onClose, 
   autoPlay = true,
-  showWatermark = false
+  showWatermark = false,
+  customLogo = null,
+  onSlideshowStart,
+  onSlideshowEnd
 }: SlideshowProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [, setIsPaused] = useState(false);
+  const [startTime] = useState(Date.now());
+  const [viewedImages] = useState(new Set<number>([0])); // Track which images were viewed
+
+  // Track slideshow start on mount
+  useEffect(() => {
+    if (onSlideshowStart) {
+      onSlideshowStart(images.length, interval);
+    }
+  }, []);
+
+  // Track viewed images
+  useEffect(() => {
+    viewedImages.add(currentIndex);
+  }, [currentIndex]);
+
+  // Track slideshow end on unmount
+  useEffect(() => {
+    return () => {
+      if (onSlideshowEnd) {
+        const duration = Math.floor((Date.now() - startTime) / 1000); // in seconds
+        onSlideshowEnd(duration, viewedImages.size);
+      }
+    };
+  }, []);
 
   // Auto-advance logic - Requirements 1.4.2, 1.4.5
   useEffect(() => {
@@ -97,12 +127,20 @@ export function Slideshow({
         {/* Left side - Title */}
         <div className="relative flex items-center gap-3 text-white">
           <div className="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center">
-            <Image 
-              src="/icons/logo.svg" 
-              alt="PikSend" 
-              width={18} 
-              height={18}
-            />
+            {customLogo ? (
+              <img 
+                src={customLogo} 
+                alt="Logo" 
+                className="w-full h-full object-contain p-0.5"
+              />
+            ) : (
+              <Image 
+                src="/icons/logo.svg" 
+                alt="PikSend" 
+                width={18} 
+                height={18}
+              />
+            )}
           </div>
           <div>
             <h3 className="text-xs font-black uppercase tracking-wider">Diaporama</h3>
@@ -133,7 +171,12 @@ export function Slideshow({
               alt={`Photo ${currentIndex + 1}`} 
             />
             {/* Watermark overlay */}
-            <WatermarkOverlay visible={showWatermark} position="bottom-right" opacity={30} />
+            <WatermarkOverlay 
+              visible={showWatermark} 
+              position="bottom-center" 
+              opacity={60}
+              size="md"
+            />
           </div>
         </div>
       </div>

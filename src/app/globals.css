@@ -1,5 +1,71 @@
 @import "tailwindcss";
 
+/* Enable dark mode by class in Tailwind v4 - Official syntax */
+@variant dark (&:is(.dark *));
+
+/* Tailwind v4 - Animation utilities (replacing v3 animate-in/out) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInFromBottom {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromTop {
+  from { opacity: 0; transform: translateY(-1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(1rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@utility animate-in {
+  animation-fill-mode: forwards;
+}
+
+@utility fade-in {
+  animation-name: fadeIn;
+}
+
+@utility fade-out {
+  animation-name: fadeOut;
+}
+
+@utility zoom-in-95 {
+  animation-name: scaleIn;
+}
+
+@utility slide-in-from-bottom-4 {
+  animation-name: slideInFromBottom;
+}
+
+@utility slide-in-from-top-2 {
+  animation-name: slideInFromTop;
+}
+
+@utility slide-in-from-top-4 {
+  animation-name: slideInFromTop;
+}
+
+@utility slide-in-from-right {
+  animation-name: slideInFromRight;
+}
+
 /* PikSend Design System - Ultra-Premium Interface */
 
 @theme {
@@ -167,6 +233,16 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+}
+
+/* Brand text utility - always displays with gradient, immune to RTL changes */
+@utility brand-text {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
 }
 
 @utility animation-delay-100 {
@@ -374,15 +450,16 @@ h1, h2, h3, h4, h5, h6 {
 [dir="rtl"] .me-4 { margin-inline-end: 1rem; }
 [dir="rtl"] .me-auto { margin-inline-end: auto; }
 
-/* Mirror positioning for RTL */
-[dir="rtl"] .left-0 { left: auto; right: 0; }
-[dir="rtl"] .left-2 { left: auto; right: 0.5rem; }
-[dir="rtl"] .left-3 { left: auto; right: 0.75rem; }
-[dir="rtl"] .left-4 { left: auto; right: 1rem; }
-[dir="rtl"] .right-0 { right: auto; left: 0; }
-[dir="rtl"] .right-2 { right: auto; left: 0.5rem; }
-[dir="rtl"] .right-3 { right: auto; left: 0.75rem; }
-[dir="rtl"] .right-4 { right: auto; left: 1rem; }
+/* Mirror positioning for RTL - Only for single-sided positioning */
+/* Note: Don't apply when both left-0 AND right-0 are used together (full-width elements) */
+[dir="rtl"] .left-0:not(.right-0) { left: auto; right: 0; }
+[dir="rtl"] .left-2:not(.right-0):not(.right-2) { left: auto; right: 0.5rem; }
+[dir="rtl"] .left-3:not(.right-0):not(.right-3) { left: auto; right: 0.75rem; }
+[dir="rtl"] .left-4:not(.right-0):not(.right-4) { left: auto; right: 1rem; }
+[dir="rtl"] .right-0:not(.left-0) { right: auto; left: 0; }
+[dir="rtl"] .right-2:not(.left-0):not(.left-2) { right: auto; left: 0.5rem; }
+[dir="rtl"] .right-3:not(.left-0):not(.left-3) { right: auto; left: 0.75rem; }
+[dir="rtl"] .right-4:not(.left-0):not(.left-4) { right: auto; left: 1rem; }
 
 /* Mirror border radius for RTL */
 [dir="rtl"] .rounded-l-none { border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; border-top-right-radius: 0; border-bottom-right-radius: 0; }
@@ -398,9 +475,10 @@ h1, h2, h3, h4, h5, h6 {
 [dir="rtl"] .border-l-2 { border-left: none; border-right: 2px solid hsl(var(--border)); }
 [dir="rtl"] .border-r-2 { border-right: none; border-left: 2px solid hsl(var(--border)); }
 
-/* Mirror flex direction for RTL */
-[dir="rtl"] .flex-row { flex-direction: row-reverse; }
-[dir="rtl"] .flex-row-reverse { flex-direction: row; }
+/* Mirror flex direction for RTL - REMOVED: causes issues with justify-between */
+/* Use explicit rtl:flex-row-reverse when needed instead */
+/* [dir="rtl"] .flex-row { flex-direction: row-reverse; } */
+/* [dir="rtl"] .flex-row-reverse { flex-direction: row; } */
 
 /* RTL-aware flex utilities - use these for explicit RTL control */
 [dir="rtl"] .rtl\:flex-row-reverse { flex-direction: row-reverse; }
@@ -418,9 +496,8 @@ h1, h2, h3, h4, h5, h6 {
 [dir="rtl"] .rtl\:rotate-180 { transform: rotate(180deg); }
 [dir="rtl"] .rtl\:scale-x-\[-1\] { transform: scaleX(-1); }
 
-/* Mirror gradients for RTL */
-[dir="rtl"] .bg-gradient-to-r { background-image: linear-gradient(to left, var(--tw-gradient-stops)); }
-[dir="rtl"] .bg-gradient-to-l { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+/* Note: Gradient direction mirroring for RTL removed - causes issues with buttons and bg-clip-text */
+/* If specific gradient mirroring is needed, use explicit RTL classes like rtl:bg-gradient-to-l */
 
 /* Mirror slide animations for RTL */
 [dir="rtl"] .slide-in-from-right { animation-name: rtl-slide-in-from-left; }

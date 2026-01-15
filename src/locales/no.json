@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "Nylig aktivitet"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "Tilbake til galleri",
+      "subtitle": "Statistikk og ytelse for galleriet ditt",
+      "tabs": {
+        "overview": "Oversikt",
+        "engagement": "Engasjement",
+        "downloads": "Nedlastinger",
+        "geography": "Geografi"
+      },
+      "metrics": {
+        "totalViews": "Totale visninger",
+        "visitors": "Besøkende",
+        "unique": "Unike",
+        "downloads": "Nedlastinger",
+        "interactions": "Interaksjoner"
+      },
+      "viewsChart": {
+        "title": "Visninger over tid",
+        "subtitle": "Siste 30 dager",
+        "views": "visninger",
+        "noData": "Ingen data tilgjengelig",
+        "viewsWillAppear": "Visninger vil vises her",
+        "total": "Totalt",
+        "avgPerDay": "Snitt/dag",
+        "peak": "Topp",
+        "vsPrevWeek": "vs forrige uke",
+        "dailyViews": "Daglige visninger",
+        "average": "Gjennomsnitt"
+      },
+      "topImages": {
+        "title": "Populære bilder",
+        "subtitle": "Topp 5 mest viste",
+        "noData": "Ingen data tilgjengelig",
+        "photosWillAppear": "Viste bilder vil vises her",
+        "views": "visninger"
+      },
+      "eventsBreakdown": {
+        "title": "Fordeling",
+        "subtitle": "Interaksjonstyper",
+        "noEvents": "Ingen hendelser",
+        "interactionsWillAppear": "Interaksjoner vil vises her",
+        "totalInteractions": "Totale interaksjoner",
+        "lightboxOpen": "Bilder vist",
+        "downloadSingle": "Enkelt nedlasting",
+        "downloadAll": "Last ned alle",
+        "downloadSelection": "Utvalg nedlasting",
+        "downloadFavorites": "Favoritter nedlasting",
+        "favoriteAdd": "Favoritter +",
+        "favoriteRemove": "Favoritter -",
+        "ctaClick": "CTA-klikk",
+        "slideshowStart": "Lysbildeshow",
+        "slideshowEnd": "Lysbildeshow slutt"
+      },
+      "secondaryStats": {
+        "favorites": "Favoritter",
+        "comments": "Kommentarer",
+        "slideshows": "Lysbildeshow",
+        "ctaClicks": "CTA-klikk"
+      },
+      "engagement": {
+        "metricsTitle": "Engasjementsmålinger",
+        "metricsSubtitle": "Økter og interaksjoner",
+        "avgTime": "Snitt tid",
+        "avgSessionDuration": "Gjennomsnittlig øktvarighet",
+        "actionsPerSession": "Handlinger/økt",
+        "interactionsPerVisit": "Interaksjoner per besøk",
+        "slideshows": "Lysbildeshow",
+        "ctaClicks": "CTA-klikk",
+        "ctaClicksDesc": "Klikk på handlingsknapper",
+        "favoritesActivity": "Favorittaktivitet",
+        "additionsAndRemovals": "Tillegg og fjerninger",
+        "added": "Lagt til",
+        "removed": "Fjernet",
+        "net": "Netto",
+        "noData": "Ingen data",
+        "statsWillAppear": "Statistikk vil vises etter de første interaksjonene"
+      },
+      "downloads": {
+        "byTypeTitle": "Nedlastinger etter type",
+        "byTypeSubtitle": "Nedlastingsfordeling",
+        "noDownloads": "Ingen nedlastinger ennå",
+        "singlePhotos": "Enkeltbilder",
+        "allPhotos": "Alle bilder",
+        "selections": "Utvalg",
+        "favorites": "Favoritter",
+        "downloadRate": "Nedlastingsrate",
+        "visitorsWhoDownload": "Besøkende som laster ned",
+        "total": "Totalt"
+      },
+      "geography": {
+        "title": "Geografisk fordeling",
+        "subtitle": "Visninger etter land",
+        "detailsByCountry": "Detaljer etter land",
+        "view": "visning",
+        "views": "visninger",
+        "noData": "Ingen geografiske data",
+        "countriesWillAppear": "Land vil vises etter de første besøkene",
+        "countries": "Land",
+        "differentCountries": "forskjellige land",
+        "geolocatedViews": "geolokaliserte visninger",
+        "otherCountries": "andre land",
+        "rank1": "1.",
+        "rank2": "2.",
+        "rank3": "3."
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "Siden ble ikke funnet",
       "description": "Siden du leter etter finnes ikke."
+    },
+    "galleryAnalytics": {
+      "title": "Galleristatistikk | PikSend",
+      "description": "Se detaljert statistikk for galleriet ditt"
     }
   },
   "limits": {

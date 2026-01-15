@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
-import { getTranslation } from '@/lib/i18n/server';
-import { FALLBACK_LOCALE } from '@/lib/i18n/types';
+import { getTranslation, getServerLocale } from '@/lib/i18n/server';
 import Error503Client from './error-503-client';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  const locale = await getServerLocale();
+  const t = (key: string) => getTranslation(locale, key);
   
   return {
     title: t('seo.error503.title'),

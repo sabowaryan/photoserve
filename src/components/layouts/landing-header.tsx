@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { MobileNav } from './mobile-nav';
 import { LayoutDashboard, FolderOpen } from 'lucide-react';
@@ -14,7 +14,7 @@ export function LandingHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useTranslation();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const isAuthenticated = status === 'authenticated' && !!session;
   const isLandingPage = pathname === '/';
 
@@ -98,7 +98,7 @@ export function LandingHeader() {
               className="h-5 w-auto"
             />
           </div>
-          <span className="font-display text-base font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="font-display text-base font-bold tracking-tight brand-text" dir="ltr">
             PikSend
           </span>
         </button>

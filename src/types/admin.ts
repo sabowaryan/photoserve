@@ -17,7 +17,8 @@ export type AuditActionType =
   | 'gallery_delete'
   | 'subscription_update'
   | 'subscription_cancel'
-  | 'admin_login';
+  | 'admin_login'
+  | 'settings_update';
 
 export type AuditEntityType = 'user' | 'gallery' | 'subscription' | 'system';
 

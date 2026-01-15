@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { 
   Mail, 
   Lock, 
@@ -52,7 +53,7 @@ function AuthContent() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
 
   const emailSchema = z.string().email({ message: t('auth.errors.invalidEmail') });
   const passwordSchema = z.string().min(6, { message: t('auth.errors.passwordTooShort') });

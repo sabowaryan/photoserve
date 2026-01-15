@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
-import { getTranslation } from "@/lib/i18n/server";
-import { FALLBACK_LOCALE } from "@/lib/i18n/types";
+import { getTranslation, getServerLocale } from "@/lib/i18n/server";
 import { GalleryCreateForm } from "./gallery-create-form";
 import { GalleryHeader } from "./gallery-header";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  const locale = await getServerLocale();
+  const t = (key: string) => getTranslation(locale, key);
   
   return {
     title: t('seo.newGallery.title'),

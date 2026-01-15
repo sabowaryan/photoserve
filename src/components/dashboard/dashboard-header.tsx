@@ -84,7 +84,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                     height={24}
                   />
                 </div>
-                <span className="hidden sm:block font-black text-xl bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                <span className="hidden sm:block font-black text-xl brand-text" dir="ltr">
                   PikSend
                 </span>
               </Link>

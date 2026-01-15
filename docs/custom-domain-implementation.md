@@ -423,6 +423,10 @@ export async function POST(request: Request) {
 
 ### Variables d'environnement
 
+**See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete configuration guide.**
+
+Required environment variables for custom domain feature:
+
 ```env
 # Cloudflare (pour SSL et DNS)
 CLOUDFLARE_API_TOKEN=your_token
@@ -431,13 +435,21 @@ CLOUDFLARE_ZONE_ID=your_zone_id
 
 # Domaine principal
 NEXT_PUBLIC_APP_DOMAIN=piksend.com
+
+# Cloudinary (pour logos)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
+
+All variables are documented in `.env.example` at the project root.
 
 ### Infrastructure
 
 - **Cloudflare** (recommandé) ou **AWS Route53** pour DNS
 - **Let's Encrypt** ou **Cloudflare SSL** pour certificats
 - **Next.js Middleware** pour routing dynamique
+- **Cloudinary** pour hébergement des logos
 
 ## 📖 Guide utilisateur
 

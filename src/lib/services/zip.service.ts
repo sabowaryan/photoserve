@@ -65,6 +65,12 @@ export interface IZipService {
     options?: Partial<ZipOptions>
   ): Promise<ZipResult>;
   
+  generateSelectionZip(
+    galleryId: string,
+    imageIds: string[],
+    options?: Partial<ZipOptions>
+  ): Promise<ZipResult>;
+  
   canDownloadZip(plan: SubscriptionPlan): boolean;
   
   checkZipAccess(plan: SubscriptionPlan): void;
@@ -193,6 +199,100 @@ export class ZipService implements IZipService {
     });
 
     const filename = `${folderName}.zip`;
+
+    return {
+      buffer: zipBuffer,
+      filename,
+      size: zipBuffer.byteLength,
+      imageCount: images.length - failedImages.length,
+      failedImages,
+    };
+  }
+
+  /**
+   * Generate a ZIP file containing selected images from a gallery
+   * Requirements: 3.1 - Favorites System (also used for temporary selection)
+   * 
+   * @param galleryId - The gallery ID
+   * @param imageIds - Array of image IDs to include
+   * @param options - ZIP generation options
+   * @returns The ZIP result with buffer and metadata
+   */
+  async generateSelectionZip(
+    galleryId: string,
+    imageIds: string[],
+    options: Partial<ZipOptions> & { suffix?: string } = {}
+  ): Promise<ZipResult> {
+    const zipOptions = { ...DEFAULT_ZIP_OPTIONS, ...options };
+    const failedImages: string[] = [];
+
+    if (!imageIds || imageIds.length === 0) {
+      throw new AppError('No images selected', 'NO_IMAGES_SELECTED', 400);
+    }
+
+    // Get gallery info
+    const { data: gallery, error: galleryError } = await this.supabase
+      .from('galleries')
+      .select('id, title, is_active, expires_at')
+      .eq('id', galleryId)
+      .single();
+
+    if (galleryError || !gallery) {
+      throw new NotFoundError('Gallery');
+    }
+
+    // Check if gallery is active and not expired
+    const isExpired = new Date(gallery.expires_at) < new Date();
+    if (!gallery.is_active || isExpired) {
+      throw new AppError('Gallery is not accessible', 'GALLERY_NOT_ACCESSIBLE', 403);
+    }
+
+    // Get selected images
+    const { data: images, error: imagesError } = await this.supabase
+      .from('images')
+      .select('id, cloudinary_url, cloudinary_public_id, order_index, file_size_mb')
+      .eq('gallery_id', galleryId)
+      .in('id', imageIds)
+      .order('order_index');
+
+    if (imagesError) {
+      throw new AppError('Error fetching images', 'ERROR_FETCHING_IMAGES', 500);
+    }
+
+    if (!images || images.length === 0) {
+      throw new AppError('No images found', 'NO_IMAGES_FOUND', 404);
+    }
+
+    // Create ZIP file
+    const zip = new JSZip();
+    const folderName = this.sanitizeFilename(gallery.title);
+    const folder = zip.folder(folderName);
+
+    if (!folder) {
+      throw new AppError('Error creating archive', 'ERROR_CREATING_ARCHIVE', 500);
+    }
+
+    // Download and add each image to the ZIP
+    await this.downloadImages(images, folder, failedImages);
+
+    // Optionally add metadata file
+    if (zipOptions.includeMetadata) {
+      const metadata = this.generateMetadata(gallery, images, failedImages);
+      folder.file('_metadata.json', JSON.stringify(metadata, null, 2));
+    }
+
+    // Generate ZIP buffer
+    const compressionOptions = zipOptions.compression === 'DEFLATE'
+      ? { compression: 'DEFLATE' as const, compressionOptions: { level: zipOptions.compressionLevel || 6 } }
+      : { compression: 'STORE' as const };
+
+    const zipBuffer = await zip.generateAsync({
+      type: 'arraybuffer',
+      ...compressionOptions,
+    });
+
+    const suffix = options.suffix || 'selection';
+    const filename = `${folderName}_${suffix}.zip`;
 
     return {
       buffer: zipBuffer,

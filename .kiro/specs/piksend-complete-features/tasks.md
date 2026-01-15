@@ -226,13 +226,13 @@ Ce plan d'implémentation couvre les 10 piliers de fonctionnalités de PikSend. 
   - Tester le flow complet de configuration galerie
   - Demander à l'utilisateur si des questions surviennent
 
-- [ ] 19. Admin Panel: Contrôles
-  - [ ] 19.1 Créer la page Admin Settings
+- [x] 19. Admin Panel: Contrôles
+  - [x] 19.1 Créer la page Admin Settings
     - Créer `src/app/(admin)/admin/settings/page.tsx`
     - Toggle Stripe enabled/disabled
     - Toggle AI features enabled/disabled
     - _Requirements: A.1.1, A.1.2_
-  - [ ] 19.2 Implémenter l'API Admin Settings
+  - [x] 19.2 Implémenter l'API Admin Settings
     - Créer `src/app/api/admin/settings/route.ts`
     - GET/PUT pour admin_settings
     - _Requirements: A.1.4, A.1.5_
@@ -240,12 +240,12 @@ Ce plan d'implémentation couvre les 10 piliers de fonctionnalités de PikSend. 
     - **Property 21: Stripe Toggle Effect**
     - **Validates: Requirements A.1.2, A.1.5**
 
-- [ ] 20. Thème Sombre/Clair
-  - [ ] 20.1 Implémenter la détection système
+- [x] 20. Thème Sombre/Clair
+  - [x] 20.1 Implémenter la détection système
     - Créer `src/hooks/use-theme.ts`
     - Détecter prefers-color-scheme
     - _Requirements: 1.3.1, 1.3.2_
-  - [ ] 20.2 Ajouter le switch de thème
+  - [x] 20.2 Ajouter le switch de thème
     - Modifier `src/components/gallery-view/gallery-header.tsx`
     - Ajouter bouton toggle
     - _Requirements: 1.3.3, 1.3.5_
@@ -272,20 +272,20 @@ Ce plan d'implémentation couvre les 10 piliers de fonctionnalités de PikSend. 
   - Vérifier le flow complet: création galerie → partage → favoris → download
   - Demander à l'utilisateur si des questions surviennent
 
-- [ ] 23. Services IA (Optionnel - Phase 2)
-  - [ ] 23.1 Créer le service AI
+- [x] 23. Services IA (Optionnel - Phase 2)
+  - [x] 23.1 Créer le service AI
     - Créer `src/lib/services/ai.service.ts`
     - Intégrer provider IA (OpenAI Vision, Replicate, etc.)
     - _Requirements: 10.1, 10.2, 10.3_
-  - [ ] 23.2 Implémenter Face Recognition
+  - [x] 23.2 Implémenter Face Recognition
     - Détection de visages dans les images
     - Matching avec selfie uploadé
     - _Requirements: 10.1.1, 10.1.2, 10.1.3_
-  - [ ] 23.3 Implémenter Auto-Caption
+  - [x] 23.3 Implémenter Auto-Caption
     - Génération de descriptions via IA
     - Stockage dans image.alt_text
     - _Requirements: 10.2.1, 10.2.2_
-  - [ ] 23.4 Implémenter Smart Culling
+  - [x] 23.4 Implémenter Smart Culling
     - Détection flou, yeux fermés, doublons
     - Suggestions de masquage
     - _Requirements: 10.3.1, 10.3.2, 10.3.3, 10.3.4_

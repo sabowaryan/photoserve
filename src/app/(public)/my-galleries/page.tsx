@@ -5,12 +5,12 @@
  * Galleries are identified by the guest_session_id stored in localStorage.
  */
 import { Metadata } from 'next';
-import { getTranslation } from '@/lib/i18n/server';
-import { FALLBACK_LOCALE } from '@/lib/i18n/types';
+import { getTranslation, getServerLocale } from '@/lib/i18n/server';
 import { MyGalleriesClient } from './my-galleries-client';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = (key: string) => getTranslation(FALLBACK_LOCALE, key);
+  const locale = await getServerLocale();
+  const t = (key: string) => getTranslation(locale, key);
   
   return {
     title: t('seo.myGalleries.title'),

@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Zap, Crown, HardDrive, Images, ImageIcon, ArrowRight, Check, TrendingUp } from "lucide-react";
+import { X, Zap, Crown, HardDrive, Images, ImageIcon, ArrowRight, Check, TrendingUp, BarChart3, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { PLAN_LIMITS, PLAN_PRICING } from "@/config/plans";
 
-type LimitType = "gallery" | "storage" | "images" | "imageSize";
+type LimitType = "gallery" | "storage" | "images" | "imageSize" | "feature";
+
+type FeatureType = "detailedAnalytics" | "customDomain" | "whiteLabel" | "ctaButton" | "leadMagnet" | "paywall";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ interface UpgradeModalProps {
   currentValue?: number;
   limitValue?: number;
   currentPlan?: string;
+  /** For feature-based upgrades, specify which feature */
+  featureType?: FeatureType;
 }
 
 const LIMIT_CONFIG: Record<LimitType, {
@@ -62,6 +66,84 @@ const LIMIT_CONFIG: Record<LimitType, {
     iconColor: "text-rose-600",
     progressColor: "bg-rose-500",
   },
+  feature: {
+    icon: Sparkles,
+    title: "Fonctionnalité Pro",
+    description: "Cette fonctionnalité est réservée aux utilisateurs Pro.",
+    gradient: "from-indigo-500 via-violet-500 to-purple-500",
+    iconBg: "bg-indigo-100",
+    iconColor: "text-indigo-600",
+    progressColor: "bg-indigo-500",
+  },
+};
+
+const FEATURE_CONFIG: Record<FeatureType, {
+  icon: typeof BarChart3;
+  title: string;
+  description: string;
+  benefits: string[];
+}> = {
+  detailedAnalytics: {
+    icon: BarChart3,
+    title: "Analytics détaillés",
+    description: "Accédez aux statistiques complètes de vos galeries : vues, téléchargements, géolocalisation et plus.",
+    benefits: [
+      "Graphiques de vues en temps réel",
+      "Répartition géographique des visiteurs",
+      "Statistiques de téléchargement",
+      "Suivi des interactions",
+    ],
+  },
+  customDomain: {
+    icon: Sparkles,
+    title: "Domaine personnalisé",
+    description: "Utilisez votre propre nom de domaine pour vos galeries.",
+    benefits: [
+      "URL personnalisée",
+      "Branding professionnel",
+      "Certificat SSL inclus",
+    ],
+  },
+  whiteLabel: {
+    icon: Sparkles,
+    title: "White Label",
+    description: "Supprimez la marque PikSend de vos galeries.",
+    benefits: [
+      "Aucun logo PikSend",
+      "Votre marque uniquement",
+      "Expérience client premium",
+    ],
+  },
+  ctaButton: {
+    icon: Sparkles,
+    title: "Bouton d'action",
+    description: "Ajoutez un bouton d'appel à l'action personnalisé sur vos galeries.",
+    benefits: [
+      "Lien personnalisé",
+      "Texte configurable",
+      "Suivi des clics",
+    ],
+  },
+  leadMagnet: {
+    icon: Sparkles,
+    title: "Capture de leads",
+    description: "Collectez les emails de vos visiteurs avant qu'ils accèdent à la galerie.",
+    benefits: [
+      "Formulaire personnalisable",
+      "Export des contacts",
+      "Intégration CRM",
+    ],
+  },
+  paywall: {
+    icon: Sparkles,
+    title: "Galerie payante",
+    description: "Monétisez vos galeries en demandant un paiement pour y accéder.",
+    benefits: [
+      "Prix personnalisable",
+      "Paiement sécurisé Stripe",
+      "Revenus directs",
+    ],
+  },
 };
 
 export function UpgradeModal({
@@ -71,6 +153,7 @@ export function UpgradeModal({
   currentValue,
   limitValue,
   currentPlan = "free",
+  featureType,
 }: UpgradeModalProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -91,10 +174,17 @@ export function UpgradeModal({
 
   if (!mounted || !isOpen) return null;
 
+  // For feature-based upgrades, use feature config
+  const isFeatureUpgrade = limitType === "feature" && featureType;
+  const featureConfig = featureType ? FEATURE_CONFIG[featureType] : null;
+  
   const config = LIMIT_CONFIG[limitType];
-  const Icon = config.icon;
+  const Icon = isFeatureUpgrade && featureConfig ? featureConfig.icon : config.icon;
+  const title = isFeatureUpgrade && featureConfig ? featureConfig.title : config.title;
+  const description = isFeatureUpgrade && featureConfig ? featureConfig.description : config.description;
 
-  const recommendedPlan = currentPlan === "free" ? "premium" : "pro";
+  // For feature upgrades, always recommend Pro
+  const recommendedPlan = isFeatureUpgrade ? "pro" : (currentPlan === "free" ? "premium" : "pro");
   const recommendedLimits = PLAN_LIMITS[recommendedPlan as keyof typeof PLAN_LIMITS];
   const recommendedPricing = PLAN_PRICING[recommendedPlan as keyof typeof PLAN_PRICING];
 
@@ -144,10 +234,10 @@ export function UpgradeModal({
               <Icon className="w-8 h-8 text-white" strokeWidth={2} />
             </div>
             <h2 className="text-2xl font-black text-white tracking-tight mb-2">
-              {config.title}
+              {title}
             </h2>
             <p className="text-white/80 font-medium text-sm">
-              {config.description}
+              {description}
             </p>
           </div>
         </div>
@@ -201,26 +291,39 @@ export function UpgradeModal({
               </div>
               
               <ul className="space-y-2">
-                <li className="flex items-center gap-2 text-sm text-slate-300">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  <span className="font-medium">{getRecommendedLimit()}</span>
-                </li>
-                {limitType !== "storage" && (
-                  <li className="flex items-center gap-2 text-sm text-slate-300">
-                    <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span className="font-medium">
-                      {recommendedLimits.storage_limit_mb >= 1024 
-                        ? `${(recommendedLimits.storage_limit_mb / 1024).toFixed(0)} Go` 
-                        : `${recommendedLimits.storage_limit_mb} Mo`} de stockage
-                    </span>
-                  </li>
+                {isFeatureUpgrade && featureConfig ? (
+                  // Show feature-specific benefits
+                  featureConfig.benefits.map((benefit, index) => (
+                    <li key={index} className="flex items-center gap-2 text-sm text-slate-300">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <span className="font-medium">{benefit}</span>
+                    </li>
+                  ))
+                ) : (
+                  // Show limit-based benefits
+                  <>
+                    <li className="flex items-center gap-2 text-sm text-slate-300">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <span className="font-medium">{getRecommendedLimit()}</span>
+                    </li>
+                    {limitType !== "storage" && (
+                      <li className="flex items-center gap-2 text-sm text-slate-300">
+                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span className="font-medium">
+                          {recommendedLimits.storage_limit_mb >= 1024 
+                            ? `${(recommendedLimits.storage_limit_mb / 1024).toFixed(0)} Go` 
+                            : `${recommendedLimits.storage_limit_mb} Mo`} de stockage
+                        </span>
+                      </li>
+                    )}
+                    <li className="flex items-center gap-2 text-sm text-slate-300">
+                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <span className="font-medium">
+                        Jusqu&apos;à {recommendedLimits.max_expiration_days} jours de validité
+                      </span>
+                    </li>
+                  </>
                 )}
-                <li className="flex items-center gap-2 text-sm text-slate-300">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  <span className="font-medium">
-                    Jusqu&apos;à {recommendedLimits.max_expiration_days} jours de validité
-                  </span>
-                </li>
               </ul>
             </div>
           </div>

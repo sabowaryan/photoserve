@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "最近活动"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "返回相册",
+      "subtitle": "相册统计和性能",
+      "tabs": {
+        "overview": "概览",
+        "engagement": "互动",
+        "downloads": "下载",
+        "geography": "地区"
+      },
+      "metrics": {
+        "totalViews": "总浏览量",
+        "visitors": "访客",
+        "unique": "独立",
+        "downloads": "下载",
+        "interactions": "互动"
+      },
+      "viewsChart": {
+        "title": "浏览量趋势",
+        "subtitle": "过去30天",
+        "views": "浏览",
+        "noData": "暂无数据",
+        "viewsWillAppear": "浏览量将显示在这里",
+        "total": "总计",
+        "avgPerDay": "日均",
+        "peak": "峰值",
+        "vsPrevWeek": "较上周",
+        "dailyViews": "每日浏览量",
+        "average": "平均"
+      },
+      "topImages": {
+        "title": "热门照片",
+        "subtitle": "浏览量前5",
+        "noData": "暂无数据",
+        "photosWillAppear": "已浏览的照片将显示在这里",
+        "views": "浏览"
+      },
+      "eventsBreakdown": {
+        "title": "分析",
+        "subtitle": "互动类型",
+        "noEvents": "暂无事件",
+        "interactionsWillAppear": "互动将显示在这里",
+        "totalInteractions": "总互动",
+        "lightboxOpen": "照片浏览",
+        "downloadSingle": "单张下载",
+        "downloadAll": "全部下载",
+        "downloadSelection": "选择下载",
+        "downloadFavorites": "收藏下载",
+        "favoriteAdd": "添加收藏",
+        "favoriteRemove": "移除收藏",
+        "ctaClick": "CTA点击",
+        "slideshowStart": "幻灯片",
+        "slideshowEnd": "幻灯片结束"
+      },
+      "secondaryStats": {
+        "favorites": "收藏",
+        "comments": "评论",
+        "slideshows": "幻灯片",
+        "ctaClicks": "CTA点击"
+      },
+      "engagement": {
+        "metricsTitle": "互动指标",
+        "metricsSubtitle": "会话和互动",
+        "avgTime": "平均时间",
+        "avgSessionDuration": "平均会话时长",
+        "actionsPerSession": "每会话操作",
+        "interactionsPerVisit": "每次访问互动",
+        "slideshows": "幻灯片",
+        "ctaClicks": "CTA点击",
+        "ctaClicksDesc": "操作按钮点击",
+        "favoritesActivity": "收藏活动",
+        "additionsAndRemovals": "添加和移除",
+        "added": "已添加",
+        "removed": "已移除",
+        "net": "净增",
+        "noData": "暂无数据",
+        "statsWillAppear": "首次互动后将显示统计数据"
+      },
+      "downloads": {
+        "byTypeTitle": "按类型下载",
+        "byTypeSubtitle": "下载分析",
+        "noDownloads": "暂无下载",
+        "singlePhotos": "单张照片",
+        "allPhotos": "全部照片",
+        "selections": "选择",
+        "favorites": "收藏",
+        "downloadRate": "下载率",
+        "visitorsWhoDownload": "下载访客",
+        "total": "总计"
+      },
+      "geography": {
+        "title": "地区分布",
+        "subtitle": "按国家浏览量",
+        "detailsByCountry": "按国家详情",
+        "view": "浏览",
+        "views": "浏览",
+        "noData": "暂无地区数据",
+        "countriesWillAppear": "首次访问后将显示国家",
+        "countries": "国家",
+        "differentCountries": "不同国家",
+        "geolocatedViews": "定位浏览",
+        "otherCountries": "其他国家",
+        "rank1": "第1",
+        "rank2": "第2",
+        "rank3": "第3"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "页面未找到",
       "description": "您查找的页面不存在。"
+    },
+    "galleryAnalytics": {
+      "title": "相册分析 | PikSend",
+      "description": "查看相册的详细分析"
     }
   },
   "limits": {

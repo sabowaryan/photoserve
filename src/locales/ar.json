@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "النشاط الأخير"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "العودة إلى المعرض",
+      "subtitle": "إحصائيات وأداء معرضك",
+      "tabs": {
+        "overview": "نظرة عامة",
+        "engagement": "التفاعل",
+        "downloads": "التنزيلات",
+        "geography": "الجغرافيا"
+      },
+      "metrics": {
+        "totalViews": "إجمالي المشاهدات",
+        "visitors": "الزوار",
+        "unique": "فريد",
+        "downloads": "التنزيلات",
+        "interactions": "التفاعلات"
+      },
+      "viewsChart": {
+        "title": "المشاهدات عبر الوقت",
+        "subtitle": "آخر 30 يوم",
+        "views": "مشاهدات",
+        "noData": "لا توجد بيانات",
+        "viewsWillAppear": "ستظهر المشاهدات هنا",
+        "total": "المجموع",
+        "avgPerDay": "المعدل/يوم",
+        "peak": "الذروة",
+        "vsPrevWeek": "مقارنة بالأسبوع السابق",
+        "dailyViews": "المشاهدات اليومية",
+        "average": "المتوسط"
+      },
+      "topImages": {
+        "title": "الصور الشائعة",
+        "subtitle": "أكثر 5 صور مشاهدة",
+        "noData": "لا توجد بيانات",
+        "photosWillAppear": "ستظهر الصور المشاهدة هنا",
+        "views": "مشاهدات"
+      },
+      "eventsBreakdown": {
+        "title": "التفصيل",
+        "subtitle": "أنواع التفاعل",
+        "noEvents": "لا توجد أحداث",
+        "interactionsWillAppear": "ستظهر التفاعلات هنا",
+        "totalInteractions": "إجمالي التفاعلات",
+        "lightboxOpen": "الصور المشاهدة",
+        "downloadSingle": "تنزيل فردي",
+        "downloadAll": "تنزيل الكل",
+        "downloadSelection": "تنزيل المحدد",
+        "downloadFavorites": "تنزيل المفضلة",
+        "favoriteAdd": "إضافة للمفضلة",
+        "favoriteRemove": "إزالة من المفضلة",
+        "ctaClick": "نقرات CTA",
+        "slideshowStart": "عروض الشرائح",
+        "slideshowEnd": "نهاية العرض"
+      },
+      "secondaryStats": {
+        "favorites": "المفضلة",
+        "comments": "التعليقات",
+        "slideshows": "عروض الشرائح",
+        "ctaClicks": "نقرات CTA"
+      },
+      "engagement": {
+        "metricsTitle": "مقاييس التفاعل",
+        "metricsSubtitle": "الجلسات والتفاعلات",
+        "avgTime": "متوسط الوقت",
+        "avgSessionDuration": "متوسط مدة الجلسة",
+        "actionsPerSession": "الإجراءات/جلسة",
+        "interactionsPerVisit": "التفاعلات لكل زيارة",
+        "slideshows": "عروض الشرائح",
+        "ctaClicks": "نقرات CTA",
+        "ctaClicksDesc": "النقرات على أزرار الإجراء",
+        "favoritesActivity": "نشاط المفضلة",
+        "additionsAndRemovals": "الإضافات والإزالات",
+        "added": "مضاف",
+        "removed": "محذوف",
+        "net": "الصافي",
+        "noData": "لا توجد بيانات",
+        "statsWillAppear": "ستظهر الإحصائيات بعد التفاعلات الأولى"
+      },
+      "downloads": {
+        "byTypeTitle": "التنزيلات حسب النوع",
+        "byTypeSubtitle": "تفصيل التنزيلات",
+        "noDownloads": "لا توجد تنزيلات بعد",
+        "singlePhotos": "صور فردية",
+        "allPhotos": "جميع الصور",
+        "selections": "المحددات",
+        "favorites": "المفضلة",
+        "downloadRate": "معدل التنزيل",
+        "visitorsWhoDownload": "الزوار الذين يقومون بالتنزيل",
+        "total": "المجموع"
+      },
+      "geography": {
+        "title": "التوزيع الجغرافي",
+        "subtitle": "المشاهدات حسب البلد",
+        "detailsByCountry": "التفاصيل حسب البلد",
+        "view": "مشاهدة",
+        "views": "مشاهدات",
+        "noData": "لا توجد بيانات جغرافية",
+        "countriesWillAppear": "ستظهر البلدان بعد الزيارات الأولى",
+        "countries": "البلدان",
+        "differentCountries": "بلدان مختلفة",
+        "geolocatedViews": "مشاهدات محددة الموقع",
+        "otherCountries": "بلدان أخرى",
+        "rank1": "الأول",
+        "rank2": "الثاني",
+        "rank3": "الثالث"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "الصفحة غير موجودة",
       "description": "الصفحة التي تبحث عنها غير موجودة."
+    },
+    "galleryAnalytics": {
+      "title": "تحليلات المعرض | PikSend",
+      "description": "عرض التحليلات التفصيلية لمعرضك"
     }
   },
   "limits": {

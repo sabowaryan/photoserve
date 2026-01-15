@@ -80,6 +80,7 @@ export interface MetadataInput {
   customTitle?: string;
   customDescription?: string;
   locale?: SupportedLocale;
+  customDomain?: string; // Custom domain for canonical URL and Open Graph tags
 }
 
 /**
@@ -122,7 +123,7 @@ export class SeoService implements ISeoService {
       case 'dashboard':
         return this.generateDashboardMetadata();
       case 'gallery':
-        return this.generateGalleryMetadata(data?.gallery);
+        return this.generateGalleryMetadata(data?.gallery, data?.customDomain);
       case 'settings':
         return this.generateSettingsMetadata();
       case 'legal':
@@ -469,22 +470,40 @@ export class SeoService implements ISeoService {
    * Generate gallery view page metadata
    * Keywords: professional photo delivery, gallery, original quality
    * Validates: Requirements 7.8 - noindex for gallery pages (privacy)
+   * Validates: Requirements 12.1, 12.2, 12.3, 12.4 - Custom domain support
    */
-  private generateGalleryMetadata(gallery?: Gallery): Metadata {
+  private generateGalleryMetadata(gallery?: Gallery, customDomain?: string): Metadata {
     const title = gallery 
       ? `${gallery.title} | PikSend Professional Photo Gallery`
       : 'Professional Photo Gallery | PikSend';
     const description = 'Professional photo delivery gallery. Original quality photos, no compression, password-protected.';
 
+    // Determine the base URL for canonical and Open Graph tags
+    // If custom domain is provided, use it; otherwise use the default base URL
+    // Clean up custom domain by removing trailing slashes and ensuring it's not empty
+    const cleanCustomDomain = customDomain?.trim().replace(/\/+$/, '');
+    const baseUrl = cleanCustomDomain && cleanCustomDomain.length > 0
+      ? `https://${cleanCustomDomain}` 
+      : this.baseUrl;
+    
+    // Construct the canonical URL
+    const canonicalUrl = gallery 
+      ? `${baseUrl}/g/${gallery.unique_slug}`
+      : baseUrl;
+
     return {
       title,
       description,
       metadataBase: new URL(this.baseUrl),
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
         title: gallery?.title || 'Professional Photo Gallery | PikSend',
         description: 'Professional photo delivery gallery in original quality.',
         type: 'website',
         locale: 'en_US',
+        url: canonicalUrl,
         siteName: 'PikSend',
       },
       twitter: {

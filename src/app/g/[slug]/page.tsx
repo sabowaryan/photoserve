@@ -13,14 +13,22 @@ import { seoService } from '@/lib/services/seo.service';
 
 interface GalleryViewPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 /**
  * Generate metadata for gallery page
  * Validates: Requirements 7.8 - noindex for gallery pages
+ * Validates: Requirements 12.1, 12.2, 12.3, 12.4 - Custom domain metadata
  */
-export async function generateMetadata({ params }: GalleryViewPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: GalleryViewPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  
+  // Extract custom domain from query parameter (added by proxy middleware)
+  const customDomain = typeof resolvedSearchParams.customDomain === 'string' 
+    ? resolvedSearchParams.customDomain 
+    : undefined;
   
   // Fetch gallery info for title (without exposing sensitive data)
   const supabase = createAdminClient();
@@ -47,12 +55,19 @@ export async function generateMetadata({ params }: GalleryViewPageProps): Promis
       is_unlocked: false,
       payment_type: 'free',
       converted_at: null
-    } : undefined 
+    } : undefined,
+    customDomain 
   });
 }
 
-export default async function GalleryViewPage({ params }: GalleryViewPageProps) {
+export default async function GalleryViewPage({ params, searchParams }: GalleryViewPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  
+  // Extract custom domain from query parameter (added by proxy middleware)
+  const customDomain = typeof resolvedSearchParams.customDomain === 'string' 
+    ? resolvedSearchParams.customDomain 
+    : undefined;
 
   // Fetch basic gallery info (public data only)
   const supabase = createAdminClient();
@@ -87,6 +102,8 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
 
   // Fetch owner's subscription plan and branding if gallery has an owner
   let brandColors = null;
+  let customLogo = null;
+  let brandingCustomDomain = null;
   let ownerPlan: 'free' | 'premium' | 'pro' = 'free';
   
   if ((gallery as any).user_id) {
@@ -100,8 +117,14 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
       ownerPlan = (profile as any).subscription_plan || 'free';
       
       if ((profile as any).branding) {
-        const branding = (profile as any).branding as { brandColors?: { primary?: string; secondary?: string; accent?: string } };
+        const branding = (profile as any).branding as { 
+          brandColors?: { primary?: string; secondary?: string; accent?: string };
+          customLogo?: string;
+          customDomain?: string;
+        };
         brandColors = branding.brandColors || null;
+        customLogo = branding.customLogo || null;
+        brandingCustomDomain = branding.customDomain || null;
       }
     }
   }
@@ -134,6 +157,8 @@ export default async function GalleryViewPage({ params }: GalleryViewPageProps) 
           guest_session_id: gallery.guest_session_id ?? null,
           settings: (gallery as any).settings as any,
           owner_plan: ownerPlan,
+          custom_logo: customLogo,
+          custom_domain: customDomain,
         }}
         isExpired={isExpired}
         isInactive={isInactive}

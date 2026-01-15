@@ -10,6 +10,7 @@ import {
   BarChart3,
   CreditCard,
   FileText,
+  Settings,
   Menu,
   X,
 } from "lucide-react";
@@ -48,6 +49,11 @@ const navItems = [
     href: "/admin/audit-logs",
     label: "Journal d'audit",
     icon: FileText,
+  },
+  {
+    href: "/admin/settings",
+    label: "Paramètres",
+    icon: Settings,
   },
 ];
 

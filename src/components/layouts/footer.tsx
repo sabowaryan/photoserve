@@ -40,7 +40,7 @@ export function Footer() {
               <div className="p-1 bg-indigo-50 rounded-lg">
                 <img src="/icons/logo.svg" alt="PikSend" className="h-5 w-auto" />
               </div>
-              <span className="font-bold text-sm text-slate-900">PikSend</span>
+              <span className="font-bold text-sm text-slate-900" dir="ltr">PikSend</span>
             </div>
             <p className="text-slate-500 text-xs leading-relaxed mb-3 max-w-[200px]">
               {t('footer.tagline')}

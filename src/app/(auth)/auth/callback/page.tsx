@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { Loader2 } from 'lucide-react';
 
 interface SubscribeIntent {
@@ -22,7 +22,7 @@ interface SubscribeIntent {
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const [statusMessage, setStatusMessage] = useState('Redirection en cours...');
   const migrationAttempted = useRef(false);
 

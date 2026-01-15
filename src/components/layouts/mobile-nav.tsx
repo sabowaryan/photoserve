@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
+import { useCachedSession, clearSessionCache } from '@/hooks/use-cached-session';
 import {
   Menu,
   X,
@@ -26,7 +27,7 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useTranslation();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const isAuthenticated = status === 'authenticated' && !!session;
 
   const onLogin = () => {
@@ -42,7 +43,10 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   const handleSignOut = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      await signOut({ callbackUrl: '/' });
+      clearSessionCache();
+      await signOut({ redirect: false });
+      // Force un refresh complet pour vider tous les caches
+      window.location.href = "/";
     } catch (error) {
       console.error("Erreur déconnexion:", error);
     }
@@ -87,7 +91,7 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
                     className="h-5 w-auto"
                   />
                 </div>
-                <span className="font-bold text-base text-slate-900">PikSend</span>
+                <span className="font-bold text-base text-slate-900" dir="ltr">PikSend</span>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

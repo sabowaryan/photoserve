@@ -10,10 +10,11 @@ interface PasswordFormProps {
   title: string;
   expiresAt: string;
   backgroundImage?: string;
+  customLogo?: string | null;
   onSubmit: (password: string) => Promise<boolean>;
 }
 
-export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: PasswordFormProps) {
+export function PasswordForm({ title, expiresAt, backgroundImage, customLogo, onSubmit }: PasswordFormProps) {
   const { t } = useTranslation();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -82,12 +83,20 @@ export function PasswordForm({ title, expiresAt, backgroundImage, onSubmit }: Pa
             <div className="relative flex flex-col items-center text-center">
               {/* Logo prominent */}
               <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lg mb-2">
-                <Image 
-                  src="/icons/logo.svg" 
-                  alt="PikSend" 
-                  width={24} 
-                  height={24}
-                />
+                {customLogo ? (
+                  <img 
+                    src={customLogo} 
+                    alt="Logo" 
+                    className="w-full h-full object-contain p-1"
+                  />
+                ) : (
+                  <Image 
+                    src="/icons/logo.svg" 
+                    alt="PikSend" 
+                    width={24} 
+                    height={24}
+                  />
+                )}
               </div>
               <h1 className="text-base font-bold text-white mb-0.5">
                 {title}

@@ -6,6 +6,7 @@ import { Clock, Unlock, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import "./gallery-theme.css";
 import {
   ExpiredView,
   PasswordForm,
@@ -21,12 +22,15 @@ import { VideoCover } from "@/components/gallery-view/video-cover";
 import { AudioPlayer } from "@/components/gallery-view/audio-player";
 import { PricingModal } from "@/components/guest/pricing-modal";
 import { UnlockSuccessModal } from "@/components/guest/unlock-success-modal";
-import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import { clearPreservedUploadState } from "@/lib/guest/file-preservation";
 import { GuestSessionManager } from "@/lib/guest/session";
 import { useTranslation } from "@/lib/i18n/context";
 import { hasFeatureAccess } from "@/config/plan-features";
-import type { PaymentType, GallerySettings, SubscriptionPlan, PlanFeatures } from "@/types";
+import { getDisplayDomain, getDomainUrl, getBrandName } from "@/lib/utils/domain";
+import { useGalleryTheme } from "@/hooks/use-gallery-theme";
+import { useVisitorFingerprint } from "@/hooks/use-visitor-fingerprint";
+import { useEventTracker } from "@/hooks/use-event-tracker";
+import type { PaymentType, GallerySettings, SubscriptionPlan } from "@/types";
 
 // Storage key for tracking pricing choices
 const PRICING_CHOICE_KEY = 'piksend_pricing_choices';
@@ -105,6 +109,8 @@ interface GalleryInfo {
   guest_session_id: string | null;
   settings?: GallerySettings;
   owner_plan?: SubscriptionPlan;
+  custom_logo?: string | null;
+  custom_domain?: string | null;
 }
 
 interface GalleryViewClientProps {
@@ -127,6 +133,7 @@ export function GalleryViewClient({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
   const [downloadModalUrl, setDownloadModalUrl] = useState<string | null>(null);
+  const [downloadModalImageId, setDownloadModalImageId] = useState<string | null>(null);
   const [viewsCount, setViewsCount] = useState(initialGallery.views_count);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [showUnlockSuccessModal, setShowUnlockSuccessModal] = useState(false);
@@ -135,9 +142,23 @@ export function GalleryViewClient({
   const [showSlideshow, setShowSlideshow] = useState(false);
   const [showLeadMagnet, setShowLeadMagnet] = useState(false);
   const [hasSubmittedEmail, setHasSubmittedEmail] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [blockedFeature, setBlockedFeature] = useState<keyof PlanFeatures | null>(null);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [isDownloadingSelection, setIsDownloadingSelection] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [isDownloadingFavorites, setIsDownloadingFavorites] = useState(false);
   const viewTracked = useRef(false);
+
+  // Gallery-specific theme (doesn't affect rest of the app)
+  const { containerRef, toggleTheme, isDark, resolvedTheme } = useGalleryTheme();
+  
+  // Visitor fingerprint for unique visitor tracking
+  const visitorId = useVisitorFingerprint();
+  
+  // Event tracker for user interactions
+  const eventTracker = useEventTracker({
+    galleryId: initialGallery.id,
+    visitorId,
+  });
 
   // Extract gallery settings and owner plan
   const settings: Partial<GallerySettings> = initialGallery.settings || {};
@@ -149,6 +170,7 @@ export function GalleryViewClient({
   const canUseLeadMagnet = hasFeatureAccess(ownerPlan, 'leadMagnet');
   const canUseVideoCover = hasFeatureAccess(ownerPlan, 'videoCover');
   const canUseAudioGallery = hasFeatureAccess(ownerPlan, 'audioGallery');
+  const canUseFavorites = hasFeatureAccess(ownerPlan, 'favorites');
   
   // Apply feature gating to settings
   const enableDeadline = canUseDeadlineTimer && settings.enableDeadline && settings.deadlineDate;
@@ -202,6 +224,31 @@ export function GalleryViewClient({
     return () => clearTimeout(timer);
   }, [isAuthenticated, enableLeadMagnet, hasSubmittedEmail, initialGallery.id]);
 
+  // Load favorites from API if feature is enabled
+  useEffect(() => {
+    if (!canUseFavorites || !isAuthenticated) return;
+    
+    const loadFavorites = async () => {
+      const sessionManager = new GuestSessionManager();
+      const sessionId = sessionManager.getSessionToken();
+      
+      try {
+        const response = await fetch(
+          `/api/galleries/${initialGallery.id}/favorites?sessionId=${sessionId}`
+        );
+        
+        if (response.ok) {
+          const { favorites: favoriteIds } = await response.json();
+          setFavorites(new Set(favoriteIds));
+        }
+      } catch (error) {
+        console.error("Error loading favorites:", error);
+      }
+    };
+    
+    loadFavorites();
+  }, [canUseFavorites, isAuthenticated, initialGallery.id]);
+
   // Check if we should show pricing modal from URL params
   // Only show if user is the gallery owner
   useEffect(() => {
@@ -237,17 +284,100 @@ export function GalleryViewClient({
       viewTracked.current = true;
       sessionStorage.setItem(viewKey, 'true');
       
-      // Increment view count
-      fetch(`/api/galleries/${initialGallery.id}/view`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => {
-          if (data.views_count) {
-            setViewsCount(data.views_count);
-          }
+      // Track view with analytics (includes IP geolocation, user agent, and updates view count)
+      fetch(`/api/galleries/${initialGallery.id}/analytics`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+          visitorId: visitorId || undefined, // Fingerprint ID
+        })
+      })
+        .then(() => {
+          // Update local view count for display
+          setViewsCount(prev => prev + 1);
         })
         .catch(console.error);
     }
   }, [isAuthenticated, isExpired, isInactive, initialGallery.id]);
+
+  // Track session start and end
+  useEffect(() => {
+    if (!isAuthenticated || isExpired || isInactive) return;
+
+    // Check if session already started for this gallery
+    const sessionKey = `piksend_session_started_${initialGallery.id}`;
+    const alreadyStarted = sessionStorage.getItem(sessionKey);
+    
+    if (alreadyStarted) return; // Don't track again
+    
+    sessionStorage.setItem(sessionKey, 'true');
+    
+    const sessionStart = Date.now();
+    let eventCount = 0;
+    let sessionEnded = false;
+
+    // Track session start
+    fetch(`/api/galleries/${initialGallery.id}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitorId: visitorId || undefined,
+        eventType: 'session_start',
+        eventData: {
+          referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+        },
+      }),
+    }).catch(console.error);
+
+    // Increment event count on any user interaction
+    const incrementEventCount = () => {
+      eventCount++;
+    };
+
+    // Listen to various events
+    window.addEventListener('click', incrementEventCount);
+    window.addEventListener('keydown', incrementEventCount);
+
+    // Track session end on page unload (only once)
+    const trackSessionEnd = () => {
+      if (sessionEnded) return;
+      sessionEnded = true;
+      
+      const duration = Math.floor((Date.now() - sessionStart) / 1000);
+      
+      // Use sendBeacon for reliable delivery on page unload
+      const data = JSON.stringify({
+        visitorId: visitorId || undefined,
+        eventType: 'session_end',
+        eventData: { duration, eventsCount: eventCount },
+      });
+      
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          `/api/galleries/${initialGallery.id}/events`,
+          new Blob([data], { type: 'application/json' })
+        );
+      } else {
+        fetch(`/api/galleries/${initialGallery.id}/events`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: data,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    };
+
+    window.addEventListener('beforeunload', trackSessionEnd);
+
+    return () => {
+      window.removeEventListener('click', incrementEventCount);
+      window.removeEventListener('keydown', incrementEventCount);
+      window.removeEventListener('beforeunload', trackSessionEnd);
+      // Don't call trackSessionEnd here - only on actual page unload
+    };
+  }, [isAuthenticated, isExpired, isInactive, initialGallery.id, visitorId]);
 
   // Handle password verification
   const handlePasswordSubmit = async (password: string): Promise<boolean> => {
@@ -286,6 +416,9 @@ export function GalleryViewClient({
         window.URL.revokeObjectURL(url);
         a.remove();
         toast.success("Téléchargement démarré !", { id: "download-zip" });
+        
+        // Track download event
+        eventTracker.trackDownloadAll(initialGallery.images.length);
       } else {
         toast.error("Erreur lors du téléchargement", { id: "download-zip" });
       }
@@ -298,9 +431,10 @@ export function GalleryViewClient({
   };
 
   // Handle single image download - show modal
-  const handleDownloadSingle = (url: string, e?: React.MouseEvent) => {
+  const handleDownloadSingle = (url: string, imageId?: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setDownloadModalUrl(url);
+    setDownloadModalImageId(imageId || null);
   };
 
   // Lightbox navigation
@@ -409,26 +543,181 @@ export function GalleryViewClient({
     setHasSubmittedEmail(true);
   };
 
-  // Handle slideshow button click with feature gating
+  // Handle slideshow button click
   const handleSlideshowClick = () => {
-    if (!canUseSlideshow) {
-      setBlockedFeature('slideshow');
-      setShowUpgradeModal(true);
-      return;
-    }
     setShowSlideshow(true);
   };
 
-  // Handle upgrade modal close
-  const handleUpgradeModalClose = () => {
-    setShowUpgradeModal(false);
-    setBlockedFeature(null);
+  // Handle image selection toggle
+  const handleToggleSelection = (imageId: string) => {
+    setSelectedImages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(imageId)) {
+        newSet.delete(imageId);
+      } else {
+        newSet.add(imageId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle select all / deselect all
+  const handleToggleSelectAll = () => {
+    if (selectedImages.size === initialGallery.images.length) {
+      // Deselect all
+      setSelectedImages(new Set());
+    } else {
+      // Select all
+      setSelectedImages(new Set(initialGallery.images.map(img => img.id)));
+    }
+  };
+
+  // Handle download selection
+  const handleDownloadSelection = async () => {
+    if (selectedImages.size === 0) return;
+    
+    // Minimum 2 images required for ZIP download
+    if (selectedImages.size < 2) {
+      toast.error("Sélectionnez au moins 2 photos pour télécharger en ZIP");
+      return;
+    }
+    
+    setIsDownloadingSelection(true);
+    toast.loading("Préparation de l'archive...", { id: "download-selection" });
+    
+    try {
+      const imageIds = Array.from(selectedImages);
+      const response = await fetch(`/api/galleries/${initialGallery.id}/download-selection`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageIds }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${initialGallery.title}_selection.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        toast.success("Téléchargement démarré !", { id: "download-selection" });
+        setSelectedImages(new Set()); // Clear selection after download
+        
+        // Track download event
+        eventTracker.trackDownloadSelection(imageIds);
+      } else {
+        toast.error("Erreur lors du téléchargement", { id: "download-selection" });
+      }
+    } catch (error) {
+      console.error("Download selection error:", error);
+      toast.error("Erreur lors du téléchargement", { id: "download-selection" });
+    } finally {
+      setIsDownloadingSelection(false);
+    }
+  };
+
+  // Handle favorite toggle
+  const handleToggleFavorite = async (imageId: string) => {
+    if (!canUseFavorites) return;
+    
+    // Get or create session ID for guest
+    const sessionManager = new GuestSessionManager();
+    const sessionId = sessionManager.getSessionToken();
+    
+    try {
+      const response = await fetch(`/api/galleries/${initialGallery.id}/favorites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageId, sessionId }),
+      });
+      
+      if (response.ok) {
+        const { isFavorite } = await response.json();
+        
+        // Track favorite event
+        if (isFavorite) {
+          eventTracker.trackFavoriteAdd(imageId);
+        } else {
+          eventTracker.trackFavoriteRemove(imageId);
+        }
+        
+        // Update local state
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          if (isFavorite) {
+            newSet.add(imageId);
+          } else {
+            newSet.delete(imageId);
+          }
+          return newSet;
+        });
+      } else {
+        toast.error("Erreur lors de la mise à jour des favoris");
+      }
+    } catch (error) {
+      console.error("Toggle favorite error:", error);
+      toast.error("Erreur lors de la mise à jour des favoris");
+    }
+  };
+
+  // Handle download favorites
+  const handleDownloadFavorites = async () => {
+    if (favorites.size === 0) return;
+    
+    // Minimum 2 images required for ZIP download
+    if (favorites.size < 2) {
+      toast.error("Ajoutez au moins 2 photos aux favoris pour télécharger en ZIP");
+      return;
+    }
+    
+    setIsDownloadingFavorites(true);
+    toast.loading("Préparation de l'archive...", { id: "download-favorites" });
+    
+    try {
+      const imageIds = Array.from(favorites);
+      const response = await fetch(`/api/galleries/${initialGallery.id}/download-favorites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageIds }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${initialGallery.title}_favoris.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        toast.success("Téléchargement démarré !", { id: "download-favorites" });
+        
+        // Track download event
+        eventTracker.trackDownloadFavorites(imageIds);
+      } else {
+        toast.error("Erreur lors du téléchargement", { id: "download-favorites" });
+      }
+    } catch (error) {
+      console.error("Download favorites error:", error);
+      toast.error("Erreur lors du téléchargement", { id: "download-favorites" });
+    } finally {
+      setIsDownloadingFavorites(false);
+    }
   };
 
   // Calculate hours remaining for reminder
   const hoursRemaining = Math.max(0, Math.ceil(
     (new Date(initialGallery.expires_at).getTime() - Date.now()) / (1000 * 60 * 60)
   ));
+
+  // Normalize custom domain for display and links
+  const displayDomain = getDisplayDomain(initialGallery.custom_domain);
+  const domainUrl = getDomainUrl(initialGallery.custom_domain);
+  const brandName = getBrandName(initialGallery.custom_domain);
 
   // Show expired/inactive view
   if (isExpired || isInactive) {
@@ -443,13 +732,14 @@ export function GalleryViewClient({
         expiresAt={initialGallery.expires_at}
         backgroundImage={initialGallery.images[0]?.url}
         onSubmit={handlePasswordSubmit}
+        customLogo={initialGallery.custom_logo}
       />
     );
   }
 
   // Main gallery view
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 font-['Plus_Jakarta_Sans'] selection:bg-indigo-100 selection:text-indigo-900">
+    <div ref={containerRef} data-gallery-theme={resolvedTheme} className="gallery-theme-wrapper min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 data-[gallery-theme=dark]:from-slate-950 data-[gallery-theme=dark]:via-slate-900 data-[gallery-theme=dark]:to-slate-950 font-['Plus_Jakarta_Sans'] selection:bg-indigo-100 selection:text-indigo-900 data-[gallery-theme=dark]:selection:bg-indigo-900 data-[gallery-theme=dark]:selection:text-indigo-100">
       {/* Video Cover Background */}
       {videoCoverUrl && (
         <VideoCover videoUrl={videoCoverUrl} />
@@ -458,17 +748,29 @@ export function GalleryViewClient({
       {/* Background decorations - use brand colors if available */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div 
-          className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] opacity-5"
-          style={{ backgroundColor: 'var(--brand-primary, rgb(99 102 241))' }}
+          className={`absolute top-0 left-1/2 -translate-x-1/2 md:left-1/4 md:translate-x-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full transition-all duration-500 ${
+            isDark 
+              ? 'blur-[100px] md:blur-[150px] opacity-[0.12]' 
+              : 'blur-[60px] md:blur-[100px] opacity-[0.40]'
+          }`}
+          style={{ backgroundColor: 'var(--brand-primary, rgb(147 197 253))' }}
         />
         <div 
-          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-5"
-          style={{ backgroundColor: 'var(--brand-secondary, rgb(139 92 246))' }}
+          className={`absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:right-1/4 md:translate-x-0 w-[250px] h-[250px] md:w-[500px] md:h-[500px] rounded-full transition-all duration-500 ${
+            isDark 
+              ? 'blur-[80px] md:blur-[120px] opacity-[0.10]' 
+              : 'blur-[50px] md:blur-[80px] opacity-[0.35]'
+          }`}
+          style={{ backgroundColor: 'var(--brand-secondary, rgb(196 181 253))' }}
         />
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[200px] opacity-3"
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[800px] rounded-full transition-all duration-500 ${
+            isDark 
+              ? 'blur-[120px] md:blur-[200px] opacity-[0.12]' 
+              : 'blur-[80px] md:blur-[120px] opacity-[0.30]'
+          }`}
           style={{ 
-            background: `linear-gradient(to bottom right, var(--brand-primary, rgb(99 102 241)), var(--brand-secondary, rgb(139 92 246)))` 
+            background: `linear-gradient(to bottom right, var(--brand-primary, rgb(147 197 253)), var(--brand-secondary, rgb(196 181 253)))` 
           }}
         />
       </div>
@@ -494,6 +796,13 @@ export function GalleryViewClient({
           onClose={() => setShowSlideshow(false)}
           autoPlay={true}
           showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
+          customLogo={initialGallery.custom_logo}
+          onSlideshowStart={(imageCount, interval) => {
+            eventTracker.trackSlideshowStart(imageCount, interval);
+          }}
+          onSlideshowEnd={(duration, imagesViewed) => {
+            eventTracker.trackSlideshowEnd(duration, imagesViewed);
+          }}
         />
       )}
 
@@ -518,16 +827,6 @@ export function GalleryViewClient({
         expiresAt={initialGallery.expires_at}
       />
 
-      {/* Upgrade Modal for blocked features */}
-      {showUpgradeModal && blockedFeature && (
-        <UpgradeModal
-          isOpen={showUpgradeModal}
-          onClose={handleUpgradeModalClose}
-          limitType="gallery"
-          currentPlan={ownerPlan}
-        />
-      )}
-
       {/* Lead Magnet Modal */}
       {showLeadMagnet && (
         <LeadMagnetModal
@@ -542,8 +841,15 @@ export function GalleryViewClient({
       {downloadModalUrl && (
         <DownloadModal
           imageUrl={downloadModalUrl}
+          imageId={downloadModalImageId || undefined}
           imageName={initialGallery.title}
-          onClose={() => setDownloadModalUrl(null)}
+          onClose={() => {
+            setDownloadModalUrl(null);
+            setDownloadModalImageId(null);
+          }}
+          onDownloadComplete={(imageId, quality) => {
+            eventTracker.trackDownloadSingle(imageId, quality);
+          }}
         />
       )}
 
@@ -565,7 +871,11 @@ export function GalleryViewClient({
           onPrev={handleLightboxPrev}
           onNext={handleLightboxNext}
           onDownload={handleDownloadSingle}
+          onFavorite={canUseFavorites ? handleToggleFavorite : undefined}
+          showFavorites={canUseFavorites}
+          favorites={favorites}
           showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
+          customLogo={initialGallery.custom_logo}
         />
       )}
 
@@ -577,7 +887,19 @@ export function GalleryViewClient({
         expiresAt={initialGallery.expires_at}
         isDownloading={isDownloadingAll}
         isUnlocked={initialGallery.is_unlocked}
+        ownerPlan={ownerPlan}
+        selectedCount={canUseFavorites ? selectedImages.size : 0}
+        isDownloadingSelection={isDownloadingSelection}
+        favoritesCount={canUseFavorites ? favorites.size : 0}
+        isDownloadingFavorites={isDownloadingFavorites}
         onDownloadAll={handleDownloadAll}
+        onDownloadSelection={canUseFavorites ? handleDownloadSelection : undefined}
+        onDownloadFavorites={canUseFavorites ? handleDownloadFavorites : undefined}
+        onToggleSelectAll={canUseFavorites ? handleToggleSelectAll : undefined}
+        allSelected={selectedImages.size === initialGallery.images.length && initialGallery.images.length > 0}
+        customLogo={initialGallery.custom_logo}
+        onToggleTheme={toggleTheme}
+        isDark={isDark}
       />
 
       {/* Pricing Reminder Banner */}
@@ -624,16 +946,18 @@ export function GalleryViewClient({
           </div>
         )}
 
-        {/* Slideshow Button */}
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={handleSlideshowClick}
-            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
-          >
-            <Play className="w-5 h-5" fill="currentColor" />
-            <span>Lancer le diaporama</span>
-          </button>
-        </div>
+        {/* Slideshow Button - Only show if owner has Premium or Pro plan */}
+        {canUseSlideshow && (
+          <div className="mb-6 flex justify-center">
+            <button
+              onClick={handleSlideshowClick}
+              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 dark:shadow-indigo-500/10 flex items-center gap-2"
+            >
+              <Play className="w-5 h-5" fill="currentColor" />
+              <span>Lancer le diaporama</span>
+            </button>
+          </div>
+        )}
 
         {/* Photo Grid */}
         <MasonryGrid
@@ -646,44 +970,101 @@ export function GalleryViewClient({
             order_index: 0,
             created_at: '',
           }))}
-          onImageClick={setLightboxIndex}
+          onImageClick={(index) => {
+            // Track lightbox open event
+            const image = initialGallery.images[index];
+            if (image) {
+              eventTracker.trackLightboxOpen(image.id, index);
+            }
+            setLightboxIndex(index);
+          }}
           onDownload={handleDownloadSingle}
+          onToggleSelection={canUseFavorites ? handleToggleSelection : undefined}
+          selectedImages={selectedImages}
+          onFavorite={canUseFavorites ? handleToggleFavorite : undefined}
+          showFavorites={canUseFavorites}
+          favorites={favorites}
           showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
         />
 
         {/* Footer */}
-        <footer className="mt-12 md:mt-16 pt-6 border-t border-slate-200/60">
+        <footer className="mt-12 md:mt-16 pt-6 border-t border-slate-200/60 dark:border-slate-700/60">
           <div className="max-w-3xl mx-auto">
             {/* Compact CTA row */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
+              {/* Left side - Logo and branding */}
               <div className="flex items-center gap-2">
-                <Link href="/" className="flex items-center gap-1.5 group">
-                  <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow border border-slate-100 group-hover:scale-105 transition-transform">
-                    <Image 
-                      src="/icons/logo.svg" 
-                      alt="PikSend" 
-                      width={16} 
-                      height={16}
-                    />
+                {initialGallery.custom_logo && ownerPlan === 'pro' ? (
+                  // White-label footer for Pro users with custom logo
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-7 h-7 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center shadow border border-slate-100 dark:border-slate-700">
+                      <img 
+                        src={initialGallery.custom_logo} 
+                        alt="Logo" 
+                        className="w-full h-full object-contain p-0.5"
+                      />
+                    </div>
+                    {brandName ? (
+                      // Show brand name extracted from domain (e.g., "JohnDoe" from johndoe.com)
+                      <span className="text-xs font-black text-slate-700 dark:text-slate-300">{brandName}</span>
+                    ) : displayDomain ? (
+                      // Fallback to full domain if brand name extraction fails
+                      <span className="text-xs font-black text-slate-700 dark:text-slate-300">{displayDomain}</span>
+                    ) : (
+                      // Final fallback to generic text
+                      <span className="text-xs font-black text-slate-700 dark:text-slate-300">Galerie Professionnelle</span>
+                    )}
                   </div>
-                  <span className="text-xs font-black text-slate-700">PikSend</span>
-                </Link>
-                <span className="text-slate-300">•</span>
-                <span className="text-[10px] text-slate-400 font-medium">{t('gallery.publicFooter.tagline')}</span>
+                ) : (
+                  // Standard PikSend branding
+                  <>
+                    <Link 
+                      href="/" 
+                      className="flex items-center gap-1.5 group"
+                      onClick={() => {
+                        eventTracker.trackCTAClick('piksend_logo', '/');
+                      }}
+                    >
+                      <div className="w-7 h-7 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center shadow border border-slate-100 dark:border-slate-700 group-hover:scale-105 transition-transform">
+                        <Image 
+                          src="/icons/logo.svg" 
+                          alt="PikSend" 
+                          width={16} 
+                          height={16}
+                        />
+                      </div>
+                      <span className="text-xs font-black text-slate-700 dark:text-slate-300" dir="ltr">PikSend</span>
+                    </Link>
+                    <span className="text-slate-300 dark:text-slate-600">•</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{t('gallery.publicFooter.tagline')}</span>
+                  </>
+                )}
               </div>
               
+              {/* Right side - CTA buttons */}
               <div className="flex items-center gap-2">
+                {/* Only show dashboard link if not white-labeled or if gallery owner */}
+                {(ownerPlan !== 'pro' || !initialGallery.custom_logo || isGalleryOwner) && (
+                  <Link
+                    href={isGalleryOwner 
+                      ? `/auth?callbackUrl=${encodeURIComponent(`/dashboard/galleries/${initialGallery.id}`)}`
+                      : "/dashboard"
+                    }
+                    onClick={() => {
+                      eventTracker.trackCTAClick('dashboard', isGalleryOwner ? '/dashboard/galleries' : '/dashboard');
+                    }}
+                    className="text-[10px] font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                  >
+                    {t('gallery.publicFooter.accessDashboard')}
+                  </Link>
+                )}
+                
+                {/* Create gallery CTA - Link to custom domain if available, otherwise PikSend */}
                 <Link
-                  href={isGalleryOwner 
-                    ? `/auth?callbackUrl=${encodeURIComponent(`/dashboard/galleries/${initialGallery.id}`)}`
-                    : "/dashboard"
-                  }
-                  className="text-[10px] font-bold text-slate-500 hover:text-slate-700 transition-colors"
-                >
-                  {t('gallery.publicFooter.accessDashboard')}
-                </Link>
-                <Link
-                  href="/"
+                  href={domainUrl || "/"}
+                  onClick={() => {
+                    eventTracker.trackCTAClick('create_gallery', domainUrl || '/');
+                  }}
                   className="px-3 py-1.5 text-white text-[10px] font-bold rounded-lg transition-colors"
                   style={{
                     backgroundColor: 'var(--brand-primary, rgb(99 102 241))',
@@ -697,14 +1078,27 @@ export function GalleryViewClient({
                     e.currentTarget.style.backgroundColor = primary;
                   }}
                 >
-                  {t('gallery.publicFooter.createGallery')}
+                  {ownerPlan === 'pro' && initialGallery.custom_logo 
+                    ? 'Créer ma galerie' 
+                    : t('gallery.publicFooter.createGallery')
+                  }
                 </Link>
               </div>
             </div>
             
-            {/* Copyright */}
-            <p className="text-center text-[9px] text-slate-400 font-medium">
-              {t('gallery.publicFooter.poweredBy')} PikSend © {new Date().getFullYear()}
+            {/* Copyright - Adapted based on plan */}
+            <p className="text-center text-[9px] text-slate-400 dark:text-slate-500 font-medium">
+              {ownerPlan === 'pro' && initialGallery.custom_logo ? (
+                // White-label: Show custom domain or minimal text
+                displayDomain ? (
+                  <>© {new Date().getFullYear()} {displayDomain} - Tous droits réservés</>
+                ) : (
+                  <>© {new Date().getFullYear()} - Galerie sécurisée</>
+                )
+              ) : (
+                // Standard: PikSend branding
+                <>{t('gallery.publicFooter.poweredBy')} PikSend © {new Date().getFullYear()}</>
+              )}
             </p>
           </div>
         </footer>

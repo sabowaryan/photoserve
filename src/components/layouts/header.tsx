@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const isAuthenticated = status === 'authenticated' && !!session;
 
   const navLinks = [
@@ -42,7 +42,7 @@ export function Header({ showBackButton = false }: PublicHeaderProps) {
                 className="h-4 w-auto"
               />
             </div>
-            <span className="font-display text-base font-bold gradient-text">PikSend</span>
+            <span className="font-display text-base font-bold brand-text" dir="ltr">PikSend</span>
           </Link>
         </div>
 

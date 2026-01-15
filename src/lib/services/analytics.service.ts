@@ -8,11 +8,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database, GalleryAnalyticsInsert } from '@/lib/supabase/types';
 import { NotFoundError, ValidationError } from '@/lib/errors';
+import { createEventsService } from './events.service';
 
 export interface ViewMetadata {
   ip?: string;
   userAgent?: string;
   countryCode?: string;
+  visitorId?: string; // Fingerprint ID from Phase 2
 }
 
 export interface GalleryStats {
@@ -23,6 +25,33 @@ export interface GalleryStats {
   ctaClicks: number;
   favoritesCount: number;
   commentsCount: number;
+  // Phase 3: Event tracking stats
+  eventStats?: {
+    totalEvents: number;
+    eventsByType: Record<string, number>;
+    mostViewedImages: Array<{ imageId: string; views: number }>;
+    downloadStats: {
+      total: number;
+      single: number;
+      all: number;
+      selection: number;
+      favorites: number;
+    };
+    favoriteStats: {
+      added: number;
+      removed: number;
+      net: number;
+    };
+    ctaClicks: number;
+    slideshowStats: {
+      starts: number;
+      avgDuration: number;
+    };
+    sessionStats: {
+      avgDuration: number;
+      avgEventsPerSession: number;
+    };
+  };
 }
 
 export interface IAnalyticsService {
@@ -40,6 +69,7 @@ export class AnalyticsService implements IAnalyticsService {
    * Requirement 3.3.1: THE System SHALL track gallery view count
    * Requirement 3.3.2: THE System SHALL track first view timestamp
    * Requirement 3.3.3: THE System SHALL track visitor country (via IP geolocation)
+   * Phase 2: Track unique visitors via fingerprinting
    */
   async trackView(galleryId: string, metadata: ViewMetadata): Promise<void> {
     // Validate inputs
@@ -64,6 +94,7 @@ export class AnalyticsService implements IAnalyticsService {
       visitor_ip: metadata.ip || null,
       country_code: metadata.countryCode || null,
       user_agent: metadata.userAgent || null,
+      visitor_id: metadata.visitorId || null, // NEW: Fingerprint ID
     };
 
     const { error: insertError } = await this.supabase
@@ -126,13 +157,12 @@ export class AnalyticsService implements IAnalyticsService {
     // Calculate total views
     const totalViews = analyticsData.length;
 
-    // Calculate unique visitors (by IP)
-    const uniqueIPs = new Set(
-      analyticsData
-        .filter(a => a.visitor_ip)
-        .map(a => a.visitor_ip)
+    // Calculate unique visitors
+    // Priority: visitor_id (fingerprint) > visitor_ip (fallback)
+    const uniqueIdentifiers = new Set(
+      analyticsData.map(a => a.visitor_id || a.visitor_ip).filter(Boolean)
     );
-    const uniqueVisitors = uniqueIPs.size;
+    const uniqueVisitors = uniqueIdentifiers.size;
 
     // Calculate views by country
     const viewsByCountry: Record<string, number> = {};
@@ -191,14 +221,25 @@ export class AnalyticsService implements IAnalyticsService {
       commentsCount = count || 0;
     }
 
+    // Phase 3: Get event statistics
+    let eventStats = undefined;
+    try {
+      const eventsService = createEventsService(this.supabase);
+      eventStats = await eventsService.getEventStats(galleryId);
+    } catch (error) {
+      // Log error but don't fail - events table might not exist yet
+      console.error('Failed to get event stats:', error);
+    }
+
     return {
       totalViews,
       uniqueVisitors,
       viewsByCountry,
       viewsByDate,
-      ctaClicks: 0, // TODO: Implement CTA click tracking when CTA feature is added
+      ctaClicks: eventStats?.ctaClicks || 0,
       favoritesCount: favoritesCount || 0,
       commentsCount,
+      eventStats,
     };
   }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { signOut } from "next-auth/react";
 import { LogOut, Loader2, AlertCircle, X } from "lucide-react";
+import { clearSessionCache } from "@/hooks/use-cached-session";
 
 export function SignOutSection() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -18,10 +19,12 @@ export function SignOutSection() {
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      await signOut({ redirect: true, callbackUrl: "/" });
+      clearSessionCache();
+      await signOut({ redirect: false });
+      // Force un refresh complet pour vider tous les caches
+      window.location.href = "/";
     } catch (error) {
       console.error("Erreur déconnexion:", error);
-    } finally {
       setIsLoggingOut(false);
       setShowConfirm(false);
     }

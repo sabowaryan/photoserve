@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "Viimeaikainen toiminta"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "Takaisin galleriaan",
+      "subtitle": "Galleriasi tilastot ja suorituskyky",
+      "tabs": {
+        "overview": "Yleiskatsaus",
+        "engagement": "Sitoutuminen",
+        "downloads": "Lataukset",
+        "geography": "Maantiede"
+      },
+      "metrics": {
+        "totalViews": "Katselut yhteensä",
+        "visitors": "Kävijät",
+        "unique": "Uniikit",
+        "downloads": "Lataukset",
+        "interactions": "Vuorovaikutukset"
+      },
+      "viewsChart": {
+        "title": "Katselut ajan mittaan",
+        "subtitle": "Viimeiset 30 päivää",
+        "views": "katselua",
+        "noData": "Ei dataa saatavilla",
+        "viewsWillAppear": "Katselut näkyvät täällä",
+        "total": "Yhteensä",
+        "avgPerDay": "Ka/päivä",
+        "peak": "Huippu",
+        "vsPrevWeek": "vs edellinen viikko",
+        "dailyViews": "Päivittäiset katselut",
+        "average": "Keskiarvo"
+      },
+      "topImages": {
+        "title": "Suositut kuvat",
+        "subtitle": "Top 5 katsotuinta",
+        "noData": "Ei dataa saatavilla",
+        "photosWillAppear": "Katsotut kuvat näkyvät täällä",
+        "views": "katselua"
+      },
+      "eventsBreakdown": {
+        "title": "Erittely",
+        "subtitle": "Vuorovaikutustyypit",
+        "noEvents": "Ei tapahtumia",
+        "interactionsWillAppear": "Vuorovaikutukset näkyvät täällä",
+        "totalInteractions": "Vuorovaikutukset yhteensä",
+        "lightboxOpen": "Kuvia katsottu",
+        "downloadSingle": "Yksittäinen lataus",
+        "downloadAll": "Lataa kaikki",
+        "downloadSelection": "Valikoiman lataus",
+        "downloadFavorites": "Suosikkien lataus",
+        "favoriteAdd": "Suosikit +",
+        "favoriteRemove": "Suosikit -",
+        "ctaClick": "CTA-klikkaukset",
+        "slideshowStart": "Diaesitykset",
+        "slideshowEnd": "Diaesitys loppu"
+      },
+      "secondaryStats": {
+        "favorites": "Suosikit",
+        "comments": "Kommentit",
+        "slideshows": "Diaesitykset",
+        "ctaClicks": "CTA-klikkaukset"
+      },
+      "engagement": {
+        "metricsTitle": "Sitoutumismittarit",
+        "metricsSubtitle": "Istunnot ja vuorovaikutukset",
+        "avgTime": "Ka aika",
+        "avgSessionDuration": "Keskimääräinen istunnon kesto",
+        "actionsPerSession": "Toiminnot/istunto",
+        "interactionsPerVisit": "Vuorovaikutukset per käynti",
+        "slideshows": "Diaesitykset",
+        "ctaClicks": "CTA-klikkaukset",
+        "ctaClicksDesc": "Toimintopainikkeiden klikkaukset",
+        "favoritesActivity": "Suosikkitoiminta",
+        "additionsAndRemovals": "Lisäykset ja poistot",
+        "added": "Lisätty",
+        "removed": "Poistettu",
+        "net": "Netto",
+        "noData": "Ei dataa",
+        "statsWillAppear": "Tilastot näkyvät ensimmäisten vuorovaikutusten jälkeen"
+      },
+      "downloads": {
+        "byTypeTitle": "Lataukset tyypeittäin",
+        "byTypeSubtitle": "Latausten erittely",
+        "noDownloads": "Ei latauksia vielä",
+        "singlePhotos": "Yksittäiset kuvat",
+        "allPhotos": "Kaikki kuvat",
+        "selections": "Valinnat",
+        "favorites": "Suosikit",
+        "downloadRate": "Latausaste",
+        "visitorsWhoDownload": "Lataavat kävijät",
+        "total": "Yhteensä"
+      },
+      "geography": {
+        "title": "Maantieteellinen jakauma",
+        "subtitle": "Katselut maittain",
+        "detailsByCountry": "Tiedot maittain",
+        "view": "katselu",
+        "views": "katselua",
+        "noData": "Ei maantieteellistä dataa",
+        "countriesWillAppear": "Maat näkyvät ensimmäisten käyntien jälkeen",
+        "countries": "Maat",
+        "differentCountries": "eri maata",
+        "geolocatedViews": "paikannettua katselua",
+        "otherCountries": "muuta maata",
+        "rank1": "1.",
+        "rank2": "2.",
+        "rank3": "3."
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "Sivua ei löytynyt",
       "description": "Etsimääsi sivua ei ole olemassa."
+    },
+    "galleryAnalytics": {
+      "title": "Galleriatilastot | PikSend",
+      "description": "Katso galleriasi yksityiskohtaiset tilastot"
     }
   },
   "limits": {

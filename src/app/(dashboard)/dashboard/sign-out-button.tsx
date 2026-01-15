@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { LogOut, Loader2 } from "lucide-react";
+import { clearSessionCache } from "@/hooks/use-cached-session";
 
 interface SignOutButtonProps {
   variant?: "icon" | "full";
@@ -10,6 +12,7 @@ interface SignOutButtonProps {
 
 export function SignOutButton({ variant = "icon" }: SignOutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -17,11 +20,14 @@ export function SignOutButton({ variant = "icon" }: SignOutButtonProps) {
       // 1️⃣ Logout Supabase
       await fetch("/api/auth/logout", { method: "POST" });
 
-      // 2️⃣ Logout NextAuth (supprime les cookies)
-      await signOut({
-        redirect: true,
-        callbackUrl: "/",
-      });
+      // 2️⃣ Clear session cache
+      clearSessionCache();
+
+      // 3️⃣ Logout NextAuth (supprime les cookies) - sans redirection auto
+      await signOut({ redirect: false });
+
+      // 4️⃣ Force un refresh complet de la page pour vider tous les caches
+      window.location.href = "/";
     } catch (error) {
       setIsLoading(false);
     }

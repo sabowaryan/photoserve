@@ -738,6 +738,112 @@
       "galleriesCreated": "Galeries créées",
       "totalActivities": "Total d'activités"
     },
+    "galleryAnalytics": {
+      "backToGallery": "Retour à la galerie",
+      "subtitle": "Statistiques et performances de votre galerie",
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "engagement": "Engagement",
+        "downloads": "Téléchargements",
+        "geography": "Géographie"
+      },
+      "metrics": {
+        "totalViews": "Vues totales",
+        "visitors": "Visiteurs",
+        "unique": "Uniques",
+        "downloads": "Téléchargements",
+        "interactions": "Interactions"
+      },
+      "viewsChart": {
+        "title": "Vues dans le temps",
+        "subtitle": "30 derniers jours",
+        "views": "vues",
+        "noData": "Aucune donnée disponible",
+        "viewsWillAppear": "Les vues apparaîtront ici",
+        "total": "Total",
+        "avgPerDay": "Moy/jour",
+        "peak": "Pic",
+        "vsPrevWeek": "vs sem. préc.",
+        "dailyViews": "Vues quotidiennes",
+        "average": "Moyenne"
+      },
+      "topImages": {
+        "title": "Photos populaires",
+        "subtitle": "Top 5 les plus vues",
+        "noData": "Aucune donnée disponible",
+        "photosWillAppear": "Les photos vues apparaîtront ici",
+        "views": "vues"
+      },
+      "eventsBreakdown": {
+        "title": "Répartition",
+        "subtitle": "Types d'interactions",
+        "noEvents": "Aucun événement",
+        "interactionsWillAppear": "Les interactions apparaîtront ici",
+        "totalInteractions": "Total interactions",
+        "lightboxOpen": "Photos vues",
+        "downloadSingle": "Téléch. unique",
+        "downloadAll": "Téléch. tout",
+        "downloadSelection": "Téléch. sélection",
+        "downloadFavorites": "Téléch. favoris",
+        "favoriteAdd": "Favoris +",
+        "favoriteRemove": "Favoris -",
+        "ctaClick": "Clics CTA",
+        "slideshowStart": "Diaporamas",
+        "slideshowEnd": "Fin diaporama"
+      },
+      "secondaryStats": {
+        "favorites": "Favoris",
+        "comments": "Commentaires",
+        "slideshows": "Diaporamas",
+        "ctaClicks": "Clics CTA"
+      },
+      "engagement": {
+        "metricsTitle": "Métriques d'engagement",
+        "metricsSubtitle": "Sessions et interactions",
+        "avgTime": "Temps moyen",
+        "avgSessionDuration": "Durée moyenne des sessions",
+        "actionsPerSession": "Actions/session",
+        "interactionsPerVisit": "Interactions par visite",
+        "slideshows": "Diaporamas",
+        "ctaClicks": "Clics CTA",
+        "ctaClicksDesc": "Clics sur boutons d'action",
+        "favoritesActivity": "Activité des favoris",
+        "additionsAndRemovals": "Ajouts et retraits",
+        "added": "Ajoutés",
+        "removed": "Retirés",
+        "net": "Net",
+        "noData": "Aucune donnée",
+        "statsWillAppear": "Les statistiques apparaîtront après les premières interactions"
+      },
+      "downloads": {
+        "byTypeTitle": "Téléchargements par type",
+        "byTypeSubtitle": "Répartition des téléchargements",
+        "noDownloads": "Aucun téléchargement pour le moment",
+        "singlePhotos": "Photos uniques",
+        "allPhotos": "Toutes les photos",
+        "selections": "Sélections",
+        "favorites": "Favoris",
+        "downloadRate": "Taux de téléchargement",
+        "visitorsWhoDownload": "Visiteurs qui téléchargent",
+        "total": "Total"
+      },
+      "geography": {
+        "title": "Distribution géographique",
+        "subtitle": "Vues par pays",
+        "detailsByCountry": "Détails par pays",
+        "view": "vue",
+        "views": "vues",
+        "noData": "Aucune donnée géographique",
+        "countriesWillAppear": "Les pays apparaîtront après les premières visites",
+        "countries": "Pays",
+        "differentCountries": "pays différents",
+        "geolocatedViews": "vues géolocalisées",
+        "otherCountries": "autres pays",
+        "rank1": "1er",
+        "rank2": "2e",
+        "rank3": "3e"
+      }
+    },
     "auditLogs": {
       "title": "Journaux d'audit",
       "subtitle": "Historique des activités système",
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "Page non trouvée",
       "description": "La page que vous recherchez n'existe pas."
+    },
+    "galleryAnalytics": {
+      "title": "Statistiques de la galerie | PikSend",
+      "description": "Consultez les statistiques détaillées de votre galerie"
     }
   },
   "limits": {

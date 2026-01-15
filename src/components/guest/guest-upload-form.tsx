@@ -11,7 +11,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { useSession } from 'next-auth/react';
+import { useCachedSession } from '@/hooks/use-cached-session';
 import { useRouter } from 'next/navigation';
 import { UploadCloud, X, Image as ImageIcon, AlertCircle, Check, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/context';
@@ -45,7 +45,7 @@ interface GuestUploadFormProps {
 
 export function GuestUploadForm({ onUploadComplete, onError, className }: GuestUploadFormProps) {
   const { t } = useTranslation();
-  const { data: session, status } = useSession();
+  const { data: session, status } = useCachedSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   

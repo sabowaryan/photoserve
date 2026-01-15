@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "최근 활동"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "갤러리로 돌아가기",
+      "subtitle": "갤러리 통계 및 성과",
+      "tabs": {
+        "overview": "개요",
+        "engagement": "참여",
+        "downloads": "다운로드",
+        "geography": "지역"
+      },
+      "metrics": {
+        "totalViews": "총 조회수",
+        "visitors": "방문자",
+        "unique": "고유",
+        "downloads": "다운로드",
+        "interactions": "상호작용"
+      },
+      "viewsChart": {
+        "title": "시간별 조회수",
+        "subtitle": "최근 30일",
+        "views": "조회",
+        "noData": "데이터 없음",
+        "viewsWillAppear": "조회수가 여기에 표시됩니다",
+        "total": "총",
+        "avgPerDay": "일 평균",
+        "peak": "최고",
+        "vsPrevWeek": "전주 대비",
+        "dailyViews": "일별 조회수",
+        "average": "평균"
+      },
+      "topImages": {
+        "title": "인기 사진",
+        "subtitle": "조회수 상위 5개",
+        "noData": "데이터 없음",
+        "photosWillAppear": "조회된 사진이 여기에 표시됩니다",
+        "views": "조회"
+      },
+      "eventsBreakdown": {
+        "title": "분석",
+        "subtitle": "상호작용 유형",
+        "noEvents": "이벤트 없음",
+        "interactionsWillAppear": "상호작용이 여기에 표시됩니다",
+        "totalInteractions": "총 상호작용",
+        "lightboxOpen": "사진 조회",
+        "downloadSingle": "단일 다운로드",
+        "downloadAll": "전체 다운로드",
+        "downloadSelection": "선택 다운로드",
+        "downloadFavorites": "즐겨찾기 다운로드",
+        "favoriteAdd": "즐겨찾기 추가",
+        "favoriteRemove": "즐겨찾기 제거",
+        "ctaClick": "CTA 클릭",
+        "slideshowStart": "슬라이드쇼",
+        "slideshowEnd": "슬라이드쇼 종료"
+      },
+      "secondaryStats": {
+        "favorites": "즐겨찾기",
+        "comments": "댓글",
+        "slideshows": "슬라이드쇼",
+        "ctaClicks": "CTA 클릭"
+      },
+      "engagement": {
+        "metricsTitle": "참여 지표",
+        "metricsSubtitle": "세션 및 상호작용",
+        "avgTime": "평균 시간",
+        "avgSessionDuration": "평균 세션 시간",
+        "actionsPerSession": "세션당 작업",
+        "interactionsPerVisit": "방문당 상호작용",
+        "slideshows": "슬라이드쇼",
+        "ctaClicks": "CTA 클릭",
+        "ctaClicksDesc": "액션 버튼 클릭",
+        "favoritesActivity": "즐겨찾기 활동",
+        "additionsAndRemovals": "추가 및 제거",
+        "added": "추가됨",
+        "removed": "제거됨",
+        "net": "순",
+        "noData": "데이터 없음",
+        "statsWillAppear": "첫 상호작용 후 통계가 표시됩니다"
+      },
+      "downloads": {
+        "byTypeTitle": "유형별 다운로드",
+        "byTypeSubtitle": "다운로드 분석",
+        "noDownloads": "아직 다운로드 없음",
+        "singlePhotos": "단일 사진",
+        "allPhotos": "모든 사진",
+        "selections": "선택",
+        "favorites": "즐겨찾기",
+        "downloadRate": "다운로드율",
+        "visitorsWhoDownload": "다운로드한 방문자",
+        "total": "총"
+      },
+      "geography": {
+        "title": "지역 분포",
+        "subtitle": "국가별 조회수",
+        "detailsByCountry": "국가별 상세",
+        "view": "조회",
+        "views": "조회",
+        "noData": "지역 데이터 없음",
+        "countriesWillAppear": "첫 방문 후 국가가 표시됩니다",
+        "countries": "국가",
+        "differentCountries": "다른 국가",
+        "geolocatedViews": "위치 기반 조회",
+        "otherCountries": "기타 국가",
+        "rank1": "1위",
+        "rank2": "2위",
+        "rank3": "3위"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "페이지를 찾을 수 없습니다",
       "description": "찾으시는 페이지가 존재하지 않습니다."
+    },
+    "galleryAnalytics": {
+      "title": "갤러리 분석 | PikSend",
+      "description": "갤러리의 상세 분석 보기"
     }
   },
   "limits": {

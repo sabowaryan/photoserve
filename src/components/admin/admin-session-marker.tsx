@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useCachedSession } from "@/hooks/use-cached-session";
 
 /**
  * Admin Session Marker Component
@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
  * This ensures admin_login is only logged once per session.
  */
 export function AdminSessionMarker() {
-  const { data: session, update } = useSession();
+  const { data: session, update } = useCachedSession();
   const hasMarked = useRef(false);
 
   useEffect(() => {

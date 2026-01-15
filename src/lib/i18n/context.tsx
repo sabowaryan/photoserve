@@ -98,6 +98,11 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
     if (!initialLocale) {
       const detected = languageDetector.detect();
       setLocaleState(detected);
+      // Sync cookie with detected/stored locale for server-side access
+      document.cookie = `piksend_locale=${detected};path=/;max-age=31536000;SameSite=Lax`;
+    } else {
+      // Sync cookie with initial locale
+      document.cookie = `piksend_locale=${initialLocale};path=/;max-age=31536000;SameSite=Lax`;
     }
     setIsHydrated(true);
   }, [initialLocale]);
@@ -107,10 +112,15 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
     RTLManager.applyDirection(locale);
   }, [locale]);
 
-  // Set locale and persist to localStorage
+  // Set locale and persist to localStorage and cookie
   const setLocale = useCallback((newLocale: SupportedLocale) => {
     setLocaleState(newLocale);
     languageDetector.setPreference(newLocale);
+    // Also set a cookie for server-side access
+    document.cookie = `piksend_locale=${newLocale};path=/;max-age=31536000;SameSite=Lax`;
+    
+    // Force page refresh to update server-rendered metadata (title, description)
+    window.location.reload();
   }, []);
 
   // Translation function

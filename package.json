@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.11.1",
+    "@fingerprintjs/fingerprintjs": "^5.0.1",
+    "@google/genai": "^1.36.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -53,7 +55,9 @@
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "country-flag-icons": "^1.6.4",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
     "gray-matter": "^4.0.3",
     "input-otp": "^1.4.2",

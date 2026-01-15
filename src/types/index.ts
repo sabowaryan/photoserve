@@ -226,6 +226,36 @@ export interface GalleryStats {
   ctaClicks: number;
   favoritesCount: number;
   commentsCount: number;
+  // Phase 3: Event tracking stats
+  eventStats?: EventStats;
+}
+
+// Event statistics from Phase 3
+export interface EventStats {
+  totalEvents: number;
+  eventsByType: Record<string, number>;
+  mostViewedImages: Array<{ imageId: string; views: number }>;
+  downloadStats: {
+    total: number;
+    single: number;
+    all: number;
+    selection: number;
+    favorites: number;
+  };
+  favoriteStats: {
+    added: number;
+    removed: number;
+    net: number;
+  };
+  ctaClicks: number;
+  slideshowStats: {
+    starts: number;
+    avgDuration: number;
+  };
+  sessionStats: {
+    avgDuration: number;
+    avgEventsPerSession: number;
+  };
 }
 
 // View metadata for analytics tracking
@@ -233,6 +263,7 @@ export interface ViewMetadata {
   ip?: string;
   userAgent?: string;
   countryCode?: string;
+  visitorId?: string; // Unique visitor ID from fingerprinting
 }
 
 // Face detection result from AI
@@ -306,11 +337,21 @@ export interface GallerySettings {
 
 // Profile branding configuration
 export interface ProfileBranding {
+  // Existing branding fields
   customLogo?: string;
-  customDomain?: string;
   brandColors?: BrandColors;
   profileSlug?: string;
   profileBio?: string;
+  
+  // Custom domain configuration fields (Requirements 7.1-7.6)
+  customDomain?: string; // The custom domain (e.g., photos.example.com)
+  domainVerified?: boolean; // Whether the domain ownership has been verified
+  verificationToken?: string; // Unique token for TXT record verification
+  domainVerifiedAt?: string; // ISO timestamp when domain was verified
+  sslCertificateId?: string; // SSL certificate identifier
+  sslProvider?: 'cloudflare' | 'letsencrypt'; // SSL certificate provider
+  sslExpiresAt?: string; // ISO timestamp when SSL certificate expires
+  cloudflareZoneId?: string; // Cloudflare zone ID for DNS management
 }
 
 // Favorite record

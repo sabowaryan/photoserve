@@ -1,0 +1,268 @@
+/* Gallery-specific dark mode styles */
+/* This allows dark mode only in the gallery without affecting the rest of the app */
+
+[data-gallery-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Adjust brand colors for dark mode - make them slightly lighter and more vibrant */
+[data-gallery-theme="dark"] {
+  /* If custom brand colors are set, we adjust them for better visibility in dark mode */
+  /* This uses CSS filters to lighten and increase saturation */
+  --brand-primary-dark: color-mix(in srgb, var(--brand-primary, rgb(99 102 241)) 85%, white);
+  --brand-secondary-dark: color-mix(in srgb, var(--brand-secondary, rgb(139 92 246)) 85%, white);
+  --brand-accent-dark: color-mix(in srgb, var(--brand-accent, rgb(236 72 153)) 85%, white);
+}
+
+/* Apply adjusted brand colors to elements in dark mode */
+[data-gallery-theme="dark"] [style*="--brand-primary"] {
+  /* Elements using brand colors will automatically use the adjusted versions */
+  filter: brightness(1.1) saturate(1.1);
+}
+
+/* Apply dark mode styles to all Tailwind dark: classes within gallery */
+/* Background gradients */
+[data-gallery-theme="dark"] .dark\:from-slate-950,
+[data-gallery-theme="dark"] .dark\:from-slate-900 {
+  --tw-gradient-from: rgb(15 23 42);
+  --tw-gradient-to: rgb(15 23 42 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+[data-gallery-theme="dark"] .dark\:from-white {
+  --tw-gradient-from: rgb(15 23 42);
+  --tw-gradient-to: rgb(15 23 42 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+[data-gallery-theme="dark"] .dark\:via-slate-900 {
+  --tw-gradient-to: rgb(15 23 42 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(15 23 42), var(--tw-gradient-to);
+}
+
+[data-gallery-theme="dark"] .dark\:via-slate-900\/95 {
+  --tw-gradient-to: rgb(15 23 42 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(15 23 42 / 0.95), var(--tw-gradient-to);
+}
+
+[data-gallery-theme="dark"] .dark\:via-white\/95 {
+  --tw-gradient-to: rgb(15 23 42 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(15 23 42 / 0.95), var(--tw-gradient-to);
+}
+
+[data-gallery-theme="dark"] .dark\:to-slate-950,
+[data-gallery-theme="dark"] .dark\:to-slate-900\/0,
+[data-gallery-theme="dark"] .dark\:to-white\/0 {
+  --tw-gradient-to: rgb(15 23 42 / 0);
+}
+
+/* Background colors */
+[data-gallery-theme="dark"] .dark\:bg-white {
+  background-color: rgb(30 41 59);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-50\/80 {
+  background-color: rgb(15 23 42 / 0.8);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-100 {
+  background-color: rgb(30 41 59);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-200 {
+  background-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-700 {
+  background-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-800 {
+  background-color: rgb(30 41 59);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-800\/90 {
+  background-color: rgb(30 41 59 / 0.9);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-900 {
+  background-color: rgb(15 23 42);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-900\/50 {
+  background-color: rgb(15 23 42 / 0.5);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-slate-900\/30 {
+  background-color: rgb(15 23 42 / 0.3);
+}
+
+/* Text colors */
+[data-gallery-theme="dark"] .dark\:text-slate-100 {
+  color: rgb(241 245 249);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-200 {
+  color: rgb(226 232 240);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-300 {
+  color: rgb(203 213 225);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-400 {
+  color: rgb(148 163 184);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-500 {
+  color: rgb(100 116 139);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-600 {
+  color: rgb(71 85 105);
+}
+
+[data-gallery-theme="dark"] .dark\:text-slate-700 {
+  color: rgb(51 65 85);
+}
+
+/* Border colors */
+[data-gallery-theme="dark"] .dark\:border-slate-100 {
+  border-color: rgb(30 41 59);
+}
+
+[data-gallery-theme="dark"] .dark\:border-slate-200 {
+  border-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:border-slate-600 {
+  border-color: rgb(71 85 105);
+}
+
+[data-gallery-theme="dark"] .dark\:border-slate-700 {
+  border-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:border-slate-700\/80 {
+  border-color: rgb(51 65 85 / 0.8);
+}
+
+[data-gallery-theme="dark"] .dark\:border-slate-700\/60 {
+  border-color: rgb(51 65 85 / 0.6);
+}
+
+/* Hover states */
+[data-gallery-theme="dark"] .dark\:hover\:bg-slate-100:hover {
+  background-color: rgb(30 41 59);
+}
+
+[data-gallery-theme="dark"] .dark\:hover\:bg-slate-200:hover {
+  background-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:hover\:bg-slate-700:hover {
+  background-color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:hover\:text-slate-200:hover {
+  color: rgb(226 232 240);
+}
+
+/* Selection */
+[data-gallery-theme="dark"] .dark\:selection\:bg-indigo-900 ::selection {
+  background-color: rgb(49 46 129);
+}
+
+[data-gallery-theme="dark"] .dark\:selection\:text-indigo-100 ::selection {
+  color: rgb(224 231 255);
+}
+
+/* Shadows */
+[data-gallery-theme="dark"] .dark\:shadow-indigo-500\/10 {
+  --tw-shadow-color: rgb(99 102 241 / 0.1);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+[data-gallery-theme="dark"] .dark\:shadow-slate-900\/50 {
+  --tw-shadow-color: rgb(15 23 42 / 0.5);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+/* Opacity adjustments for background decorations */
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:opacity-\[0\.12\] {
+  opacity: 0.12;
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:opacity-\[0\.10\] {
+  opacity: 0.10;
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:opacity-\[0\.08\] {
+  opacity: 0.08;
+}
+
+/* Blur adjustments for background decorations */
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:blur-\[100px\] {
+  --tw-blur: blur(100px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:blur-\[80px\] {
+  --tw-blur: blur(80px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:blur-\[120px\] {
+  --tw-blur: blur(120px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:blur-\[150px\] {
+  --tw-blur: blur(150px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:blur-\[200px\] {
+  --tw-blur: blur(200px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:md\:blur-\[150px\] {
+  --tw-blur: blur(150px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:md\:blur-\[120px\] {
+  --tw-blur: blur(120px);
+  filter: var(--tw-blur);
+}
+
+[data-gallery-theme="dark"] .data-\[gallery-theme\=dark\]\:md\:blur-\[200px\] {
+  --tw-blur: blur(200px);
+  filter: var(--tw-blur);
+}
+
+/* Special colors for badges and accents */
+[data-gallery-theme="dark"] .dark\:bg-emerald-900\/30 {
+  background-color: rgb(6 78 59 / 0.3);
+}
+
+[data-gallery-theme="dark"] .dark\:text-emerald-400 {
+  color: rgb(52 211 153);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-rose-900\/30 {
+  background-color: rgb(136 19 55 / 0.3);
+}
+
+[data-gallery-theme="dark"] .dark\:text-rose-400 {
+  color: rgb(251 113 133);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-amber-900\/30 {
+  background-color: rgb(120 53 15 / 0.3);
+}
+
+[data-gallery-theme="dark"] .dark\:text-amber-400 {
+  color: rgb(251 191 36);
+}

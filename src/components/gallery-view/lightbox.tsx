@@ -13,7 +13,7 @@ interface LightboxProps {
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
-  onDownload: (url: string) => void;
+  onDownload: (url: string, imageId?: string) => void;
   onFavorite?: (imageId: string) => void;
   onComment?: (imageId: string, comment: string) => void;
   /** Whether to show watermark overlay on images */
@@ -24,6 +24,8 @@ interface LightboxProps {
   favorites?: Set<string>;
   /** Whether to show comments section */
   showComments?: boolean;
+  /** Custom logo URL */
+  customLogo?: string | null;
 }
 
 export function Lightbox({ 
@@ -39,7 +41,8 @@ export function Lightbox({
   showWatermark = false,
   showFavorites = false,
   favorites = new Set(),
-  showComments = false
+  showComments = false,
+  customLogo = null
 }: LightboxProps) {
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -76,9 +79,9 @@ export function Lightbox({
   if (!currentImage) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[200] flex flex-col animate-[fadeIn_0.3s_ease-out_forwards]" style={{ opacity: 0 }}>
       <div 
-        className="absolute inset-0 bg-slate-950/98 backdrop-blur-2xl" 
+        className="absolute inset-0 bg-black/95 dark:bg-black/98 backdrop-blur-2xl" 
         onClick={onClose}
       />
       
@@ -89,17 +92,25 @@ export function Lightbox({
         
         <div className="relative flex items-center gap-3 text-white">
           <div className="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center">
-            <Image 
-              src="/icons/logo.svg" 
-              alt="PikSend" 
-              width={18} 
-              height={18}
-            />
+            {customLogo ? (
+              <img 
+                src={customLogo} 
+                alt="Logo" 
+                className="w-full h-full object-contain p-0.5"
+              />
+            ) : (
+              <Image 
+                src="/icons/logo.svg" 
+                alt="PikSend" 
+                width={18} 
+                height={18}
+              />
+            )}
           </div>
           <div className="w-px h-6 bg-white/10 hidden sm:block" />
           <div className="hidden sm:block">
             <h3 className="text-xs font-black uppercase tracking-wider">{title}</h3>
-            <p className="text-[9px] text-white/40 font-bold uppercase tracking-wider mt-0.5">
+            <p className="text-[9px] text-white/40 font-bold uppercase tracking-wider mt-0.5" dir="ltr">
               PikSend Gallery
             </p>
           </div>
@@ -140,11 +151,17 @@ export function Lightbox({
               <div className="relative">
                 <img 
                   src={currentImage.cloudinary_url} 
-                  className="max-w-full h-auto object-contain rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] animate-in zoom-in duration-500" 
+                  className="max-w-full h-auto object-contain rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] animate-[scaleIn_0.5s_ease-out_forwards]" 
+                  style={{ opacity: 0 }}
                   alt={`Photo ${currentIndex + 1}`} 
                 />
                 {/* Watermark overlay for free guest galleries - Requirements 2.1, 2.2 */}
-                <WatermarkOverlay visible={showWatermark} position="bottom-right" opacity={30} />
+                <WatermarkOverlay 
+                  visible={showWatermark} 
+                  position="bottom-center" 
+                  opacity={60}
+                  size="md"
+                />
               </div>
             </div>
             
@@ -223,37 +240,42 @@ export function Lightbox({
         </div>
       </div>
       
-      {/* Bottom Controls - Fixed position */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[210] flex items-center gap-6 px-6 py-3 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl">
-        <span className="text-xs font-black text-white uppercase tracking-wider">
-          {currentIndex + 1} <span className="text-white/30">/ {images.length}</span>
-        </span>
-        <div className="w-px h-5 bg-white/10" />
-        
-        {/* Favorite Button */}
-        {showFavorites && onFavorite && (
-          <>
-            <button
-              onClick={() => onFavorite(currentImage.id)}
-              className="flex items-center gap-2 text-[10px] font-black text-white uppercase tracking-wider hover:text-red-400 transition-colors"
-              aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-            >
-              <Heart 
-                size={14} 
-                className={isFavorite ? 'fill-red-500 text-red-500' : ''}
-              />
-              {isFavorite ? 'Favori' : 'Favoris'}
-            </button>
-            <div className="w-px h-5 bg-white/10" />
-          </>
-        )}
-        
-        <button 
-          onClick={() => onDownload(currentImage.cloudinary_url)}
-          className="flex items-center gap-2 text-[10px] font-black text-white uppercase tracking-wider hover:text-indigo-400 transition-colors"
-        >
-          <Download size={14} /> Télécharger
-        </button>
+      {/* Bottom Controls - Fixed position with safe area for mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-[210] pb-safe">
+        <div className="flex items-center justify-center gap-2 md:gap-6 px-3 md:px-6 py-3 md:py-4 mx-4 mb-4 md:mx-auto md:mb-6 md:max-w-fit bg-white/5 backdrop-blur-3xl border border-white/10 rounded-xl md:rounded-2xl shadow-2xl">
+          <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-wider">
+            {currentIndex + 1} <span className="text-white/30">/ {images.length}</span>
+          </span>
+          <div className="w-px h-4 md:h-5 bg-white/10" />
+          
+          {/* Favorite Button */}
+          {showFavorites && onFavorite && (
+            <>
+              <button
+                onClick={() => onFavorite(currentImage.id)}
+                className="flex items-center gap-1 md:gap-2 text-[10px] font-black text-white uppercase tracking-wider hover:text-red-400 transition-colors p-2 md:p-0 -m-2 md:m-0"
+                aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+              >
+                <Heart 
+                  size={16} 
+                  className={isFavorite ? 'fill-red-500 text-red-500' : ''}
+                />
+                <span className="hidden sm:inline">{isFavorite ? 'Favori' : 'Favoris'}</span>
+              </button>
+              <div className="w-px h-4 md:h-5 bg-white/10" />
+            </>
+          )}
+          
+          <button 
+            onClick={() => onDownload(currentImage.cloudinary_url, currentImage.id)}
+            className="flex items-center gap-1 md:gap-2 text-[10px] font-black text-white uppercase tracking-wider hover:text-indigo-400 transition-colors p-2 md:p-0 -m-2 md:m-0"
+            title="Télécharger"
+          >
+            <Download size={16} /> 
+            <span className="hidden sm:inline">Télécharger</span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -384,7 +384,8 @@ export class TranslationKeyGenerator {
 
   /**
    * Synchronize all locale files to match the reference locale structure
-   * Adds missing keys with placeholder values
+   * Adds missing keys with the reference locale values (English fallback)
+   * Also replaces any existing [TODO: xx] placeholders with English values
    */
   synchronizeLocales(): void {
     const localeFiles = this.getLocaleFiles();
@@ -398,13 +399,17 @@ export class TranslationKeyGenerator {
       
       const content = this.readLocaleFile(locale);
       
-      // Add missing keys with placeholder values
+      // Add missing keys or replace [TODO:] placeholders with reference locale values
       for (const key of referenceKeys) {
-        if (this.getNestedValue(content, key) === undefined) {
-          const refValue = this.getNestedValue(referenceContent, key);
-          // Use placeholder that indicates translation needed
-          const placeholder = `[TODO: ${locale}] ${refValue}`;
-          this.setNestedKey(content, key, placeholder);
+        const currentValue = this.getNestedValue(content, key);
+        const refValue = this.getNestedValue(referenceContent, key);
+        
+        // Replace if undefined or if it's a TODO placeholder
+        const isTodoPlaceholder = typeof currentValue === 'string' && currentValue.startsWith('[TODO:');
+        
+        if (currentValue === undefined || isTodoPlaceholder) {
+          // Use the English value as fallback (will display in English until translated)
+          this.setNestedKey(content, key, String(refValue));
         }
       }
       
@@ -588,7 +593,7 @@ Commands:
 
   sync
     Synchronize all locale files to match the reference locale (en).
-    Adds missing keys with placeholder values.
+    Adds missing keys with English values as fallback.
 
   list [section] [locale]
     List all translation keys, optionally filtered by section.

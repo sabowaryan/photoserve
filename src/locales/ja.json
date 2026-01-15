@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "最近のアクティビティ"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "ギャラリーに戻る",
+      "subtitle": "ギャラリーの統計とパフォーマンス",
+      "tabs": {
+        "overview": "概要",
+        "engagement": "エンゲージメント",
+        "downloads": "ダウンロード",
+        "geography": "地域"
+      },
+      "metrics": {
+        "totalViews": "総閲覧数",
+        "visitors": "訪問者",
+        "unique": "ユニーク",
+        "downloads": "ダウンロード",
+        "interactions": "インタラクション"
+      },
+      "viewsChart": {
+        "title": "閲覧数の推移",
+        "subtitle": "過去30日間",
+        "views": "閲覧",
+        "noData": "データがありません",
+        "viewsWillAppear": "閲覧数がここに表示されます",
+        "total": "合計",
+        "avgPerDay": "日平均",
+        "peak": "ピーク",
+        "vsPrevWeek": "前週比",
+        "dailyViews": "日別閲覧数",
+        "average": "平均"
+      },
+      "topImages": {
+        "title": "人気の写真",
+        "subtitle": "閲覧数トップ5",
+        "noData": "データがありません",
+        "photosWillAppear": "閲覧された写真がここに表示されます",
+        "views": "閲覧"
+      },
+      "eventsBreakdown": {
+        "title": "内訳",
+        "subtitle": "インタラクションの種類",
+        "noEvents": "イベントなし",
+        "interactionsWillAppear": "インタラクションがここに表示されます",
+        "totalInteractions": "総インタラクション",
+        "lightboxOpen": "写真閲覧",
+        "downloadSingle": "単体ダウンロード",
+        "downloadAll": "全てダウンロード",
+        "downloadSelection": "選択ダウンロード",
+        "downloadFavorites": "お気に入りダウンロード",
+        "favoriteAdd": "お気に入り追加",
+        "favoriteRemove": "お気に入り削除",
+        "ctaClick": "CTAクリック",
+        "slideshowStart": "スライドショー",
+        "slideshowEnd": "スライドショー終了"
+      },
+      "secondaryStats": {
+        "favorites": "お気に入り",
+        "comments": "コメント",
+        "slideshows": "スライドショー",
+        "ctaClicks": "CTAクリック"
+      },
+      "engagement": {
+        "metricsTitle": "エンゲージメント指標",
+        "metricsSubtitle": "セッションとインタラクション",
+        "avgTime": "平均時間",
+        "avgSessionDuration": "平均セッション時間",
+        "actionsPerSession": "アクション/セッション",
+        "interactionsPerVisit": "訪問あたりのインタラクション",
+        "slideshows": "スライドショー",
+        "ctaClicks": "CTAクリック",
+        "ctaClicksDesc": "アクションボタンのクリック",
+        "favoritesActivity": "お気に入りアクティビティ",
+        "additionsAndRemovals": "追加と削除",
+        "added": "追加",
+        "removed": "削除",
+        "net": "純増",
+        "noData": "データなし",
+        "statsWillAppear": "最初のインタラクション後に統計が表示されます"
+      },
+      "downloads": {
+        "byTypeTitle": "種類別ダウンロード",
+        "byTypeSubtitle": "ダウンロードの内訳",
+        "noDownloads": "まだダウンロードがありません",
+        "singlePhotos": "単体写真",
+        "allPhotos": "全ての写真",
+        "selections": "選択",
+        "favorites": "お気に入り",
+        "downloadRate": "ダウンロード率",
+        "visitorsWhoDownload": "ダウンロードした訪問者",
+        "total": "合計"
+      },
+      "geography": {
+        "title": "地域分布",
+        "subtitle": "国別閲覧数",
+        "detailsByCountry": "国別詳細",
+        "view": "閲覧",
+        "views": "閲覧",
+        "noData": "地域データがありません",
+        "countriesWillAppear": "最初の訪問後に国が表示されます",
+        "countries": "国",
+        "differentCountries": "異なる国",
+        "geolocatedViews": "位置情報付き閲覧",
+        "otherCountries": "その他の国",
+        "rank1": "1位",
+        "rank2": "2位",
+        "rank3": "3位"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "ページが見つかりません",
       "description": "お探しのページは存在しません。"
+    },
+    "galleryAnalytics": {
+      "title": "ギャラリー分析 | PikSend",
+      "description": "ギャラリーの詳細な分析を表示"
     }
   },
   "limits": {

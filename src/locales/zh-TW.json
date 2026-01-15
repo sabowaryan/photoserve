@@ -750,6 +750,112 @@
     },
     "recentActivity": {
       "title": "最近活動"
+    },
+    "galleryAnalytics": {
+      "backToGallery": "返回相簿",
+      "subtitle": "相簿統計和效能",
+      "tabs": {
+        "overview": "概覽",
+        "engagement": "互動",
+        "downloads": "下載",
+        "geography": "地區"
+      },
+      "metrics": {
+        "totalViews": "總瀏覽量",
+        "visitors": "訪客",
+        "unique": "獨立",
+        "downloads": "下載",
+        "interactions": "互動"
+      },
+      "viewsChart": {
+        "title": "瀏覽量趨勢",
+        "subtitle": "過去30天",
+        "views": "瀏覽",
+        "noData": "暫無資料",
+        "viewsWillAppear": "瀏覽量將顯示在這裡",
+        "total": "總計",
+        "avgPerDay": "日均",
+        "peak": "峰值",
+        "vsPrevWeek": "較上週",
+        "dailyViews": "每日瀏覽量",
+        "average": "平均"
+      },
+      "topImages": {
+        "title": "熱門照片",
+        "subtitle": "瀏覽量前5",
+        "noData": "暫無資料",
+        "photosWillAppear": "已瀏覽的照片將顯示在這裡",
+        "views": "瀏覽"
+      },
+      "eventsBreakdown": {
+        "title": "分析",
+        "subtitle": "互動類型",
+        "noEvents": "暫無事件",
+        "interactionsWillAppear": "互動將顯示在這裡",
+        "totalInteractions": "總互動",
+        "lightboxOpen": "照片瀏覽",
+        "downloadSingle": "單張下載",
+        "downloadAll": "全部下載",
+        "downloadSelection": "選擇下載",
+        "downloadFavorites": "收藏下載",
+        "favoriteAdd": "新增收藏",
+        "favoriteRemove": "移除收藏",
+        "ctaClick": "CTA點擊",
+        "slideshowStart": "幻燈片",
+        "slideshowEnd": "幻燈片結束"
+      },
+      "secondaryStats": {
+        "favorites": "收藏",
+        "comments": "評論",
+        "slideshows": "幻燈片",
+        "ctaClicks": "CTA點擊"
+      },
+      "engagement": {
+        "metricsTitle": "互動指標",
+        "metricsSubtitle": "工作階段和互動",
+        "avgTime": "平均時間",
+        "avgSessionDuration": "平均工作階段時長",
+        "actionsPerSession": "每工作階段操作",
+        "interactionsPerVisit": "每次訪問互動",
+        "slideshows": "幻燈片",
+        "ctaClicks": "CTA點擊",
+        "ctaClicksDesc": "操作按鈕點擊",
+        "favoritesActivity": "收藏活動",
+        "additionsAndRemovals": "新增和移除",
+        "added": "已新增",
+        "removed": "已移除",
+        "net": "淨增",
+        "noData": "暫無資料",
+        "statsWillAppear": "首次互動後將顯示統計資料"
+      },
+      "downloads": {
+        "byTypeTitle": "按類型下載",
+        "byTypeSubtitle": "下載分析",
+        "noDownloads": "暫無下載",
+        "singlePhotos": "單張照片",
+        "allPhotos": "全部照片",
+        "selections": "選擇",
+        "favorites": "收藏",
+        "downloadRate": "下載率",
+        "visitorsWhoDownload": "下載訪客",
+        "total": "總計"
+      },
+      "geography": {
+        "title": "地區分佈",
+        "subtitle": "按國家瀏覽量",
+        "detailsByCountry": "按國家詳情",
+        "view": "瀏覽",
+        "views": "瀏覽",
+        "noData": "暫無地區資料",
+        "countriesWillAppear": "首次訪問後將顯示國家",
+        "countries": "國家",
+        "differentCountries": "不同國家",
+        "geolocatedViews": "定位瀏覽",
+        "otherCountries": "其他國家",
+        "rank1": "第1",
+        "rank2": "第2",
+        "rank3": "第3"
+      }
     }
   },
   "errors": {
@@ -1003,6 +1109,10 @@
     "pageNotFound": {
       "title": "找不到頁面",
       "description": "您尋找的頁面不存在。"
+    },
+    "galleryAnalytics": {
+      "title": "相簿分析 | PikSend",
+      "description": "查看相簿的詳細分析"
     }
   },
   "limits": {
