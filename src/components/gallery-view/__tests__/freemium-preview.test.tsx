@@ -12,9 +12,8 @@
  * - Lightbox showing low-res with watermark
  * - "Unlock HD" button in lightbox
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { WatermarkOverlay } from '@/components/gallery/watermark-overlay';
 import { UnlockBanner } from '../unlock-banner';
 import { Lightbox } from '../lightbox';

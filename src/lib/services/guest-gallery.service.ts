@@ -197,7 +197,7 @@ export class GuestGalleryService implements IGuestGalleryService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Gallery[];
   }
 
   /**

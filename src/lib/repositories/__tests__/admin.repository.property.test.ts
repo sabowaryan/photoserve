@@ -5,7 +5,7 @@
  * Tests dashboard stats accuracy, user search filtering, gallery filtering, and analytics date range filtering
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import * as fc from 'fast-check';
 import { AdminRepository } from '../admin.repository';
 import type { SupabaseClient } from '@supabase/supabase-js';
