@@ -6,9 +6,11 @@
  * Requirements: 3.3.1, 3.3.2, 3.3.3, 3.3.4
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, GalleryAnalyticsInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { createEventsService } from './events.service';
+
+type GalleryAnalyticsInsert = Database['public']['Tables']['gallery_analytics']['Insert'];
 
 export interface ViewMetadata {
   ip?: string;

@@ -4,22 +4,26 @@
  * 
  * @module lib/services/gallery-purchase.service
  * Requirements: 3.1, 3.2, 3.3 - Payment Processing, Access Grant, Access Verification
+ * Requirements: 11.1 - Caching Strategy (5 minute cache for purchase verification)
  */
 import { getStripe } from '@/lib/stripe/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 import { AppError, NotFoundError, ValidationError } from '@/lib/errors';
 import Stripe from 'stripe';
+import {
+  getCacheService,
+  ICacheService,
+  CACHE_TTL,
+  CACHE_PREFIX,
+  buildCacheKey,
+  CacheInvalidation,
+} from './cache.service';
 
 /**
  * Platform fee percentage (10%)
  */
 const PLATFORM_FEE_PERCENT = 10;
-
-/**
- * Cache TTL in milliseconds (5 minutes)
- */
-const ACCESS_CACHE_TTL = 5 * 60 * 1000;
 
 /**
  * Purchase record interface
@@ -64,16 +68,6 @@ export interface AccessCheckResult {
   purchase?: GalleryPurchase;
   expiresAt?: string | null;
 }
-
-/**
- * Simple in-memory cache for access verification
- */
-interface CacheEntry {
-  result: AccessCheckResult;
-  expiresAt: number;
-}
-
-const accessCache = new Map<string, CacheEntry>();
 
 /**
  * Refundable amount result
@@ -121,9 +115,14 @@ export interface IGalleryPurchaseService {
  */
 export class GalleryPurchaseService implements IGalleryPurchaseService {
   private stripe: Stripe;
+  private cacheService: ICacheService;
 
-  constructor(private supabase: SupabaseClient<Database>) {
+  constructor(
+    private supabase: SupabaseClient<Database>,
+    cacheService?: ICacheService
+  ) {
     this.stripe = getStripe();
+    this.cacheService = cacheService || getCacheService();
   }
 
   /**
@@ -376,9 +375,9 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
       await this.updateGalleryStats(galleryId, amountCents);
 
       // Invalidate access cache
-      this.invalidateAccessCache(galleryId, buyerEmail);
+      await this.invalidateAccessCache(galleryId, buyerEmail);
       if (buyerSessionId) {
-        this.invalidateAccessCache(galleryId, buyerSessionId);
+        await this.invalidateAccessCache(galleryId, buyerSessionId);
       }
 
       console.log('[GalleryPurchaseService] Recorded purchase:', {
@@ -509,9 +508,9 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
       }
 
       // Invalidate cache
-      this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
+      await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
       if (purchase.buyer_session_id) {
-        this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
+        await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
       }
 
       console.log('[GalleryPurchaseService] Granted access:', { purchaseId });
@@ -558,9 +557,9 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
       }
 
       // Invalidate cache
-      this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
+      await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
       if (purchase.buyer_session_id) {
-        this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
+        await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
       }
 
       console.log('[GalleryPurchaseService] Revoked access:', { purchaseId });
@@ -576,6 +575,7 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
   /**
    * Check if buyer has valid access to a gallery
    * Requirements: 3.3 - Check access with caching
+   * Requirements: 11.1 - Cache purchase verification (5 minutes)
    * 
    * @param galleryId - The gallery ID
    * @param identifier - Email or session ID
@@ -583,11 +583,11 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
    */
   async checkAccess(galleryId: string, identifier: string): Promise<AccessCheckResult> {
     try {
-      // Check cache first
-      const cacheKey = this.getCacheKey(galleryId, identifier);
-      const cached = accessCache.get(cacheKey);
-      if (cached && cached.expiresAt > Date.now()) {
-        return cached.result;
+      // Check cache first using the new cache service
+      const cacheKey = buildCacheKey(CACHE_PREFIX.PURCHASE_ACCESS, galleryId, identifier.toLowerCase());
+      const cached = await this.cacheService.get<AccessCheckResult>(cacheKey);
+      if (cached) {
+        return cached;
       }
 
       // Query database
@@ -595,14 +595,14 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
 
       if (!purchase) {
         const result: AccessCheckResult = { hasAccess: false };
-        this.setAccessCache(cacheKey, result);
+        await this.cacheService.set(cacheKey, result, CACHE_TTL.PURCHASE_VERIFICATION);
         return result;
       }
 
       // Check if access has been granted
       if (!purchase.accessGrantedAt) {
         const result: AccessCheckResult = { hasAccess: false, purchase };
-        this.setAccessCache(cacheKey, result);
+        await this.cacheService.set(cacheKey, result, CACHE_TTL.PURCHASE_VERIFICATION);
         return result;
       }
 
@@ -615,7 +615,7 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
             purchase,
             expiresAt: purchase.accessExpiresAt,
           };
-          this.setAccessCache(cacheKey, result);
+          await this.cacheService.set(cacheKey, result, CACHE_TTL.PURCHASE_VERIFICATION);
           return result;
         }
       }
@@ -626,7 +626,7 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
         purchase,
         expiresAt: purchase.accessExpiresAt,
       };
-      this.setAccessCache(cacheKey, result);
+      await this.cacheService.set(cacheKey, result, CACHE_TTL.PURCHASE_VERIFICATION);
       return result;
     } catch (error) {
       console.error('[GalleryPurchaseService] Error checking access:', error);
@@ -704,9 +704,9 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
       }
 
       // Invalidate cache
-      this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
+      await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
       if (purchase.buyer_session_id) {
-        this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
+        await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
       }
 
       console.log('[GalleryPurchaseService] Processed refund:', {
@@ -919,9 +919,9 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
         updatedPurchase = updated;
 
         // Invalidate cache when fully refunded
-        this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
+        await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_email);
         if (purchase.buyer_session_id) {
-          this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
+          await this.invalidateAccessCache(purchase.gallery_id, purchase.buyer_session_id);
         }
       } else {
         // For partial refunds that don't complete the full refund, 
@@ -1031,31 +1031,12 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
   }
 
   /**
-   * Get cache key for access check
-   * @private
-   */
-  private getCacheKey(galleryId: string, identifier: string): string {
-    return `${galleryId}:${identifier.toLowerCase()}`;
-  }
-
-  /**
-   * Set access cache entry
-   * @private
-   */
-  private setAccessCache(key: string, result: AccessCheckResult): void {
-    accessCache.set(key, {
-      result,
-      expiresAt: Date.now() + ACCESS_CACHE_TTL,
-    });
-  }
-
-  /**
    * Invalidate access cache for a gallery/identifier
+   * Uses the new cache service
    * @private
    */
-  private invalidateAccessCache(galleryId: string, identifier: string): void {
-    const key = this.getCacheKey(galleryId, identifier);
-    accessCache.delete(key);
+  private async invalidateAccessCache(galleryId: string, identifier: string): Promise<void> {
+    await CacheInvalidation.purchaseAccess(this.cacheService, galleryId, identifier);
   }
 
   /**
@@ -1093,14 +1074,8 @@ export class GalleryPurchaseService implements IGalleryPurchaseService {
  * Factory function to create a GalleryPurchaseService instance
  */
 export function createGalleryPurchaseService(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  cacheService?: ICacheService
 ): GalleryPurchaseService {
-  return new GalleryPurchaseService(supabase);
-}
-
-/**
- * Clear the access cache (for testing)
- */
-export function clearAccessCache(): void {
-  accessCache.clear();
+  return new GalleryPurchaseService(supabase, cacheService);
 }

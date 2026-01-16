@@ -7,7 +7,11 @@
  */
 import bcrypt from 'bcryptjs';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Gallery, GalleryInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
+import type { Gallery } from '@/types';
+
+type GalleryInsert = Database['public']['Tables']['galleries']['Insert'];
+type GalleryUpdate = Database['public']['Tables']['galleries']['Update'];
 import { 
   createGalleryRepository,
   type IGalleryRepository 
@@ -29,7 +33,9 @@ import {
 } from '@/lib/errors';
 import { getPlanLimits, isValidExpirationDays } from '@/config/plans';
 import { sanitizeTitle, sanitizePassword } from '@/lib/utils/sanitize';
-import type { Gallery as DbGallery, Image as DbImage } from '@/lib/supabase/types';
+
+type DbGallery = Database['public']['Tables']['galleries']['Row'];
+type DbImage = Database['public']['Tables']['images']['Row'];
 
 // Local type for gallery access result using database types
 export interface GalleryAccessResult {
@@ -188,7 +194,7 @@ export class GalleryService implements IGalleryService {
     const { title, password, expirationDays, settings } = validatedData.data;
 
     // Build update object
-    const updateData: Partial<Gallery> = {};
+    const updateData: GalleryUpdate = {};
 
     if (title !== undefined) {
       updateData.title = sanitizeTitle(title);
@@ -225,7 +231,7 @@ export class GalleryService implements IGalleryService {
     }
     
     if (settings !== undefined) {
-      updateData.settings = settings as any;
+      updateData.settings = settings as unknown as Database['public']['Tables']['galleries']['Row']['settings'];
     }
 
     return this.galleryRepository.update(id, updateData);
@@ -307,7 +313,7 @@ export class GalleryService implements IGalleryService {
 
     return {
       success: true,
-      gallery,
+      gallery: gallery as DbGallery,
       images: images || [],
     };
   }

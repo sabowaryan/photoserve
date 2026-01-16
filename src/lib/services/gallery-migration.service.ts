@@ -6,7 +6,8 @@
  * Requirements: 8.4, 8.5, 8.8
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Gallery } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
+import type { Gallery } from '@/types';
 import { 
   createGalleryRepository,
   type IGalleryRepository 
@@ -73,7 +74,7 @@ export class GalleryMigrationService implements IGalleryMigrationService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Gallery[];
   }
 
   /**

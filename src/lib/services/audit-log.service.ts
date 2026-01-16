@@ -5,7 +5,10 @@
  * Requirements: 7.1, 7.2, 7.3
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, AuditActionType, AuditEntityType } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
+
+type AuditActionType = Database['public']['Enums']['audit_action_type'];
+type AuditEntityType = Database['public']['Enums']['audit_entity_type'];
 import {
   createAuditLogRepository,
   type IAuditLogRepository,

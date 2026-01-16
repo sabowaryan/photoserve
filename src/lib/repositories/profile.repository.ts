@@ -3,8 +3,12 @@
  * Data access layer for user profiles
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, Profile, ProfileInsert, ProfileUpdate } from '@/lib/supabase/types'
+import type { Database } from '@/lib/supabase/types'
+import type { Profile } from '@/types'
 import { NotFoundError } from '@/lib/errors'
+
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 
 export interface IProfileRepository {
   findById(id: string): Promise<Profile | null>
@@ -13,6 +17,14 @@ export interface IProfileRepository {
   update(id: string, data: ProfileUpdate): Promise<Profile>
   incrementStorage(userId: string, sizeMb: number): Promise<void>
   decrementStorage(userId: string, sizeMb: number): Promise<void>
+}
+
+// Helper to map database row to Profile type
+function mapToProfile(data: Database['public']['Tables']['profiles']['Row']): Profile {
+  return {
+    ...data,
+    subscription_plan: data.subscription_plan || 'free',
+  } as Profile;
 }
 
 export class ProfileRepository implements IProfileRepository {
@@ -35,7 +47,7 @@ export class ProfileRepository implements IProfileRepository {
       throw error
     }
 
-    return data
+    return mapToProfile(data)
   }
 
   /**
@@ -55,7 +67,7 @@ export class ProfileRepository implements IProfileRepository {
       throw error
     }
 
-    return data
+    return mapToProfile(data)
   }
 
   /**
@@ -72,7 +84,7 @@ export class ProfileRepository implements IProfileRepository {
       throw error
     }
 
-    return profile
+    return mapToProfile(profile)
   }
 
   /**
@@ -96,7 +108,7 @@ export class ProfileRepository implements IProfileRepository {
       throw error
     }
 
-    return profile
+    return mapToProfile(profile)
   }
 
   /**

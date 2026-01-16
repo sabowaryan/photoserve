@@ -13,7 +13,8 @@ import {
   Shield, 
   Trash2,
   ExternalLink,
-  Clock
+  Clock,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -42,45 +43,28 @@ interface BrandingSectionProps {
   onUpdate: (branding: ProfileBranding) => Promise<void>;
 }
 
-// Domain verification status type
 type VerificationStatus = 'idle' | 'verifying' | 'verified' | 'failed';
-
-// SSL provisioning status type
 type SSLStatus = 'idle' | 'provisioning' | 'provisioned' | 'failed';
 
 export function BrandingSection({ initialBranding, userPlan, onUpdate }: BrandingSectionProps) {
   const [branding, setBranding] = useState<ProfileBranding>(initialBranding || {});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(
-    initialBranding?.customLogo || null
-  );
+  const [logoPreview, setLogoPreview] = useState<string | null>(initialBranding?.customLogo || null);
   const [previewDark, setPreviewDark] = useState(false);
-  
-  // Domain verification state
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('idle');
-  const [verificationToken, setVerificationToken] = useState<string | null>(
-    initialBranding?.verificationToken || null
-  );
+  const [verificationToken, setVerificationToken] = useState<string | null>(initialBranding?.verificationToken || null);
   const [sslStatus, setSSLStatus] = useState<SSLStatus>('idle');
   const [showDNSInstructions, setShowDNSInstructions] = useState(false);
   const [domainError, setDomainError] = useState<string | null>(null);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   
-  // Initialize verification status from initial branding
   useEffect(() => {
-    if (initialBranding?.domainVerified) {
-      setVerificationStatus('verified');
-    }
-    if (initialBranding?.sslCertificateId && initialBranding?.sslProvider) {
-      setSSLStatus('provisioned');
-    }
-    if (initialBranding?.customDomain && !initialBranding?.domainVerified) {
-      setShowDNSInstructions(true);
-    }
+    if (initialBranding?.domainVerified) setVerificationStatus('verified');
+    if (initialBranding?.sslCertificateId && initialBranding?.sslProvider) setSSLStatus('provisioned');
+    if (initialBranding?.customDomain && !initialBranding?.domainVerified) setShowDNSInstructions(true);
   }, [initialBranding]);
 
-  // Check feature access
   const hasWhiteLabel = hasFeatureAccess(userPlan, 'whiteLabel');
   const hasCustomDomain = hasFeatureAccess(userPlan, 'customDomain');
   const hasBrandColors = hasFeatureAccess(userPlan, 'brandColors');
@@ -88,48 +72,20 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
-    }
-
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Logo must be less than 2MB');
-      return;
-    }
-
+    if (!file.type.startsWith('image/')) { toast.error('Veuillez télécharger une image'); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error('Le logo doit faire moins de 2MB'); return; }
     try {
       setIsUploadingLogo(true);
-
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append('file', file);
-
-      // Upload to /api/profile/logo endpoint
-      const response = await fetch('/api/profile/logo', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to upload logo');
-      }
-
+      const response = await fetch('/api/profile/logo', { method: 'POST', body: formData });
+      if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'Échec du téléchargement'); }
       const data = await response.json();
-      
-      // Update logo preview and branding state
       setLogoPreview(data.url);
       setBranding((prev) => ({ ...prev, customLogo: data.url }));
-      
-      toast.success('Logo uploaded successfully!');
+      toast.success('Logo téléchargé avec succès !');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to upload logo';
-      toast.error(errorMessage);
-      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Échec du téléchargement');
     } finally {
       setIsUploadingLogo(false);
     }
@@ -155,12 +111,10 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
   const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setBranding((prev) => ({ ...prev, customDomain: value }));
-    
-    // Real-time validation
     if (value) {
       const normalized = normalizeDomain(value);
       if (!normalized || !isValidDomain(normalized)) {
-        setDomainError('Invalid domain format. Expected: photos.example.com');
+        setDomainError('Format invalide. Exemple: photos.example.com');
       } else {
         setDomainError(null);
         setShowDNSInstructions(true);
@@ -172,7 +126,6 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
   };
 
   const handleDomainBlur = () => {
-    // Normalize domain on blur
     if (branding.customDomain) {
       const normalized = normalizeDomain(branding.customDomain);
       if (normalized && normalized !== branding.customDomain) {
@@ -182,125 +135,81 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
   };
   
   const handleVerifyDomain = async () => {
-    if (!branding.customDomain) {
-      toast.error('Please enter a domain first');
-      return;
-    }
-    
+    if (!branding.customDomain) { toast.error('Veuillez entrer un domaine'); return; }
     const normalized = normalizeDomain(branding.customDomain);
-    if (!normalized || !isValidDomain(normalized)) {
-      toast.error('Invalid domain format');
-      return;
-    }
-    
+    if (!normalized || !isValidDomain(normalized)) { toast.error('Format de domaine invalide'); return; }
     try {
       setVerificationStatus('verifying');
       setDomainError(null);
-      
       const response = await fetch('/api/domain/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ domain: normalized }),
       });
-      
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to verify domain');
-      }
-      
+      if (!response.ok) throw new Error(data.error || 'Échec de la vérification');
       if (data.status === 'verified') {
         setVerificationStatus('verified');
         setVerificationToken(null);
-        toast.success('Domain verified successfully!');
-        
-        // Automatically provision SSL
+        toast.success('Domaine vérifié avec succès !');
         handleProvisionSSL();
       } else if (data.status === 'pending') {
         setVerificationStatus('idle');
         setVerificationToken(data.token);
         setShowDNSInstructions(true);
-        toast.info('Domain verification pending. Please configure DNS records.');
+        toast.info('Vérification en attente. Configurez vos enregistrements DNS.');
       } else {
         setVerificationStatus('failed');
-        toast.error(data.error || 'Domain verification failed');
+        toast.error(data.error || 'Échec de la vérification');
       }
     } catch (err) {
       setVerificationStatus('failed');
-      const errorMessage = err instanceof Error ? err.message : 'Failed to verify domain';
-      toast.error(errorMessage);
-      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Échec de la vérification');
     }
   };
   
   const handleProvisionSSL = async () => {
     if (!branding.customDomain) return;
-    
     try {
       setSSLStatus('provisioning');
-      
       const response = await fetch('/api/domain/provision-ssl', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ domain: branding.customDomain }),
       });
-      
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to provision SSL');
-      }
-      
+      if (!response.ok) throw new Error(data.error || 'Échec du provisionnement SSL');
       if (data.success) {
         setSSLStatus('provisioned');
-        toast.success('SSL certificate provisioned successfully!');
+        toast.success('Certificat SSL provisionné !');
       } else {
         setSSLStatus('failed');
-        toast.error(data.error || 'SSL provisioning failed');
+        toast.error(data.error || 'Échec du provisionnement SSL');
       }
     } catch (err) {
       setSSLStatus('failed');
-      const errorMessage = err instanceof Error ? err.message : 'Failed to provision SSL';
-      toast.error(errorMessage);
-      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Échec du provisionnement SSL');
     }
   };
   
   const handleRemoveDomain = async () => {
     try {
       setIsLoading(true);
-      
-      const response = await fetch('/api/domain/remove', {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to remove domain');
-      }
-      
-      // Clear domain-related state
+      const response = await fetch('/api/domain/remove', { method: 'DELETE' });
+      if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'Échec de la suppression'); }
       setBranding((prev) => ({
         ...prev,
-        customDomain: undefined,
-        domainVerified: undefined,
-        verificationToken: undefined,
-        domainVerifiedAt: undefined,
-        sslCertificateId: undefined,
-        sslProvider: undefined,
-        sslExpiresAt: undefined,
-        cloudflareZoneId: undefined,
+        customDomain: undefined, domainVerified: undefined, verificationToken: undefined,
+        domainVerifiedAt: undefined, sslCertificateId: undefined, sslProvider: undefined,
+        sslExpiresAt: undefined, cloudflareZoneId: undefined,
       }));
       setVerificationStatus('idle');
       setVerificationToken(null);
       setSSLStatus('idle');
       setShowDNSInstructions(false);
-      
-      toast.success('Domain removed successfully');
+      toast.success('Domaine supprimé avec succès');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to remove domain';
-      toast.error(errorMessage);
-      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Échec de la suppression');
     } finally {
       setIsLoading(false);
     }
@@ -309,57 +218,53 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(`${label} copied to clipboard`);
-    } catch (err) {
-      toast.error('Failed to copy to clipboard');
-    }
+      toast.success(`${label} copié !`);
+    } catch { toast.error('Échec de la copie'); }
   };
 
   const handleSave = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // Validate custom domain if provided
       if (branding.customDomain && !isValidDomain(branding.customDomain)) {
-        setError('Invalid custom domain format. Expected: photos.example.com');
-        toast.error('Invalid custom domain format');
+        setError('Format de domaine invalide');
+        toast.error('Format de domaine invalide');
         return;
       }
-      
-      // Normalize domain before saving
       const normalizedBranding = {
         ...branding,
         customDomain: branding.customDomain ? (normalizeDomain(branding.customDomain) || undefined) : undefined,
       };
-      
-      // Call API to update branding
       const response = await fetch('/api/profile/branding', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(normalizedBranding),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to save branding');
-      }
-
-      // Call the onUpdate callback if provided
+      if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'Échec de la sauvegarde'); }
       await onUpdate(normalizedBranding);
-      
-      // Show success message
       setError(null);
-      toast.success('Branding settings saved successfully!');
+      toast.success('Paramètres de branding sauvegardés !');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save branding settings';
+      const errorMessage = err instanceof Error ? err.message : 'Échec de la sauvegarde';
       setError(errorMessage);
       toast.error(errorMessage);
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
+
+
+  const FeatureLockedCard = ({ title, description }: { title: string; description: string }) => (
+    <div className="p-4 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-slate-700">{title}</span>
+        <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+          Pro requis
+        </span>
+      </div>
+      <p className="text-xs text-slate-500">{description}</p>
+    </div>
+  );
 
   return (
     <section className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
@@ -367,27 +272,28 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
         <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
           <Palette size={18} />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="font-bold text-slate-900">Branding</h2>
-          <p className="text-xs text-slate-500">Customize your brand identity</p>
+          <p className="text-xs text-slate-500">Personnalisez votre identité visuelle</p>
         </div>
       </div>
 
       <div className="p-6 space-y-6">
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            <AlertCircle size={16} />
+          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+            <AlertCircle size={16} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {/* Custom Logo */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-slate-700">Custom Logo</Label>
+          <div className="flex items-center gap-2">
+            <ImageIcon size={16} className="text-slate-600" />
+            <Label className="text-sm font-medium text-slate-700">Logo personnalisé</Label>
             {!hasWhiteLabel && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                Pro Plan Required
+              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full ml-auto">
+                Pro requis
               </span>
             )}
           </div>
@@ -395,405 +301,279 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
           {hasWhiteLabel ? (
             <div className="space-y-3">
               {logoPreview ? (
-                <div className="relative inline-block">
-                  <img
-                    src={logoPreview}
-                    alt="Logo preview"
-                    className="h-20 w-auto max-w-[200px] object-contain border border-slate-200 rounded-lg p-2"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleRemoveLogo}
-                    className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                    disabled={isUploadingLogo}
-                  >
-                    <X size={14} />
-                  </button>
+                <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div className="relative">
+                    <img
+                      src={logoPreview}
+                      alt="Logo preview"
+                      className="h-16 w-auto max-w-[160px] object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveLogo}
+                      className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-sm"
+                      disabled={isUploadingLogo}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-900">Logo actuel</p>
+                    <p className="text-xs text-slate-500">Cliquez sur × pour supprimer</p>
+                  </div>
                 </div>
               ) : (
                 <label className={cn(
-                  "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg transition-colors",
+                  "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all cursor-pointer",
                   isUploadingLogo 
                     ? "border-slate-300 bg-slate-50 cursor-not-allowed" 
-                    : "border-slate-300 cursor-pointer hover:border-slate-400"
+                    : "border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/30"
                 )}>
                   {isUploadingLogo ? (
                     <>
-                      <Loader2 className="w-8 h-8 text-slate-400 mb-2 animate-spin" />
-                      <span className="text-sm text-slate-500">Uploading...</span>
+                      <Loader2 className="w-8 h-8 text-indigo-500 mb-2 animate-spin" />
+                      <span className="text-sm text-slate-600">Téléchargement...</span>
                     </>
                   ) : (
                     <>
-                      <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                      <span className="text-sm text-slate-500">Click to upload logo</span>
-                      <span className="text-xs text-slate-400 mt-1">PNG, JPG, WebP up to 2MB</span>
+                      <div className="p-3 bg-indigo-100 rounded-xl text-indigo-600 mb-2">
+                        <Upload className="w-6 h-6" />
+                      </div>
+                      <span className="text-sm font-medium text-slate-700">Cliquez pour télécharger</span>
+                      <span className="text-xs text-slate-500 mt-1">PNG, JPG, WebP • Max 2MB</span>
                     </>
                   )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                    disabled={isUploadingLogo}
-                  />
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" disabled={isUploadingLogo} />
                 </label>
               )}
             </div>
           ) : (
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600">
-              Upgrade to Pro to upload your custom logo and remove PikSend branding.
-            </div>
+            <FeatureLockedCard 
+              title="Logo personnalisé" 
+              description="Téléchargez votre logo et supprimez le branding PikSend." 
+            />
           )}
         </div>
 
         {/* Custom Domain */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Globe size={16} className="text-slate-600" />
-              <Label className="text-sm font-medium text-slate-700">Custom Domain</Label>
-            </div>
+          <div className="flex items-center gap-2">
+            <Globe size={16} className="text-slate-600" />
+            <Label className="text-sm font-medium text-slate-700">Domaine personnalisé</Label>
             {!hasCustomDomain && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                Pro Plan Required
+              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full ml-auto">
+                Pro requis
               </span>
             )}
           </div>
           
           {hasCustomDomain ? (
             <div className="space-y-4">
-              {/* Domain Input */}
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    value={branding.customDomain || ''}
-                    onChange={handleDomainChange}
-                    onBlur={handleDomainBlur}
-                    placeholder="photos.yourdomain.com"
-                    disabled={isLoading || verificationStatus === 'verifying'}
-                    className={cn(
-                      domainError && 'border-red-300 focus-visible:ring-red-500'
-                    )}
-                  />
-                  <Button
-                    onClick={handleVerifyDomain}
-                    disabled={
-                      !branding.customDomain || 
-                      !!domainError || 
-                      verificationStatus === 'verifying' ||
-                      verificationStatus === 'verified'
-                    }
-                    variant="outline"
-                    className="shrink-0"
-                  >
-                    {verificationStatus === 'verifying' ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Verifying...
-                      </>
-                    ) : verificationStatus === 'verified' ? (
-                      <>
-                        <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
-                        Verified
-                      </>
-                    ) : (
-                      'Verify Domain'
-                    )}
-                  </Button>
-                </div>
-                
-                {domainError && (
-                  <p className="text-xs text-red-600 flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {domainError}
-                  </p>
-                )}
-                
-                {!domainError && branding.customDomain && (
-                  <p className="text-xs text-slate-500">
-                    Enter your domain without https:// (e.g., photos.johndoe.com)
-                  </p>
-                )}
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={branding.customDomain || ''}
+                  onChange={handleDomainChange}
+                  onBlur={handleDomainBlur}
+                  placeholder="photos.votredomaine.com"
+                  disabled={isLoading || verificationStatus === 'verifying'}
+                  className={cn("flex-1", domainError && 'border-red-300 focus-visible:ring-red-500')}
+                />
+                <Button
+                  onClick={handleVerifyDomain}
+                  disabled={!branding.customDomain || !!domainError || verificationStatus === 'verifying' || verificationStatus === 'verified'}
+                  variant="outline"
+                  className="shrink-0 gap-2"
+                >
+                  {verificationStatus === 'verifying' ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" />Vérification...</>
+                  ) : verificationStatus === 'verified' ? (
+                    <><CheckCircle2 className="w-4 h-4 text-green-600" />Vérifié</>
+                  ) : (
+                    'Vérifier'
+                  )}
+                </Button>
               </div>
               
-              {/* Verification Status Indicator */}
-              {branding.customDomain && (
-                <div className={cn(
-                  "p-3 rounded-lg border flex items-start gap-3",
-                  verificationStatus === 'verified' && "bg-green-50 border-green-200",
-                  verificationStatus === 'failed' && "bg-red-50 border-red-200",
-                  verificationStatus === 'idle' && "bg-blue-50 border-blue-200"
-                )}>
-                  {verificationStatus === 'verified' ? (
-                    <>
-                      <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-green-900">Domain Verified</p>
-                        <p className="text-xs text-green-700 mt-1">
-                          Your domain is verified and ready to use
-                        </p>
-                      </div>
-                    </>
-                  ) : verificationStatus === 'failed' ? (
-                    <>
-                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-red-900">Verification Failed</p>
-                        <p className="text-xs text-red-700 mt-1">
-                          Please check your DNS configuration and try again
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-blue-900">Verification Pending</p>
-                        <p className="text-xs text-blue-700 mt-1">
-                          Configure your DNS records and click Verify Domain
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
+              {domainError && (
+                <p className="text-xs text-red-600 flex items-center gap-1">
+                  <AlertCircle size={12} />{domainError}
+                </p>
               )}
               
-              {/* DNS Instructions Panel */}
-              {showDNSInstructions && branding.customDomain && verificationStatus !== 'verified' && (
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
-                  <div className="flex items-center gap-2">
-                    <ExternalLink size={16} className="text-slate-600" />
-                    <h4 className="text-sm font-medium text-slate-900">DNS Configuration</h4>
-                  </div>
-                  
-                  <p className="text-xs text-slate-600">
-                    Add one of the following DNS records to your domain:
-                  </p>
-                  
-                  {/* CNAME Record Option */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-slate-700">Option 1: CNAME Record (Recommended)</p>
-                    <div className="bg-white p-3 rounded border border-slate-200 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <p className="text-xs text-slate-500">Type</p>
-                          <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">CNAME</code>
-                        </div>
-                        <div className="space-y-1 flex-1 mx-4">
-                          <p className="text-xs text-slate-500">Name</p>
-                          <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">
-                            {branding.customDomain?.split('.')[0] || '@'}
-                          </code>
-                        </div>
-                        <div className="space-y-1 flex-1">
-                          <p className="text-xs text-slate-500">Value</p>
-                          <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">piksend.com</code>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => copyToClipboard('piksend.com', 'CNAME value')}
-                          className="ml-2"
-                        >
-                          <Copy size={14} />
-                        </Button>
-                      </div>
+              {branding.customDomain && (
+                <div className={cn(
+                  "p-4 rounded-xl border",
+                  verificationStatus === 'verified' ? "bg-green-50/50 border-green-200" :
+                  verificationStatus === 'failed' ? "bg-red-50/50 border-red-200" : "bg-blue-50/50 border-blue-200"
+                )}>
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "p-2 rounded-lg",
+                      verificationStatus === 'verified' ? "bg-green-100 text-green-600" :
+                      verificationStatus === 'failed' ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
+                    )}>
+                      {verificationStatus === 'verified' ? <CheckCircle2 size={16} /> :
+                       verificationStatus === 'failed' ? <AlertCircle size={16} /> : <Clock size={16} />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        {verificationStatus === 'verified' ? 'Domaine vérifié' :
+                         verificationStatus === 'failed' ? 'Vérification échouée' : 'Vérification en attente'}
+                      </p>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {verificationStatus === 'verified' ? 'Votre domaine est prêt à être utilisé' :
+                         verificationStatus === 'failed' ? 'Vérifiez votre configuration DNS' : 'Configurez vos enregistrements DNS'}
+                      </p>
                     </div>
                   </div>
+                </div>
+              )}
+
+              
+              {showDNSInstructions && branding.customDomain && verificationStatus !== 'verified' && (
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                  <div className="flex items-center gap-2">
+                    <ExternalLink size={14} className="text-slate-600" />
+                    <h4 className="text-sm font-medium text-slate-900">Configuration DNS</h4>
+                  </div>
+                  <p className="text-xs text-slate-600">Ajoutez l'un des enregistrements DNS suivants :</p>
                   
-                  {/* TXT Record Option */}
-                  {verificationToken && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium text-slate-700">Option 2: TXT Record</p>
-                      <div className="bg-white p-3 rounded border border-slate-200 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <p className="text-xs text-slate-500">Type</p>
-                            <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">TXT</code>
-                          </div>
-                          <div className="space-y-1 flex-1 mx-4">
-                            <p className="text-xs text-slate-500">Name</p>
-                            <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded">
-                              _piksend-verify
-                            </code>
-                          </div>
-                          <div className="space-y-1 flex-1">
-                            <p className="text-xs text-slate-500">Value</p>
-                            <code className="text-xs font-mono bg-slate-100 px-2 py-1 rounded truncate max-w-[200px]">
-                              {verificationToken}
-                            </code>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => copyToClipboard(verificationToken, 'TXT value')}
-                            className="ml-2"
-                          >
-                            <Copy size={14} />
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-slate-700">Option 1 : CNAME (Recommandé)</p>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200">
+                      <div className="flex items-center justify-between gap-4 text-xs">
+                        <div><span className="text-slate-500">Type:</span> <code className="bg-slate-100 px-1.5 py-0.5 rounded">CNAME</code></div>
+                        <div><span className="text-slate-500">Nom:</span> <code className="bg-slate-100 px-1.5 py-0.5 rounded">{branding.customDomain?.split('.')[0] || '@'}</code></div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-500">Valeur:</span> <code className="bg-slate-100 px-1.5 py-0.5 rounded">piksend.com</code>
+                          <Button size="sm" variant="ghost" onClick={() => copyToClipboard('piksend.com', 'Valeur CNAME')} className="h-6 w-6 p-0">
+                            <Copy size={12} />
                           </Button>
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
                   
-                  <p className="text-xs text-slate-500 italic">
-                    DNS changes may take up to 48 hours to propagate. Click "Verify Domain" once configured.
-                  </p>
+                  {verificationToken && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-slate-700">Option 2 : TXT</p>
+                      <div className="bg-white p-3 rounded-lg border border-slate-200">
+                        <div className="flex items-center justify-between gap-4 text-xs">
+                          <div><span className="text-slate-500">Type:</span> <code className="bg-slate-100 px-1.5 py-0.5 rounded">TXT</code></div>
+                          <div><span className="text-slate-500">Nom:</span> <code className="bg-slate-100 px-1.5 py-0.5 rounded">_piksend-verify</code></div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-500">Valeur:</span> 
+                            <code className="bg-slate-100 px-1.5 py-0.5 rounded truncate max-w-[120px]">{verificationToken}</code>
+                            <Button size="sm" variant="ghost" onClick={() => copyToClipboard(verificationToken, 'Valeur TXT')} className="h-6 w-6 p-0">
+                              <Copy size={12} />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-500 italic">La propagation DNS peut prendre jusqu'à 48h.</p>
                 </div>
               )}
               
-              {/* SSL Status Badge */}
               {verificationStatus === 'verified' && (
                 <div className={cn(
-                  "p-3 rounded-lg border flex items-start gap-3",
-                  sslStatus === 'provisioned' && "bg-green-50 border-green-200",
-                  sslStatus === 'provisioning' && "bg-blue-50 border-blue-200",
-                  sslStatus === 'failed' && "bg-red-50 border-red-200"
+                  "p-4 rounded-xl border",
+                  sslStatus === 'provisioned' ? "bg-green-50/50 border-green-200" :
+                  sslStatus === 'provisioning' ? "bg-blue-50/50 border-blue-200" : "bg-red-50/50 border-red-200"
                 )}>
-                  <Shield className={cn(
-                    "w-5 h-5 shrink-0 mt-0.5",
-                    sslStatus === 'provisioned' && "text-green-600",
-                    sslStatus === 'provisioning' && "text-blue-600",
-                    sslStatus === 'failed' && "text-red-600"
-                  )} />
-                  <div className="flex-1">
-                    {sslStatus === 'provisioned' ? (
-                      <>
-                        <p className="text-sm font-medium text-green-900">SSL Certificate Active</p>
-                        <p className="text-xs text-green-700 mt-1">
-                          Your domain is secured with HTTPS
-                        </p>
-                        {branding.sslExpiresAt && (
-                          <p className="text-xs text-green-600 mt-1">
-                            Expires: {new Date(branding.sslExpiresAt).toLocaleDateString()}
-                          </p>
-                        )}
-                      </>
-                    ) : sslStatus === 'provisioning' ? (
-                      <>
-                        <p className="text-sm font-medium text-blue-900 flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Provisioning SSL Certificate
-                        </p>
-                        <p className="text-xs text-blue-700 mt-1">
-                          This may take a few minutes...
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-sm font-medium text-red-900">SSL Provisioning Failed</p>
-                        <p className="text-xs text-red-700 mt-1">
-                          Please contact support for assistance
-                        </p>
-                      </>
-                    )}
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "p-2 rounded-lg",
+                      sslStatus === 'provisioned' ? "bg-green-100 text-green-600" :
+                      sslStatus === 'provisioning' ? "bg-blue-100 text-blue-600" : "bg-red-100 text-red-600"
+                    )}>
+                      <Shield size={16} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        {sslStatus === 'provisioned' ? 'Certificat SSL actif' :
+                         sslStatus === 'provisioning' ? 'Provisionnement SSL...' : 'Échec SSL'}
+                      </p>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {sslStatus === 'provisioned' ? 'Votre domaine est sécurisé avec HTTPS' :
+                         sslStatus === 'provisioning' ? 'Cela peut prendre quelques minutes' : 'Contactez le support'}
+                      </p>
+                      {branding.sslExpiresAt && sslStatus === 'provisioned' && (
+                        <p className="text-xs text-green-600 mt-1">Expire: {new Date(branding.sslExpiresAt).toLocaleDateString()}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
               
-              {/* Remove Domain Button */}
               {branding.customDomain && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      disabled={isLoading}
-                    >
-                      <Trash2 size={14} className="mr-2" />
-                      Remove Domain
+                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 gap-2" disabled={isLoading}>
+                      <Trash2 size={14} />Supprimer le domaine
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Remove Custom Domain?</AlertDialogTitle>
+                      <AlertDialogTitle>Supprimer le domaine personnalisé ?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will remove your custom domain configuration and SSL certificate. 
-                        Your galleries will no longer be accessible via {branding.customDomain}.
-                        This action cannot be undone.
+                        Cette action supprimera votre configuration de domaine et le certificat SSL. 
+                        Vos galeries ne seront plus accessibles via {branding.customDomain}.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleRemoveDomain}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Remove Domain
-                      </AlertDialogAction>
+                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleRemoveDomain} className="bg-red-600 hover:bg-red-700">Supprimer</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               )}
             </div>
           ) : (
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600">
-              Upgrade to Pro to use your own domain for gallery links.
-            </div>
+            <FeatureLockedCard 
+              title="Domaine personnalisé" 
+              description="Utilisez votre propre domaine pour vos liens de galerie." 
+            />
           )}
         </div>
 
         {/* Brand Colors */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-slate-700">Brand Colors</Label>
+          <div className="flex items-center gap-2">
+            <Palette size={16} className="text-slate-600" />
+            <Label className="text-sm font-medium text-slate-700">Couleurs de marque</Label>
             {!hasBrandColors && (
-              <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                Pro Plan Required
+              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full ml-auto">
+                Pro requis
               </span>
             )}
           </div>
 
           {hasBrandColors ? (
             <div className="space-y-4">
-              <ColorPicker
-                label="Primary Color"
-                value={branding.brandColors?.primary || '#6366f1'}
-                onChange={(color) => handleColorChange('primary', color)}
-              />
-              <ColorPicker
-                label="Secondary Color"
-                value={branding.brandColors?.secondary || '#8b5cf6'}
-                onChange={(color) => handleColorChange('secondary', color)}
-              />
-              <ColorPicker
-                label="Accent Color"
-                value={branding.brandColors?.accent || '#ec4899'}
-                onChange={(color) => handleColorChange('accent', color)}
-              />
+              <ColorPicker label="Couleur primaire" value={branding.brandColors?.primary || '#6366f1'} onChange={(c) => handleColorChange('primary', c)} />
+              <ColorPicker label="Couleur secondaire" value={branding.brandColors?.secondary || '#8b5cf6'} onChange={(c) => handleColorChange('secondary', c)} />
+              <ColorPicker label="Couleur d'accent" value={branding.brandColors?.accent || '#ec4899'} onChange={(c) => handleColorChange('accent', c)} />
               
-              {/* Preview Section */}
-              <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium text-slate-700">Aperçu</Label>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span>Mode clair</span>
+                    <span>Clair</span>
                     <button
                       type="button"
                       onClick={() => setPreviewDark(!previewDark)}
-                      className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors"
                       style={{ backgroundColor: previewDark ? '#6366f1' : '#cbd5e1' }}
                     >
-                      <span
-                        className={cn(
-                          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                          previewDark ? 'translate-x-5' : 'translate-x-0.5'
-                        )}
-                      />
+                      <span className={cn('inline-block h-4 w-4 transform rounded-full bg-white transition-transform', previewDark ? 'translate-x-5' : 'translate-x-0.5')} />
                     </button>
-                    <span>Mode sombre</span>
+                    <span>Sombre</span>
                   </div>
                 </div>
-                
-                <div 
-                  className={cn(
-                    "p-4 rounded-lg transition-colors",
-                    previewDark ? "bg-slate-900" : "bg-white"
-                  )}
-                >
-                  {/* Preview Button */}
+                <div className={cn("p-4 rounded-lg transition-colors", previewDark ? "bg-slate-900" : "bg-white")}>
                   <button
                     type="button"
                     className="px-4 py-2 rounded-lg text-white font-medium text-sm shadow-lg transition-all hover:scale-105"
@@ -804,35 +584,39 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
                   >
                     Télécharger tout
                   </button>
-                  
-                  <p className={cn(
-                    "mt-3 text-xs",
-                    previewDark ? "text-slate-400" : "text-slate-600"
-                  )}>
-                    {previewDark 
-                      ? "En mode sombre, vos couleurs sont automatiquement éclaircies pour garantir une bonne lisibilité."
-                      : "Vos couleurs de marque seront appliquées aux boutons et éléments interactifs de la galerie."
-                    }
+                  <p className={cn("mt-3 text-xs", previewDark ? "text-slate-400" : "text-slate-600")}>
+                    {previewDark ? "En mode sombre, vos couleurs sont automatiquement ajustées." : "Vos couleurs seront appliquées aux boutons et éléments interactifs."}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600">
-              Upgrade to Pro to customize gallery colors to match your brand.
-            </div>
+            <FeatureLockedCard 
+              title="Couleurs de marque" 
+              description="Personnalisez les couleurs de vos galeries pour correspondre à votre marque." 
+            />
           )}
         </div>
 
         {/* Save Button */}
         {(hasWhiteLabel || hasCustomDomain || hasBrandColors) && (
-          <div className="pt-4 border-t border-slate-200">
-            <Button
-              onClick={handleSave}
-              disabled={isLoading}
-              className="w-full sm:w-auto"
+          <div className="pt-6 border-t border-slate-200">
+            <Button 
+              onClick={handleSave} 
+              disabled={isLoading} 
+              className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-200 gap-2"
             >
-              {isLoading ? 'Saving...' : 'Save Branding Settings'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Sauvegarde en cours...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  Sauvegarder les paramètres
+                </>
+              )}
             </Button>
           </div>
         )}

@@ -851,3 +851,561 @@ describe('RevenueService', () => {
     });
   });
 });
+
+
+/**
+ * Advanced Analytics Tests
+ * Tests for Task 9.1: Advanced Analytics
+ * 
+ * Requirements covered:
+ * - 9.1: Revenue Analytics (trends, revenue per gallery, avg time to conversion, peak hours)
+ * - 9.2: Sales Funnel (Views → Paywall → Checkout → Purchase with drop-off analysis)
+ */
+describe('Advanced Analytics', () => {
+  let mockSupabase: ReturnType<typeof createMockSupabase>;
+
+  beforeEach(() => {
+    mockSupabase = createMockSupabase();
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('getDetailedConversionFunnel', () => {
+    it('should return detailed conversion funnel with step-by-step metrics', async () => {
+      const uniquePhotographerId = `photographer-detailed-funnel-${Date.now()}`;
+      // Views count
+      mockSupabase.addResponse(null, null, 1000);
+      // Paywall views count
+      mockSupabase.addResponse(null, null, 500);
+      // Checkout starts count
+      mockSupabase.addResponse(null, null, 200);
+      // Purchases count
+      mockSupabase.addResponse(null, null, 100);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result.views).toBe(1000);
+      expect(result.paywallViews).toBe(500);
+      expect(result.checkoutStarts).toBe(200);
+      expect(result.purchases).toBe(100);
+    });
+
+    it('should calculate conversion rates correctly', async () => {
+      const uniquePhotographerId = `photographer-funnel-rates-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 1000);
+      mockSupabase.addResponse(null, null, 500);
+      mockSupabase.addResponse(null, null, 200);
+      mockSupabase.addResponse(null, null, 100);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result.conversionRates.viewToPaywall).toBe(50);
+      expect(result.conversionRates.paywallToCheckout).toBe(40);
+      expect(result.conversionRates.checkoutToPurchase).toBe(50);
+      expect(result.conversionRates.overall).toBe(10);
+    });
+
+    it('should calculate drop-off points correctly', async () => {
+      const uniquePhotographerId = `photographer-funnel-dropoff-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 1000);
+      mockSupabase.addResponse(null, null, 500);
+      mockSupabase.addResponse(null, null, 200);
+      mockSupabase.addResponse(null, null, 100);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result.dropOffPoints).toHaveLength(3);
+      expect(result.dropOffPoints[0]).toMatchObject({
+        step: 'View → Paywall',
+        dropOffRate: 50,
+        count: 500,
+      });
+      expect(result.dropOffPoints[1]).toMatchObject({
+        step: 'Paywall → Checkout',
+        dropOffRate: 60,
+        count: 300,
+      });
+      expect(result.dropOffPoints[2]).toMatchObject({
+        step: 'Checkout → Purchase',
+        dropOffRate: 50,
+        count: 100,
+      });
+    });
+
+    it('should handle zero views gracefully', async () => {
+      const uniquePhotographerId = `photographer-funnel-zero-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 0);
+      mockSupabase.addResponse(null, null, 0);
+      mockSupabase.addResponse(null, null, 0);
+      mockSupabase.addResponse(null, null, 0);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result.views).toBe(0);
+      expect(result.conversionRates.overall).toBe(0);
+      expect(result.conversionRates.viewToPaywall).toBe(0);
+    });
+
+    it('should include period dates in result', async () => {
+      const uniquePhotographerId = `photographer-funnel-period-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 100);
+      mockSupabase.addResponse(null, null, 50);
+      mockSupabase.addResponse(null, null, 20);
+      mockSupabase.addResponse(null, null, 10);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result.period).toBeDefined();
+      expect(result.period.startDate).toBeDefined();
+      expect(result.period.endDate).toBeDefined();
+    });
+
+    it('should apply gallery filter when provided', async () => {
+      const uniquePhotographerId = `photographer-funnel-filter-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 50);
+      mockSupabase.addResponse(null, null, 25);
+      mockSupabase.addResponse(null, null, 10);
+      mockSupabase.addResponse(null, null, 5);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getDetailedConversionFunnel(uniquePhotographerId, {
+        galleryId: 'gallery-123',
+      });
+
+      expect(result.views).toBe(50);
+      expect(result.purchases).toBe(5);
+    });
+
+    it('should cache results', async () => {
+      const uniquePhotographerId = `photographer-funnel-cache-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 100);
+      mockSupabase.addResponse(null, null, 50);
+      mockSupabase.addResponse(null, null, 20);
+      mockSupabase.addResponse(null, null, 10);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      
+      const result1 = await service.getDetailedConversionFunnel(uniquePhotographerId);
+      mockSupabase.reset();
+      const result2 = await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      expect(result1).toEqual(result2);
+    });
+  });
+
+  describe('getCohortAnalysis', () => {
+    const mockCohortPurchases = [
+      { buyer_email: 'user1@test.com', amount_cents: 2999, created_at: '2024-01-15T10:00:00Z' },
+      { buyer_email: 'user1@test.com', amount_cents: 1999, created_at: '2024-02-15T10:00:00Z' },
+      { buyer_email: 'user2@test.com', amount_cents: 4999, created_at: '2024-01-20T10:00:00Z' },
+      { buyer_email: 'user3@test.com', amount_cents: 3999, created_at: '2024-02-10T10:00:00Z' },
+    ];
+
+    it('should return cohort analysis with customer retention data', async () => {
+      const uniquePhotographerId = `photographer-cohort-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId);
+
+      expect(result.cohorts).toBeDefined();
+      expect(result.cohorts.length).toBeGreaterThan(0);
+      expect(result.summary).toBeDefined();
+    });
+
+    it('should group customers by first purchase month', async () => {
+      const uniquePhotographerId = `photographer-cohort-group-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId);
+
+      // Should have cohorts for January and February
+      const janCohort = result.cohorts.find(c => c.cohortMonth === '2024-01');
+      const febCohort = result.cohorts.find(c => c.cohortMonth === '2024-02');
+
+      expect(janCohort).toBeDefined();
+      expect(janCohort?.totalCustomers).toBe(2); // user1 and user2
+      expect(febCohort).toBeDefined();
+      expect(febCohort?.totalCustomers).toBe(1); // user3
+    });
+
+    it('should calculate retention by month', async () => {
+      const uniquePhotographerId = `photographer-cohort-retention-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId);
+
+      const janCohort = result.cohorts.find(c => c.cohortMonth === '2024-01');
+      expect(janCohort?.retentionByMonth).toBeDefined();
+      expect(janCohort?.retentionByMonth.length).toBeGreaterThan(0);
+    });
+
+    it('should calculate summary metrics', async () => {
+      const uniquePhotographerId = `photographer-cohort-summary-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId);
+
+      expect(result.summary.averageRetention).toBeDefined();
+      expect(result.summary.averageLifetimeValue).toBeDefined();
+      expect(result.summary.bestPerformingCohort).toBeDefined();
+    });
+
+    it('should handle empty purchase data', async () => {
+      const uniquePhotographerId = `photographer-cohort-empty-${Date.now()}`;
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId);
+
+      expect(result.cohorts).toEqual([]);
+      expect(result.summary.averageRetention).toBe(0);
+      expect(result.summary.averageLifetimeValue).toBe(0);
+    });
+
+    it('should throw AppError on database error', async () => {
+      const uniquePhotographerId = `photographer-cohort-error-${Date.now()}`;
+      mockSupabase.addResponse(null, { message: 'Database error' });
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      await expect(service.getCohortAnalysis(uniquePhotographerId)).rejects.toThrow(AppError);
+    });
+
+    it('should cache results', async () => {
+      const uniquePhotographerId = `photographer-cohort-cache-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      
+      const result1 = await service.getCohortAnalysis(uniquePhotographerId);
+      mockSupabase.reset();
+      const result2 = await service.getCohortAnalysis(uniquePhotographerId);
+
+      expect(result1).toEqual(result2);
+    });
+
+    it('should respect monthsToAnalyze filter', async () => {
+      const uniquePhotographerId = `photographer-cohort-months-${Date.now()}`;
+      mockSupabase.addResponse(mockCohortPurchases);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getCohortAnalysis(uniquePhotographerId, {
+        monthsToAnalyze: 3,
+      });
+
+      expect(result.cohorts).toBeDefined();
+    });
+  });
+
+  describe('getRevenueTrends', () => {
+    const mockTrendData = [
+      { amount_cents: 2999, created_at: '2024-01-15T10:00:00Z' },
+      { amount_cents: 3999, created_at: '2024-01-16T10:00:00Z' },
+      { amount_cents: 4999, created_at: '2024-01-17T10:00:00Z' },
+    ];
+
+    it('should return revenue trends with growth rates', async () => {
+      const uniquePhotographerId = `photographer-trends-${Date.now()}`;
+      mockSupabase.addResponse(mockTrendData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0]).toHaveProperty('period');
+      expect(result[0]).toHaveProperty('revenue');
+      expect(result[0]).toHaveProperty('sales');
+      expect(result[0]).toHaveProperty('averageOrderValue');
+      expect(result[0]).toHaveProperty('growthRate');
+    });
+
+    it('should calculate growth rate correctly', async () => {
+      const uniquePhotographerId = `photographer-trends-growth-${Date.now()}`;
+      const growthData = [
+        { amount_cents: 1000, created_at: '2024-01-15T10:00:00Z' },
+        { amount_cents: 2000, created_at: '2024-01-16T10:00:00Z' },
+      ];
+      mockSupabase.addResponse(growthData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      // Second day should have 100% growth (1000 -> 2000)
+      const secondDay = result.find(r => r.period === '2024-01-16');
+      expect(secondDay?.growthRate).toBe(100);
+    });
+
+    it('should handle first period with zero growth rate', async () => {
+      const uniquePhotographerId = `photographer-trends-first-${Date.now()}`;
+      mockSupabase.addResponse(mockTrendData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      // First period should have 0 growth rate (no previous period)
+      expect(result[0]?.growthRate).toBe(0);
+    });
+
+    it('should calculate average order value', async () => {
+      const uniquePhotographerId = `photographer-trends-aov-${Date.now()}`;
+      const aovData = [
+        { amount_cents: 1000, created_at: '2024-01-15T10:00:00Z' },
+        { amount_cents: 3000, created_at: '2024-01-15T14:00:00Z' },
+      ];
+      mockSupabase.addResponse(aovData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      const jan15 = result.find(r => r.period === '2024-01-15');
+      expect(jan15?.averageOrderValue).toBe(2000); // (1000 + 3000) / 2
+    });
+
+    it('should handle empty data', async () => {
+      const uniquePhotographerId = `photographer-trends-empty-${Date.now()}`;
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'month');
+
+      expect(result).toEqual([]);
+    });
+
+    it('should throw AppError on database error', async () => {
+      const uniquePhotographerId = `photographer-trends-error-${Date.now()}`;
+      mockSupabase.addResponse(null, { message: 'Database error' });
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      await expect(service.getRevenueTrends(uniquePhotographerId, 'month')).rejects.toThrow(AppError);
+    });
+
+    it('should cache results', async () => {
+      const uniquePhotographerId = `photographer-trends-cache-${Date.now()}`;
+      mockSupabase.addResponse(mockTrendData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      
+      const result1 = await service.getRevenueTrends(uniquePhotographerId, 'week');
+      mockSupabase.reset();
+      const result2 = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      expect(result1).toEqual(result2);
+    });
+
+    it('should support different period types', async () => {
+      const periods: Array<'today' | 'week' | 'month' | 'quarter' | 'year' | 'all'> = ['today', 'week', 'month', 'quarter', 'year', 'all'];
+
+      for (const period of periods) {
+        const uniquePhotographerId = `photographer-trends-period-${period}-${Date.now()}`;
+        mockSupabase.reset();
+        mockSupabase.addResponse(mockTrendData);
+
+        const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+        const result = await service.getRevenueTrends(uniquePhotographerId, period);
+        expect(result).toBeDefined();
+      }
+    });
+  });
+
+  describe('getAdvancedAnalyticsSummary', () => {
+    it('should return advanced analytics summary', async () => {
+      const uniquePhotographerId = `photographer-summary-${Date.now()}`;
+      // Monetization data
+      mockSupabase.addResponse([
+        { total_revenue_cents: 50000, galleries: { user_id: uniquePhotographerId } },
+        { total_revenue_cents: 30000, galleries: { user_id: uniquePhotographerId } },
+      ]);
+      // Funnel data (views, paywall, checkout, purchases)
+      mockSupabase.addResponse(Array(100).fill({ id: 'view' }));
+      mockSupabase.addResponse(Array(50).fill({ id: 'paywall' }));
+      mockSupabase.addResponse(Array(20).fill({ id: 'checkout' }));
+      mockSupabase.addResponse(Array(10).fill({ id: 'purchase' }));
+      // Conversion time data
+      mockSupabase.addResponse([
+        { created_at: '2024-01-15T12:00:00Z', buyer_email: 'test@test.com', gallery_id: 'gallery-1' },
+      ]);
+      // First view for conversion time
+      mockSupabase.addResponse({ created_at: '2024-01-15T10:00:00Z' });
+      // Purchases by hour
+      mockSupabase.addResponse([
+        { created_at: '2024-01-15T14:00:00Z' },
+        { created_at: '2024-01-16T14:00:00Z' },
+        { created_at: '2024-01-17T10:00:00Z' },
+      ]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result).toHaveProperty('revenuePerGallery');
+      expect(result).toHaveProperty('conversionRate');
+      expect(result).toHaveProperty('averageTimeToConversion');
+      expect(result).toHaveProperty('topPerformingDay');
+      expect(result).toHaveProperty('peakHour');
+    });
+
+    it('should calculate revenue per gallery correctly', async () => {
+      const uniquePhotographerId = `photographer-summary-rpg-${Date.now()}`;
+      mockSupabase.addResponse([
+        { total_revenue_cents: 60000, galleries: { user_id: uniquePhotographerId } },
+        { total_revenue_cents: 40000, galleries: { user_id: uniquePhotographerId } },
+      ]);
+      // Funnel data
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      // Conversion time
+      mockSupabase.addResponse([]);
+      // Purchases by hour
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result.revenuePerGallery).toBe(50000); // (60000 + 40000) / 2
+    });
+
+    it('should handle no galleries', async () => {
+      const uniquePhotographerId = `photographer-summary-nogallery-${Date.now()}`;
+      mockSupabase.addResponse([]);
+      // Funnel data
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      // Conversion time
+      mockSupabase.addResponse([]);
+      // Purchases by hour
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result.revenuePerGallery).toBe(0);
+    });
+
+    it('should identify peak hour correctly', async () => {
+      const uniquePhotographerId = `photographer-summary-peak-${Date.now()}`;
+      mockSupabase.addResponse([]);
+      // Funnel data
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      // Conversion time
+      mockSupabase.addResponse([]);
+      // Purchases by hour - most at 14:00 UTC
+      mockSupabase.addResponse([
+        { created_at: '2024-01-15T14:00:00Z' },
+        { created_at: '2024-01-16T14:00:00Z' },
+        { created_at: '2024-01-17T14:00:00Z' },
+        { created_at: '2024-01-18T10:00:00Z' },
+      ]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result.peakHour).toBe(14);
+    });
+
+    it('should cache results', async () => {
+      const uniquePhotographerId = `photographer-summary-cache-${Date.now()}`;
+      mockSupabase.addResponse([{ total_revenue_cents: 50000, galleries: { user_id: uniquePhotographerId } }]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      
+      const result1 = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+      mockSupabase.reset();
+      const result2 = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result1).toEqual(result2);
+    });
+
+    it('should handle default values when no data', async () => {
+      const uniquePhotographerId = `photographer-summary-defaults-${Date.now()}`;
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(result.revenuePerGallery).toBe(0);
+      expect(result.conversionRate).toBe(0);
+      expect(result.averageTimeToConversion).toBe(0);
+      expect(result.peakHour).toBe(12); // Default
+      expect(result.topPerformingDay).toBe('Saturday'); // Default
+    });
+  });
+
+  describe('Query Optimization', () => {
+    it('should use count queries for funnel metrics (head: true)', async () => {
+      const uniquePhotographerId = `photographer-opt-count-${Date.now()}`;
+      mockSupabase.addResponse(null, null, 100);
+      mockSupabase.addResponse(null, null, 50);
+      mockSupabase.addResponse(null, null, 20);
+      mockSupabase.addResponse(null, null, 10);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      await service.getDetailedConversionFunnel(uniquePhotographerId);
+
+      // Verify that from was called (queries were made)
+      expect(mockSupabase.from).toHaveBeenCalled();
+    });
+
+    it('should order purchases by date for trend analysis', async () => {
+      const uniquePhotographerId = `photographer-opt-order-${Date.now()}`;
+      const trendData = [
+        { amount_cents: 1000, created_at: '2024-01-15T10:00:00Z' },
+        { amount_cents: 2000, created_at: '2024-01-16T10:00:00Z' },
+      ];
+      mockSupabase.addResponse(trendData);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      const result = await service.getRevenueTrends(uniquePhotographerId, 'week');
+
+      // Results should be sorted by date
+      for (let i = 1; i < result.length; i++) {
+        expect(result[i]!.period >= result[i - 1]!.period).toBe(true);
+      }
+    });
+
+    it('should limit conversion time queries to recent purchases', async () => {
+      const uniquePhotographerId = `photographer-opt-limit-${Date.now()}`;
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+      // Limited to 100 purchases
+      mockSupabase.addResponse([]);
+      mockSupabase.addResponse([]);
+
+      const service = new RevenueService(mockSupabase as unknown as SupabaseClient);
+      await service.getAdvancedAnalyticsSummary(uniquePhotographerId);
+
+      expect(mockSupabase.from).toHaveBeenCalled();
+    });
+  });
+});

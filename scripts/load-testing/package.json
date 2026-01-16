@@ -1,0 +1,24 @@
+{
+  "name": "piksend-load-testing",
+  "version": "1.0.0",
+  "description": "Load testing scripts for PikSend Stripe Connect monetization system",
+  "type": "module",
+  "scripts": {
+    "test:webhook": "node webhook-load.js",
+    "test:checkout": "node checkout-load.js",
+    "test:dashboard": "node dashboard-load.js",
+    "test:all": "npm run test:webhook && npm run test:checkout && npm run test:dashboard",
+    "test:quick": "DURATION=10 CONNECTIONS=10 npm run test:all"
+  },
+  "dependencies": {
+    "autocannon": "^8.0.0",
+    "dotenv": "^16.4.5",
+    "stripe": "^20.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

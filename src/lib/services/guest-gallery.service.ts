@@ -7,7 +7,11 @@
  */
 import bcrypt from 'bcryptjs';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Gallery, GalleryInsert, Image, ImageInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
+import type { Gallery, Image } from '@/types';
+
+type GalleryInsert = Database['public']['Tables']['galleries']['Insert'];
+type ImageInsert = Database['public']['Tables']['images']['Insert'];
 import { 
   createGalleryRepository,
   type IGalleryRepository 

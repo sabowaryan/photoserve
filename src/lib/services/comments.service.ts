@@ -6,8 +6,11 @@
  * Requirements: 3.2.1, 3.2.2, 3.2.3
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Comment, CommentInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
 import { NotFoundError, ValidationError } from '@/lib/errors';
+
+type Comment = Database['public']['Tables']['comments']['Row'];
+type CommentInsert = Database['public']['Tables']['comments']['Insert'];
 
 export interface ICommentsService {
   addComment(imageId: string, content: string, sessionId: string): Promise<Comment>;

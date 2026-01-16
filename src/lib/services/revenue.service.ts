@@ -4,9 +4,17 @@
  * 
  * @module lib/services/revenue.service
  * Requirements: 5.1 - Revenue Service
+ * Requirements: 11.1 - Caching Strategy (15 minute cache for revenue stats)
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { AppError } from '@/lib/errors';
+import {
+  getCacheService,
+  ICacheService,
+  CACHE_TTL as CACHE_TTL_CONSTANTS,
+  CACHE_PREFIX,
+  buildCacheKey,
+} from './cache.service';
 
 /**
  * Time period for analytics
@@ -188,6 +196,24 @@ export interface AdvancedAnalyticsSummary {
 }
 
 /**
+ * Filters for detailed conversion funnel
+ */
+export interface ConversionFunnelFilters {
+  galleryId?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+/**
+ * Filters for cohort analysis
+ */
+export interface CohortAnalysisFilters {
+  startMonth?: string;
+  endMonth?: string;
+  monthsToAnalyze?: number;
+}
+
+/**
  * Revenue Service Interface
  */
 export interface IRevenueService {
@@ -198,50 +224,33 @@ export interface IRevenueService {
   getTopGalleries(photographerId: string, limit?: number): Promise<TopGallery[]>;
   getConversionFunnel(photographerId: string): Promise<ConversionFunnel>;
   getRevenueByGallery(photographerId: string): Promise<GalleryRevenue[]>;
-}
-
-/**
- * Cache TTL in milliseconds (15 minutes)
- */
-const CACHE_TTL = 15 * 60 * 1000;
-
-/**
- * Simple in-memory cache
- */
-const cache = new Map<string, { data: unknown; timestamp: number }>();
-
-/**
- * Get cached data or null if expired
- */
-function getCached<T>(key: string): T | null {
-  const entry = cache.get(key);
-  if (!entry) return null;
-  if (Date.now() - entry.timestamp > CACHE_TTL) {
-    cache.delete(key);
-    return null;
-  }
-  return entry.data as T;
-}
-
-/**
- * Set cache entry
- */
-function setCache(key: string, data: unknown): void {
-  cache.set(key, { data, timestamp: Date.now() });
+  // Advanced Analytics Methods (Requirement 9.1, 9.2)
+  getDetailedConversionFunnel(photographerId: string, filters?: ConversionFunnelFilters): Promise<DetailedConversionFunnel>;
+  getCohortAnalysis(photographerId: string, filters?: CohortAnalysisFilters): Promise<CohortAnalysis>;
+  getRevenueTrends(photographerId: string, period: AnalyticsPeriod): Promise<RevenueTrend[]>;
+  getAdvancedAnalyticsSummary(photographerId: string): Promise<AdvancedAnalyticsSummary>;
 }
 
 /**
  * Revenue Service Implementation
  */
 export class RevenueService implements IRevenueService {
-  constructor(private supabase: SupabaseClient) {}
+  private cacheService: ICacheService;
+
+  constructor(
+    private supabase: SupabaseClient,
+    cacheService?: ICacheService
+  ) {
+    this.cacheService = cacheService || getCacheService();
+  }
 
   /**
    * Get revenue overview for a photographer
+   * Requirements: 11.1 - Cache revenue statistics (15 minutes)
    */
   async getOverview(photographerId: string, period: AnalyticsPeriod): Promise<RevenueOverview> {
-    const cacheKey = `overview:${photographerId}:${period}`;
-    const cached = getCached<RevenueOverview>(cacheKey);
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_OVERVIEW, photographerId, period);
+    const cached = await this.cacheService.get<RevenueOverview>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -307,7 +316,7 @@ export class RevenueService implements IRevenueService {
         },
       };
 
-      setCache(cacheKey, overview);
+      await this.cacheService.set(cacheKey, overview, CACHE_TTL_CONSTANTS.REVENUE_STATS);
       return overview;
     } catch (error) {
       console.error('[RevenueService] Error getting overview:', error);
@@ -319,8 +328,8 @@ export class RevenueService implements IRevenueService {
    * Get chart data for revenue visualization
    */
   async getChartData(photographerId: string, range: AnalyticsPeriod): Promise<ChartDataPoint[]> {
-    const cacheKey = `chart:${photographerId}:${range}`;
-    const cached = getCached<ChartDataPoint[]>(cacheKey);
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_CHART, photographerId, range);
+    const cached = await this.cacheService.get<ChartDataPoint[]>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -348,7 +357,7 @@ export class RevenueService implements IRevenueService {
       // Group data by interval
       const grouped = this.groupDataByInterval(data || [], groupBy);
       
-      setCache(cacheKey, grouped);
+      await this.cacheService.set(cacheKey, grouped, CACHE_TTL_CONSTANTS.REVENUE_STATS);
       return grouped;
     } catch (error) {
       console.error('[RevenueService] Error getting chart data:', error);
@@ -487,8 +496,8 @@ export class RevenueService implements IRevenueService {
    * Get top performing galleries by revenue
    */
   async getTopGalleries(photographerId: string, limit: number = 5): Promise<TopGallery[]> {
-    const cacheKey = `topGalleries:${photographerId}:${limit}`;
-    const cached = getCached<TopGallery[]>(cacheKey);
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_TOP_GALLERIES, photographerId, String(limit));
+    const cached = await this.cacheService.get<TopGallery[]>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -519,7 +528,7 @@ export class RevenueService implements IRevenueService {
         conversionRate: row.conversion_rate as number,
       }));
 
-      setCache(cacheKey, topGalleries);
+      await this.cacheService.set(cacheKey, topGalleries, CACHE_TTL_CONSTANTS.REVENUE_STATS);
       return topGalleries;
     } catch (error) {
       console.error('[RevenueService] Error getting top galleries:', error);
@@ -531,8 +540,8 @@ export class RevenueService implements IRevenueService {
    * Get conversion funnel data
    */
   async getConversionFunnel(photographerId: string): Promise<ConversionFunnel> {
-    const cacheKey = `funnel:${photographerId}`;
-    const cached = getCached<ConversionFunnel>(cacheKey);
+    const cacheKey = `${CACHE_PREFIX.REVENUE_FUNNEL}${photographerId}`;
+    const cached = await this.cacheService.get<ConversionFunnel>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -582,7 +591,7 @@ export class RevenueService implements IRevenueService {
         conversionRate: Math.round(conversionRate * 100) / 100,
       };
 
-      setCache(cacheKey, funnel);
+      await this.cacheService.set(cacheKey, funnel, CACHE_TTL_CONSTANTS.REVENUE_STATS);
       return funnel;
     } catch (error) {
       console.error('[RevenueService] Error getting conversion funnel:', error);
@@ -594,8 +603,8 @@ export class RevenueService implements IRevenueService {
    * Get revenue breakdown by gallery
    */
   async getRevenueByGallery(photographerId: string): Promise<GalleryRevenue[]> {
-    const cacheKey = `revenueByGallery:${photographerId}`;
-    const cached = getCached<GalleryRevenue[]>(cacheKey);
+    const cacheKey = `${CACHE_PREFIX.REVENUE_BY_GALLERY}${photographerId}`;
+    const cached = await this.cacheService.get<GalleryRevenue[]>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -631,10 +640,510 @@ export class RevenueService implements IRevenueService {
         };
       });
 
-      setCache(cacheKey, revenueByGallery);
+      await this.cacheService.set(cacheKey, revenueByGallery, CACHE_TTL_CONSTANTS.REVENUE_STATS);
       return revenueByGallery;
     } catch (error) {
       console.error('[RevenueService] Error getting revenue by gallery:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get detailed conversion funnel with step-by-step metrics and drop-off analysis
+   * Requirement 9.2: Sales Funnel (Views → Paywall → Checkout → Purchase)
+   */
+  async getDetailedConversionFunnel(
+    photographerId: string,
+    filters?: ConversionFunnelFilters
+  ): Promise<DetailedConversionFunnel> {
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_DETAILED_FUNNEL, photographerId, JSON.stringify(filters || {}));
+    const cached = await this.cacheService.get<DetailedConversionFunnel>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      // Build date filter
+      const startDate = filters?.startDate || this.getDefaultStartDate();
+      const endDate = filters?.endDate || new Date().toISOString();
+
+      // Get gallery views - optimized with index hint on (photographer_id, event_type, created_at)
+      let viewsQuery = this.supabase
+        .from('gallery_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('photographer_id', photographerId)
+        .eq('event_type', 'view')
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
+
+      if (filters?.galleryId) {
+        viewsQuery = viewsQuery.eq('gallery_id', filters.galleryId);
+      }
+
+      const { count: views } = await viewsQuery;
+
+      // Get paywall views
+      let paywallQuery = this.supabase
+        .from('gallery_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('photographer_id', photographerId)
+        .eq('event_type', 'paywall_view')
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
+
+      if (filters?.galleryId) {
+        paywallQuery = paywallQuery.eq('gallery_id', filters.galleryId);
+      }
+
+      const { count: paywallViews } = await paywallQuery;
+
+      // Get checkout starts
+      let checkoutQuery = this.supabase
+        .from('gallery_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('photographer_id', photographerId)
+        .eq('event_type', 'checkout_start')
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
+
+      if (filters?.galleryId) {
+        checkoutQuery = checkoutQuery.eq('gallery_id', filters.galleryId);
+      }
+
+      const { count: checkoutStarts } = await checkoutQuery;
+
+      // Get purchases
+      let purchaseQuery = this.supabase
+        .from('gallery_purchases')
+        .select('id', { count: 'exact', head: true })
+        .eq('photographer_id', photographerId)
+        .eq('status', 'succeeded')
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
+
+      if (filters?.galleryId) {
+        purchaseQuery = purchaseQuery.eq('gallery_id', filters.galleryId);
+      }
+
+      const { count: purchases } = await purchaseQuery;
+
+      // Calculate conversion rates
+      const viewCount = views || 0;
+      const paywallCount = paywallViews || 0;
+      const checkoutCount = checkoutStarts || 0;
+      const purchaseCount = purchases || 0;
+
+      const viewToPaywall = viewCount > 0 ? (paywallCount / viewCount) * 100 : 0;
+      const paywallToCheckout = paywallCount > 0 ? (checkoutCount / paywallCount) * 100 : 0;
+      const checkoutToPurchase = checkoutCount > 0 ? (purchaseCount / checkoutCount) * 100 : 0;
+      const overall = viewCount > 0 ? (purchaseCount / viewCount) * 100 : 0;
+
+      // Calculate drop-off points
+      const dropOffPoints = [
+        {
+          step: 'View → Paywall',
+          dropOffRate: this.roundToTwoDecimals(100 - viewToPaywall),
+          count: viewCount - paywallCount,
+        },
+        {
+          step: 'Paywall → Checkout',
+          dropOffRate: this.roundToTwoDecimals(100 - paywallToCheckout),
+          count: paywallCount - checkoutCount,
+        },
+        {
+          step: 'Checkout → Purchase',
+          dropOffRate: this.roundToTwoDecimals(100 - checkoutToPurchase),
+          count: checkoutCount - purchaseCount,
+        },
+      ];
+
+      const result: DetailedConversionFunnel = {
+        views: viewCount,
+        paywallViews: paywallCount,
+        checkoutStarts: checkoutCount,
+        purchases: purchaseCount,
+        conversionRates: {
+          viewToPaywall: this.roundToTwoDecimals(viewToPaywall),
+          paywallToCheckout: this.roundToTwoDecimals(paywallToCheckout),
+          checkoutToPurchase: this.roundToTwoDecimals(checkoutToPurchase),
+          overall: this.roundToTwoDecimals(overall),
+        },
+        dropOffPoints,
+        period: {
+          startDate,
+          endDate,
+        },
+      };
+
+      await this.cacheService.set(cacheKey, result, CACHE_TTL_CONSTANTS.REVENUE_STATS);
+      return result;
+    } catch (error) {
+      console.error('[RevenueService] Error getting detailed conversion funnel:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get cohort analysis for customer retention
+   * Requirement 9.1: Revenue Analytics - detailed analytics for pricing optimization
+   */
+  async getCohortAnalysis(
+    photographerId: string,
+    filters?: CohortAnalysisFilters
+  ): Promise<CohortAnalysis> {
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_COHORT, photographerId, JSON.stringify(filters || {}));
+    const cached = await this.cacheService.get<CohortAnalysis>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const monthsToAnalyze = filters?.monthsToAnalyze || 6;
+      const endMonth = filters?.endMonth || new Date().toISOString().slice(0, 7);
+      const startMonth = filters?.startMonth || this.getMonthsAgo(monthsToAnalyze);
+
+      // Get all purchases within the date range - optimized with index on (photographer_id, status, created_at)
+      const { data: purchases, error } = await this.supabase
+        .from('gallery_purchases')
+        .select('buyer_email, amount_cents, created_at')
+        .eq('photographer_id', photographerId)
+        .eq('status', 'succeeded')
+        .gte('created_at', `${startMonth}-01`)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        throw new AppError('Failed to fetch cohort data', 'COHORT_ANALYSIS_ERROR', 500);
+      }
+
+      // Group customers by their first purchase month (cohort)
+      const customerCohorts = new Map<string, { firstPurchaseMonth: string; purchases: Array<{ month: string; amount: number }> }>();
+
+      for (const purchase of purchases || []) {
+        const email = purchase.buyer_email;
+        const purchaseMonth = purchase.created_at.slice(0, 7);
+        const amount = purchase.amount_cents || 0;
+
+        if (!customerCohorts.has(email)) {
+          customerCohorts.set(email, {
+            firstPurchaseMonth: purchaseMonth,
+            purchases: [],
+          });
+        }
+
+        const customer = customerCohorts.get(email)!;
+        customer.purchases.push({ month: purchaseMonth, amount });
+      }
+
+      // Build cohort data
+      const cohortMap = new Map<string, CohortData>();
+
+      for (const [, customer] of customerCohorts) {
+        const cohortMonth = customer.firstPurchaseMonth;
+
+        if (!cohortMap.has(cohortMonth)) {
+          cohortMap.set(cohortMonth, {
+            cohortMonth,
+            totalCustomers: 0,
+            totalRevenue: 0,
+            averageOrderValue: 0,
+            retentionByMonth: [],
+          });
+        }
+
+        const cohort = cohortMap.get(cohortMonth)!;
+        cohort.totalCustomers += 1;
+
+        // Calculate retention by month offset
+        const retentionMap = new Map<number, { customers: Set<string>; revenue: number }>();
+
+        for (const purchase of customer.purchases) {
+          const monthOffset = this.getMonthDifference(cohortMonth, purchase.month);
+          cohort.totalRevenue += purchase.amount;
+
+          if (!retentionMap.has(monthOffset)) {
+            retentionMap.set(monthOffset, { customers: new Set(), revenue: 0 });
+          }
+
+          const retention = retentionMap.get(monthOffset)!;
+          retention.customers.add(customer.firstPurchaseMonth + purchase.month);
+          retention.revenue += purchase.amount;
+        }
+      }
+
+      // Calculate retention rates for each cohort
+      const cohorts: CohortData[] = [];
+      let totalRetention = 0;
+      let totalLifetimeValue = 0;
+      let bestCohort = { month: '', revenue: 0 };
+
+      for (const [cohortMonth, cohort] of cohortMap) {
+        // Calculate average order value
+        const totalPurchases = (purchases || []).filter(
+          p => customerCohorts.get(p.buyer_email)?.firstPurchaseMonth === cohortMonth
+        ).length;
+        cohort.averageOrderValue = totalPurchases > 0 ? Math.round(cohort.totalRevenue / totalPurchases) : 0;
+
+        // Build retention by month
+        const maxMonths = Math.min(monthsToAnalyze, this.getMonthDifference(cohortMonth, endMonth) + 1);
+        const retentionByMonth: CohortData['retentionByMonth'] = [];
+
+        for (let month = 0; month < maxMonths; month++) {
+          const monthPurchases = (purchases || []).filter(p => {
+            const customer = customerCohorts.get(p.buyer_email);
+            if (customer?.firstPurchaseMonth !== cohortMonth) return false;
+            return this.getMonthDifference(cohortMonth, p.created_at.slice(0, 7)) === month;
+          });
+
+          const uniqueCustomers = new Set(monthPurchases.map(p => p.buyer_email)).size;
+          const monthRevenue = monthPurchases.reduce((sum, p) => sum + (p.amount_cents || 0), 0);
+          const retentionRate = cohort.totalCustomers > 0 ? (uniqueCustomers / cohort.totalCustomers) * 100 : 0;
+
+          retentionByMonth.push({
+            month,
+            customers: uniqueCustomers,
+            revenue: monthRevenue,
+            retentionRate: this.roundToTwoDecimals(retentionRate),
+          });
+
+          if (month > 0) {
+            totalRetention += retentionRate;
+          }
+        }
+
+        cohort.retentionByMonth = retentionByMonth;
+        cohorts.push(cohort);
+
+        // Track best performing cohort
+        if (cohort.totalRevenue > bestCohort.revenue) {
+          bestCohort = { month: cohortMonth, revenue: cohort.totalRevenue };
+        }
+
+        // Calculate lifetime value
+        if (cohort.totalCustomers > 0) {
+          totalLifetimeValue += cohort.totalRevenue / cohort.totalCustomers;
+        }
+      }
+
+      // Sort cohorts by month
+      cohorts.sort((a, b) => a.cohortMonth.localeCompare(b.cohortMonth));
+
+      // Calculate summary
+      const cohortCount = cohorts.length;
+      const retentionPeriods = cohorts.reduce((sum, c) => sum + Math.max(0, c.retentionByMonth.length - 1), 0);
+
+      const result: CohortAnalysis = {
+        cohorts,
+        summary: {
+          averageRetention: retentionPeriods > 0 ? this.roundToTwoDecimals(totalRetention / retentionPeriods) : 0,
+          averageLifetimeValue: cohortCount > 0 ? Math.round(totalLifetimeValue / cohortCount) : 0,
+          bestPerformingCohort: bestCohort.month || 'N/A',
+        },
+      };
+
+      await this.cacheService.set(cacheKey, result, CACHE_TTL_CONSTANTS.REVENUE_STATS);
+      return result;
+    } catch (error) {
+      console.error('[RevenueService] Error getting cohort analysis:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get revenue trends with growth rates
+   * Requirement 9.1: Revenue Analytics - trends, conversion rate
+   */
+  async getRevenueTrends(photographerId: string, period: AnalyticsPeriod): Promise<RevenueTrend[]> {
+    const cacheKey = buildCacheKey(CACHE_PREFIX.REVENUE_TRENDS, photographerId, period);
+    const cached = await this.cacheService.get<RevenueTrend[]>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const { startDate } = this.getPeriodDates(period);
+      const groupBy = this.getGroupByInterval(period);
+
+      // Fetch purchases - optimized with index on (photographer_id, status, created_at)
+      const query = this.supabase
+        .from('gallery_purchases')
+        .select('amount_cents, created_at')
+        .eq('photographer_id', photographerId)
+        .eq('status', 'succeeded')
+        .order('created_at', { ascending: true });
+
+      if (startDate) {
+        query.gte('created_at', startDate);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw new AppError('Failed to fetch revenue trends', 'REVENUE_TRENDS_ERROR', 500);
+      }
+
+      // Group data by interval
+      const grouped = new Map<string, { revenue: number; sales: number }>();
+
+      for (const item of data || []) {
+        const date = new Date(item.created_at);
+        const key = this.getIntervalKey(date, groupBy);
+
+        const existing = grouped.get(key) || { revenue: 0, sales: 0 };
+        existing.revenue += item.amount_cents || 0;
+        existing.sales += 1;
+        grouped.set(key, existing);
+      }
+
+      // Convert to array and calculate growth rates
+      const sortedKeys = Array.from(grouped.keys()).sort();
+      const trends: RevenueTrend[] = [];
+
+      for (let i = 0; i < sortedKeys.length; i++) {
+        const key = sortedKeys[i]!;
+        const current = grouped.get(key)!;
+        const previous = i > 0 ? grouped.get(sortedKeys[i - 1]!) : null;
+
+        const growthRate = previous && previous.revenue > 0
+          ? ((current.revenue - previous.revenue) / previous.revenue) * 100
+          : 0;
+
+        trends.push({
+          period: key,
+          revenue: current.revenue,
+          sales: current.sales,
+          averageOrderValue: current.sales > 0 ? Math.round(current.revenue / current.sales) : 0,
+          growthRate: this.roundToTwoDecimals(growthRate),
+        });
+      }
+
+      await this.cacheService.set(cacheKey, trends, CACHE_TTL_CONSTANTS.REVENUE_STATS);
+      return trends;
+    } catch (error) {
+      console.error('[RevenueService] Error getting revenue trends:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get advanced analytics summary
+   * Requirement 9.1: Revenue Analytics - Revenue per gallery, avg time to conversion, peak hours
+   */
+  async getAdvancedAnalyticsSummary(photographerId: string): Promise<AdvancedAnalyticsSummary> {
+    const cacheKey = `${CACHE_PREFIX.REVENUE_ADVANCED_SUMMARY}${photographerId}`;
+    const cached = await this.cacheService.get<AdvancedAnalyticsSummary>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      // Get total revenue and gallery count for revenue per gallery
+      const { data: monetizationData } = await this.supabase
+        .from('gallery_monetization')
+        .select(`
+          total_revenue_cents,
+          galleries!inner(user_id)
+        `)
+        .eq('galleries.user_id', photographerId)
+        .eq('is_enabled', true);
+
+      const totalRevenue = (monetizationData || []).reduce(
+        (sum, row) => sum + ((row.total_revenue_cents as number) || 0),
+        0
+      );
+      const galleryCount = monetizationData?.length || 0;
+      const revenuePerGallery = galleryCount > 0 ? Math.round(totalRevenue / galleryCount) : 0;
+
+      // Get conversion rate from funnel
+      const funnel = await this.getConversionFunnel(photographerId);
+      const conversionRate = funnel.conversionRate;
+
+      // Get average time to conversion (from first view to purchase)
+      const { data: conversionTimeData } = await this.supabase
+        .from('gallery_purchases')
+        .select(`
+          created_at,
+          buyer_email,
+          gallery_id
+        `)
+        .eq('photographer_id', photographerId)
+        .eq('status', 'succeeded')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      let totalConversionTime = 0;
+      let conversionCount = 0;
+
+      for (const purchase of conversionTimeData || []) {
+        // Get first view for this buyer and gallery
+        const { data: firstView } = await this.supabase
+          .from('gallery_events')
+          .select('created_at')
+          .eq('gallery_id', purchase.gallery_id)
+          .eq('event_type', 'view')
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (firstView) {
+          const viewTime = new Date(firstView.created_at).getTime();
+          const purchaseTime = new Date(purchase.created_at).getTime();
+          const timeDiff = purchaseTime - viewTime;
+
+          if (timeDiff > 0) {
+            totalConversionTime += timeDiff;
+            conversionCount++;
+          }
+        }
+      }
+
+      // Convert to hours
+      const averageTimeToConversion = conversionCount > 0
+        ? Math.round((totalConversionTime / conversionCount) / (1000 * 60 * 60))
+        : 0;
+
+      // Get peak hour and top performing day
+      const { data: purchasesByHour } = await this.supabase
+        .from('gallery_purchases')
+        .select('created_at')
+        .eq('photographer_id', photographerId)
+        .eq('status', 'succeeded');
+
+      const hourCounts = new Map<number, number>();
+      const dayCounts = new Map<string, number>();
+
+      for (const purchase of purchasesByHour || []) {
+        const date = new Date(purchase.created_at);
+        const hour = date.getUTCHours();
+        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getUTCDay()];
+
+        hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
+        dayCounts.set(dayName!, (dayCounts.get(dayName!) || 0) + 1);
+      }
+
+      // Find peak hour
+      let peakHour = 12; // Default to noon
+      let maxHourCount = 0;
+      for (const [hour, count] of hourCounts) {
+        if (count > maxHourCount) {
+          maxHourCount = count;
+          peakHour = hour;
+        }
+      }
+
+      // Find top performing day
+      let topPerformingDay = 'Saturday'; // Default
+      let maxDayCount = 0;
+      for (const [day, count] of dayCounts) {
+        if (count > maxDayCount) {
+          maxDayCount = count;
+          topPerformingDay = day;
+        }
+      }
+
+      const result: AdvancedAnalyticsSummary = {
+        revenuePerGallery,
+        conversionRate,
+        averageTimeToConversion,
+        topPerformingDay,
+        peakHour,
+      };
+
+      await this.cacheService.set(cacheKey, result, CACHE_TTL_CONSTANTS.REVENUE_STATS);
+      return result;
+    } catch (error) {
+      console.error('[RevenueService] Error getting advanced analytics summary:', error);
       throw error;
     }
   }
@@ -767,11 +1276,73 @@ export class RevenueService implements IRevenueService {
       }))
       .sort((a, b) => a.date.localeCompare(b.date));
   }
+
+  /**
+   * Round number to two decimal places
+   * @private
+   */
+  private roundToTwoDecimals(value: number): number {
+    return Math.round(value * 100) / 100;
+  }
+
+  /**
+   * Get default start date (30 days ago)
+   * @private
+   */
+  private getDefaultStartDate(): string {
+    const date = new Date();
+    date.setDate(date.getDate() - 30);
+    return date.toISOString();
+  }
+
+  /**
+   * Get date string for N months ago
+   * @private
+   */
+  private getMonthsAgo(months: number): string {
+    const date = new Date();
+    date.setMonth(date.getMonth() - months);
+    return date.toISOString().slice(0, 7);
+  }
+
+  /**
+   * Calculate month difference between two YYYY-MM strings
+   * @private
+   */
+  private getMonthDifference(startMonth: string, endMonth: string): number {
+    const [startYear, startMonthNum] = startMonth.split('-').map(Number);
+    const [endYear, endMonthNum] = endMonth.split('-').map(Number);
+    return (endYear! - startYear!) * 12 + (endMonthNum! - startMonthNum!);
+  }
+
+  /**
+   * Get interval key for a date based on grouping
+   * @private
+   */
+  private getIntervalKey(date: Date, interval: 'hour' | 'day' | 'week' | 'month'): string {
+    switch (interval) {
+      case 'hour':
+        return `${date.toISOString().slice(0, 13)}:00`;
+      case 'day':
+        return date.toISOString().slice(0, 10);
+      case 'week':
+        const weekStart = new Date(date);
+        weekStart.setDate(date.getDate() - date.getDay());
+        return weekStart.toISOString().slice(0, 10);
+      case 'month':
+        return date.toISOString().slice(0, 7);
+    }
+  }
 }
 
 /**
  * Factory function to create a RevenueService instance
+ /**
+ * Factory function to create a RevenueService instance
  */
-export function createRevenueService(supabase: SupabaseClient): RevenueService {
-  return new RevenueService(supabase);
+export function createRevenueService(
+  supabase: SupabaseClient,
+  cacheService?: ICacheService
+): RevenueService {
+  return new RevenueService(supabase, cacheService);
 }

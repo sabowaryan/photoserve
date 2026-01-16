@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
+import { handleApiError } from '@/lib/api/error-handler';
+import { AuthenticationError } from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, userId } = await requireSupabaseClient();
 
     const { endpoint } = await request.json();
 
@@ -26,7 +20,7 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase
       .from('push_subscriptions')
       .delete()
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('endpoint', endpoint);
 
     if (error) {
@@ -39,10 +33,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return handleApiError(new AuthenticationError());
+    }
     console.error('Error in unsubscribe endpoint:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

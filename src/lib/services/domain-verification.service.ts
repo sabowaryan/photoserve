@@ -75,7 +75,10 @@ export interface IDomainVerificationService {
 export class DomainVerificationService implements IDomainVerificationService {
   private rateLimitCache: Map<string, VerificationRateLimit> = new Map();
 
-  constructor(private supabase: SupabaseClient<Database>) {}
+  constructor(_supabase: SupabaseClient<Database>) {
+    // Supabase client reserved for future use
+    void _supabase;
+  }
 
   /**
    * Verify domain ownership via CNAME/A or TXT records

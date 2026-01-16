@@ -71,16 +71,6 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function formatFullDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
 function getStatusConfig(status: PayoutStatus) {
   switch (status) {
     case 'paid':

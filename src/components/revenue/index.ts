@@ -13,3 +13,5 @@ export { RefundModal } from './refund-modal';
 export { DisputeAlert } from './dispute-alert';
 export { DisputeList } from './dispute-list';
 export { DisputeDetails } from './dispute-details';
+export { AnalyticsTab } from './analytics-tab';
+export { ConversionFunnel } from './conversion-funnel';

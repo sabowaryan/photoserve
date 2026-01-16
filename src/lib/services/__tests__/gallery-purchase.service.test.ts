@@ -3,10 +3,11 @@
  * Tests for gallery purchase operations including checkout, access verification, and refunds
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GalleryPurchaseService, clearAccessCache } from '../gallery-purchase.service';
+import { GalleryPurchaseService } from '../gallery-purchase.service';
 import { ValidationError, NotFoundError, AppError } from '@/lib/errors';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type Stripe from 'stripe';
+import type { ICacheService } from '../cache.service';
 
 // Mock Stripe
 const mockStripe = {
@@ -17,6 +18,7 @@ const mockStripe = {
   },
   refunds: {
     create: vi.fn(),
+    list: vi.fn(),
   },
 } as unknown as Stripe;
 
@@ -24,6 +26,18 @@ const mockStripe = {
 vi.mock('@/lib/stripe/client', () => ({
   getStripe: vi.fn(() => mockStripe),
 }));
+
+// Mock cache service
+const createMockCacheService = (): ICacheService => ({
+  get: vi.fn().mockResolvedValue(null),
+  set: vi.fn().mockResolvedValue(undefined),
+  delete: vi.fn().mockResolvedValue(undefined),
+  deletePattern: vi.fn().mockResolvedValue(undefined),
+  exists: vi.fn().mockResolvedValue(false),
+  getStats: vi.fn().mockReturnValue({ hits: 0, misses: 0, sets: 0, deletes: 0, errors: 0, isRedisConnected: false }),
+  isRedisAvailable: vi.fn().mockReturnValue(false),
+  disconnect: vi.fn().mockResolvedValue(undefined),
+});
 
 // Mock Supabase client
 const createMockSupabase = () => {
@@ -67,6 +81,7 @@ const createMockSupabase = () => {
 describe('GalleryPurchaseService', () => {
   let service: GalleryPurchaseService;
   let mockSupabase: ReturnType<typeof createMockSupabase>;
+  let mockCacheService: ICacheService;
 
   // Test data
   const mockGallery = {
@@ -117,9 +132,9 @@ describe('GalleryPurchaseService', () => {
 
   beforeEach(() => {
     mockSupabase = createMockSupabase();
-    service = new GalleryPurchaseService(mockSupabase as any);
+    mockCacheService = createMockCacheService();
+    service = new GalleryPurchaseService(mockSupabase as any, mockCacheService);
     vi.clearAllMocks();
-    clearAccessCache();
   });
 
   afterEach(() => {
@@ -669,21 +684,40 @@ describe('GalleryPurchaseService', () => {
     });
 
     it('should use cache for repeated checks', async () => {
+      // Create a cache that stores values
+      const cacheStore = new Map<string, any>();
+      const cachingMockService: ICacheService = {
+        get: vi.fn().mockImplementation((key: string) => Promise.resolve(cacheStore.get(key) || null)),
+        set: vi.fn().mockImplementation((key: string, value: any) => {
+          cacheStore.set(key, value);
+          return Promise.resolve();
+        }),
+        delete: vi.fn().mockResolvedValue(undefined),
+        deletePattern: vi.fn().mockResolvedValue(undefined),
+        exists: vi.fn().mockResolvedValue(false),
+        getStats: vi.fn().mockReturnValue({ hits: 0, misses: 0, sets: 0, deletes: 0, errors: 0, isRedisConnected: false }),
+        isRedisAvailable: vi.fn().mockReturnValue(false),
+        disconnect: vi.fn().mockResolvedValue(undefined),
+      };
+      
+      const cachingService = new GalleryPurchaseService(mockSupabase as any, cachingMockService);
+
       // First call - hits database
       mockSupabase._mocks.single.mockResolvedValueOnce({
         data: mockPurchase,
         error: null,
       });
 
-      const result1 = await service.checkAccess('gallery-123', 'buyer@example.com');
+      const result1 = await cachingService.checkAccess('gallery-123', 'buyer@example.com');
       expect(result1.hasAccess).toBe(true);
 
       // Second call - should use cache (no additional DB call)
-      const result2 = await service.checkAccess('gallery-123', 'buyer@example.com');
+      const result2 = await cachingService.checkAccess('gallery-123', 'buyer@example.com');
       expect(result2.hasAccess).toBe(true);
 
-      // Verify only one DB call was made
-      expect(mockSupabase._mocks.single).toHaveBeenCalledTimes(1);
+      // Verify cache was used
+      expect(cachingMockService.get).toHaveBeenCalledTimes(2);
+      expect(cachingMockService.set).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1286,7 +1320,6 @@ describe('GalleryPurchaseService', () => {
 
       for (const { price, expectedFee } of testCases) {
         vi.clearAllMocks();
-        clearAccessCache();
 
         // Mock monetization lookup
         mockSupabase._mocks.single.mockResolvedValueOnce({

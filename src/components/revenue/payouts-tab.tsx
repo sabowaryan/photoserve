@@ -26,7 +26,6 @@ import {
   ExternalLink,
   AlertCircle
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 type PayoutStatus = 'pending' | 'in_transit' | 'paid' | 'failed' | 'canceled';

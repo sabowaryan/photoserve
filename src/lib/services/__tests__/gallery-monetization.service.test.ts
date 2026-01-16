@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { GalleryMonetizationService } from '../gallery-monetization.service';
 import { ValidationError, NotFoundError, AppError } from '@/lib/errors';
 import type Stripe from 'stripe';
+import type { ICacheService } from '../cache.service';
 
 // Mock Stripe
 const mockStripe = {
@@ -21,6 +22,18 @@ const mockStripe = {
 vi.mock('@/lib/stripe/client', () => ({
   getStripe: vi.fn(() => mockStripe),
 }));
+
+// Mock cache service
+const createMockCacheService = (): ICacheService => ({
+  get: vi.fn().mockResolvedValue(null),
+  set: vi.fn().mockResolvedValue(undefined),
+  delete: vi.fn().mockResolvedValue(undefined),
+  deletePattern: vi.fn().mockResolvedValue(undefined),
+  exists: vi.fn().mockResolvedValue(false),
+  getStats: vi.fn().mockReturnValue({ hits: 0, misses: 0, sets: 0, deletes: 0, errors: 0, isRedisConnected: false }),
+  isRedisAvailable: vi.fn().mockReturnValue(false),
+  disconnect: vi.fn().mockResolvedValue(undefined),
+});
 
 // Mock Supabase client
 interface MockSupabase {
@@ -77,10 +90,12 @@ const createMockSupabase = (): MockSupabase => {
 describe('GalleryMonetizationService', () => {
   let service: GalleryMonetizationService;
   let mockSupabase: ReturnType<typeof createMockSupabase>;
+  let mockCacheService: ICacheService;
 
   beforeEach(() => {
     mockSupabase = createMockSupabase();
-    service = new GalleryMonetizationService(mockSupabase as any);
+    mockCacheService = createMockCacheService();
+    service = new GalleryMonetizationService(mockSupabase as any, mockCacheService);
     vi.clearAllMocks();
   });
 

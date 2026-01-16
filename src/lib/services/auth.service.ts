@@ -10,7 +10,7 @@ import bcrypt from 'bcryptjs';
 import { createAdminClient } from '@/lib/supabase/server';
 import { signUpSchema, type SignUpInput } from '@/lib/validators/auth.schema';
 import { ValidationError } from '@/lib/errors';
-import type { Profile } from '@/lib/supabase/types';
+import type { Profile } from '@/types';
 
 const BCRYPT_ROUNDS = 10;
 
@@ -109,7 +109,10 @@ export class AuthService implements IAuthService {
 
     return {
       success: true,
-      user: profile,
+      user: {
+        ...profile,
+        subscription_plan: profile.subscription_plan || 'free',
+      } as Profile,
     };
   }
 
@@ -150,7 +153,10 @@ export class AuthService implements IAuthService {
 
     return {
       success: true,
-      user: profile,
+      user: {
+        ...profile,
+        subscription_plan: profile.subscription_plan || 'free',
+      } as Profile,
       session: {
         access_token: signInData.session.access_token,
         refresh_token: signInData.session.refresh_token,

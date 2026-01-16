@@ -53,7 +53,13 @@ export function usePushNotifications() {
 
   const subscribe = useCallback(async () => {
     if (!isSupported) {
-      setError('Push notifications are not supported in this browser');
+      setError('Les notifications push ne sont pas supportées par ce navigateur');
+      return null;
+    }
+
+    const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    if (!vapidPublicKey) {
+      setError('Les notifications push ne sont pas configurées sur ce serveur');
       return null;
     }
 
@@ -61,26 +67,31 @@ export function usePushNotifications() {
     setError(null);
 
     try {
-      // Request notification permission
       const permission = await Notification.requestPermission();
       
       if (permission !== 'granted') {
-        setError('Notification permission denied');
+        setError('Permission de notification refusée');
         setIsLoading(false);
         return null;
       }
 
-      // Get service worker registration
-      const registration = await navigator.serviceWorker.ready;
-
-      // Subscribe to push notifications
-      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      
-      if (!vapidPublicKey) {
-        setError('VAPID public key not configured');
+      // Check if service worker is registered
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      if (registrations.length === 0) {
+        setError('Service worker non disponible. Les notifications push nécessitent HTTPS en production.');
         setIsLoading(false);
         return null;
       }
+
+      // Add timeout for service worker ready
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Service worker timeout')), 5000);
+      });
+
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        timeoutPromise
+      ]);
 
       const pushSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
@@ -94,16 +105,18 @@ export function usePushNotifications() {
 
       return subscriptionData;
     } catch (err) {
-      console.error('Error subscribing to push notifications:', err);
-      setError(err instanceof Error ? err.message : 'Failed to subscribe');
+      const message = err instanceof Error ? err.message : 'Échec de l\'inscription';
+      if (message === 'Service worker timeout') {
+        setError('Service worker non prêt. Rechargez la page et réessayez.');
+      } else {
+        setError(message);
+      }
       setIsLoading(false);
       return null;
     }
   }, [isSupported]);
 
   const unsubscribe = useCallback(async () => {
-    if (!subscription) return;
-
     setIsLoading(true);
     setError(null);
 
@@ -113,17 +126,17 @@ export function usePushNotifications() {
       
       if (pushSubscription) {
         await pushSubscription.unsubscribe();
-        setSubscription(null);
-        setIsSubscribed(false);
       }
       
+      setSubscription(null);
+      setIsSubscribed(false);
       setIsLoading(false);
     } catch (err) {
       console.error('Error unsubscribing from push notifications:', err);
-      setError(err instanceof Error ? err.message : 'Failed to unsubscribe');
+      setError(err instanceof Error ? err.message : 'Échec de la désinscription');
       setIsLoading(false);
     }
-  }, [subscription]);
+  }, []);
 
   return {
     isSupported,

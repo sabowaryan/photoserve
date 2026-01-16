@@ -20,20 +20,23 @@ export interface Profile {
   name: string | null;
   avatar_url: string | null;
   subscription_plan: SubscriptionPlan;
-  storage_used_mb: number;
-  storage_limit_mb: number;
-  max_galleries: number;
-  max_images_per_gallery: number;
-  max_image_size_mb: number;
+  storage_used_mb: number | null;
+  storage_limit_mb: number | null;
+  max_galleries: number | null;
+  max_images_per_gallery: number | null;
+  max_image_size_mb: number | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
-  is_admin: boolean;
-  is_suspended: boolean;
-  onboarding_completed: boolean;
-  branding: ProfileBranding | null;
-  created_at: string;
-  updated_at: string;
+  is_admin: boolean | null;
+  is_suspended: boolean | null;
+  onboarding_completed: boolean | null;
+  branding: ProfileBranding | Json | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
+
+// JSON type for database compatibility
+type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 // Gallery
 export interface Gallery {
@@ -42,16 +45,17 @@ export interface Gallery {
   title: string;
   unique_slug: string;
   password_hash: string;
-  expiration_days: number;
+  expiration_days: number | null;
   expires_at: string;
-  views_count: number;
-  is_active: boolean;
+  views_count: number | null;
+  is_active: boolean | null;
   guest_session_id: string | null;
-  is_unlocked: boolean;
-  payment_type: PaymentType;
+  is_unlocked: boolean | null;
+  payment_type: PaymentType | null;
   converted_at: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
+  settings?: GallerySettings | null;
 }
 
 // Guest Gallery - Gallery created by a visitor without an account (Requirement 9.1)
@@ -77,10 +81,10 @@ export interface Image {
   id: string;
   gallery_id: string;
   cloudinary_url: string;
-  cloudinary_public_id: string;
-  file_size_mb: number;
-  order_index: number;
-  created_at: string;
+  cloudinary_public_id: string | null;
+  file_size_mb: number | null;
+  order_index: number | null;
+  created_at: string | null;
 }
 
 // Rate Limit

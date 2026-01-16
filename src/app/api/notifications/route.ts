@@ -5,22 +5,14 @@
  * @module app/api/notifications/route
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createInAppNotificationService } from '@/lib/services/in-app-notification.service';
+import { AuthenticationError } from '@/lib/errors';
+import { handleApiError } from '@/lib/api/error-handler';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, userId } = await requireSupabaseClient();
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
@@ -31,14 +23,14 @@ export async function GET(request: NextRequest) {
 
     const notificationService = createInAppNotificationService(supabase);
     
-    const notifications = await notificationService.getNotifications(user.id, {
+    const notifications = await notificationService.getNotifications(userId, {
       type: type || undefined,
       isRead: isRead !== null ? isRead === 'true' : undefined,
       limit,
       offset,
     });
 
-    const unreadCount = await notificationService.getUnreadCount(user.id);
+    const unreadCount = await notificationService.getUnreadCount(userId);
 
     return NextResponse.json({
       notifications,
@@ -50,10 +42,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return handleApiError(new AuthenticationError());
+    }
     console.error('[NotificationsAPI] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch notifications' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

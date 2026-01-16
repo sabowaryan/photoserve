@@ -4,12 +4,20 @@
  * 
  * @module lib/services/gallery-monetization.service
  * Requirements: 2.1 - Gallery Paywall Configuration
+ * Requirements: 11.1 - Caching Strategy (5 minute cache for monetization config)
  */
 import { getStripe } from '@/lib/stripe/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 import { AppError, NotFoundError, ValidationError } from '@/lib/errors';
 import Stripe from 'stripe';
+import { 
+  getCacheService, 
+  ICacheService, 
+  CACHE_TTL, 
+  CACHE_PREFIX,
+  CacheInvalidation,
+} from './cache.service';
 
 /**
  * Monetization Configuration
@@ -53,9 +61,14 @@ export interface IGalleryMonetizationService {
  */
 export class GalleryMonetizationService implements IGalleryMonetizationService {
   private stripe: Stripe;
+  private cacheService: ICacheService;
 
-  constructor(private supabase: SupabaseClient<Database>) {
+  constructor(
+    private supabase: SupabaseClient<Database>,
+    cacheService?: ICacheService
+  ) {
     this.stripe = getStripe();
+    this.cacheService = cacheService || getCacheService();
   }
 
   /**
@@ -169,6 +182,9 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
         stripePriceId,
       });
 
+      // Invalidate cache for this gallery
+      await CacheInvalidation.monetizationConfig(this.cacheService, galleryId);
+
       return this.mapToConfig(monetization);
     } catch (error) {
       if (error instanceof AppError) {
@@ -252,6 +268,9 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
         changes: Object.keys(updateData),
       });
 
+      // Invalidate cache for this gallery
+      await CacheInvalidation.monetizationConfig(this.cacheService, galleryId);
+
       return this.mapToConfig(updated);
     } catch (error) {
       if (error instanceof AppError) {
@@ -287,6 +306,9 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
         throw new AppError('Failed to disable paywall', 'MONETIZATION_DISABLE_ERROR', 500);
       }
 
+      // Invalidate cache for this gallery
+      await CacheInvalidation.monetizationConfig(this.cacheService, galleryId);
+
       console.log('[GalleryMonetizationService] Disabled paywall:', { galleryId });
     } catch (error) {
       if (error instanceof AppError) {
@@ -300,12 +322,20 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
   /**
    * Get monetization configuration for a gallery
    * Requirements: 2.1 - Retrieve configuration
+   * Requirements: 11.1 - Cache monetization config (5 minutes)
    * 
    * @param galleryId - The gallery ID
    * @returns The configuration or null if not found
    */
   async getConfig(galleryId: string): Promise<MonetizationConfig | null> {
     try {
+      // Check cache first
+      const cacheKey = `${CACHE_PREFIX.MONETIZATION_CONFIG}${galleryId}`;
+      const cached = await this.cacheService.get<MonetizationConfig>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
       const { data, error } = await this.supabase
         .from('gallery_monetization')
         .select('*')
@@ -321,7 +351,12 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
         throw new AppError('Failed to get monetization config', 'MONETIZATION_GET_ERROR', 500);
       }
 
-      return this.mapToConfig(data);
+      const config = this.mapToConfig(data);
+      
+      // Cache the result
+      await this.cacheService.set(cacheKey, config, CACHE_TTL.MONETIZATION_CONFIG);
+
+      return config;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
@@ -453,6 +488,9 @@ export class GalleryMonetizationService implements IGalleryMonetizationService {
         totalRevenue: newTotalRevenue,
         conversionRate,
       });
+
+      // Invalidate cache for this gallery
+      await CacheInvalidation.monetizationConfig(this.cacheService, galleryId);
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
