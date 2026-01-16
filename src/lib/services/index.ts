@@ -213,7 +213,6 @@ export {
 export {
   GalleryPurchaseService,
   createGalleryPurchaseService,
-  clearAccessCache,
   type IGalleryPurchaseService,
   type GalleryPurchase,
   type CheckoutSessionResult,

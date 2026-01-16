@@ -6,7 +6,10 @@
  * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, Image, ImageInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
+import type { Image } from '@/types';
+
+type ImageInsert = Database['public']['Tables']['images']['Insert'];
 import {
   createImageRepository,
   type IImageRepository,
