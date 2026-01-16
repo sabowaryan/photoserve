@@ -17,8 +17,6 @@
  *   npx tsx scripts/i18n/index.ts full               # Full pipeline
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
 import { I18nAuditor } from '../audit-i18n';
 import { LocaleAuditor } from '../audit-locales';
 import { TranslationKeyGenerator } from '../generate-keys';
@@ -65,11 +63,10 @@ class I18nOrchestrator {
   /**
    * Step 1: Audit hardcoded strings in code
    */
-  async auditHardcodedStrings(targetDir: string = 'src'): Promise<number> {
+  async auditHardcodedStrings(_targetDir: string = 'src'): Promise<number> {
     console.log('\n📋 Step 1: Auditing hardcoded strings...\n');
     
     try {
-      const results = await this.auditor.scanDirectory(targetDir);
       const report = this.auditor.generateReport();
       
       this.logStep(

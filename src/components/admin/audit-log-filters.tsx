@@ -34,6 +34,7 @@ const ACTION_TYPE_LABELS: Record<AuditActionType, string> = {
   subscription_update: "Modification abonnement",
   subscription_cancel: "Annulation abonnement",
   admin_login: "Connexion admin",
+  settings_update: "Modification paramètres",
 };
 
 const ACTION_TYPES: AuditActionType[] = [
@@ -47,6 +48,7 @@ const ACTION_TYPES: AuditActionType[] = [
   "gallery_delete",
   "subscription_update",
   "subscription_cancel",
+  "settings_update",
 ];
 
 /**

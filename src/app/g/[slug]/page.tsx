@@ -103,7 +103,6 @@ export default async function GalleryViewPage({ params, searchParams }: GalleryV
   // Fetch owner's subscription plan and branding if gallery has an owner
   let brandColors = null;
   let customLogo = null;
-  let brandingCustomDomain = null;
   let ownerPlan: 'free' | 'premium' | 'pro' = 'free';
   
   if ((gallery as any).user_id) {
@@ -124,7 +123,6 @@ export default async function GalleryViewPage({ params, searchParams }: GalleryV
         };
         brandColors = branding.brandColors || null;
         customLogo = branding.customLogo || null;
-        brandingCustomDomain = branding.customDomain || null;
       }
     }
   }

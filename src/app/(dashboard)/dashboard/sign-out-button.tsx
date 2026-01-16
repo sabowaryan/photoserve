@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { LogOut, Loader2 } from "lucide-react";
 import { clearSessionCache } from "@/hooks/use-cached-session";
 
@@ -12,7 +11,6 @@ interface SignOutButtonProps {
 
 export function SignOutButton({ variant = "icon" }: SignOutButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogout = async () => {
     setIsLoading(true);

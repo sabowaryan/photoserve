@@ -5,13 +5,25 @@
  * Requirements: 7.1, 7.3
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database, AuditLogInsert } from '@/lib/supabase/types';
+import type { Database } from '@/lib/supabase/types';
 import type { 
   AuditLog, 
   AuditLogWithAdmin, 
   AuditLogFilters,
-  PaginatedResult 
+  PaginatedResult,
+  AuditActionType,
+  AuditEntityType
 } from '@/types/admin';
+
+// Type for inserting audit logs
+type AuditLogInsert = {
+  admin_id: string;
+  action_type: AuditActionType;
+  entity_type: AuditEntityType;
+  entity_id: string | null;
+  details: any; // Use any for JSON compatibility with Supabase
+  ip_address: string | null;
+};
 
 export interface IAuditLogRepository {
   create(log: AuditLogInsert): Promise<AuditLog>;

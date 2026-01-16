@@ -10,3 +10,5 @@ export { LeadMagnetModal } from './lead-magnet-modal';
 export { VideoCover } from './video-cover';
 export { AudioPlayer } from './audio-player';
 export { TestimonialModal } from './testimonial-modal';
+export { GalleryPaywall } from './gallery-paywall';
+export { UnlockBanner } from './unlock-banner';

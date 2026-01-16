@@ -6,7 +6,7 @@
  */
 
 // Routes that require authentication
-export const PROTECTED_ROUTES = ['/dashboard', '/settings'];
+export const PROTECTED_ROUTES = ['/dashboard', '/settings', '/revenue'];
 
 // Routes that should redirect to dashboard if authenticated
 export const AUTH_ROUTES = ['/auth', '/forgot-password', '/reset-password'];

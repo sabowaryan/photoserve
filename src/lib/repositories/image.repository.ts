@@ -3,8 +3,12 @@
  * Data access layer for images
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, Image, ImageInsert } from '@/lib/supabase/types'
+import type { Database } from '@/lib/supabase/types'
+import type { Image } from '@/types'
 import { NotFoundError } from '@/lib/errors'
+
+// Type for inserting images
+type ImageInsert = Database['public']['Tables']['images']['Insert'];
 
 export interface IImageRepository {
   create(data: ImageInsert): Promise<Image>
@@ -32,7 +36,7 @@ export class ImageRepository implements IImageRepository {
       throw error
     }
 
-    return image
+    return image as Image
   }
 
   /**

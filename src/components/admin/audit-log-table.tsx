@@ -108,6 +108,7 @@ const ACTION_TYPE_LABELS: Record<AuditActionType, string> = {
   subscription_update: "Modification",
   subscription_cancel: "Annulation",
   admin_login: "Connexion",
+  settings_update: "Paramètres",
 };
 
 /**

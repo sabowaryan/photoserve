@@ -8,3 +8,4 @@ export { ShareCard } from './share-card';
 export { QuotaCard } from './quota-card';
 export { SettingsTab } from './settings-tab';
 export { GalleryHero } from './gallery-hero';
+export { MonetizationTab } from './monetization-tab';

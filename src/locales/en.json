@@ -226,6 +226,7 @@
     "contact": "Contact",
     "dashboard": "Dashboard",
     "settings": "Settings",
+    "revenue": "Revenue",
     "signIn": "Sign In",
     "signOut": "Sign Out",
     "getStarted": "Get Started",
@@ -1113,6 +1114,10 @@
     "galleryAnalytics": {
       "title": "Gallery Analytics | PikSend",
       "description": "View detailed analytics for your gallery"
+    },
+    "revenue": {
+      "title": "Revenue Dashboard | PikSend",
+      "description": "Track your gallery sales and revenue. View analytics, manage payouts, and monitor your photography business."
     }
   },
   "limits": {

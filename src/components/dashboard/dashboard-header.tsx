@@ -5,10 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
-import { Settings, X, Home, Bell, Menu, Crown, HelpCircle, ExternalLink, ChevronRight, Zap, Plus } from "lucide-react";
+import { Settings, X, Home, Menu, Crown, HelpCircle, ExternalLink, ChevronRight, Zap, Plus, DollarSign } from "lucide-react";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { SignOutButton } from "@/app/(dashboard)/dashboard/sign-out-button";
 import { useTranslation } from "@/lib/i18n/context";
+import { NotificationBell } from "@/components/notifications";
 
 interface DashboardHeaderProps {
   userName: string;
@@ -24,6 +25,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
 
   const isDashboardActive = pathname === "/dashboard" || pathname.startsWith("/dashboard/gallery");
   const isSettingsActive = pathname === "/settings";
+  const isRevenueActive = pathname === "/revenue" || pathname.startsWith("/revenue/");
 
   useEffect(() => {
     setMounted(true);
@@ -103,6 +105,17 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                   {t('nav.dashboard')}
                 </Link>
                 <Link
+                  href="/revenue"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${
+                    isRevenueActive
+                      ? "bg-white shadow-sm text-indigo-600"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
+                  }`}
+                >
+                  <DollarSign size={16} />
+                  {t('nav.revenue')}
+                </Link>
+                <Link
                   href="/settings"
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                     isSettingsActive
@@ -118,10 +131,7 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
               {/* Right Actions */}
               <div className="flex items-center gap-2 md:gap-3">
                 {/* Notifications */}
-                <button className="relative p-2.5 rounded-xl hover:bg-slate-100 transition-all text-slate-500 hover:text-slate-700">
-                  <Bell size={18} />
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full" />
-                </button>
+                <NotificationBell />
 
                 {/* Language Switcher */}
                 <LanguageSwitcher variant="compact" className="hidden md:flex" />
@@ -251,6 +261,24 @@ export function DashboardHeader({ userName, userPlan, userAvatar }: DashboardHea
                     <Home size={14} className={isDashboardActive ? 'text-indigo-600' : 'text-slate-500 group-hover:text-indigo-500'} />
                   </div>
                   <span>{t('nav.dashboard')}</span>
+                </div>
+                <ChevronRight size={14} className="text-slate-300" />
+              </Link>
+
+              <Link
+                href="/revenue"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-lg font-bold text-sm transition-all group ${
+                  isRevenueActive
+                    ? "bg-indigo-50 text-indigo-600"
+                    : "text-slate-600 hover:bg-white hover:shadow-sm"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className={`p-1.5 rounded-md ${isRevenueActive ? 'bg-indigo-100' : 'bg-slate-100 group-hover:bg-indigo-50'}`}>
+                    <DollarSign size={14} className={isRevenueActive ? 'text-indigo-600' : 'text-slate-500 group-hover:text-indigo-500'} />
+                  </div>
+                  <span>{t('nav.revenue')}</span>
                 </div>
                 <ChevronRight size={14} className="text-slate-300" />
               </Link>

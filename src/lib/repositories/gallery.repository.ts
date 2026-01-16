@@ -3,8 +3,13 @@
  * Data access layer for galleries
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, Gallery, GalleryInsert, GalleryUpdate } from '@/lib/supabase/types'
+import type { Database } from '@/lib/supabase/types'
+import type { Gallery } from '@/types'
 import { NotFoundError } from '@/lib/errors'
+
+// Types for inserting and updating galleries
+type GalleryInsert = Database['public']['Tables']['galleries']['Insert'];
+type GalleryUpdate = Database['public']['Tables']['galleries']['Update'];
 
 export interface IGalleryRepository {
   create(data: GalleryInsert): Promise<Gallery>
@@ -35,7 +40,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error
     }
 
-    return gallery
+    return gallery as Gallery
   }
 
   /**
@@ -55,7 +60,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error
     }
 
-    return data
+    return data as Gallery
   }
 
   /**
@@ -75,7 +80,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error
     }
 
-    return data
+    return data as Gallery
   }
 
   /**
@@ -99,7 +104,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error
     }
 
-    return data || []
+    return (data || []) as Gallery[]
   }
 
   /**
@@ -123,7 +128,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error
     }
 
-    return gallery
+    return gallery as Gallery
   }
 
   /**

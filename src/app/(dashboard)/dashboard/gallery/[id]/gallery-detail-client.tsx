@@ -14,6 +14,7 @@ import {
   ShareCard,
   QuotaCard,
   SettingsTab,
+  MonetizationTab,
 } from "@/components/gallery-detail";
 import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import type { GallerySettings } from "@/types";
@@ -85,7 +86,7 @@ export function GalleryDetailClient({
   const [title, setTitle] = useState(gallery.title);
   const [password, setPassword] = useState('');
   const [expirationDays, setExpirationDays] = useState(gallery.expiration_days);
-  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'settings' | 'monetization'>('content');
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ ids: string[], type: 'single' | 'multiple' } | null>(null);
   const [uploadQueue, setUploadQueue] = useState<UploadingFile[]>([]);
@@ -433,7 +434,7 @@ export function GalleryDetailClient({
             />
           </div>
         </div>
-      ) : (
+      ) : activeTab === 'settings' ? (
         /* Settings Tab */
         <SettingsTab
           title={title}
@@ -449,6 +450,12 @@ export function GalleryDetailClient({
           onSave={handleSaveSettings}
           settings={settings}
           onSettingsChange={handleSettingsChange}
+          userPlan={planName}
+        />
+      ) : (
+        /* Monetization Tab */
+        <MonetizationTab
+          galleryId={gallery.id}
           userPlan={planName}
         />
       )}

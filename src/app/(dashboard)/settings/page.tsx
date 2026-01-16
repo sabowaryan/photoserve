@@ -10,6 +10,7 @@ import { SubscriptionSection } from "./subscription-section";
 import { SettingsScrollHandler } from "./settings-client";
 import { BrandingSection } from "@/components/settings/branding-section";
 import { PushNotificationSettings } from "@/components/settings/push-notification-settings";
+import { StripeConnectSection } from "@/components/settings/stripe-connect-section";
 
 export const metadata: Metadata = generatePageMetadata("settings");
 
@@ -90,6 +91,9 @@ export default async function SettingsPage() {
             await updateProfileBranding(session.user.id, branding);
           }}
         />
+
+        {/* Stripe Connect Section - Pro Plan Feature */}
+        <StripeConnectSection userPlan={currentPlan} />
 
         {/* Push Notifications Section */}
         <PushNotificationSettings />

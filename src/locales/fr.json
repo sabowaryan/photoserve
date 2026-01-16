@@ -226,6 +226,7 @@
     "contact": "Contact",
     "dashboard": "Tableau de bord",
     "settings": "Paramètres",
+    "revenue": "Revenus",
     "signIn": "Connexion",
     "signOut": "Déconnexion",
     "getStarted": "Commencer",
@@ -1113,6 +1114,10 @@
     "galleryAnalytics": {
       "title": "Statistiques de la galerie | PikSend",
       "description": "Consultez les statistiques détaillées de votre galerie"
+    },
+    "revenue": {
+      "title": "Tableau de bord des revenus | PikSend",
+      "description": "Suivez vos ventes de galeries et vos revenus. Consultez les analyses, gérez les paiements et surveillez les performances de votre activité."
     }
   },
   "limits": {

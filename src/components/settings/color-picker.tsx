@@ -29,7 +29,7 @@ const DEFAULT_PRESETS = [
   '#06b6d4', // Cyan
   '#0ea5e9', // Sky
   '#3b82f6', // Blue
-  '#6366f1', // Indigo
+  '#1e293b', // Slate
 ];
 
 export function ColorPicker({ label, value, onChange, presets = DEFAULT_PRESETS }: ColorPickerProps) {

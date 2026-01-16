@@ -197,3 +197,27 @@ export {
   type LogoUploadResult,
   type ValidationResult,
 } from './logo-upload.service';
+
+// In-App Notification Service
+export {
+  InAppNotificationService,
+  createInAppNotificationService,
+  type IInAppNotificationService,
+  type InAppNotification,
+  type NotificationType,
+  type RelatedEntityType,
+  type CreateNotificationInput,
+  type NotificationFilters,
+} from './in-app-notification.service';
+// Gallery Purchase Service
+export {
+  GalleryPurchaseService,
+  createGalleryPurchaseService,
+  clearAccessCache,
+  type IGalleryPurchaseService,
+  type GalleryPurchase,
+  type CheckoutSessionResult,
+  type AccessCheckResult,
+  type RefundableAmountResult,
+  type PartialRefundResult,
+} from './gallery-purchase.service';

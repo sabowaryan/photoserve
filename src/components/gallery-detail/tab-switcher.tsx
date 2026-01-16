@@ -1,15 +1,16 @@
 "use client";
 
-import { ImageIcon, Settings, Trash2 } from "lucide-react";
+import { ImageIcon, Settings, Trash2, DollarSign } from "lucide-react";
 
 interface TabSwitcherProps {
-  activeTab: 'content' | 'settings';
-  onTabChange: (tab: 'content' | 'settings') => void;
+  activeTab: 'content' | 'settings' | 'monetization';
+  onTabChange: (tab: 'content' | 'settings' | 'monetization') => void;
   selectedCount: number;
   onDeleteSelected: () => void;
+  showMonetization?: boolean;
 }
 
-export function TabSwitcher({ activeTab, onTabChange, selectedCount, onDeleteSelected }: TabSwitcherProps) {
+export function TabSwitcher({ activeTab, onTabChange, selectedCount, onDeleteSelected, showMonetization = true }: TabSwitcherProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="flex p-1 bg-white rounded-xl w-fit border border-slate-200 shadow-sm">
@@ -35,6 +36,19 @@ export function TabSwitcher({ activeTab, onTabChange, selectedCount, onDeleteSel
           <Settings size={14} />
           Paramètres
         </button>
+        {showMonetization && (
+          <button 
+            onClick={() => onTabChange('monetization')}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+              activeTab === 'monetization' 
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25' 
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <DollarSign size={14} />
+            Monetization
+          </button>
+        )}
       </div>
 
       {activeTab === 'content' && selectedCount > 0 && (

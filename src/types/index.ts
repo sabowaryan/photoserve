@@ -305,6 +305,7 @@ export interface PlanFeatures {
   faceRecognition: boolean;
   autoCaption: boolean;
   smartCulling: boolean;
+  stripeConnect: boolean;
 }
 
 // CTA Button configuration

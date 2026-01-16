@@ -28,6 +28,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanFeatures> = {
     faceRecognition: false,
     autoCaption: false,
     smartCulling: false,
+    stripeConnect: false,
   },
   premium: {
     slideshow: true,
@@ -51,6 +52,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanFeatures> = {
     faceRecognition: false,
     autoCaption: true,
     smartCulling: false,
+    stripeConnect: false,
   },
   pro: {
     slideshow: true,
@@ -74,6 +76,7 @@ export const PLAN_FEATURES: Record<SubscriptionPlan, PlanFeatures> = {
     faceRecognition: true,
     autoCaption: true,
     smartCulling: true,
+    stripeConnect: true,
   },
 };
 
@@ -103,6 +106,7 @@ const FEATURE_REQUIRED_PLAN: Record<keyof PlanFeatures, SubscriptionPlan> = {
   faceRecognition: 'pro',
   autoCaption: 'premium',
   smartCulling: 'pro',
+  stripeConnect: 'pro',
 };
 
 /**
