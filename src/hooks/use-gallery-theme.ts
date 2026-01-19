@@ -11,27 +11,32 @@ export type GalleryTheme = 'light' | 'dark' | 'system';
  */
 export function useGalleryTheme() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
   
-  // Initialize with system preference to avoid flash
-  const [theme, setTheme] = useState<GalleryTheme>(() => {
-    if (typeof window === 'undefined') return 'system';
-    return (localStorage.getItem('gallery-theme') as GalleryTheme) || 'system';
-  });
-  
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light';
+  // Initialize with 'light' for SSR to avoid hydration mismatch
+  const [theme, setTheme] = useState<GalleryTheme>('light');
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+
+  // Load theme from localStorage after mount
+  useEffect(() => {
+    setMounted(true);
     
-    const savedTheme = localStorage.getItem('gallery-theme') as GalleryTheme | null;
-    const currentTheme = savedTheme || 'system';
+    const savedTheme = (localStorage.getItem('gallery-theme') as GalleryTheme) || 'system';
+    setTheme(savedTheme);
     
-    if (currentTheme === 'system') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Determine initial resolved theme
+    if (savedTheme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setResolvedTheme(mediaQuery.matches ? 'dark' : 'light');
+    } else {
+      setResolvedTheme(savedTheme);
     }
-    return currentTheme;
-  });
+  }, []);
 
   // Detect system preference and apply theme
   useEffect(() => {
+    if (!mounted) return;
+    
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const updateResolvedTheme = () => {
@@ -53,11 +58,11 @@ export function useGalleryTheme() {
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
+  }, [theme, mounted]);
 
   // Apply theme to gallery container only (not document root)
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !mounted) return;
     
     const container = containerRef.current;
     
@@ -69,7 +74,7 @@ export function useGalleryTheme() {
     
     // Also add to data attribute for easier CSS targeting
     container.setAttribute('data-theme', resolvedTheme);
-  }, [resolvedTheme]);
+  }, [resolvedTheme, mounted]);
 
   // Toggle theme function
   const toggleTheme = () => {

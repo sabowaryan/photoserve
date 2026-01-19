@@ -27,19 +27,69 @@ serve(async (req) => {
     const cloudinaryApiKey = Deno.env.get('CLOUDINARY_API_KEY')!;
     const cloudinaryApiSecret = Deno.env.get('CLOUDINARY_API_SECRET')!;
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      },
+      db: {
+        schema: 'public'
+      }
+    });
     const encoder = new TextEncoder();
 
-    // Find all expired galleries
-    const { data: expiredGalleries, error: galleriesError } = await supabase
-      .from('galleries')
-      .select('id, user_id, title')
-      .or(`expires_at.lt.${new Date().toISOString()},is_active.eq.false`);
+    const now = new Date().toISOString();
+    logStep('Looking for expired galleries', { currentTime: now });
 
-    if (galleriesError) {
-      logStep('Error fetching expired galleries', { error: galleriesError });
-      throw galleriesError;
+    // Test connection first
+    const { count: totalCount, error: countError } = await supabase
+      .from('galleries')
+      .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      logStep('Error counting galleries', { error: countError });
+    } else {
+      logStep('Total galleries in database', { count: totalCount });
     }
+
+    // Find all expired galleries
+    // Using two separate queries to ensure we catch all cases
+    const { data: expiredByDate, error: expiredError } = await supabase
+      .from('galleries')
+      .select('id, user_id, title, expires_at, is_active')
+      .lt('expires_at', now);
+
+    const { data: inactiveGalleries, error: inactiveError } = await supabase
+      .from('galleries')
+      .select('id, user_id, title, expires_at, is_active')
+      .eq('is_active', false);
+
+    if (expiredError) {
+      logStep('Error fetching expired galleries', { error: expiredError });
+      throw expiredError;
+    }
+
+    if (inactiveError) {
+      logStep('Error fetching inactive galleries', { error: inactiveError });
+      throw inactiveError;
+    }
+
+    // Combine and deduplicate galleries
+    const allExpired = [...(expiredByDate || []), ...(inactiveGalleries || [])];
+    const uniqueIds = new Set();
+    const expiredGalleries = allExpired.filter(gallery => {
+      if (uniqueIds.has(gallery.id)) {
+        return false;
+      }
+      uniqueIds.add(gallery.id);
+      return true;
+    });
+
+    logStep('Found galleries', { 
+      expiredByDate: expiredByDate?.length || 0,
+      inactive: inactiveGalleries?.length || 0,
+      totalUnique: expiredGalleries.length 
+    });
 
     if (!expiredGalleries || expiredGalleries.length === 0) {
       logStep('No expired galleries found');
@@ -104,11 +154,13 @@ serve(async (req) => {
               const sizeMb = image.file_size_mb || 0;
               totalFreedStorageMb += sizeMb;
               
-              // Track storage to decrement per user
-              if (!userStorageUpdates[gallery.user_id]) {
-                userStorageUpdates[gallery.user_id] = 0;
+              // Track storage to decrement per user (skip guest galleries)
+              if (gallery.user_id && gallery.user_id !== null) {
+                if (!userStorageUpdates[gallery.user_id]) {
+                  userStorageUpdates[gallery.user_id] = 0;
+                }
+                userStorageUpdates[gallery.user_id] += sizeMb;
               }
-              userStorageUpdates[gallery.user_id] += sizeMb;
             } else {
               logStep('Failed to delete from Cloudinary', { 
                 publicId: image.cloudinary_public_id,

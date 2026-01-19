@@ -67,9 +67,9 @@ export default function PricingPage() {
 
   const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
-    if (pricing.monthlyPrice === 0) return '0';
+    if (pricing.monthlyPrice === 0) return '$0';
     const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
-    return `${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
+    return `$${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
   };
 
   const getPeriod = (planKey: 'free' | 'premium' | 'pro') => {
@@ -81,7 +81,7 @@ export default function PricingPage() {
     const pricing = PLAN_PRICING[planKey];
     if (!isYearly || pricing.monthlyPrice === 0) return null;
     const monthlyEquivalent = pricing.yearlyPrice / 12;
-    return `${monthlyEquivalent.toFixed(2)}${t('pricing.perMonth')}`;
+    return `$${monthlyEquivalent.toFixed(2)}${t('pricing.perMonth')}`;
   };
 
   const getSavings = (planKey: 'free' | 'premium' | 'pro') => {

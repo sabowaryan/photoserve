@@ -32,6 +32,7 @@ export function AudioPlayer({
   const [showConsent, setShowConsent] = useState(requireConsent && autoPlay);
   const [hasConsent, setHasConsent] = useState(!requireConsent);
   const [hasError, setHasError] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
 
   // Handle consent and auto-play - Requirement 8.2.2
   useEffect(() => {
@@ -40,6 +41,10 @@ export function AudioPlayer({
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Set optimal audio settings for smooth playback
+    audio.volume = volume;
+    audio.preload = "auto";
+    
     // Attempt to play after consent
     const playPromise = audio.play();
     
@@ -53,7 +58,36 @@ export function AudioPlayer({
           // Autoplay might be blocked, user will need to click play
         });
     }
-  }, [hasConsent, autoPlay]);
+  }, [hasConsent, autoPlay, volume]);
+
+  // Handle buffering events for smooth playback
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleWaiting = () => setIsBuffering(true);
+    const handleCanPlay = () => setIsBuffering(false);
+    const handlePlaying = () => {
+      setIsBuffering(false);
+      setIsPlaying(true);
+    };
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('waiting', handleWaiting);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('waiting', handleWaiting);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('playing', handlePlaying);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
 
   // Update volume when changed
   useEffect(() => {
@@ -122,8 +156,11 @@ export function AudioPlayer({
         src={audioUrl}
         loop
         preload="auto"
+        crossOrigin="anonymous"
         onError={handleError}
         aria-label="Musique d'ambiance de la galerie"
+        // Optimize for streaming
+        playsInline
       />
 
       {/* Consent Dialog - Requirement 8.2.2 */}
@@ -179,15 +216,20 @@ export function AudioPlayer({
             onClick={togglePlayPause}
             className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             aria-label={isPlaying ? "Pause" : "Lecture"}
+            disabled={isBuffering}
           >
-            {isPlaying ? (
+            {isBuffering ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" className="text-slate-700 dark:text-slate-300 animate-spin">
+                <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="20" strokeLinecap="round" />
+              </svg>
+            ) : isPlaying ? (
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="text-slate-700 dark:text-slate-300">
-                <rect x="2" y="2" width="3" height="10" rx="1" />
-                <rect x="9" y="2" width="3" height="10" rx="1" />
+                <rect x="3" y="2" width="3" height="10" rx="1" />
+                <rect x="8" y="2" width="3" height="10" rx="1" />
               </svg>
             ) : (
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="text-slate-700 dark:text-slate-300">
-                <path d="M3 2.5C3 2.22386 3.22386 2 3.5 2C3.63261 2 3.75979 2.05268 3.85355 2.14645L11.8536 10.1464C12.0488 10.3417 12.0488 10.6583 11.8536 10.8536C11.6583 11.0488 11.3417 11.0488 11.1464 10.8536L3.14645 2.85355C3.05268 2.75979 3 2.63261 3 2.5Z" />
+                <path d="M4 2.5C4 2.22386 4.22386 2 4.5 2C4.63261 2 4.75979 2.05268 4.85355 2.14645L11.8536 7.64645C12.0488 7.84171 12.0488 8.15829 11.8536 8.35355L4.85355 13.8536C4.75979 13.9473 4.63261 14 4.5 14C4.22386 14 4 13.7761 4 13.5V2.5Z" />
               </svg>
             )}
           </button>

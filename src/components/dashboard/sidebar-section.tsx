@@ -13,9 +13,10 @@ interface ActivityItem {
 
 interface SidebarSectionProps {
   activities?: ActivityItem[];
+  userPlan?: string;
 }
 
-export function SidebarSection({ activities = [] }: SidebarSectionProps) {
+export function SidebarSection({ activities = [], userPlan = "free" }: SidebarSectionProps) {
   const { t } = useTranslation();
   
   const displayActivities = activities.length > 0 ? activities : [];
@@ -72,29 +73,31 @@ export function SidebarSection({ activities = [] }: SidebarSectionProps) {
         )}
       </div>
 
-      {/* Upgrade Card */}
-      <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl p-3.5 text-white relative overflow-hidden">
-        <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-violet-400/20 rounded-full blur-xl" />
-        
-        <div className="relative">
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="p-1 bg-white/20 rounded-md">
-              <Zap size={12} />
+      {/* Upgrade Card - Only show for free users */}
+      {userPlan === "free" && (
+        <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl p-3.5 text-white relative overflow-hidden">
+          <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-violet-400/20 rounded-full blur-xl" />
+          
+          <div className="relative">
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="p-1 bg-white/20 rounded-md">
+                <Zap size={12} />
+              </div>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{t('dashboard.plans.premium')}</span>
             </div>
-            <span className="text-[9px] font-bold uppercase tracking-wider text-white/80">{t('dashboard.plans.premium')}</span>
+            <h4 className="font-black text-base mb-1.5">{t('common.upgradeLevel')}</h4>
+            <p className="text-white/70 text-[10px] font-medium leading-relaxed mb-3">
+              {t('pricing.plans.premium.description')}
+            </p>
+            <Link href="/settings">
+              <button className="w-full py-2 bg-white text-indigo-600 font-bold text-xs rounded-lg hover:bg-white/90 transition-all shadow-lg">
+                {t('pricing.selectPlan')}
+              </button>
+            </Link>
           </div>
-          <h4 className="font-black text-base mb-1.5">{t('common.upgradeLevel')}</h4>
-          <p className="text-white/70 text-[10px] font-medium leading-relaxed mb-3">
-            {t('pricing.plans.premium.description')}
-          </p>
-          <Link href="/settings">
-            <button className="w-full py-2 bg-white text-indigo-600 font-bold text-xs rounded-lg hover:bg-white/90 transition-all shadow-lg">
-              {t('pricing.selectPlan')}
-            </button>
-          </Link>
         </div>
-      </div>
+      )}
 
       {/* Help Card */}
       <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100">

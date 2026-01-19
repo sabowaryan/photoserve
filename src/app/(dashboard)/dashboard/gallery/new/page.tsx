@@ -4,6 +4,7 @@ import { getSession, requireSupabaseClient } from "@/lib/auth";
 import { getTranslation, getServerLocale } from "@/lib/i18n/server";
 import { GalleryCreateForm } from "./gallery-create-form";
 import { GalleryHeader } from "./gallery-header";
+import { PLAN_LIMITS } from "@/config/plans";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
@@ -82,14 +83,18 @@ export default async function GalleryCreatePage() {
     session.user.id
   );
 
-  const maxGalleries = profile?.max_galleries || 3;
+  // Use plan limits from config instead of DB values
+  const userPlan = profile?.subscription_plan || "free";
+  const planLimits = PLAN_LIMITS[userPlan];
+  
+  const maxGalleries = planLimits.max_galleries;
   const isGalleryLimitReached = galleryCount >= maxGalleries;
-  const storageLimit = profile?.storage_limit_mb || 20;
+  const storageLimit = planLimits.storage_limit_mb;
   const currentStorageUsed = profile?.storage_used_mb || 0;
   const storagePercentage = (currentStorageUsed / storageLimit) * 100;
 
   // Get duration options based on plan's max_expiration_days
-  const maxExpirationDays = planDetails?.max_expiration_days || 30;
+  const maxExpirationDays = planLimits.max_expiration_days;
   const durationOptions = ALL_DURATION_OPTIONS.filter(
     (option) => option.value <= maxExpirationDays
   );
@@ -116,8 +121,8 @@ export default async function GalleryCreatePage() {
 
         {/* Main Form */}
         <GalleryCreateForm
-          maxImagesPerGallery={profile?.max_images_per_gallery || 30}
-          maxImageSizeMb={profile?.max_image_size_mb || 1}
+          maxImagesPerGallery={planLimits.max_images_per_gallery}
+          maxImageSizeMb={planLimits.max_image_size_mb}
           storageLimit={storageLimit}
           currentStorageUsed={currentStorageUsed}
           isGalleryLimitReached={isGalleryLimitReached}

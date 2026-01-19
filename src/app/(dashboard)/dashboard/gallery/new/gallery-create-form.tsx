@@ -22,6 +22,16 @@ import {
 import { showUploadError } from "@/lib/utils/upload-toast";
 import { UpgradeModal } from "@/components/shared/upgrade-modal";
 
+// Format storage for display (MB, GB, TB)
+const formatStorage = (mb: number): string => {
+  if (mb >= 1024000) {
+    return `${(mb / 1024000).toFixed(0)} To`;
+  } else if (mb >= 1024) {
+    return `${(mb / 1024).toFixed(0)} Go`;
+  }
+  return `${mb.toFixed(0)} Mo`;
+};
+
 interface UploadedImage {
   id: string;
   url: string;
@@ -583,7 +593,7 @@ export function GalleryCreateForm({
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-bold text-slate-700">Stockage prévu</span>
                   <span className={`text-sm font-black ${isStorageExceeded ? "text-rose-600" : "text-slate-900"}`}>
-                    {projectedStorageUsed.toFixed(1)} / {storageLimit} Mo
+                    {projectedStorageUsed.toFixed(1)} / {formatStorage(storageLimit)}
                   </span>
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">

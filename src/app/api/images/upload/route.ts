@@ -32,17 +32,28 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!file) {
-      throw new ValidationError('File is required');
+      throw new ValidationError('File is required', { field: 'file' });
     }
 
     if (!galleryId) {
-      throw new ValidationError('Gallery ID is required');
+      throw new ValidationError('Gallery ID is required', { field: 'galleryId' });
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      throw new ValidationError('File must be an image', { 
+        field: 'file',
+        receivedType: file.type 
+      });
     }
 
     // Parse order index
     const orderIndex = orderIndexStr ? parseInt(orderIndexStr, 10) : 0;
     if (isNaN(orderIndex) || orderIndex < 0) {
-      throw new ValidationError('Order index must be a non-negative integer');
+      throw new ValidationError('Order index must be a non-negative integer', { 
+        field: 'orderIndex',
+        receivedValue: orderIndexStr 
+      });
     }
 
     // Convert file to buffer

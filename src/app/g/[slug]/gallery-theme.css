@@ -97,6 +97,14 @@
   background-color: rgb(15 23 42 / 0.3);
 }
 
+[data-gallery-theme="dark"] .dark\:bg-slate-900\/90 {
+  background-color: rgb(15 23 42 / 0.9);
+}
+
+[data-gallery-theme="dark"] .dark\:bg-indigo-900\/30 {
+  background-color: rgb(49 46 129 / 0.3);
+}
+
 /* Text colors */
 [data-gallery-theme="dark"] .dark\:text-slate-100 {
   color: rgb(241 245 249);
@@ -124,6 +132,14 @@
 
 [data-gallery-theme="dark"] .dark\:text-slate-700 {
   color: rgb(51 65 85);
+}
+
+[data-gallery-theme="dark"] .dark\:text-white {
+  color: rgb(255 255 255);
+}
+
+[data-gallery-theme="dark"] .dark\:text-indigo-400 {
+  color: rgb(129 140 248);
 }
 
 /* Border colors */

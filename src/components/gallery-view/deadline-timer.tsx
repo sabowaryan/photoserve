@@ -46,11 +46,14 @@ function calculateTimeRemaining(deadline: Date): TimeRemaining {
 }
 
 export function DeadlineTimer({ deadline, onExpired }: DeadlineTimerProps) {
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>(() =>
-    calculateTimeRemaining(deadline)
-  );
+  // Initialize with null to prevent hydration mismatch
+  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Mark as mounted
+    setMounted(true);
+    
     // Initial calculation
     const initial = calculateTimeRemaining(deadline);
     setTimeRemaining(initial);
@@ -74,6 +77,33 @@ export function DeadlineTimer({ deadline, onExpired }: DeadlineTimerProps) {
 
     return () => clearInterval(interval);
   }, [deadline, onExpired]);
+
+  // Show loading state during SSR and initial mount
+  if (!mounted || !timeRemaining) {
+    return (
+      <div className="rounded-2xl border-2 p-4 bg-gradient-to-br from-indigo-50 to-violet-50 border-indigo-200 animate-pulse">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Clock className="w-6 h-6 text-indigo-600" />
+          </div>
+          <div className="flex-1">
+            <div className="h-4 bg-indigo-200 rounded w-3/4 mb-2"></div>
+            <div className="h-3 bg-indigo-100 rounded w-1/2"></div>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="text-center">
+              <div className="bg-indigo-600 rounded-xl py-2 px-1 mb-1">
+                <p className="text-2xl font-black leading-none text-white">00</p>
+              </div>
+              <div className="h-2 bg-indigo-200 rounded w-full"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Determine urgency level for styling
   const getUrgencyLevel = (): "critical" | "warning" | "normal" => {

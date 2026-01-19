@@ -32,7 +32,9 @@ export const createGallerySchema = z.object({
       {
         message: 'Le mot de passe doit être vide ou contenir entre 4 et 50 caractères',
       }
-    ),
+    )
+    .optional()
+    .default(''),
   expirationDays: z
     .number()
     .int('Le nombre de jours doit être un entier')

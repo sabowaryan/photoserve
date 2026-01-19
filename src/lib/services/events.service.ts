@@ -17,6 +17,7 @@ export type EventType =
   | 'download_favorites'
   | 'favorite_add'
   | 'favorite_remove'
+  | 'comment_add'
   | 'cta_click'
   | 'slideshow_start'
   | 'slideshow_end'

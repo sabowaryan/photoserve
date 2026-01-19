@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 interface LeadMagnetModalProps {
   galleryId?: string;
   galleryTitle?: string;
-  onSubmit: (email: string) => Promise<void>;
+  onSubmit: (email: string, gdprConsent: boolean) => Promise<void>;
   onSkip?: () => void;
 }
 
@@ -60,7 +60,7 @@ export function LeadMagnetModal({
     setIsSubmitting(true);
 
     try {
-      await onSubmit(email);
+      await onSubmit(email, gdprConsent);
       setIsSuccess(true);
       // Auto-close after success
       setTimeout(() => {

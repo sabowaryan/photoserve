@@ -9,3 +9,5 @@ export { QuotaCard } from './quota-card';
 export { SettingsTab } from './settings-tab';
 export { GalleryHero } from './gallery-hero';
 export { MonetizationTab } from './monetization-tab';
+export { VideoUploader } from './video-uploader';
+export { AudioUploader } from './audio-uploader';

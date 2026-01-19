@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, Crown, Zap, Sparkles, Star, Info, X } from "lucide-react";
-import { PLAN_LIMITS, PLAN_PRICING, getPlanFeatures } from "@/config/plans";
+import { PLAN_PRICING, getPlanFeatures } from "@/config/plans";
 import { SettingsPricingButton } from "./settings-pricing-button";
 
 interface Profile {

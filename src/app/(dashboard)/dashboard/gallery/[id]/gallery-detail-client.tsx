@@ -17,6 +17,7 @@ import {
   MonetizationTab,
 } from "@/components/gallery-detail";
 import { UpgradeModal } from "@/components/shared/upgrade-modal";
+import { PLAN_LIMITS } from "@/config/plans";
 import type { GallerySettings } from "@/types";
 
 interface Gallery {
@@ -118,13 +119,17 @@ export function GalleryDetailClient({
     setPublicUrl(`${window.location.origin}/g/${gallery.unique_slug}`);
   }, [gallery.unique_slug]);
 
+  // Use plan limits from config instead of DB values
+  const userPlan = profile?.subscription_plan || 'free';
+  const planLimits = PLAN_LIMITS[userPlan];
+  
   const limits = {
-    max_images_per_gallery: profile?.max_images_per_gallery || 30,
-    max_image_size_mb: profile?.max_image_size_mb || 5,
+    max_images_per_gallery: planLimits.max_images_per_gallery,
+    max_image_size_mb: planLimits.max_image_size_mb,
   };
   
   const isLimitReached = images.length >= limits.max_images_per_gallery;
-  const planName = profile?.subscription_plan || 'free';
+  const planName = userPlan;
 
   // Upgrade modal helpers
   const openUpgradeModal = useCallback((

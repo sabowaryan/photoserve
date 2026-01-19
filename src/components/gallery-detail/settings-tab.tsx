@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {  Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Settings, Link as LinkIcon, Film, Music2, Globe } from "lucide-react";
+import {  Lock, Clock, Eye, EyeOff, ChevronDown, Save, Loader2, CheckCircle2, Type, Sparkles, Settings, Link as LinkIcon, Film, Globe } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/context";
+import { VideoUploader } from "./video-uploader";
+import { AudioUploader } from "./audio-uploader";
 import type { GallerySettings, CTAButtonConfig, SubscriptionPlan } from "@/types";
 
 interface DurationOption {
@@ -376,79 +378,22 @@ export function SettingsTab({
             <div className="space-y-4">
               {/* Video Cover */}
               {hasFeature('videoCover') && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Video Cover</label>
-                  {settings.videoCoverUrl ? (
-                    <div className="relative group">
-                      <video
-                        src={settings.videoCoverUrl}
-                        className="w-full h-32 object-cover rounded-lg"
-                        controls
-                        muted
-                      />
-                      <button
-                        onClick={() => onSettingsChange({ videoCoverUrl: undefined })}
-                        className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-indigo-400 transition-colors cursor-pointer">
-                      <input
-                        type="file"
-                        accept="video/mp4,video/webm"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            console.log('Video file selected:', file.name);
-                          }
-                        }}
-                      />
-                      <Film size={20} className="mx-auto mb-1 text-slate-400" />
-                      <p className="text-xs text-slate-600">Upload video (max 50MB)</p>
-                    </label>
-                  )}
-                </div>
+                <VideoUploader
+                  currentVideoUrl={settings.videoCoverUrl}
+                  onVideoChange={(url) => onSettingsChange({ videoCoverUrl: url })}
+                  maxSizeMB={50}
+                  disabled={isUpdating}
+                />
               )}
 
               {/* Audio */}
               {hasFeature('audioGallery') && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Background Audio</label>
-                  {settings.audioUrl ? (
-                    <div className="relative group p-3 bg-slate-50 rounded-lg">
-                      <audio
-                        src={settings.audioUrl}
-                        controls
-                        className="w-full h-8"
-                      />
-                      <button
-                        onClick={() => onSettingsChange({ audioUrl: undefined })}
-                        className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-indigo-400 transition-colors cursor-pointer">
-                      <input
-                        type="file"
-                        accept="audio/mp3,audio/wav,audio/mpeg"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            console.log('Audio file selected:', file.name);
-                          }
-                        }}
-                      />
-                      <Music2 size={20} className="mx-auto mb-1 text-slate-400" />
-                      <p className="text-xs text-slate-600">Upload audio (max 10MB)</p>
-                    </label>
-                  )}
-                </div>
+                <AudioUploader
+                  currentAudioUrl={settings.audioUrl}
+                  onAudioChange={(url) => onSettingsChange({ audioUrl: url })}
+                  maxSizeMB={10}
+                  disabled={isUpdating}
+                />
               )}
             </div>
           ) : (

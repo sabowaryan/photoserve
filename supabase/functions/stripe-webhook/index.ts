@@ -7,21 +7,22 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 // Plan configuration matching the app pricing (src/config/plans.ts)
 // IMPORTANT: Keep in sync with src/config/plans.ts
-// Supports both EUR and USD product IDs
+// Note: The app now uses PLAN_LIMITS from src/config/plans.ts directly
+// This webhook only needs to update subscription_plan field
 const PLAN_LIMITS = {
   premium: {
-    storage_limit_mb: 5120, // 5 Go
-    max_galleries: 50,
+    storage_limit_mb: 102400, // 100 GB
+    max_galleries: 100,
     max_images_per_gallery: 500,
-    max_image_size_mb: 50,
+    max_image_size_mb: 100,
     max_expiration_days: 90,
   },
   pro: {
-    storage_limit_mb: 51200, // 50 Go
-    max_galleries: 500,
-    max_images_per_gallery: 5000,
-    max_image_size_mb: 100,
-    max_expiration_days: 180,
+    storage_limit_mb: 1024000, // 1 TB
+    max_galleries: 9999,
+    max_images_per_gallery: 2000,
+    max_image_size_mb: 500,
+    max_expiration_days: 365,
   },
 };
 
@@ -36,11 +37,11 @@ const PRODUCT_TO_PLAN: Record<string, keyof typeof PLAN_LIMITS> = {
 };
 
 const FREE_LIMITS = {
-  storage_limit_mb: 20,
-  max_galleries: 3,
-  max_images_per_gallery: 30,
-  max_image_size_mb: 1,
-  max_expiration_days: 14,
+  storage_limit_mb: 500,
+  max_galleries: 2,
+  max_images_per_gallery: 50,
+  max_image_size_mb: 25,
+  max_expiration_days: 7,
 };
 
 // Gallery unlock price in cents ($2.99)

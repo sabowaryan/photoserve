@@ -138,6 +138,14 @@ export default async function GalleryViewPage({ params, searchParams }: GalleryV
     '--brand-accent': customColors.accent || '#ec4899',
   } : undefined;
 
+  // Normalize password_hash to ensure consistent boolean value
+  // password_hash can be an empty string for galleries without password
+  const hasPassword = Boolean(
+    gallery.password_hash && 
+    typeof gallery.password_hash === 'string' && 
+    gallery.password_hash.trim().length > 0
+  );
+
   return (
     <div style={cssVariables as React.CSSProperties}>
       <GalleryViewClient
@@ -149,7 +157,7 @@ export default async function GalleryViewPage({ params, searchParams }: GalleryV
           views_count: gallery.views_count ?? 0,
           images,
           // has_password is true only if password_hash is non-empty
-          has_password: !!gallery.password_hash && gallery.password_hash.length > 0,
+          has_password: hasPassword,
           is_unlocked: gallery.is_unlocked ?? false,
           payment_type: (gallery.payment_type as 'free' | 'one_time' | 'subscription') ?? 'free',
           guest_session_id: gallery.guest_session_id ?? null,

@@ -25,6 +25,7 @@ interface EventTracker {
   trackDownloadFavorites: (imageIds: string[]) => Promise<void>;
   trackFavoriteAdd: (imageId: string) => Promise<void>;
   trackFavoriteRemove: (imageId: string) => Promise<void>;
+  trackComment: (imageId: string) => Promise<void>;
   trackCTAClick: (ctaType: string, ctaUrl?: string) => Promise<void>;
   trackSlideshowStart: (imageCount: number, interval: number) => Promise<void>;
   trackSlideshowEnd: (duration: number, imagesViewed: number) => Promise<void>;
@@ -143,6 +144,16 @@ export function useEventTracker(options: UseEventTrackerOptions): EventTracker {
   );
 
   /**
+   * Track comment added
+   */
+  const trackComment = useCallback(
+    async (imageId: string) => {
+      await trackEvent('comment_add', { imageId });
+    },
+    [trackEvent]
+  );
+
+  /**
    * Track CTA click
    */
   const trackCTAClick = useCallback(
@@ -201,6 +212,7 @@ export function useEventTracker(options: UseEventTrackerOptions): EventTracker {
     trackDownloadFavorites,
     trackFavoriteAdd,
     trackFavoriteRemove,
+    trackComment,
     trackCTAClick,
     trackSlideshowStart,
     trackSlideshowEnd,

@@ -14,6 +14,16 @@ interface GalleryHeaderProps {
   maxGalleries: number;
 }
 
+// Format storage for display (MB, GB, TB)
+const formatStorage = (mb: number): string => {
+  if (mb >= 1024000) {
+    return `${(mb / 1024000).toFixed(0)} To`;
+  } else if (mb >= 1024) {
+    return `${(mb / 1024).toFixed(0)} Go`;
+  }
+  return `${mb.toFixed(0)} Mo`;
+};
+
 export function GalleryHeader({
   currentStorageUsed,
   storageLimit,
@@ -74,7 +84,7 @@ export function GalleryHeader({
                 <div>
                   <p className="text-[10px] font-bold text-white/50 uppercase tracking-wider">{t('common.storage')}</p>
                   <p className="text-sm font-black">
-                    {currentStorageUsed.toFixed(1)} / {storageLimit} Mo
+                    {currentStorageUsed.toFixed(1)} / {formatStorage(storageLimit)}
                   </p>
                 </div>
               </div>
@@ -130,7 +140,7 @@ export function GalleryHeader({
               </div>
               <div className="flex-1">
                 <p className="font-bold text-amber-900">{t('common.galleryLimitReached')}</p>
-                <p className="text-sm text-amber-700">{galleryCount}/{maxGalleries} {t('common.galleries').toLowerCase()} • {t('pricing.upgrade')} Premium</p>
+                <p className="text-sm text-amber-700">{galleryCount}/{maxGalleries >= 9999 ? '∞' : maxGalleries} {t('common.galleries').toLowerCase()} • {t('pricing.upgrade')} Premium</p>
               </div>
               <Zap size={18} className="text-amber-600 group-hover:translate-x-1 transition-transform" />
             </Link>

@@ -46,6 +46,10 @@ export function Lightbox({
 }: LightboxProps) {
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [comments, setComments] = useState<Array<{ id: string; content: string; createdAt: string }>>(
+    []
+  );
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
   
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onClose();
@@ -60,7 +64,31 @@ export function Lightbox({
 
   const currentImage = images[currentIndex];
   const isFavorite = currentImage ? favorites.has(currentImage.id) : false;
-  const comments = currentImage?.comments || [];
+
+  // Load comments when image changes or when comments are enabled
+  useEffect(() => {
+    if (!showComments || !currentImage) {
+      setComments([]);
+      return;
+    }
+
+    const loadComments = async () => {
+      setIsLoadingComments(true);
+      try {
+        const response = await fetch(`/api/images/${currentImage.id}/comments`);
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data.comments || []);
+        }
+      } catch (error) {
+        console.error("Failed to load comments:", error);
+      } finally {
+        setIsLoadingComments(false);
+      }
+    };
+
+    loadComments();
+  }, [currentImage?.id, showComments]);
 
   const handleSubmitComment = async () => {
     if (!commentText.trim() || !onComment || !currentImage) return;
@@ -69,6 +97,13 @@ export function Lightbox({
     try {
       await onComment(currentImage.id, commentText.trim());
       setCommentText("");
+      
+      // Reload comments after successful submission
+      const response = await fetch(`/api/images/${currentImage.id}/comments`);
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data.comments || []);
+      }
     } catch (error) {
       console.error("Failed to submit comment:", error);
     } finally {
@@ -182,7 +217,11 @@ export function Lightbox({
                 
                 {/* Comments List */}
                 <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-2">
-                  {comments.length === 0 ? (
+                  {isLoadingComments ? (
+                    <p className="text-xs text-white/40 text-center py-8">
+                      Chargement...
+                    </p>
+                  ) : comments.length === 0 ? (
                     <p className="text-xs text-white/40 text-center py-8">
                       Aucun commentaire pour le moment
                     </p>
@@ -196,7 +235,7 @@ export function Lightbox({
                           {comment.content}
                         </p>
                         <p className="text-[10px] text-white/30 mt-2">
-                          {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                          {new Date(comment.createdAt || comment.created_at).toLocaleDateString('fr-FR', {
                             day: 'numeric',
                             month: 'short',
                             hour: '2-digit',

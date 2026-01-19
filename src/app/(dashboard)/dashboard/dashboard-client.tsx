@@ -28,6 +28,7 @@ import { DashboardSkeleton } from "@/components/skeletons/dashboard-skeleton";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { useTranslation } from "@/lib/i18n/context";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { PLAN_LIMITS } from "@/config/plans";
 
 interface DashboardClientProps {
   userEmail: string;
@@ -106,15 +107,18 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
     }
   };
 
-  // Calculate stats
+  // Calculate stats - Use plan limits from config instead of DB values
+  const userPlan = profile?.subscription_plan || "free";
+  const planLimits = PLAN_LIMITS[userPlan];
+  
   const stats = useMemo(() => ({
     totalGalleries: galleries.length,
     totalImages: galleries.reduce((sum, g) => sum + (g.image_count || 0), 0),
     totalViews: galleries.reduce((sum, g) => sum + g.views_count, 0),
     storageUsed: profile?.storage_used_mb || 0,
-    storageLimit: profile?.storage_limit_mb || 20,
-    maxGalleries: profile?.max_galleries || 3,
-  }), [galleries, profile]);
+    storageLimit: planLimits.storage_limit_mb,
+    maxGalleries: planLimits.max_galleries,
+  }), [galleries, profile, planLimits]);
 
   const isGalleryLimitReached = stats.totalGalleries >= stats.maxGalleries;
 
@@ -227,6 +231,16 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
 
   const currentPlan = planConfig[profile?.subscription_plan || "free"];
   const currentPlanLabel = t(currentPlan.labelKey);
+
+  // Format storage for display (MB, GB, TB)
+  const formatStorage = (mb: number): string => {
+    if (mb >= 1024000) {
+      return `${(mb / 1024000).toFixed(0)} To`;
+    } else if (mb >= 1024) {
+      return `${(mb / 1024).toFixed(0)} Go`;
+    }
+    return `${mb.toFixed(0)} Mo`;
+  };
 
   const storagePercent = (stats.storageUsed / stats.storageLimit) * 100;
   const galleriesPercent = (stats.totalGalleries / stats.maxGalleries) * 100;
@@ -356,7 +370,7 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                 <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.storage')}</p>
                 <div className="flex items-baseline gap-0.5">
                   <span className="text-base font-black text-slate-900">{stats.storageUsed.toFixed(1)}</span>
-                  <span className="text-[10px] text-slate-400 font-medium">/ {stats.storageLimit} Mo</span>
+                  <span className="text-[10px] text-slate-400 font-medium">/ {formatStorage(stats.storageLimit)}</span>
                 </div>
                 <div className="mt-1.5 h-1 bg-slate-100 rounded-full overflow-hidden">
                   <div 
@@ -373,18 +387,18 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                     <FolderOpen size={14} />
                   </div>
                   <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
-                    {galleriesPercent.toFixed(0)}%
+                    {stats.maxGalleries >= 9999 ? '∞' : `${galleriesPercent.toFixed(0)}%`}
                   </span>
                 </div>
                 <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{t('common.galleries')}</p>
                 <div className="flex items-baseline gap-0.5">
                   <span className="text-base font-black text-slate-900">{stats.totalGalleries}</span>
-                  <span className="text-[10px] text-slate-400 font-medium">/ {stats.maxGalleries}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">/ {stats.maxGalleries >= 9999 ? '∞' : stats.maxGalleries}</span>
                 </div>
                 <div className="mt-1.5 h-1 bg-slate-100 rounded-full overflow-hidden">
                   <div 
                     className={`h-full rounded-full transition-all ${galleriesPercent > 90 ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                    style={{ width: `${Math.min(100, galleriesPercent)}%` }}
+                    style={{ width: `${stats.maxGalleries >= 9999 ? 0 : Math.min(100, galleriesPercent)}%` }}
                   />
                 </div>
               </div>
@@ -538,7 +552,7 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
 
           {/* Sidebar */}
           <div className="lg:col-span-3">
-            <SidebarSection activities={activities} />
+            <SidebarSection activities={activities} userPlan={profile?.subscription_plan || "free"} />
           </div>
         </div>
       </div>

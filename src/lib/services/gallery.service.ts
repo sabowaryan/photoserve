@@ -121,8 +121,11 @@ export class GalleryService implements IGalleryService {
     // Generate unique slug (Requirement 4.2)
     const uniqueSlug = await this.galleryRepository.generateUniqueSlug();
 
-    // Hash password (Requirement 4.3)
-    const passwordHash = await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS);
+    // Hash password only if provided (Requirement 4.3)
+    // Empty string means no password protection
+    const passwordHash = sanitizedPassword && sanitizedPassword.length > 0
+      ? await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS)
+      : '';
 
     // Calculate expiration date
     const expiresAt = new Date();
@@ -202,7 +205,10 @@ export class GalleryService implements IGalleryService {
 
     if (password !== undefined) {
       const sanitizedPassword = sanitizePassword(password);
-      updateData.password_hash = await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS);
+      // Hash password only if provided, empty string means no password protection
+      updateData.password_hash = sanitizedPassword && sanitizedPassword.length > 0
+        ? await bcrypt.hash(sanitizedPassword, BCRYPT_ROUNDS)
+        : '';
     }
 
     if (expirationDays !== undefined) {
@@ -259,7 +265,7 @@ export class GalleryService implements IGalleryService {
   /**
    * Verify gallery password and return gallery with images
    * - Checks if gallery exists and is active
-   * - Verifies password using bcrypt
+   * - Verifies password using bcrypt (if gallery has password protection)
    * - Increments view count on success
    * 
    * Requirements: 4.6, 4.7
@@ -289,6 +295,24 @@ export class GalleryService implements IGalleryService {
       return {
         success: false,
         error: 'Cette galerie a expiré',
+      };
+    }
+
+    // Check if gallery has password protection
+    const hasPassword = gallery.password_hash && gallery.password_hash.length > 0;
+    
+    if (!hasPassword) {
+      // Gallery has no password protection - allow access
+      const { data: images } = await this.supabase
+        .from('images')
+        .select('*')
+        .eq('gallery_id', gallery.id)
+        .order('order_index', { ascending: true });
+
+      return {
+        success: true,
+        gallery: gallery as DbGallery,
+        images: images || [],
       };
     }
 

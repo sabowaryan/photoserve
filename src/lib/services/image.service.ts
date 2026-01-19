@@ -128,8 +128,9 @@ export class ImageService implements IImageService {
     validateImageOrThrow(buffer, mimeType, fileSizeBytes, planLimits.max_image_size_mb);
 
     // Check storage limit (Requirement 5.4)
+    // Always use plan limits from config, not DB values
     const currentStorageMb = profile.storage_used_mb || 0;
-    const storageLimitMb = profile.storage_limit_mb || planLimits.storage_limit_mb;
+    const storageLimitMb = planLimits.storage_limit_mb;
     
     if (currentStorageMb + fileSizeMb > storageLimitMb) {
       throw new StorageLimitError(currentStorageMb, storageLimitMb);
@@ -137,7 +138,7 @@ export class ImageService implements IImageService {
 
     // Check image count limit per gallery
     const currentImageCount = await this.imageRepository.countByGalleryId(galleryId);
-    const maxImagesPerGallery = profile.max_images_per_gallery || planLimits.max_images_per_gallery;
+    const maxImagesPerGallery = planLimits.max_images_per_gallery;
     
     if (currentImageCount >= maxImagesPerGallery) {
       throw new ImageLimitError(currentImageCount, maxImagesPerGallery);

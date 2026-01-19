@@ -129,7 +129,9 @@ export function GalleryViewClient({
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useTranslation();
-  const [isAuthenticated, setIsAuthenticated] = useState(!initialGallery.has_password);
+  
+  // Ensure consistent boolean evaluation to prevent hydration mismatch
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(!initialGallery.has_password));
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
   const [downloadModalUrl, setDownloadModalUrl] = useState<string | null>(null);
@@ -171,10 +173,12 @@ export function GalleryViewClient({
   const canUseVideoCover = hasFeatureAccess(ownerPlan, 'videoCover');
   const canUseAudioGallery = hasFeatureAccess(ownerPlan, 'audioGallery');
   const canUseFavorites = hasFeatureAccess(ownerPlan, 'favorites');
+  const canUseComments = hasFeatureAccess(ownerPlan, 'comments');
   
   // Apply feature gating to settings
   const enableDeadline = canUseDeadlineTimer && settings.enableDeadline && settings.deadlineDate;
   const enableLeadMagnet = canUseLeadMagnet && settings.enableLeadMagnet;
+  const enableComments = canUseComments && settings.enableComments;
   const videoCoverUrl = canUseVideoCover ? settings.videoCoverUrl : undefined;
   const audioUrl = canUseAudioGallery ? settings.audioUrl : undefined;
 
@@ -510,12 +514,12 @@ export function GalleryViewClient({
   };
 
   // Handle lead magnet submission
-  const handleLeadMagnetSubmit = async (email: string) => {
+  const handleLeadMagnetSubmit = async (email: string, gdprConsent: boolean) => {
     try {
       const response = await fetch(`/api/galleries/${initialGallery.id}/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, gdprConsent }),
       });
 
       if (!response.ok) {
@@ -709,6 +713,34 @@ export function GalleryViewClient({
     }
   };
 
+  // Handle comment submission
+  const handleComment = async (imageId: string, comment: string) => {
+    if (!enableComments) return;
+    
+    // Get or create session ID for guest
+    const sessionManager = new GuestSessionManager();
+    const sessionId = sessionManager.getSessionToken();
+    
+    try {
+      const response = await fetch(`/api/images/${imageId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: comment, sessionId }),
+      });
+      
+      if (response.ok) {
+        toast.success("Commentaire ajouté avec succès !");
+        // Track comment event
+        eventTracker.trackComment(imageId);
+      } else {
+        toast.error("Erreur lors de l'ajout du commentaire");
+      }
+    } catch (error) {
+      console.error("Comment error:", error);
+      toast.error("Erreur lors de l'ajout du commentaire");
+    }
+  };
+
   // Calculate hours remaining for reminder
   const hoursRemaining = Math.max(0, Math.ceil(
     (new Date(initialGallery.expires_at).getTime() - Date.now()) / (1000 * 60 * 60)
@@ -742,7 +774,10 @@ export function GalleryViewClient({
     <div ref={containerRef} data-gallery-theme={resolvedTheme} className="gallery-theme-wrapper min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 data-[gallery-theme=dark]:from-slate-950 data-[gallery-theme=dark]:via-slate-900 data-[gallery-theme=dark]:to-slate-950 font-['Plus_Jakarta_Sans'] selection:bg-indigo-100 selection:text-indigo-900 data-[gallery-theme=dark]:selection:bg-indigo-900 data-[gallery-theme=dark]:selection:text-indigo-100">
       {/* Video Cover Background */}
       {videoCoverUrl && (
-        <VideoCover videoUrl={videoCoverUrl} />
+        <VideoCover 
+          videoUrl={videoCoverUrl} 
+          hasBackgroundAudio={!!audioUrl} 
+        />
       )}
 
       {/* Background decorations - use brand colors if available */}
@@ -872,7 +907,9 @@ export function GalleryViewClient({
           onNext={handleLightboxNext}
           onDownload={handleDownloadSingle}
           onFavorite={canUseFavorites ? handleToggleFavorite : undefined}
+          onComment={enableComments ? handleComment : undefined}
           showFavorites={canUseFavorites}
+          showComments={enableComments}
           favorites={favorites}
           showWatermark={!initialGallery.is_unlocked && initialGallery.payment_type === 'free'}
           customLogo={initialGallery.custom_logo}
