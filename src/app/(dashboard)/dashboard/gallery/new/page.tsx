@@ -79,7 +79,7 @@ export default async function GalleryCreatePage() {
     redirect("/auth");
   }
 
-  const { profile, planDetails, galleryCount } = await getProfileAndLimits(
+  const { profile, galleryCount } = await getProfileAndLimits(
     session.user.id
   );
 
