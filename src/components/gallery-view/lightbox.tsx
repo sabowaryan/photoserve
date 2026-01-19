@@ -235,7 +235,7 @@ export function Lightbox({
                           {comment.content}
                         </p>
                         <p className="text-[10px] text-white/30 mt-2">
-                          {new Date(comment.createdAt || comment.created_at).toLocaleDateString('fr-FR', {
+                          {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
                             day: 'numeric',
                             month: 'short',
                             hour: '2-digit',
