@@ -99,13 +99,31 @@ export interface RateLimitAttempt {
 
 // Plan Limits
 export interface PlanLimits {
+  // Storage & Capacity
   storage_limit_mb: number;
   max_galleries: number;
   max_images_per_gallery: number;
   max_image_size_mb: number;
   max_expiration_days: number;
+  
+  // Download Features
   can_download_zip: boolean;
+  
+  // Branding & Customization
   has_custom_branding: boolean;
+  has_custom_watermark: boolean;
+  
+  // Advanced Features
+  has_slideshow: boolean;
+  has_favorites: boolean;
+  has_comments: boolean;
+  has_detailed_analytics: boolean;
+  
+  // Pro Features
+  has_priority_support: boolean;
+  has_custom_domain: boolean;
+  has_lightroom_plugin: boolean;
+  has_gallery_monetization: boolean; // Stripe Connect + Paywall
 }
 
 export interface SubscriptionPlanLimits extends PlanLimits {

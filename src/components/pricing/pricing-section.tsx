@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Crown, Zap, Lock, Sparkles } from 'lucide-react';
+import { Check, Crown, Zap, Lock, Sparkles, X } from 'lucide-react';
 import { PricingButton } from './pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
-import { PLAN_PRICING } from '@/config/plans';
+import { PLAN_PRICING, getPlanFeatures } from '@/config/plans';
 import type { LandingContent } from '@/lib/content/landing';
 
 interface PricingSectionProps {
@@ -47,7 +47,7 @@ export function PricingSection({ content }: PricingSectionProps) {
 
   const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
-    if (pricing.monthlyPrice === 0) return '$0';
+    if (pricing.monthlyPrice === 0) return '0';
     const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
     return `${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
   };
@@ -122,10 +122,7 @@ export function PricingSection({ content }: PricingSectionProps) {
         <div className="grid md:grid-cols-3 gap-4">
           {PRICING_PLANS.map((plan) => {
             const Icon = plan.icon;
-            const contentPlan = content.plans.find(p => 
-              p.name.toLowerCase() === plan.name.toLowerCase() || 
-              (plan.key === 'free' && p.name === 'Free')
-            );
+            const planFeatures = getPlanFeatures(plan.key, true) as Array<{ text: string; included: boolean }>;
             const monthlyEquivalent = getMonthlyEquivalent(plan.key);
             const savings = getSavings(plan.key);
             
@@ -156,7 +153,7 @@ export function PricingSection({ content }: PricingSectionProps) {
                   
                   {/* Price */}
                   <div className="mb-1">
-                    <span className="text-2xl font-bold text-slate-900">{formatPrice(plan.key)}</span>
+                    <span className="text-2xl font-bold text-slate-900">${formatPrice(plan.key)}</span>
                     <span className="text-slate-500 text-sm">{getPeriod(plan.key)}</span>
                   </div>
                   {monthlyEquivalent && (
@@ -170,12 +167,22 @@ export function PricingSection({ content }: PricingSectionProps) {
                 {/* Features */}
                 <div className="px-4 pb-4">
                   <ul className="space-y-1.5 mb-4">
-                    {contentPlan?.features.map((feature, featureIndex) => (
+                    {planFeatures.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${plan.iconBg}`}>
-                          <Check size={10} className={plan.iconColor} />
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          feature.included ? plan.iconBg : 'bg-slate-100'
+                        }`}>
+                          {feature.included ? (
+                            <Check size={10} className={plan.iconColor} />
+                          ) : (
+                            <X size={10} className="text-slate-300" />
+                          )}
                         </div>
-                        <span className="text-xs text-slate-700">{feature}</span>
+                        <span className={`text-xs ${
+                          feature.included ? 'text-slate-700' : 'text-slate-400 line-through'
+                        }`}>
+                          {feature.text}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -186,13 +193,13 @@ export function PricingSection({ content }: PricingSectionProps) {
                     interval={isYearly ? 'yearly' : 'monthly'}
                     currentPlan={currentPlan}
                     variant={plan.popular ? 'default' : 'outline'}
-                    className={`w-full py-2 rounded-lg text-sm font-bold transition-all ${
+                    className={
                       plan.popular 
-                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow shadow-indigo-500/20' 
-                        : 'border border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
-                    }`}
+                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/25' 
+                        : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600 shadow-sm'
+                    }
                   >
-                    {contentPlan?.cta || 'Choisir'}
+                    {plan.key === 'free' ? 'Commencer gratuitement' : plan.key === 'premium' ? 'Passer à Premium' : 'Passer à Pro'}
                   </PricingButton>
                 </div>
               </div>

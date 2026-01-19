@@ -516,7 +516,9 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                     <p className="text-slate-500 font-medium text-xs mb-5 max-w-xs">
                       {searchQuery
                         ? t('dashboard.galleriesSection.noResultsQuery', { query: searchQuery })
-                        : t('dashboard.galleriesSection.emptyState')}
+                        : galleries.length === 0 
+                          ? t('dashboard.galleriesSection.emptyState')
+                          : t('dashboard.galleriesSection.noResults')}
                     </p>
                     {!searchQuery && !isGalleryLimitReached && (
                       <LoadingButton

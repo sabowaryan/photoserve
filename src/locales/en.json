@@ -497,7 +497,9 @@
       "dropzoneHint": "or click to select files",
       "uploading": "Uploading...",
       "processing": "Processing...",
-      "complete": "Upload complete!"
+      "complete": "Upload complete!",
+      "authenticatedMessage": "You're now logged in! Create your galleries from the dashboard for more features and control.",
+      "goToDashboard": "Go to Dashboard"
     },
     "pricing": {
       "title": "Your gallery is ready!",

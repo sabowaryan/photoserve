@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Crown, Zap, Sparkles, Star, Info } from "lucide-react";
-import { PLAN_LIMITS, PLAN_PRICING } from "@/config/plans";
+import { Check, Crown, Zap, Sparkles, Star, Info, X } from "lucide-react";
+import { PLAN_LIMITS, PLAN_PRICING, getPlanFeatures } from "@/config/plans";
 import { SettingsPricingButton } from "./settings-pricing-button";
 
 interface Profile {
@@ -107,7 +107,6 @@ export function SubscriptionSection({ currentPlan, profile }: SubscriptionSectio
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {PRICING_PLANS.map((plan) => {
-            const limits = PLAN_LIMITS[plan.key];
             const Icon = plan.icon;
             const isPlanSelected = currentPlan === plan.key;
             const monthlyEquivalent = getMonthlyEquivalent(plan.key);
@@ -167,24 +166,22 @@ export function SubscriptionSection({ currentPlan, profile }: SubscriptionSectio
 
                 {/* Features */}
                 <ul className="space-y-2 mb-5">
-                  <li className="flex items-center gap-2 text-xs text-slate-600">
-                    <Check size={14} className={plan.popular ? "text-indigo-500" : "text-slate-400"} />
-                    {limits.storage_limit_mb >= 1024
-                      ? `${limits.storage_limit_mb / 1024} Go stockage`
-                      : `${limits.storage_limit_mb} Mo stockage`}
-                  </li>
-                  <li className="flex items-center gap-2 text-xs text-slate-600">
-                    <Check size={14} className={plan.popular ? "text-indigo-500" : "text-slate-400"} />
-                    {limits.max_galleries === 500 ? "Galeries illimitées" : `${limits.max_galleries} galeries`}
-                  </li>
-                  <li className="flex items-center gap-2 text-xs text-slate-600">
-                    <Check size={14} className={plan.popular ? "text-indigo-500" : "text-slate-400"} />
-                    {limits.max_images_per_gallery} photos/galerie
-                  </li>
-                  <li className="flex items-center gap-2 text-xs text-slate-600">
-                    <Check size={14} className={plan.popular ? "text-indigo-500" : "text-slate-400"} />
-                    Validité {limits.max_expiration_days}j
-                  </li>
+                  {(getPlanFeatures(plan.key, true) as Array<{ text: string; included: boolean }>).map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 text-xs text-slate-600">
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        feature.included ? (plan.popular ? "bg-indigo-100" : "bg-slate-100") : "bg-slate-50"
+                      }`}>
+                        {feature.included ? (
+                          <Check size={14} className={plan.popular ? "text-indigo-500" : "text-slate-400"} />
+                        ) : (
+                          <X size={14} className="text-slate-300" />
+                        )}
+                      </div>
+                      <span className={feature.included ? "" : "text-slate-400 line-through"}>
+                        {feature.text}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
 
                 {/* CTA Button */}

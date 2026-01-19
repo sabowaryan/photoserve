@@ -106,14 +106,19 @@ export function PricingButton({
 
   const getButtonContent = () => {
     if (isLoading) {
-      return <Loader2 className="animate-spin" size={18} />;
+      return (
+        <span className="flex items-center justify-center gap-2">
+          <Loader2 className="animate-spin" size={16} />
+          <span>Chargement...</span>
+        </span>
+      );
     }
     
     if (isCurrentPlan) {
       return (
         <span className="flex items-center justify-center gap-2">
-          <Check size={16} />
-          Plan actuel
+          <Check size={16} strokeWidth={3} />
+          <span className="font-bold">Plan actuel</span>
         </span>
       );
     }
@@ -122,29 +127,42 @@ export function PricingButton({
       return (
         <span className="flex items-center justify-center gap-2">
           <ArrowDown size={16} />
-          {isFree ? 'Annuler l\'abonnement' : 'Rétrograder'}
+          <span className="font-semibold">{isFree ? 'Annuler l\'abonnement' : 'Rétrograder'}</span>
+        </span>
+      );
+    }
+    
+    if (!isAuthenticated) {
+      return (
+        <span className="flex items-center justify-center gap-2">
+          <span className="font-semibold">{children}</span>
+          <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
         </span>
       );
     }
     
     return (
       <span className="flex items-center justify-center gap-2">
-        {children}
+        <span className="font-semibold">{children}</span>
         <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
       </span>
     );
   };
 
   const getButtonStyles = () => {
+    // Base styles that are always applied
+    const baseStyles = 'w-full py-2.5 rounded-lg text-sm transition-all';
+    
     if (isCurrentPlan) {
-      return 'bg-emerald-100 text-emerald-700 cursor-default';
+      return `${baseStyles} bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25 cursor-default hover:shadow-xl hover:shadow-emerald-500/30`;
     }
     
     if (isDowngrade) {
-      return 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200';
+      return `${baseStyles} bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200 hover:border-slate-300 shadow-sm hover:shadow`;
     }
     
-    return className;
+    // For upgrade/normal state, use the className passed from parent
+    return `${baseStyles} ${className}`;
   };
 
   return (

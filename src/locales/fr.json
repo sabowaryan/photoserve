@@ -497,7 +497,9 @@
       "dropzoneHint": "ou cliquez pour sélectionner des fichiers",
       "uploading": "Téléversement...",
       "processing": "Traitement...",
-      "complete": "Téléversement terminé !"
+      "complete": "Téléversement terminé !",
+      "authenticatedMessage": "Vous êtes maintenant connecté ! Créez vos galeries depuis le tableau de bord pour plus de fonctionnalités et de contrôle.",
+      "goToDashboard": "Aller au tableau de bord"
     },
     "pricing": {
       "title": "Votre galerie est prête !",

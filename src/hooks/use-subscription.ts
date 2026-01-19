@@ -31,7 +31,8 @@ export function useSubscription() {
           throw new Error('Failed to fetch profile');
         }
 
-        const data = await response.json();
+        const result = await response.json();
+        const data = result.data || result; // Handle both { data: {...} } and direct response
         
         setSubscription({
           plan: data.subscription_plan || data.subscription_tier || 'free',

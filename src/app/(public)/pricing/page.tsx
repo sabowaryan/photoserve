@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Check, Crown, Zap, Sparkles, ArrowRight, HelpCircle } from 'lucide-react';
+import { Check, Crown, Zap, Sparkles, ArrowRight, HelpCircle, X } from 'lucide-react';
 import { PricingButton } from '@/components/pricing/pricing-button';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useTranslation } from '@/lib/i18n/context';
-import { PLAN_PRICING, PLAN_LIMITS } from '@/config/plans';
+import { PLAN_PRICING, getPlanFeatures } from '@/config/plans';
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
@@ -46,23 +46,6 @@ export default function PricingPage() {
     },
   ];
 
-  function getFeatures(planKey: 'free' | 'premium' | 'pro') {
-    const limits = PLAN_LIMITS[planKey];
-    const storage = limits.storage_limit_mb >= 1024 
-      ? `${limits.storage_limit_mb / 1024} Go` 
-      : `${limits.storage_limit_mb} Mo`;
-    
-    return [
-      { text: `${storage} ${t('common.storage').toLowerCase()}`, included: true },
-      { text: `${limits.max_galleries} ${t('common.galleries').toLowerCase()}`, included: true },
-      { text: `${limits.max_images_per_gallery} ${t('common.photos').toLowerCase()}/${t('common.galleries').toLowerCase().slice(0, -1)}`, included: true },
-      { text: `${t('common.expiration')} ${limits.max_expiration_days}j`, included: true },
-      { text: t('common.originalQuality'), included: true },
-      { text: t('common.customizableDuration'), included: planKey !== 'free' },
-      { text: t('common.prioritySupport'), included: planKey === 'pro' },
-    ];
-  }
-
   const FAQ_ITEMS = [
     {
       question: t('pricing.faq.changePlan.question'),
@@ -84,7 +67,7 @@ export default function PricingPage() {
 
   const formatPrice = (planKey: 'free' | 'premium' | 'pro') => {
     const pricing = PLAN_PRICING[planKey];
-    if (pricing.monthlyPrice === 0) return '$0';
+    if (pricing.monthlyPrice === 0) return '0';
     const price = isYearly ? pricing.yearlyPrice : pricing.monthlyPrice;
     return `${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}`;
   };
@@ -165,7 +148,7 @@ export default function PricingPage() {
             const Icon = plan.icon;
             const monthlyEquivalent = getMonthlyEquivalent(plan.key);
             const savings = getSavings(plan.key);
-            const features = getFeatures(plan.key);
+            const features = getPlanFeatures(plan.key, true) as Array<{ text: string; included: boolean }>;
             
             return (
               <div 
@@ -214,7 +197,11 @@ export default function PricingPage() {
                         <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
                           feature.included ? plan.iconBg : 'bg-slate-100'
                         }`}>
-                          <Check size={10} className={feature.included ? plan.iconColor : 'text-slate-300'} />
+                          {feature.included ? (
+                            <Check size={10} className={plan.iconColor} />
+                          ) : (
+                            <X size={10} className="text-slate-300" />
+                          )}
                         </div>
                         <span className={`text-xs ${feature.included ? 'text-slate-700' : 'text-slate-400 line-through'}`}>
                           {feature.text}

@@ -301,16 +301,16 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
             <Check size={32} className="text-indigo-600" />
           </div>
           <h3 className="text-xl font-black text-slate-900 mb-3">
-            {t('auth.title')} - {session?.user?.name || session?.user?.email}
+            {session?.user?.name || session?.user?.email}
           </h3>
           <p className="text-slate-600 font-medium mb-6">
-            {t('dashboard.galleriesSection.emptyState')}
+            {t('guest.upload.authenticatedMessage')}
           </p>
           <button
-            onClick={() => router.push('/dashboard/gallery/new')}
+            onClick={() => router.push('/dashboard')}
             className="px-8 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-[0.98]"
           >
-            {t('dashboard.newGallery')}
+            {t('guest.upload.goToDashboard')}
           </button>
         </div>
       </div>
