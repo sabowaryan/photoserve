@@ -267,16 +267,26 @@ export function getPlanFeatures(planKey: SubscriptionPlan, showAll = false): str
   if (!showAll) {
     // Original behavior: only show included features
     return PLAN_FEATURES_CONFIG
-      .filter(feature => feature.alwaysShow || !feature.condition || feature.condition(limits))
+      .filter(feature => {
+        const hasAlwaysShow = 'alwaysShow' in feature && feature.alwaysShow;
+        const hasCondition = 'condition' in feature;
+        return hasAlwaysShow || !hasCondition || (hasCondition && feature.condition && feature.condition(limits));
+      })
       .sort((a, b) => a.priority - b.priority)
       .map(feature => feature.getLabel(limits));
   }
   
   // New behavior: show all features with included status
-  return PLAN_FEATURES_CONFIG
+  return [...PLAN_FEATURES_CONFIG]
     .sort((a, b) => a.priority - b.priority)
-    .map(feature => ({
-      text: feature.getLabel(limits),
-      included: feature.alwaysShow || !feature.condition || feature.condition(limits),
-    }));
+    .map(feature => {
+      const hasAlwaysShow = 'alwaysShow' in feature && feature.alwaysShow;
+      const hasCondition = 'condition' in feature;
+      const included = hasAlwaysShow || !hasCondition || (hasCondition && feature.condition && feature.condition(limits));
+      
+      return {
+        text: feature.getLabel(limits),
+        included,
+      };
+    });
 }
