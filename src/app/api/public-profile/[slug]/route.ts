@@ -32,15 +32,15 @@ import { createAdminClient } from '@/lib/supabase/server';
  */
 export async function GET(
   _request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Use admin client for public access (no authentication required)
     const supabase = createAdminClient();
     const service = createPublicProfileService(supabase);
 
-    // Get the slug from params
-    const { slug } = params;
+    // Get the slug from params (await the Promise in Next.js 16)
+    const { slug } = await params;
 
     // Validate slug format
     if (!slug || typeof slug !== 'string') {
