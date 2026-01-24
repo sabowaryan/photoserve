@@ -35,12 +35,14 @@ export async function proxy(request: NextRequest) {
   // If not primary domain, handle custom domain routing
   if (!isPrimaryDomain && cleanHostname) {
     try {
+      // Create Supabase client for custom domain queries
+      const supabase = await createClient();
+      
       // Lookup photographer by custom domain with caching (Requirement 3.3)
       let photographerData = domainCache.get(cleanHostname);
       
       if (!photographerData) {
         // Cache miss - query database
-        const supabase = await createClient();
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('id, branding')
@@ -130,7 +132,6 @@ export async function proxy(request: NextRequest) {
         const gallerySlug = galleryMatch[2];
         
         // Verify gallery belongs to photographer (Requirement 3.6)
-        const supabase = await createClient();
         const { data: gallery, error: galleryError } = await supabase
           .from('galleries')
           .select('id, user_id')
