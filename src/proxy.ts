@@ -83,11 +83,43 @@ export async function proxy(request: NextRequest) {
       
       // Handle root custom domain request (Requirement 3.9)
       if (pathname === '/' || pathname === '') {
-        // Route to photographer's portfolio page
-        const portfolioUrl = url.clone();
-        portfolioUrl.pathname = `/portfolio/${photographerId}`;
-        portfolioUrl.searchParams.set('customDomain', cleanHostname);
-        return NextResponse.rewrite(portfolioUrl);
+        // Get the public profile slug for this photographer
+        const { data: publicProfile } = await supabase
+          .from('public_profiles')
+          .select('slug')
+          .eq('user_id', photographerId)
+          .eq('is_enabled', true)
+          .single();
+        
+        if (!publicProfile) {
+          console.error('[Custom Domain] No public profile found for photographer:', {
+            hostname: cleanHostname,
+            photographerId,
+            timestamp: new Date().toISOString(),
+          });
+          
+          return new NextResponse(
+            `<html>
+              <head><title>Profile Not Found</title></head>
+              <body style="font-family: system-ui; padding: 2rem; text-align: center;">
+                <h1>404 - Profile Not Found</h1>
+                <p>This photographer's public profile is not available.</p>
+              </body>
+            </html>`,
+            { 
+              status: 404,
+              headers: { 'Content-Type': 'text/html' }
+            }
+          );
+        }
+        
+        // Rewrite to the public profile page
+        const profileUrl = url.clone();
+        profileUrl.pathname = `/p/${publicProfile.slug}`;
+        
+        console.log(`[Custom Domain] Rewriting ${cleanHostname}/ to /p/${publicProfile.slug}`);
+        
+        return NextResponse.rewrite(profileUrl);
       }
       
       // Extract gallery slug from URL path (Requirement 3.5)
