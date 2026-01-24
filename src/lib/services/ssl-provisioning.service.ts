@@ -479,7 +479,7 @@ export class SSLProvisioningService implements ISSLProvisioningService {
       const { data: profile, error: fetchError } = await this.supabase
         .from('profiles')
         .select('branding')
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single();
 
       if (fetchError) {
@@ -500,7 +500,7 @@ export class SSLProvisioningService implements ISSLProvisioningService {
             sslExpiresAt: metadata.expiresAt.toISOString(),
           },
         })
-        .eq('user_id', userId);
+        .eq('id', userId);
 
       if (updateError) {
         throw new Error(`Failed to store certificate metadata: ${updateError.message}`);

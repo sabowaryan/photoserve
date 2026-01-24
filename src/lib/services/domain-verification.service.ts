@@ -102,6 +102,16 @@ export class DomainVerificationService implements IDomainVerificationService {
       };
     }
 
+    // Development mode: simulate verification for testing
+    // Set ENABLE_DOMAIN_VERIFICATION_SIMULATION=true in .env.local to enable
+    if (process.env.NODE_ENV === 'development' && process.env.ENABLE_DOMAIN_VERIFICATION_SIMULATION === 'true') {
+      console.warn('[DomainVerification] Running in SIMULATION mode - domain will be auto-verified');
+      return {
+        status: 'verified',
+        instructions: 'Domain verified successfully (SIMULATION MODE for development).',
+      };
+    }
+
     // Check rate limiting (Requirement 1.10)
     const rateLimitCheck = await this.checkRateLimit(userId);
     if (!rateLimitCheck.allowed) {
@@ -319,7 +329,15 @@ export class DomainVerificationService implements IDomainVerificationService {
 
       return data.Answer || null;
     } catch (error) {
-      console.error('[DomainVerification] Error querying DNS:', error);
+      // In development, SSL certificate errors are common
+      // Log a helpful message but continue gracefully
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[DomainVerification] DNS query failed in development (this is normal):', 
+          error instanceof Error ? error.message : 'Unknown error');
+        console.warn('[DomainVerification] To test domain verification, use production environment or configure SSL certificates');
+      } else {
+        console.error('[DomainVerification] Error querying DNS:', error);
+      }
       return null;
     }
   }

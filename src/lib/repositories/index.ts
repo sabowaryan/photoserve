@@ -36,3 +36,17 @@ export {
   createAdminRepository,
   type IAdminRepository,
 } from './admin.repository'
+
+// Public Profile Repository
+export {
+  PublicProfileRepository,
+  createPublicProfileRepository,
+  type IPublicProfileRepository,
+} from './public-profile.repository'
+
+// Profile Views Repository
+export {
+  ProfileViewsRepository,
+  createProfileViewsRepository,
+  type IProfileViewsRepository,
+} from './profile-views.repository'

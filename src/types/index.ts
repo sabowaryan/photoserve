@@ -455,3 +455,33 @@ export interface FeatureAccessError {
     [key: string]: unknown;
   };
 }
+
+// ============================================
+// Public Photographer Profile Types
+// ============================================
+
+export type {
+  SocialLinks,
+  CTAButton,
+  Testimonial as ProfileTestimonial,
+  PublicGallery,
+  PublicProfile,
+  PublicProfileWithGalleries,
+  ProfileView,
+  ProfileAnalytics,
+  MetaTags,
+  SitemapEntry,
+  PublicProfileInput,
+  PublicProfileUpdate,
+} from './public-profile';
+
+export {
+  RESERVED_SLUGS,
+  TEXT_LIMITS,
+  ARRAY_LIMITS,
+  PublicProfileSchema,
+  PublicProfileUpdateSchema,
+  SocialLinksSchema,
+  CTAButtonSchema,
+  TestimonialSchema,
+} from './public-profile';

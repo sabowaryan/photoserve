@@ -2,11 +2,13 @@
  * Dynamic Sitemap Generation
  * Generates sitemap.xml for SEO with language-specific URLs
  * 
- * Requirements: 7.4, 8.5
+ * Requirements: 7.4, 8.5, 8.9, 8.10
  */
 
 import type { MetadataRoute } from 'next';
 import { SupportedLocale } from '@/lib/i18n/types';
+import { createAdminClient } from '@/lib/supabase/server';
+import { SEOGenerator } from '@/lib/utils/seo.utils';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://piksend.com';
 
@@ -148,11 +150,53 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // Public photographer profiles (Requirements 8.9, 8.10)
+  const publicProfiles = await getPublicProfiles();
+
   // Note: Gallery pages (/g/[slug]) are NOT included in sitemap
   // as they are protected and should not be indexed (Requirement 7.8)
 
   // Note: Dashboard, Settings, and Auth pages are NOT included
   // as they require authentication or should not be indexed
 
-  return [...staticPages, ...legalPages];
+  return [...staticPages, ...legalPages, ...publicProfiles];
+}
+
+/**
+ * Fetch all active public photographer profiles for sitemap
+ * Validates: Requirements 8.9, 8.10
+ */
+async function getPublicProfiles(): Promise<SitemapEntry[]> {
+  try {
+    const supabase = createAdminClient();
+    
+    // Fetch all enabled public profiles
+    const { data: profiles, error } = await supabase
+      .from('public_profiles')
+      .select('slug, updated_at')
+      .eq('is_enabled', true);
+    
+    if (error || !profiles) {
+      console.error('Error fetching public profiles for sitemap:', error);
+      return [];
+    }
+    
+    // Generate sitemap entries using SEOGenerator
+    return profiles.map((profile) => {
+      const sitemapEntry = SEOGenerator.generateSitemapEntry({
+        slug: profile.slug,
+        updatedAt: new Date(profile.updated_at),
+      } as any);
+      
+      return {
+        url: sitemapEntry.url,
+        lastModified: new Date(sitemapEntry.lastmod),
+        changeFrequency: sitemapEntry.changefreq as 'weekly',
+        priority: sitemapEntry.priority,
+      };
+    });
+  } catch (error) {
+    console.error('Error generating public profile sitemap entries:', error);
+    return [];
+  }
 }

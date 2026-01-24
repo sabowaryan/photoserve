@@ -77,7 +77,7 @@ export function BrandingSection({ initialBranding, userPlan, onUpdate }: Brandin
     try {
       setIsUploadingLogo(true);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('logo', file);
       const response = await fetch('/api/profile/logo', { method: 'POST', body: formData });
       if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'Échec du téléchargement'); }
       const data = await response.json();

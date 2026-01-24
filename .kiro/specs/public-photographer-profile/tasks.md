@@ -8,53 +8,53 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
 
 ### Phase 1: MVP - Infrastructure et Fonctionnalités de Base
 
-- [ ] 1. Créer le schéma de base de données et les migrations
+- [x] 1. Créer le schéma de base de données et les migrations
   - Créer la migration pour la table `public_profiles` avec toutes les colonnes, contraintes et index
   - Créer la migration pour la table `profile_views` pour le tracking analytics
   - Créer la fonction trigger `update_updated_at_column()` pour mise à jour automatique
   - Ajouter les index pour optimiser les requêtes fréquentes
   - _Exigences: 1.2, 9.1, 9.2_
 
-- [ ] 2. Implémenter les types TypeScript et interfaces
+- [x] 2. Implémenter les types TypeScript et interfaces
   - Créer `types/public-profile.ts` avec toutes les interfaces (PublicProfile, SocialLinks, CTAButton, Testimonial, PublicGallery, ProfileView, ProfileAnalytics)
   - Créer le schéma de validation Zod `PublicProfileSchema` avec toutes les règles
   - Définir les constantes (RESERVED_SLUGS, limites de longueur)
   - _Exigences: 1.4, 1.6, 1.7, 1.8, 14.5_
 
-- [ ] 2.1 Écrire les tests de propriété pour la validation Zod
+- [x] 2.1 Écrire les tests de propriété pour la validation Zod
   - **Propriété 6: Respect des limites de longueur des champs texte**
   - **Propriété 7: Respect des limites de cardinalité des tableaux**
   - **Valide: Exigences 1.6, 1.7, 1.8**
 
-- [ ] 3. Créer le repository pour les profils publics
+- [x] 3. Créer le repository pour les profils publics
   - Implémenter `lib/repositories/public-profile.repository.ts`
   - Méthodes: `findBySlug()`, `findByUserId()`, `create()`, `update()`, `delete()`, `incrementViewsCount()`
   - Utiliser le client Supabase pour les requêtes
   - Gérer les erreurs de base de données
   - _Exigences: 1.2, 1.3, 6.1_
 
-- [ ] 3.1 Écrire les tests unitaires pour le repository
+- [x] 3.1 Écrire les tests unitaires pour le repository
   - Tester la création, mise à jour, suppression
   - Tester les contraintes d'unicité
   - Tester les cas d'erreur
   - _Exigences: 1.2, 1.3_
 
-- [ ] 4. Implémenter les utilitaires pour les slugs
+- [x] 4. Implémenter les utilitaires pour les slugs
   - Créer `lib/utils/slug.utils.ts` avec la classe `SlugUtils`
   - Méthodes: `normalize()`, `isValid()`, `generateUnique()`
   - Implémenter la normalisation (minuscules, remplacement espaces, suppression accents)
   - Implémenter la validation avec regex et vérification des slugs réservés
   - _Exigences: 1.4, 14.1, 14.6, 14.7, 14.8_
 
-- [ ] 4.1 Écrire les tests de propriété pour la normalisation des slugs
+- [x] 4.1 Écrire les tests de propriété pour la normalisation des slugs
   - **Propriété 5: Normalisation des slugs**
   - **Valide: Exigences 14.7, 14.8**
 
-- [ ] 4.2 Écrire les tests de propriété pour la validation des slugs
+- [x] 4.2 Écrire les tests de propriété pour la validation des slugs
   - **Propriété 4: Validation du format des slugs**
   - **Valide: Exigences 1.4, 14.1, 14.5, 14.6**
 
-- [ ] 5. Créer le service de profil public
+- [x] 5. Créer le service de profil public
   - Implémenter `lib/services/public-profile.service.ts` avec la classe `PublicProfileService`
   - Méthodes: `getProfileBySlug()`, `upsertProfile()`, `checkSlugAvailability()`, `generateSlugSuggestions()`, `sortGalleries()`
   - Implémenter la vérification du plan Pro
@@ -62,52 +62,52 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter le tri des galeries (featured en premier, puis par date)
   - _Exigences: 1.1, 1.3, 1.5, 3.8, 3.9, 14.2, 14.3, 14.4_
 
-- [ ] 5.1 Écrire les tests de propriété pour le tri des galeries
+- [x] 5.1 Écrire les tests de propriété pour le tri des galeries
   - **Propriété 12: Ordre de tri des galeries**
   - **Valide: Exigences 3.8, 3.9**
 
-- [ ] 5.2 Écrire les tests unitaires pour le service
+- [x] 5.2 Écrire les tests unitaires pour le service
   - Tester la restriction au plan Pro
   - Tester la génération de suggestions de slugs
   - Tester les cas d'erreur (slug déjà pris, utilisateur non Pro)
   - _Exigences: 1.1, 1.5_
 
-- [ ] 6. Checkpoint - Vérifier l'infrastructure de base
+- [x] 6. Checkpoint - Vérifier l'infrastructure de base
   - S'assurer que toutes les migrations s'exécutent correctement
   - Vérifier que les types TypeScript sont corrects
   - Vérifier que les tests passent
   - Demander à l'utilisateur si des questions se posent
 
 
-- [ ] 7. Créer les API routes pour la gestion des profils
+- [x] 7. Créer les API routes pour la gestion des profils
   - Créer `app/api/public-profile/route.ts` pour PUT (création/mise à jour)
   - Créer `app/api/public-profile/[slug]/route.ts` pour GET (récupération par slug)
   - Créer `app/api/public-profile/check-slug/route.ts` pour GET (vérification disponibilité)
-  - Implémenter l'authentification avec `getServerSession()`
+  - Implémenter l'authentification avec le systeme existant(voir les implementations)`
   - Implémenter la validation des données avec Zod
   - Implémenter la gestion des erreurs (validation, autorisation, contraintes)
   - _Exigences: 1.1, 1.3, 6.1, 14.1_
 
-- [ ] 7.1 Écrire les tests d'intégration pour les API routes
+- [x] 7.1 Écrire les tests d'intégration pour les API routes
   - Tester la création d'un profil pour un utilisateur Pro
   - Tester le rejet pour un utilisateur non-Pro
   - Tester le rejet pour un slug déjà pris
   - Tester la récupération d'un profil par slug
   - _Exigences: 1.1, 1.3, 6.1_
 
-- [ ] 8. Implémenter le filtrage des galeries publiques
+- [x] 8. Implémenter le filtrage des galeries publiques
   - Créer la fonction `filterPublicGalleries()` dans le service
   - Filtrer les galeries: is_active = true, non expirées, non masquées
   - Ajouter la propriété `isNew` (< 7 jours)
   - Intégrer avec `getProfileBySlug()` pour récupérer les galeries
   - _Exigences: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 8.1 Écrire les tests de propriété pour le filtrage des galeries
+- [x] 8.1 Écrire les tests de propriété pour le filtrage des galeries
   - **Propriété 10: Filtrage des galeries publiques**
   - **Propriété 11: Badge "Nouveau" basé sur la date**
   - **Valide: Exigences 3.1, 3.2, 3.3, 3.4, 3.5**
 
-- [ ] 9. Créer la page de profil public
+- [x] 9. Créer la page de profil public
   - Créer `app/p/[slug]/page.tsx` avec génération statique (SSG)
   - Implémenter `generateStaticParams()` pour pré-générer les profils actifs
   - Récupérer le profil et les galeries via le service
@@ -115,13 +115,13 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter le layout responsive
   - _Exigences: 6.1, 6.3, 6.4, 1.10_
 
-- [ ] 9.1 Écrire les tests unitaires pour la page
+- [x] 9.1 Écrire les tests unitaires pour la page
   - Tester le rendu avec un profil valide
   - Tester le retour 404 pour profil inexistant
   - Tester le retour 404 pour profil désactivé
   - _Exigences: 6.3, 6.4, 1.10_
 
-- [ ] 10. Créer les composants de base du profil
+- [x] 10. Créer les composants de base du profil
   - Créer `components/public-profile/profile-header.tsx` (hero section avec avatar, cover, nom, tagline, localisation)
   - Créer `components/public-profile/profile-bio.tsx` (bio avec support markdown, spécialités, années d'expérience, récompenses)
   - Créer `components/public-profile/profile-galleries.tsx` (grille responsive de galeries)
@@ -129,11 +129,11 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter l'affichage conditionnel des champs optionnels
   - _Exigences: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.6_
 
-- [ ] 10.1 Écrire les tests de propriété pour l'affichage conditionnel
+- [x] 10.1 Écrire les tests de propriété pour l'affichage conditionnel
   - **Propriété 9: Affichage conditionnel des informations du photographe**
   - **Valide: Exigences 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9**
 
-- [ ] 11. Créer le composant de contact
+- [x] 11. Créer le composant de contact
   - Créer `components/public-profile/profile-contact.tsx`
   - Afficher email avec protection anti-spam (remplacer @ par [at] et . par [dot])
   - Afficher téléphone, site web, adresse si configurés
@@ -141,17 +141,17 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Afficher le bouton CTA personnalisable
   - _Exigences: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7_
 
-- [ ] 11.1 Écrire les tests de propriété pour la protection anti-spam
+- [x] 11.1 Écrire les tests de propriété pour la protection anti-spam
   - **Propriété 13: Protection anti-spam des emails**
   - **Valide: Exigences 4.1, 13.1**
 
-- [ ] 11.2 Écrire les tests unitaires pour le composant contact
+- [x] 11.2 Écrire les tests unitaires pour le composant contact
   - Tester le formatage de l'email
   - Tester l'affichage conditionnel des champs
   - Tester le rendu des réseaux sociaux
   - _Exigences: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 12. Créer le footer du profil
+- [x] 12. Créer le footer du profil
   - Créer `components/public-profile/profile-footer.tsx`
   - Afficher le copyright avec nom du photographe
   - Afficher les liens légaux (CGU, Politique de confidentialité)
@@ -159,7 +159,7 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Afficher footer white-label si domaine custom configuré
   - _Exigences: 7.3, 7.4, 7.5_
 
-- [ ] 13. Checkpoint - Vérifier le MVP
+- [x] 13. Checkpoint - Vérifier le MVP
   - Tester la création d'un profil via le dashboard
   - Tester l'affichage du profil public
   - Vérifier que seuls les utilisateurs Pro peuvent activer
@@ -169,7 +169,7 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
 
 ### Phase 2: Enrichissement - Configuration et Personnalisation
 
-- [ ] 14. Créer l'interface de configuration dans le dashboard
+- [x] 14. Créer l'interface de configuration dans le dashboard
   - Créer `app/(dashboard)/settings/public-profile/page.tsx`
   - Implémenter le layout avec onglets (Général, Médias, Contact, Galeries, Témoignages, SEO)
   - Créer le toggle d'activation du profil
@@ -177,63 +177,63 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Ajouter le bouton "Prévisualiser"
   - _Exigences: 10.1, 10.2, 10.6, 10.7_
 
-- [ ] 15. Créer l'onglet Général
-  - Créer `app/(dashboard)/settings/public-profile/components/general-tab.tsx`
+- [x] 15. Créer l'onglet Général
+  - Créer `app/(dashboard)/settings/profile/components/general-tab.tsx`
   - Champs: slug (avec vérification en temps réel), displayName, tagline, bio (textarea avec compteur)
   - Implémenter la validation en temps réel avec Zod
   - Afficher les messages d'erreur clairs
   - Afficher les suggestions de slugs si déjà pris
   - _Exigences: 10.3, 10.8, 14.2, 14.3_
 
-- [ ] 15.1 Écrire les tests de propriété pour la vérification des slugs
+- [x] 15.1 Écrire les tests de propriété pour la vérification des slugs
   - **Propriété 22: Vérification en temps réel de la disponibilité des slugs**
   - **Propriété 21: Suggestions de slugs alternatifs**
   - **Valide: Exigences 1.5, 14.1, 14.2, 14.3, 14.4**
 
-- [ ] 16. Créer l'onglet Médias
-  - Créer `app/(dashboard)/settings/public-profile/components/media-tab.tsx`
+- [x] 16. Créer l'onglet Médias
+  - Créer `app/(dashboard)/settings/profile/components/media-tab.tsx`
   - Upload d'avatar avec drag & drop et preview
   - Upload d'image de couverture avec drag & drop et preview
   - Intégration avec Cloudinary pour l'upload et l'optimisation
   - Afficher les dimensions recommandées
   - _Exigences: 10.9, 10.10_
 
-- [ ] 17. Créer l'onglet Contact
-  - Créer `app/(dashboard)/settings/public-profile/components/contact-tab.tsx`
+- [x] 17. Créer l'onglet Contact
+  - Créer `app/(dashboard)/settings/profile/components/contact-tab.tsx`
   - Champs: publicEmail, phone, website, address
   - Champs pour les réseaux sociaux (Instagram, Facebook, Pinterest, LinkedIn, TikTok, YouTube, autre)
   - Configuration du bouton CTA (texte, URL, style)
   - Validation des URLs et emails
   - _Exigences: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7_
 
-- [ ] 17.1 Écrire les tests de propriété pour la validation des URLs
+- [x] 17.1 Écrire les tests de propriété pour la validation des URLs
   - **Propriété 20: Validation des URLs**
   - **Valide: Exigences 4.3, validation générale**
 
-- [ ] 18. Créer l'onglet Galeries
-  - Créer `app/(dashboard)/settings/public-profile/components/galleries-tab.tsx`
+- [x] 18. Créer l'onglet Galeries
+  - Créer `app/(dashboard)/settings/profile/components/galleries-tab.tsx`
   - Afficher la liste des galeries de l'utilisateur
   - Permettre de marquer des galeries comme "mises en avant" (featured)
   - Permettre de masquer des galeries du profil public
   - Afficher un aperçu de l'ordre d'affichage
   - _Exigences: 3.8, 3.4_
 
-- [ ] 19. Créer l'onglet Témoignages
-  - Créer `app/(dashboard)/settings/public-profile/components/testimonials-tab.tsx`
+- [x] 19. Créer l'onglet Témoignages
+  - Créer `app/(dashboard)/settings/profile/components/testimonials-tab.tsx`
   - Formulaire d'ajout de témoignage (nom client, photo, note, texte, date)
   - Liste des témoignages avec édition et suppression
   - Limite de 5 témoignages maximum
   - Validation de la longueur du texte (200 caractères max)
   - _Exigences: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-- [ ] 20. Créer l'onglet SEO
-  - Créer `app/(dashboard)/settings/public-profile/components/seo-tab.tsx`
+- [x] 20. Créer l'onglet SEO
+  - Créer `app/(dashboard)/settings/profile/components/seo-tab.tsx`
   - Champs: metaTitle (60 caractères max), metaDescription (160 caractères max), metaKeywords
   - Afficher des compteurs de caractères
   - Afficher un aperçu de l'apparence dans les résultats de recherche Google
   - _Exigences: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 21. Implémenter la génération des meta tags SEO
+- [x] 21. Implémenter la génération des meta tags SEO
   - Créer `lib/utils/seo.utils.ts` avec la classe `SEOGenerator`
   - Méthodes: `generateMetaTags()`, `generateStructuredData()`, `generateSitemapEntry()`
   - Générer les meta tags (title, description, keywords, Open Graph, Twitter Card)
@@ -241,18 +241,18 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Intégrer dans la page du profil public
   - _Exigences: 8.1, 8.2, 8.3, 8.6, 8.7, 8.8_
 
-- [ ] 21.1 Écrire les tests de propriété pour la génération SEO
+- [x] 21.1 Écrire les tests de propriété pour la génération SEO
   - **Propriété 17: Génération des meta tags SEO**
   - **Propriété 18: Génération des données structurées JSON-LD**
   - **Valide: Exigences 8.1, 8.2, 8.3, 8.6, 8.7, 8.8**
 
-- [ ] 21.2 Écrire les tests unitaires pour la génération SEO
+- [x] 21.2 Écrire les tests unitaires pour la génération SEO
   - Tester l'utilisation du meta title custom vs généré
   - Tester la troncature de la bio pour la description
   - Tester la génération des données structurées
   - _Exigences: 8.1, 8.2, 8.3_
 
-- [ ] 22. Créer le composant de témoignages
+- [x] 22. Créer le composant de témoignages
   - Créer `components/public-profile/profile-testimonials.tsx` (carrousel)
   - Créer `components/public-profile/testimonial-card.tsx` (carte individuelle)
   - Implémenter le carrousel avec navigation (précédent/suivant)
@@ -260,25 +260,25 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Limiter l'affichage à 5 témoignages maximum
   - _Exigences: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 23. Implémenter l'application du branding personnalisé
+- [x] 23. Implémenter l'application du branding personnalisé
   - Récupérer les paramètres de branding de l'utilisateur (logo, couleurs, domaine)
   - Appliquer le logo personnalisé dans le header si configuré
   - Appliquer les couleurs de marque (primary, secondary, accent) aux boutons et liens
   - Afficher le footer white-label si domaine custom, sinon afficher "Propulsé par PikSend"
   - _Exigences: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 23.1 Écrire les tests de propriété pour l'application du branding
+- [x] 23.1 Écrire les tests de propriété pour l'application du branding
   - **Propriété 19: Application conditionnelle du branding**
   - **Valide: Exigences 7.1, 7.2, 7.3**
 
-- [ ] 24. Créer la page de prévisualisation
-  - Créer `app/(dashboard)/settings/public-profile/preview/page.tsx`
+- [x] 24. Créer la page de prévisualisation
+  - Créer `app/(dashboard)/settings/profile/preview/page.tsx`
   - Afficher le profil tel qu'il apparaîtra publiquement
   - Utiliser les mêmes composants que la page publique
   - Ajouter un bandeau "Mode Prévisualisation"
   - _Exigences: 10.5_
 
-- [ ] 25. Checkpoint - Vérifier l'enrichissement
+- [x] 25. Checkpoint - Vérifier l'enrichissement
   - Tester la configuration complète d'un profil via le dashboard
   - Vérifier que tous les onglets fonctionnent correctement
   - Vérifier l'upload d'images
@@ -290,7 +290,7 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
 
 ### Phase 3: Analytics - Suivi et Statistiques
 
-- [ ] 26. Créer le repository pour les vues de profil
+- [x] 26. Créer le repository pour les vues de profil
   - Implémenter `lib/repositories/profile-views.repository.ts`
   - Méthodes: `create()`, `updateCTAClick()`, `addSocialClick()`, `findByProfileAndDateRange()`, `getAnalytics()`
   - Implémenter les requêtes d'agrégation pour les statistiques
@@ -340,7 +340,7 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - **Valide: Exigences 9.1, 9.2, 9.3, 9.5, 9.6**
 
 - [ ] 31. Créer le dashboard analytics
-  - Créer `app/(dashboard)/settings/public-profile/analytics/page.tsx`
+  - Créer `app/(dashboard)/settings/profile/analytics/page.tsx`
   - Afficher les métriques principales (total views, CTA click rate, avg session duration)
   - Afficher le graphique des visites par jour/semaine/mois
   - Afficher le top 10 des galeries les plus vues
