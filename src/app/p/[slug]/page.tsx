@@ -24,6 +24,7 @@ import { ProfileGalleries } from '@/components/public-profile/profile-galleries'
 import { ProfileContact } from '@/components/public-profile/profile-contact';
 import { ProfileTestimonials } from '@/components/public-profile/profile-testimonials';
 import { ProfileFooter } from '@/components/public-profile/profile-footer';
+import { ProfileClientWrapper } from '@/components/public-profile/profile-client-wrapper';
 import type { ProfileBranding } from '@/types';
 
 interface PublicProfilePageProps {
@@ -149,67 +150,69 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
   const brandColors = branding?.brandColors;
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Structured Data for SEO (JSON-LD) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      
-      {/* Profile Header with branding (Requirements 7.1, 7.2) */}
-      <ProfileHeader
-        displayName={profile.displayName}
-        tagline={profile.tagline}
-        location={profile.location}
-        avatarUrl={profile.avatarUrl}
-        coverImageUrl={profile.coverImageUrl}
-        customLogo={customLogo}
-        brandColors={brandColors}
-      />
-      
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Bio and Info */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Bio and Expertise */}
-            <ProfileBio
-              bio={profile.bio}
-              specialties={profile.specialties}
-              yearsOfExperience={profile.yearsOfExperience}
-              awards={profile.awards}
-            />
+    <ProfileClientWrapper profileSlug={slug}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 profile-bg-gradient transition-colors duration-300">
+        {/* Structured Data for SEO (JSON-LD) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        
+        {/* Profile Header with branding (Requirements 7.1, 7.2) */}
+        <ProfileHeader
+          displayName={profile.displayName}
+          tagline={profile.tagline}
+          location={profile.location}
+          avatarUrl={profile.avatarUrl}
+          coverImageUrl={profile.coverImageUrl}
+          customLogo={customLogo}
+          brandColors={brandColors}
+        />
+        
+        {/* Main Content - Responsive grid layout (Requirement 11.1) */}
+        <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16" role="main" aria-label="Contenu principal du profil">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            {/* Left Column - Bio and Info */}
+            <div className="lg:col-span-2 space-y-6 md:space-y-8">
+              {/* Bio and Expertise */}
+              <ProfileBio
+                bio={profile.bio}
+                specialties={profile.specialties}
+                yearsOfExperience={profile.yearsOfExperience}
+                awards={profile.awards}
+              />
+              
+              {/* Galleries */}
+              <ProfileGalleries galleries={profile.galleries} />
+              
+              {/* Testimonials */}
+              {profile.testimonials && profile.testimonials.length > 0 && (
+                <ProfileTestimonials testimonials={profile.testimonials} />
+              )}
+            </div>
             
-            {/* Galleries */}
-            <ProfileGalleries galleries={profile.galleries} />
-            
-            {/* Testimonials */}
-            {profile.testimonials && profile.testimonials.length > 0 && (
-              <ProfileTestimonials testimonials={profile.testimonials} />
-            )}
+            {/* Right Column - Contact and Social - Sticky on desktop (Requirement 11.1) */}
+            <aside className="space-y-6" aria-label="Informations de contact">
+              {/* Contact Information with brand colors (Requirement 7.2) */}
+              <ProfileContact
+                email={profile.publicEmail}
+                phone={profile.phone}
+                website={profile.website}
+                address={profile.address}
+                socialLinks={profile.socialLinks}
+                ctaButton={profile.ctaButton}
+                brandColors={brandColors}
+              />
+            </aside>
           </div>
-          
-          {/* Right Column - Contact and Social */}
-          <div className="space-y-6">
-            {/* Contact Information with brand colors (Requirement 7.2) */}
-            <ProfileContact
-              email={profile.publicEmail}
-              phone={profile.phone}
-              website={profile.website}
-              address={profile.address}
-              socialLinks={profile.socialLinks}
-              ctaButton={profile.ctaButton}
-              brandColors={brandColors}
-            />
-          </div>
-        </div>
+        </main>
+        
+        {/* Footer */}
+        <ProfileFooter 
+          photographerName={profile.displayName}
+          hasCustomDomain={hasCustomDomain}
+        />
       </div>
-      
-      {/* Footer */}
-      <ProfileFooter 
-        photographerName={profile.displayName}
-        hasCustomDomain={hasCustomDomain}
-      />
-    </div>
+    </ProfileClientWrapper>
   );
 }

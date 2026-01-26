@@ -20,7 +20,8 @@ import {
   Mail,
   Images,
   MessageSquare,
-  Search
+  Search,
+  BarChart3
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -901,13 +902,23 @@ export function PublicProfileSettings({
             {/* Action Buttons */}
             <div className="shrink-0 flex gap-2">
               {profileSlug && (
-                <button 
-                  onClick={openPreview}
-                  className="group relative px-4 py-2.5 backdrop-blur-md font-bold text-sm rounded-xl transition-all border hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 bg-white/10 text-white border-white/20 hover:bg-white/20"
-                >
-                  <Eye size={16} />
-                  <span className="hidden sm:inline">Prévisualiser</span>
-                </button>
+                <>
+                  <Link href="/settings/profile/analytics">
+                    <button 
+                      className="group relative px-4 py-2.5 backdrop-blur-md font-bold text-sm rounded-xl transition-all border hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 bg-white/10 text-white border-white/20 hover:bg-white/20"
+                    >
+                      <BarChart3 size={16} />
+                      <span className="hidden sm:inline">Analytics</span>
+                    </button>
+                  </Link>
+                  <button 
+                    onClick={openPreview}
+                    className="group relative px-4 py-2.5 backdrop-blur-md font-bold text-sm rounded-xl transition-all border hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 bg-white/10 text-white border-white/20 hover:bg-white/20"
+                  >
+                    <Eye size={16} />
+                    <span className="hidden sm:inline">Prévisualiser</span>
+                  </button>
+                </>
               )}
               {profileUrl && (
                 <button 

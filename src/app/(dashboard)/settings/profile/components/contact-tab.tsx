@@ -12,7 +12,7 @@ import {
   Instagram,
   Facebook,
   Linkedin,
-  Youtube,
+  YoutubeIcon,
   Link as LinkIcon,
   MousePointerClick,
   Save,
@@ -55,7 +55,7 @@ const SOCIAL_PLATFORMS = [
   { key: 'pinterest' as const, label: 'Pinterest', icon: LinkIcon, placeholder: 'https://pinterest.com/votre-profil' },
   { key: 'linkedin' as const, label: 'LinkedIn', icon: Linkedin, placeholder: 'https://linkedin.com/in/votre-profil' },
   { key: 'tiktok' as const, label: 'TikTok', icon: LinkIcon, placeholder: 'https://tiktok.com/@votre-profil' },
-  { key: 'youtube' as const, label: 'YouTube', icon: Youtube, placeholder: 'https://youtube.com/@votre-chaine' },
+  { key: 'youtube' as const, label: 'YouTube', icon: YoutubeIcon, placeholder: 'https://youtube.com/@votre-chaine' },
   { key: 'other' as const, label: 'Autre', icon: LinkIcon, placeholder: 'https://votre-site.com' },
 ];
 

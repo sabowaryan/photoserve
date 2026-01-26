@@ -296,7 +296,7 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter les requêtes d'agrégation pour les statistiques
   - _Exigences: 9.1, 9.2, 9.4, 9.5, 9.6_
 
-- [ ] 27. Implémenter le service analytics
+- [x] 27. Implémenter le service analytics
   - Créer `lib/services/analytics.service.ts` avec la classe `AnalyticsService`
   - Méthodes: `calculateStats()`, `groupViewsByDate()`, `calculateTopGalleries()`, `calculateTopReferrers()`
   - Implémenter le calcul des métriques (total views, CTA click rate, average session duration)
@@ -304,29 +304,29 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter le calcul des top galeries et top referrers
   - _Exigences: 9.7, 9.8_
 
-- [ ] 27.1 Écrire les tests de propriété pour le calcul des statistiques
+- [x] 27.1 Écrire les tests de propriété pour le calcul des statistiques
   - **Propriété 23: Calcul correct des statistiques analytics**
   - **Valide: Exigences 9.7, 9.8**
 
-- [ ] 28. Ajouter le tracking dans PublicProfileService
+- [x] 28. Ajouter le tracking dans PublicProfileService
   - Implémenter `trackView()` avec hashage de l'IP (SHA-256)
   - Implémenter `trackCTAClick()` pour enregistrer les clics sur le CTA
   - Implémenter `trackSocialClick()` pour enregistrer les clics sur les réseaux sociaux
   - Implémenter `getAnalytics()` pour récupérer les statistiques
   - _Exigences: 9.1, 9.2, 9.3, 9.5, 9.6, 13.4_
 
-- [ ] 28.1 Écrire les tests de propriété pour l'anonymisation des IPs
+- [x] 28.1 Écrire les tests de propriété pour l'anonymisation des IPs
   - **Propriété 16: Anonymisation des adresses IP**
   - **Valide: Exigences 9.9, 13.4**
 
-- [ ] 29. Créer l'API route pour le tracking
+- [x] 29. Créer l'API route pour le tracking
   - Créer `app/api/public-profile/track-view/route.ts` pour POST
   - Enregistrer les visites avec IP hashée, user agent, referrer
   - Enregistrer les clics CTA et réseaux sociaux
   - Implémenter la détection du pays et de la ville (optionnel, via IP)
   - _Exigences: 9.1, 9.2, 9.5, 9.6_
 
-- [ ] 30. Intégrer le tracking dans la page publique
+- [x] 30. Intégrer le tracking dans la page publique
   - Ajouter l'appel à `trackView()` lors du chargement de la page (useEffect)
   - Ajouter le tracking des clics sur le CTA
   - Ajouter le tracking des clics sur les réseaux sociaux
@@ -334,12 +334,12 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Implémenter le respect du Do Not Track
   - _Exigences: 9.1, 9.4, 9.5, 9.6, 13.7_
 
-- [ ] 30.1 Écrire les tests de propriété pour l'enregistrement des événements
+- [x] 30.1 Écrire les tests de propriété pour l'enregistrement des événements
   - **Propriété 14: Enregistrement des événements analytics**
   - **Propriété 15: Incrémentation du compteur de vues**
   - **Valide: Exigences 9.1, 9.2, 9.3, 9.5, 9.6**
 
-- [ ] 31. Créer le dashboard analytics
+- [x] 31. Créer le dashboard analytics
   - Créer `app/(dashboard)/settings/profile/analytics/page.tsx`
   - Afficher les métriques principales (total views, CTA click rate, avg session duration)
   - Afficher le graphique des visites par jour/semaine/mois
@@ -348,20 +348,20 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Permettre de filtrer par période (7 jours, 30 jours, 90 jours, tout)
   - _Exigences: 9.7, 9.8_
 
-- [ ] 32. Implémenter le bandeau de consentement cookies
+- [x] 32. Implémenter le bandeau de consentement cookies
   - Créer un composant de bandeau RGPD pour le consentement
   - Permettre d'accepter ou refuser le tracking
   - Stocker le choix dans localStorage
   - Ne pas tracker si le consentement est refusé
   - _Exigences: 9.10_
 
-- [ ] 33. Implémenter l'export des données analytics
+- [x] 33. Implémenter l'export des données analytics
   - Ajouter un bouton "Exporter" dans le dashboard analytics
   - Générer un fichier CSV avec toutes les données de visites
   - Respecter le RGPD (données anonymisées)
   - _Exigences: 13.6_
 
-- [ ] 34. Checkpoint - Vérifier les analytics
+- [x] 34. Checkpoint - Vérifier les analytics
   - Tester l'enregistrement des visites
   - Vérifier que les IPs sont bien hashées
   - Vérifier le calcul des statistiques
@@ -372,14 +372,14 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
 
 ### Phase 4: Avancé - Optimisations et Fonctionnalités Supplémentaires
 
-- [ ] 35. Implémenter le responsive design
+- [x] 35. Implémenter le responsive design
   - Adapter la grille de galeries (1 colonne mobile, 2-3 tablette, 3-4 desktop)
   - Adapter le hero section pour mobile
   - Adapter la navigation et les menus
   - Tester sur différentes tailles d'écran (320px, 768px, 1024px, 1440px)
   - _Exigences: 11.1, 11.2_
 
-- [ ] 36. Implémenter l'accessibilité
+- [x] 36. Implémenter l'accessibilité
   - Ajouter les attributs ARIA sur tous les éléments interactifs
   - Ajouter les alt text descriptifs sur toutes les images
   - Implémenter la navigation au clavier complète
@@ -387,77 +387,77 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Vérifier le contraste des couleurs (WCAG AA minimum)
   - _Exigences: 11.3, 11.4, 11.5, 11.6, 11.7_
 
-- [ ] 36.1 Écrire les tests unitaires pour l'accessibilité
+- [x] 36.1 Écrire les tests unitaires pour l'accessibilité
   - Tester la présence des attributs ARIA
   - Tester la présence des alt text
   - Tester la navigation au clavier
   - _Exigences: 11.4, 11.5, 11.6_
 
 - [ ] 37. Implémenter le mode sombre
-  - Créer `components/public-profile/theme-toggle.tsx` pour basculer entre clair/sombre
+  - utiliser le composant existant  pour basculer entre clair/sombre
   - Détecter automatiquement la préférence système (prefers-color-scheme)
   - Persister le choix dans localStorage
   - Appliquer les styles appropriés pour chaque mode
   - _Exigences: 11.8, 11.9, 11.10_
 
-- [ ] 38. Optimiser les images
+- [~] 38. Optimiser les images
   - Configurer Cloudinary pour la compression et le format WebP
   - Implémenter le lazy loading pour les images des galeries
   - Utiliser next/image pour l'optimisation automatique
   - Définir les tailles d'images appropriées (srcset)
   - _Exigences: 12.1, 12.2_
 
-- [ ] 39. Optimiser les performances
+- [~] 39. Optimiser les performances
   - Implémenter le code splitting par route
   - Implémenter le prefetch des galeries au hover
   - Configurer le cache CDN pour les profils publics
   - Optimiser les requêtes de base de données (index, requêtes N+1)
   - _Exigences: 12.3, 12.4, 12.5_
 
-- [ ] 40. Implémenter la génération statique (SSG)
+- [~] 40. Implémenter la génération statique (SSG)
   - Configurer `generateStaticParams()` pour pré-générer les profils actifs
   - Implémenter l'invalidation du cache lors de la mise à jour d'un profil
   - Configurer la revalidation incrémentale (ISR) avec un délai approprié
   - _Exigences: 12.6_
 
-- [ ] 41. Ajouter les profils au sitemap
+- [~] 41. Ajouter les profils au sitemap
   - Créer ou modifier `app/sitemap.ts`
   - Ajouter tous les profils publics actifs au sitemap
   - Définir la priorité à 0.8 et la fréquence à "weekly"
   - Utiliser la date de mise à jour pour lastmod
   - _Exigences: 8.9, 8.10_
 
-- [ ] 42. Implémenter le support du markdown dans la bio
+- [~] 42. Implémenter le support du markdown dans la bio
   - Installer et configurer une bibliothèque de rendu markdown (react-markdown)
   - Configurer les options de sécurité (sanitization)
   - Limiter les éléments HTML autorisés (pas de scripts)
   - Tester avec différents formats markdown
   - _Exigences: 2.3_
 
-- [ ] 42.1 Écrire les tests de propriété pour le support markdown
+- [~] 42.1 Écrire les tests de propriété pour le support markdown
   - **Propriété 25: Support du markdown dans la bio**
   - **Valide: Exigences 2.3**
 
-- [ ] 43. Implémenter la gestion des domaines personnalisés
+- [~] 43. Implémenter la gestion des domaines personnalisés
   - Vérifier si l'utilisateur a configuré un domaine personnalisé
   - Rendre le profil accessible via le domaine personnalisé
   - Appliquer le footer white-label pour les domaines personnalisés
   - Gérer les redirections appropriées
   - _Exigences: 6.2, 7.3_
 
-- [ ] 43.1 Écrire les tests unitaires pour les domaines personnalisés
+- [~] 43.1 Écrire les tests unitaires pour les domaines personnalisés
   - Tester l'accessibilité via domaine custom
   - Tester l'application du footer white-label
   - _Exigences: 6.2, 7.3_
 
-- [ ] 44. Implémenter la suppression du profil
+- [~] 44. Implémenter la suppression du profil
   - Ajouter un bouton "Supprimer le profil" dans les paramètres
   - Implémenter la confirmation de suppression
   - Supprimer le profil et toutes les données analytics associées (CASCADE)
   - Respecter le droit à l'oubli (RGPD)
   - _Exigences: 13.5_
 
-- [ ] 45. Checkpoint final - Vérification complète
+- [~] 45. Checkpoint final - Vérification complète
   - Tester l'ensemble du parcours utilisateur (création, configuration, consultation, analytics)
   - Vérifier les performances (Lighthouse: LCP < 2.5s, FID < 100ms, CLS < 0.1)
   - Vérifier l'accessibilité (WCAG AA)

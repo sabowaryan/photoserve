@@ -8,7 +8,7 @@
  * - 5.1: Display next payout date
  */
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createPayoutService } from '@/lib/services/payout.service';
 import { createApiResponse, ApiErrorResponse } from '@/lib/api/error-handler';
 
@@ -52,22 +52,14 @@ interface BalanceResponse {
  */
 export async function GET() {
   try {
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
+    // Require authentication
+    const { supabase, userId } = await requireSupabaseClient();
 
     // Get user's Stripe Connect account
     const { data: connectAccount, error: connectError } = await supabase
       .from('stripe_connect_accounts')
       .select('stripe_account_id, charges_enabled, payouts_enabled')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single();
 
     if (connectError || !connectAccount) {
@@ -100,6 +92,15 @@ export async function GET() {
     return createApiResponse(response);
   } catch (error) {
     console.error('[Balance] Error:', error);
+    
+    // Handle authentication errors
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
+    
     return NextResponse.json<ApiErrorResponse>(
       { error: 'Failed to fetch balance', code: 'BALANCE_ERROR' },
       { status: 500 }

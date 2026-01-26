@@ -6,7 +6,7 @@
  * Requirements: 7.2 - Dispute Handling
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { getStripe } from '@/lib/stripe/client';
 import { createApiResponse, ApiErrorResponse, handleApiError } from '@/lib/api/error-handler';
 import { NotFoundError, AppError } from '@/lib/errors';
@@ -143,23 +143,14 @@ function getRequiredEvidence(reason: string): string[] {
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
+    const { supabase, userId } = await requireSupabaseClient();
     const stripe = getStripe();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
 
     // Check if user has a Stripe Connect account
     const { data: connectAccount, error: connectError } = await supabase
       .from('stripe_connect_accounts')
       .select('stripe_account_id')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single();
 
     if (connectError || !connectAccount) {
@@ -199,7 +190,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     // Verify ownership
-    if (purchase.photographer_id !== user.id) {
+    if (purchase.photographer_id !== userId) {
       throw new NotFoundError('Dispute');
     }
 
@@ -259,6 +250,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return createApiResponse(disputeDetails);
   } catch (error) {
     console.error('[DisputeDetails] Error:', error);
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error);
   }
 }

@@ -11,7 +11,7 @@
  * - Export SHALL support filtering by status, gallery
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createRevenueService, SaleFilters } from '@/lib/services/revenue.service';
 import { ApiErrorResponse } from '@/lib/api/error-handler';
 import { exportSales, isValidExportFormat, ExportFormat } from '@/lib/utils/export';
@@ -29,16 +29,8 @@ import { exportSales, isValidExportFormat, ExportFormat } from '@/lib/utils/expo
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
+    // Require authentication
+    const { supabase, userId } = await requireSupabaseClient();
 
     // Parse query params
     const { searchParams } = new URL(request.url);
@@ -61,13 +53,13 @@ export async function GET(request: NextRequest) {
     }
 
     const revenueService = createRevenueService(supabase);
-    const { sales } = await revenueService.getSales(user.id, filters);
+    const { sales } = await revenueService.getSales(userId, filters);
 
     // Get user profile for photographer name (optional)
     const { data: profile } = await supabase
       .from('profiles')
       .select('name')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
     // Generate export
@@ -97,6 +89,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[SalesExport] Error:', error);
+    
+    // Handle authentication errors
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
+    
     return NextResponse.json<ApiErrorResponse>(
       { error: 'Failed to export sales', code: 'EXPORT_ERROR' },
       { status: 500 }

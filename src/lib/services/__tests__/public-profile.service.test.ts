@@ -41,6 +41,14 @@ const mockGalleryRepo = {
   generateUniqueSlug: vi.fn(),
 };
 
+const mockViewsRepo = {
+  create: vi.fn(),
+  updateCTAClick: vi.fn(),
+  addSocialClick: vi.fn(),
+  findByProfileAndDateRange: vi.fn(),
+  getAnalytics: vi.fn(),
+};
+
 // Mock Supabase client
 const mockSupabase = {} as SupabaseClient<Database>;
 
@@ -55,6 +63,7 @@ describe('PublicProfileService - Unit Tests', () => {
     (service as any).profileRepo = mockProfileRepo;
     (service as any).userProfileRepo = mockUserProfileRepo;
     (service as any).galleryRepo = mockGalleryRepo;
+    (service as any).viewsRepo = mockViewsRepo;
   });
 
   describe('upsertProfile - Pro Plan Restriction (Requirement 1.1)', () => {
@@ -652,6 +661,197 @@ describe('PublicProfileService - Unit Tests', () => {
       expect(result[0]?.isNew).toBe(true);
       expect(result[0]?.coverImageUrl).toBe('http://example.com/img1.jpg');
       expect(result[0]?.imageCount).toBe(1);
+    });
+  });
+
+  describe('trackView (Requirements 9.1, 9.2, 9.3, 13.4)', () => {
+    it('should create a view record with hashed IP', async () => {
+      mockProfileRepo.findBySlug.mockResolvedValue({
+        id: 'profile-123',
+        user_id: 'user-123',
+        slug: 'john-doe',
+      });
+
+      mockViewsRepo.create.mockResolvedValue({
+        id: 'view-123',
+        profile_id: 'profile-123',
+        visitor_ip_hash: 'hashed-ip',
+        user_agent: 'Mozilla/5.0',
+        referrer: 'https://google.com',
+        viewed_at: new Date().toISOString(),
+      });
+
+      mockProfileRepo.incrementViewsCount.mockResolvedValue(undefined);
+
+      const viewId = await service.trackView('john-doe', {
+        ipAddress: '192.168.1.1',
+        userAgent: 'Mozilla/5.0',
+        referrer: 'https://google.com',
+      });
+
+      expect(viewId).toBe('view-123');
+      expect(mockViewsRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          profile_id: 'profile-123',
+          user_agent: 'Mozilla/5.0',
+          referrer: 'https://google.com',
+        })
+      );
+      expect(mockProfileRepo.incrementViewsCount).toHaveBeenCalledWith('profile-123');
+    });
+
+    it('should hash IP address before storing', async () => {
+      mockProfileRepo.findBySlug.mockResolvedValue({
+        id: 'profile-123',
+        user_id: 'user-123',
+        slug: 'john-doe',
+      });
+
+      mockViewsRepo.create.mockResolvedValue({
+        id: 'view-123',
+        profile_id: 'profile-123',
+        visitor_ip_hash: 'hashed-ip',
+        user_agent: 'Mozilla/5.0',
+        viewed_at: new Date().toISOString(),
+      });
+
+      mockProfileRepo.incrementViewsCount.mockResolvedValue(undefined);
+
+      await service.trackView('john-doe', {
+        ipAddress: '192.168.1.1',
+        userAgent: 'Mozilla/5.0',
+      });
+
+      // Verify that the IP hash was created (not the raw IP)
+      const createCall = mockViewsRepo.create.mock.calls[0]?.[0];
+      expect(createCall?.visitor_ip_hash).toBeDefined();
+      expect(createCall?.visitor_ip_hash).not.toBe('192.168.1.1');
+      expect(createCall?.visitor_ip_hash).toHaveLength(64); // SHA-256 produces 64 hex chars
+    });
+
+    it('should handle optional referrer', async () => {
+      mockProfileRepo.findBySlug.mockResolvedValue({
+        id: 'profile-123',
+        user_id: 'user-123',
+        slug: 'john-doe',
+      });
+
+      mockViewsRepo.create.mockResolvedValue({
+        id: 'view-123',
+        profile_id: 'profile-123',
+        visitor_ip_hash: 'hashed-ip',
+        user_agent: 'Mozilla/5.0',
+        viewed_at: new Date().toISOString(),
+      });
+
+      mockProfileRepo.incrementViewsCount.mockResolvedValue(undefined);
+
+      await service.trackView('john-doe', {
+        ipAddress: '192.168.1.1',
+        userAgent: 'Mozilla/5.0',
+      });
+
+      expect(mockViewsRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          referrer: null,
+        })
+      );
+    });
+
+    it('should throw error if profile not found', async () => {
+      mockProfileRepo.findBySlug.mockResolvedValue(null);
+
+      await expect(
+        service.trackView('non-existent', {
+          ipAddress: '192.168.1.1',
+          userAgent: 'Mozilla/5.0',
+        })
+      ).rejects.toThrow('Profile not found');
+
+      expect(mockViewsRepo.create).not.toHaveBeenCalled();
+      expect(mockProfileRepo.incrementViewsCount).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('trackCTAClick (Requirement 9.5)', () => {
+    it('should update CTA clicked status', async () => {
+      mockViewsRepo.updateCTAClick.mockResolvedValue(undefined);
+
+      await service.trackCTAClick('view-123');
+
+      expect(mockViewsRepo.updateCTAClick).toHaveBeenCalledWith('view-123', true);
+    });
+  });
+
+  describe('trackSocialClick (Requirement 9.6)', () => {
+    it('should add social platform to clicked array', async () => {
+      mockViewsRepo.addSocialClick.mockResolvedValue(undefined);
+
+      await service.trackSocialClick('view-123', 'instagram');
+
+      expect(mockViewsRepo.addSocialClick).toHaveBeenCalledWith('view-123', 'instagram');
+    });
+
+    it('should handle different social platforms', async () => {
+      mockViewsRepo.addSocialClick.mockResolvedValue(undefined);
+
+      await service.trackSocialClick('view-123', 'facebook');
+      await service.trackSocialClick('view-123', 'linkedin');
+      await service.trackSocialClick('view-123', 'twitter');
+
+      expect(mockViewsRepo.addSocialClick).toHaveBeenCalledTimes(3);
+      expect(mockViewsRepo.addSocialClick).toHaveBeenNthCalledWith(1, 'view-123', 'facebook');
+      expect(mockViewsRepo.addSocialClick).toHaveBeenNthCalledWith(2, 'view-123', 'linkedin');
+      expect(mockViewsRepo.addSocialClick).toHaveBeenNthCalledWith(3, 'view-123', 'twitter');
+    });
+  });
+
+  describe('getAnalytics (Requirements 9.7, 9.8)', () => {
+    it('should retrieve analytics for user profile', async () => {
+      mockProfileRepo.findByUserId.mockResolvedValue({
+        id: 'profile-123',
+        user_id: 'user-123',
+        slug: 'john-doe',
+      });
+
+      const mockAnalytics = {
+        totalViews: 100,
+        viewsByPeriod: [
+          { date: '2024-01-01', views: 10 },
+          { date: '2024-01-02', views: 15 },
+        ],
+        topGalleries: [
+          { galleryId: 'gallery-1', galleryTitle: 'Wedding', views: 50 },
+        ],
+        ctaClickRate: 25.5,
+        averageSessionDuration: 120,
+        topReferrers: [
+          { referrer: 'google.com', count: 30 },
+        ],
+      };
+
+      mockViewsRepo.getAnalytics.mockResolvedValue(mockAnalytics);
+
+      const startDate = new Date('2024-01-01');
+      const endDate = new Date('2024-01-31');
+
+      const result = await service.getAnalytics('user-123', startDate, endDate);
+
+      expect(result).toEqual(mockAnalytics);
+      expect(mockViewsRepo.getAnalytics).toHaveBeenCalledWith('profile-123', startDate, endDate);
+    });
+
+    it('should throw error if profile not found', async () => {
+      mockProfileRepo.findByUserId.mockResolvedValue(null);
+
+      const startDate = new Date('2024-01-01');
+      const endDate = new Date('2024-01-31');
+
+      await expect(
+        service.getAnalytics('non-existent-user', startDate, endDate)
+      ).rejects.toThrow('Profile not found');
+
+      expect(mockViewsRepo.getAnalytics).not.toHaveBeenCalled();
     });
   });
 });

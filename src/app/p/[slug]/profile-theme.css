@@ -1,0 +1,211 @@
+/**
+ * Profile-specific dark mode styles
+ * 
+ * These styles are scoped to the profile container using data-profile-theme attribute
+ * This ensures dark mode only affects the profile page, not the rest of the application
+ * 
+ * Requirements:
+ * - 11.8: Support dark mode with appropriate styles
+ * - 11.3: Ensure WCAG AA contrast compliance
+ */
+
+/* Base theme variables */
+[data-profile-theme="light"] {
+  color-scheme: light;
+}
+
+[data-profile-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Background gradients */
+[data-profile-theme="dark"] .profile-bg-gradient {
+  background: linear-gradient(to bottom right, rgb(15 23 42), rgb(30 41 59), rgb(15 23 42)) !important;
+}
+
+/* Text colors */
+[data-profile-theme="dark"] .profile-text-primary {
+  color: rgb(248 250 252) !important;
+}
+
+[data-profile-theme="dark"] .profile-text-secondary {
+  color: rgb(203 213 225) !important;
+}
+
+[data-profile-theme="dark"] .profile-text-muted {
+  color: rgb(148 163 184) !important;
+}
+
+/* Card backgrounds */
+[data-profile-theme="dark"] .profile-card {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+[data-profile-theme="dark"] .profile-card-hover:hover {
+  background-color: rgb(51 65 85) !important;
+}
+
+/* Header styles */
+[data-profile-theme="dark"] .profile-header-bg {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Avatar and logo backgrounds */
+[data-profile-theme="dark"] .profile-avatar-border {
+  border-color: rgb(30 41 59) !important;
+}
+
+[data-profile-theme="dark"] .profile-avatar-ring {
+  --tw-ring-color: rgb(30 41 59 / 0.5) !important;
+}
+
+[data-profile-theme="dark"] .profile-avatar-bg {
+  background: linear-gradient(to bottom right, rgb(51 65 85), rgb(71 85 105)) !important;
+}
+
+[data-profile-theme="dark"] .profile-avatar-initial {
+  color: rgb(148 163 184) !important;
+  background: linear-gradient(to bottom right, rgb(49 46 129 / 0.3), rgb(88 28 135 / 0.3)) !important;
+}
+
+/* Location badge */
+[data-profile-theme="dark"] .profile-location-badge {
+  background-color: rgb(30 41 59 / 0.8) !important;
+  border-color: rgb(51 65 85) !important;
+  color: rgb(203 213 225) !important;
+}
+
+[data-profile-theme="dark"] .profile-location-icon {
+  color: rgb(129 140 248) !important;
+}
+
+/* Logo background */
+[data-profile-theme="dark"] .profile-logo-bg {
+  background-color: rgb(30 41 59 / 0.95) !important;
+  border-color: rgb(51 65 85 / 0.2) !important;
+}
+
+/* Bio section */
+[data-profile-theme="dark"] .profile-bio {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Gallery card styles */
+[data-profile-theme="dark"] .gallery-card {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+[data-profile-theme="dark"] .gallery-card:hover {
+  background-color: rgb(51 65 85) !important;
+  border-color: rgb(71 85 105) !important;
+}
+
+/* Contact section */
+[data-profile-theme="dark"] .contact-card {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Testimonial cards */
+[data-profile-theme="dark"] .testimonial-card {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Footer */
+[data-profile-theme="dark"] .profile-footer {
+  background-color: rgb(15 23 42) !important;
+  border-top-color: rgb(51 65 85) !important;
+}
+
+[data-profile-theme="dark"] .profile-footer-text {
+  color: rgb(203 213 225) !important;
+}
+
+[data-profile-theme="dark"] .profile-footer-link {
+  color: rgb(148 163 184) !important;
+}
+
+[data-profile-theme="dark"] .profile-footer-link:hover {
+  color: rgb(203 213 225) !important;
+}
+
+/* Buttons */
+[data-profile-theme="dark"] .profile-button-secondary {
+  background-color: rgb(51 65 85) !important;
+  color: rgb(248 250 252) !important;
+}
+
+[data-profile-theme="dark"] .profile-button-secondary:hover {
+  background-color: rgb(71 85 105) !important;
+}
+
+/* Links */
+[data-profile-theme="dark"] .profile-link {
+  color: rgb(129 140 248) !important;
+}
+
+[data-profile-theme="dark"] .profile-link:hover {
+  color: rgb(165 180 252) !important;
+}
+
+/* Badges */
+[data-profile-theme="dark"] .profile-badge {
+  background-color: rgb(51 65 85) !important;
+  color: rgb(203 213 225) !important;
+}
+
+/* Dividers */
+[data-profile-theme="dark"] .profile-divider {
+  border-color: rgb(51 65 85) !important;
+}
+
+/* Shadows */
+[data-profile-theme="dark"] .profile-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-profile-theme="dark"] .profile-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Input fields (if any) */
+[data-profile-theme="dark"] .profile-input {
+  background-color: rgb(30 41 59) !important;
+  border-color: rgb(51 65 85) !important;
+  color: rgb(248 250 252) !important;
+}
+
+[data-profile-theme="dark"] .profile-input:focus {
+  border-color: rgb(99 102 241) !important;
+  background-color: rgb(51 65 85) !important;
+}
+
+/* Scrollbar styling for dark mode */
+[data-profile-theme="dark"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-profile-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgb(15 23 42);
+}
+
+[data-profile-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgb(51 65 85);
+  border-radius: 6px;
+}
+
+[data-profile-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgb(71 85 105);
+}
+
+/* Selection color */
+[data-profile-theme="dark"] ::selection {
+  background-color: rgb(99 102 241);
+  color: rgb(248 250 252);
+}

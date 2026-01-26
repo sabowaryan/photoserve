@@ -5,7 +5,7 @@
  * @module app/api/notifications/[id]/read/route
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createInAppNotificationService } from '@/lib/services/in-app-notification.service';
 
 export async function POST(
@@ -13,17 +13,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { supabase, userId } = await requireSupabaseClient();
 
     const { id } = await params;
     
@@ -35,11 +25,17 @@ export async function POST(
     }
 
     const notificationService = createInAppNotificationService(supabase);
-    await notificationService.markAsRead(id, user.id);
+    await notificationService.markAsRead(id, userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[NotificationsAPI] Error marking as read:', error);
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to mark notification as read' },
       { status: 500 }

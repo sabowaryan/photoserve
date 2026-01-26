@@ -5,7 +5,7 @@
  * Uses fast-check for property-based testing with 100+ iterations.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import fc from 'fast-check';
 import type { PublicGallery } from '@/types/public-profile';
 import { PublicProfileService } from '../public-profile.service';
@@ -666,6 +666,324 @@ describe('PublicProfileService - Property Tests', () => {
         ),
         { numRuns: 100 }
       );
+    });
+  });
+
+  describe('Propriété 16: Anonymisation des adresses IP', () => {
+    /**
+     * **Validates: Requirements 9.9, 13.4**
+     * 
+     * For any IP address, when hashed:
+     * 1. The hash must not contain the original IP address
+     * 2. The hash must be exactly 64 characters (SHA-256 hex output)
+     * 3. The hash must be deterministic (same IP always produces same hash)
+     * 4. Different IPs must produce different hashes
+     * 
+     * This property ensures GDPR compliance by verifying that IP addresses
+     * are properly anonymized before storage.
+     */
+    it('should always hash IP addresses with SHA-256 producing 64-char hex strings', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          // Generate various IP addresses (IPv4)
+          fc.ipV4(),
+          async (ipAddress) => {
+            // Mock profile and repositories with vitest mocks
+            const mockCreate = vi.fn().mockResolvedValue({
+              id: 'view-123',
+              profile_id: 'profile-123',
+              visitor_ip_hash: '',
+              user_agent: 'Mozilla/5.0',
+              viewed_at: new Date().toISOString(),
+            });
+
+            const mockProfileRepo = {
+              findBySlug: vi.fn().mockResolvedValue({
+                id: 'profile-123',
+                user_id: 'user-123',
+                slug: 'test-profile',
+              }),
+              incrementViewsCount: vi.fn().mockResolvedValue(undefined),
+            };
+
+            const mockViewsRepo = {
+              create: mockCreate,
+            };
+
+            const service = new PublicProfileService(null as any);
+            (service as any).profileRepo = mockProfileRepo;
+            (service as any).viewsRepo = mockViewsRepo;
+
+            // Track a view with the IP address
+            await service.trackView('test-profile', {
+              ipAddress,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            // Get the hashed IP from the create call
+            expect(mockCreate).toHaveBeenCalled();
+            const createCall = mockCreate.mock.calls[0]?.[0];
+            const hashedIp = createCall?.visitor_ip_hash;
+
+            // Verify hash properties
+            expect(hashedIp).toBeDefined();
+            expect(typeof hashedIp).toBe('string');
+
+            // 1. Hash must not contain the original IP
+            expect(hashedIp).not.toContain(ipAddress);
+            expect(hashedIp).not.toContain(ipAddress.replace(/\./g, ''));
+
+            // 2. Hash must be exactly 64 characters (SHA-256 produces 32 bytes = 64 hex chars)
+            expect(hashedIp).toHaveLength(64);
+
+            // 3. Hash must be valid hex string
+            expect(hashedIp).toMatch(/^[0-9a-f]{64}$/);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should produce deterministic hashes (same IP always produces same hash)', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          fc.ipV4(),
+          async (ipAddress) => {
+            // Mock profile and repositories with vitest mocks
+            const mockCreate = vi.fn()
+              .mockResolvedValueOnce({
+                id: 'view-123',
+                profile_id: 'profile-123',
+                visitor_ip_hash: '',
+                user_agent: 'Mozilla/5.0',
+                viewed_at: new Date().toISOString(),
+              })
+              .mockResolvedValueOnce({
+                id: 'view-124',
+                profile_id: 'profile-123',
+                visitor_ip_hash: '',
+                user_agent: 'Mozilla/5.0',
+                viewed_at: new Date().toISOString(),
+              });
+
+            const mockProfileRepo = {
+              findBySlug: vi.fn().mockResolvedValue({
+                id: 'profile-123',
+                user_id: 'user-123',
+                slug: 'test-profile',
+              }),
+              incrementViewsCount: vi.fn().mockResolvedValue(undefined),
+            };
+
+            const mockViewsRepo = {
+              create: mockCreate,
+            };
+
+            const service = new PublicProfileService(null as any);
+            (service as any).profileRepo = mockProfileRepo;
+            (service as any).viewsRepo = mockViewsRepo;
+
+            // Track the same IP twice
+            await service.trackView('test-profile', {
+              ipAddress,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            await service.trackView('test-profile', {
+              ipAddress,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            // Get both hashes
+            expect(mockCreate).toHaveBeenCalledTimes(2);
+            const firstHash = mockCreate.mock.calls[0]?.[0]?.visitor_ip_hash;
+            const secondHash = mockCreate.mock.calls[1]?.[0]?.visitor_ip_hash;
+
+            // Both hashes should be identical
+            expect(firstHash).toBeDefined();
+            expect(secondHash).toBeDefined();
+            expect(firstHash).toBe(secondHash);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should produce different hashes for different IPs', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          fc.ipV4(),
+          fc.ipV4(),
+          async (ip1, ip2) => {
+            // Skip if IPs are the same
+            fc.pre(ip1 !== ip2);
+
+            // Mock profile and repositories with vitest mocks
+            const mockCreate = vi.fn()
+              .mockResolvedValueOnce({
+                id: 'view-123',
+                profile_id: 'profile-123',
+                visitor_ip_hash: '',
+                user_agent: 'Mozilla/5.0',
+                viewed_at: new Date().toISOString(),
+              })
+              .mockResolvedValueOnce({
+                id: 'view-124',
+                profile_id: 'profile-123',
+                visitor_ip_hash: '',
+                user_agent: 'Mozilla/5.0',
+                viewed_at: new Date().toISOString(),
+              });
+
+            const mockProfileRepo = {
+              findBySlug: vi.fn().mockResolvedValue({
+                id: 'profile-123',
+                user_id: 'user-123',
+                slug: 'test-profile',
+              }),
+              incrementViewsCount: vi.fn().mockResolvedValue(undefined),
+            };
+
+            const mockViewsRepo = {
+              create: mockCreate,
+            };
+
+            const service = new PublicProfileService(null as any);
+            (service as any).profileRepo = mockProfileRepo;
+            (service as any).viewsRepo = mockViewsRepo;
+
+            // Track two different IPs
+            await service.trackView('test-profile', {
+              ipAddress: ip1,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            await service.trackView('test-profile', {
+              ipAddress: ip2,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            // Get both hashes
+            expect(mockCreate).toHaveBeenCalledTimes(2);
+            const hash1 = mockCreate.mock.calls[0]?.[0]?.visitor_ip_hash;
+            const hash2 = mockCreate.mock.calls[1]?.[0]?.visitor_ip_hash;
+
+            // Hashes should be different
+            expect(hash1).toBeDefined();
+            expect(hash2).toBeDefined();
+            expect(hash1).not.toBe(hash2);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should handle IPv6 addresses', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          fc.ipV6(),
+          async (ipAddress) => {
+            // Mock profile and repositories with vitest mocks
+            const mockCreate = vi.fn().mockResolvedValue({
+              id: 'view-123',
+              profile_id: 'profile-123',
+              visitor_ip_hash: '',
+              user_agent: 'Mozilla/5.0',
+              viewed_at: new Date().toISOString(),
+            });
+
+            const mockProfileRepo = {
+              findBySlug: vi.fn().mockResolvedValue({
+                id: 'profile-123',
+                user_id: 'user-123',
+                slug: 'test-profile',
+              }),
+              incrementViewsCount: vi.fn().mockResolvedValue(undefined),
+            };
+
+            const mockViewsRepo = {
+              create: mockCreate,
+            };
+
+            const service = new PublicProfileService(null as any);
+            (service as any).profileRepo = mockProfileRepo;
+            (service as any).viewsRepo = mockViewsRepo;
+
+            // Track a view with the IPv6 address
+            await service.trackView('test-profile', {
+              ipAddress,
+              userAgent: 'Mozilla/5.0',
+            });
+
+            // Get the hashed IP from the create call
+            expect(mockCreate).toHaveBeenCalled();
+            const createCall = mockCreate.mock.calls[0]?.[0];
+            const hashedIp = createCall?.visitor_ip_hash;
+
+            // Verify hash properties
+            expect(hashedIp).toBeDefined();
+            expect(hashedIp).toHaveLength(64);
+            expect(hashedIp).toMatch(/^[0-9a-f]{64}$/);
+            expect(hashedIp).not.toContain(ipAddress);
+          }
+        ),
+        { numRuns: 50 } // Fewer runs for IPv6 as they're more complex
+      );
+    });
+
+    it('should handle edge case IP addresses', async () => {
+      const edgeCaseIPs = [
+        '0.0.0.0',
+        '255.255.255.255',
+        '127.0.0.1',
+        '192.168.0.1',
+        '10.0.0.1',
+      ];
+
+      for (const ipAddress of edgeCaseIPs) {
+        // Mock profile and repositories with vitest mocks
+        const mockCreate = vi.fn().mockResolvedValue({
+          id: 'view-123',
+          profile_id: 'profile-123',
+          visitor_ip_hash: '',
+          user_agent: 'Mozilla/5.0',
+          viewed_at: new Date().toISOString(),
+        });
+
+        const mockProfileRepo = {
+          findBySlug: vi.fn().mockResolvedValue({
+            id: 'profile-123',
+            user_id: 'user-123',
+            slug: 'test-profile',
+          }),
+          incrementViewsCount: vi.fn().mockResolvedValue(undefined),
+        };
+
+        const mockViewsRepo = {
+          create: mockCreate,
+        };
+
+        const service = new PublicProfileService(null as any);
+        (service as any).profileRepo = mockProfileRepo;
+        (service as any).viewsRepo = mockViewsRepo;
+
+        // Track a view with the edge case IP
+        await service.trackView('test-profile', {
+          ipAddress,
+          userAgent: 'Mozilla/5.0',
+        });
+
+        // Get the hashed IP from the create call
+        expect(mockCreate).toHaveBeenCalled();
+        const createCall = mockCreate.mock.calls[0]?.[0];
+        const hashedIp = createCall?.visitor_ip_hash;
+
+        // Verify hash properties
+        expect(hashedIp).toBeDefined();
+        expect(hashedIp).toHaveLength(64);
+        expect(hashedIp).toMatch(/^[0-9a-f]{64}$/);
+        expect(hashedIp).not.toContain(ipAddress);
+      }
     });
   });
 });

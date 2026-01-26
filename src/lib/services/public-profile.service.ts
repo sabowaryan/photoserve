@@ -45,6 +45,10 @@ import {
   GalleryRepository,
   type IGalleryRepository,
 } from '@/lib/repositories/gallery.repository';
+import {
+  ProfileViewsRepository,
+  type IProfileViewsRepository,
+} from '@/lib/repositories/profile-views.repository';
 import { SlugUtils } from '@/lib/utils/slug.utils';
 import { PublicProfileSchema } from '@/types/public-profile';
 
@@ -67,6 +71,10 @@ export interface IPublicProfileService {
   generateSlugSuggestions(baseSlug: string): string[];
   sortGalleries(galleries: PublicGallery[], featuredIds?: string[]): PublicGallery[];
   filterPublicGalleries(userId: string, hiddenGalleries?: string[]): Promise<PublicGallery[]>;
+  trackView(profileSlug: string, viewData: { ipAddress: string; userAgent: string; referrer?: string }): Promise<string>;
+  trackCTAClick(viewId: string): Promise<void>;
+  trackSocialClick(viewId: string, platform: string): Promise<void>;
+  getAnalytics(userId: string, startDate: Date, endDate: Date): Promise<import('@/types/public-profile').ProfileAnalytics>;
 }
 
 /**
@@ -82,11 +90,13 @@ export class PublicProfileService implements IPublicProfileService {
   private profileRepo: IPublicProfileRepository;
   private userProfileRepo: IProfileRepository;
   private galleryRepo: IGalleryRepository;
+  private viewsRepo: IProfileViewsRepository;
 
   constructor(supabase: SupabaseClient<Database>) {
     this.profileRepo = new PublicProfileRepository(supabase);
     this.userProfileRepo = new ProfileRepository(supabase);
     this.galleryRepo = new GalleryRepository(supabase);
+    this.viewsRepo = new ProfileViewsRepository(supabase);
   }
 
   /**
@@ -509,6 +519,170 @@ export class PublicProfileService implements IPublicProfileService {
       meta_description: input.metaDescription || null,
       meta_keywords: input.metaKeywords || null,
     };
+  }
+
+  /**
+   * Tracks a view of a public profile
+   * 
+   * Records the visit with hashed IP address for GDPR compliance (Requirement 13.4).
+   * Increments the profile's views_count (Requirement 9.3).
+   * 
+   * @param profileSlug - The slug of the profile being viewed
+   * @param viewData - View tracking data (IP address, user agent, referrer)
+   * @returns The ID of the created view record
+   * 
+   * Requirements:
+   * - 9.1: Record visit in profile_views table
+   * - 9.2: Record hashed IP, user agent, referrer, timestamp
+   * - 9.3: Increment views_count
+   * - 13.4: Hash IP addresses with SHA-256 for GDPR compliance
+   * 
+   * @example
+   * const viewId = await service.trackView('john-doe', {
+   *   ipAddress: '192.168.1.1',
+   *   userAgent: 'Mozilla/5.0...',
+   *   referrer: 'https://google.com'
+   * });
+   */
+  async trackView(
+    profileSlug: string,
+    viewData: {
+      ipAddress: string;
+      userAgent: string;
+      referrer?: string;
+    }
+  ): Promise<string> {
+    // Find the profile by slug
+    const profile = await this.profileRepo.findBySlug(profileSlug);
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    // Hash the IP address for GDPR compliance (Requirement 13.4)
+    const ipHash = await this.hashIpAddress(viewData.ipAddress);
+
+    // Create the view record (Requirements 9.1, 9.2)
+    const view = await this.viewsRepo.create({
+      profile_id: profile.id,
+      visitor_ip_hash: ipHash,
+      user_agent: viewData.userAgent,
+      referrer: viewData.referrer || null,
+      viewed_at: new Date().toISOString(),
+    });
+
+    // Increment the profile's views count (Requirement 9.3)
+    await this.profileRepo.incrementViewsCount(profile.id);
+
+    return view.id;
+  }
+
+  /**
+   * Tracks a click on the CTA button
+   * 
+   * Marks the cta_clicked field as true for the given view record.
+   * 
+   * @param viewId - The ID of the view record
+   * 
+   * Requirements:
+   * - 9.5: Mark cta_clicked as true when visitor clicks CTA
+   * 
+   * @example
+   * await service.trackCTAClick(viewId);
+   */
+  async trackCTAClick(viewId: string): Promise<void> {
+    // Update the view record to mark CTA as clicked (Requirement 9.5)
+    await this.viewsRepo.updateCTAClick(viewId, true);
+  }
+
+  /**
+   * Tracks a click on a social media link
+   * 
+   * Adds the platform name to the social_links_clicked array for the given view record.
+   * 
+   * @param viewId - The ID of the view record
+   * @param platform - The name of the social platform (e.g., 'instagram', 'facebook')
+   * 
+   * Requirements:
+   * - 9.6: Record social network name in social_links_clicked when visitor clicks
+   * 
+   * @example
+   * await service.trackSocialClick(viewId, 'instagram');
+   */
+  async trackSocialClick(viewId: string, platform: string): Promise<void> {
+    // Add the social platform to the clicked array (Requirement 9.6)
+    await this.viewsRepo.addSocialClick(viewId, platform);
+  }
+
+  /**
+   * Retrieves analytics for a user's public profile
+   * 
+   * Returns comprehensive analytics including:
+   * - Total views
+   * - Views by period (daily breakdown)
+   * - Top galleries viewed
+   * - CTA click rate
+   * - Average session duration
+   * - Top referrers
+   * 
+   * @param userId - The ID of the user
+   * @param startDate - Start of the analytics period
+   * @param endDate - End of the analytics period
+   * @returns Profile analytics data
+   * @throws Error if profile not found
+   * 
+   * Requirements:
+   * - 9.7: Allow photographer to view profile statistics in dashboard
+   * - 9.8: Display metrics (total views, views by period, top galleries, CTA click rate)
+   * 
+   * @example
+   * const analytics = await service.getAnalytics(
+   *   userId,
+   *   new Date('2024-01-01'),
+   *   new Date('2024-01-31')
+   * );
+   * console.log(`Total views: ${analytics.totalViews}`);
+   */
+  async getAnalytics(
+    userId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<import('@/types/public-profile').ProfileAnalytics> {
+    // Find the user's profile
+    const profile = await this.profileRepo.findByUserId(userId);
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    // Get analytics from the repository (Requirements 9.7, 9.8)
+    return await this.viewsRepo.getAnalytics(profile.id, startDate, endDate);
+  }
+
+  /**
+   * Hashes an IP address using SHA-256
+   * 
+   * This ensures GDPR compliance by not storing raw IP addresses.
+   * The hash is deterministic (same IP always produces same hash)
+   * but irreversible (cannot recover original IP from hash).
+   * 
+   * @param ip - The IP address to hash
+   * @returns The SHA-256 hash as a hex string (64 characters)
+   * 
+   * Requirements:
+   * - 13.4: Hash IP addresses before storage for GDPR compliance
+   * 
+   * @example
+   * const hash = await hashIpAddress('192.168.1.1');
+   * // Returns: 'c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646'
+   */
+  private async hashIpAddress(ip: string): Promise<string> {
+    // Use Web Crypto API for SHA-256 hashing
+    const encoder = new TextEncoder();
+    const data = encoder.encode(ip);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    
+    // Convert buffer to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 }
 

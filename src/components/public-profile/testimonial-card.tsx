@@ -55,19 +55,22 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   });
 
   return (
-    <div className="bg-card rounded-lg p-6 shadow-sm h-full flex flex-col">
+    <article className="bg-card rounded-lg p-6 shadow-sm h-full flex flex-col">
       {/* Client Info */}
       <div className="flex items-center gap-4 mb-4">
         {/* Client Photo */}
-        <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex-shrink-0" role="img" aria-label={`Photo de ${clientName}`}>
           {clientPhoto ? (
             <img
               src={clientPhoto}
-              alt={clientName}
+              alt={`Photo de ${clientName}`}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-lg font-semibold text-muted-foreground">
+            <div 
+              className="w-full h-full flex items-center justify-center text-lg font-semibold text-muted-foreground"
+              aria-label={`Initiale de ${clientName}`}
+            >
               {clientName.charAt(0).toUpperCase()}
             </div>
           )}
@@ -86,7 +89,9 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       </blockquote>
 
       {/* Date */}
-      <p className="text-sm text-muted-foreground">{formattedDate}</p>
-    </div>
+      <time className="text-sm text-muted-foreground" dateTime={date}>
+        {formattedDate}
+      </time>
+    </article>
   );
 }

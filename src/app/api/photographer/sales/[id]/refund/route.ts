@@ -6,7 +6,7 @@
  * Requirements: 7.1 - Refund Management
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createGalleryPurchaseService } from '@/lib/services/gallery-purchase.service';
 import { createApiResponse, ApiErrorResponse, handleApiError } from '@/lib/api/error-handler';
 import { z } from 'zod';
@@ -45,16 +45,7 @@ const refundRequestSchema = z.object({
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
+    const { supabase, userId } = await requireSupabaseClient();
 
     // Verify ownership - check if the sale belongs to this photographer
     const { data: purchase, error: purchaseError } = await supabase
@@ -70,7 +61,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    if (purchase.photographer_id !== user.id) {
+    if (purchase.photographer_id !== userId) {
       return NextResponse.json<ApiErrorResponse>(
         { error: 'Sale not found', code: 'NOT_FOUND' },
         { status: 404 }
@@ -83,6 +74,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return createApiResponse(refundableAmount);
   } catch (error) {
     console.error('[Refund GET] Error:', error);
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error);
   }
 }
@@ -99,16 +96,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
+    const { supabase, userId } = await requireSupabaseClient();
 
     // Parse and validate request body
     let body;
@@ -136,7 +124,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       throw new NotFoundError('Sale');
     }
 
-    if (purchase.photographer_id !== user.id) {
+    if (purchase.photographer_id !== userId) {
       throw new NotFoundError('Sale');
     }
 
@@ -187,6 +175,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
   } catch (error) {
     console.error('[Refund POST] Error:', error);
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
     return handleApiError(error);
   }
 }

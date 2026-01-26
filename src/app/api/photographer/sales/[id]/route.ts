@@ -6,7 +6,7 @@
  * Requirements: 5.2 - API Routes - Revenue
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createRevenueService } from '@/lib/services/revenue.service';
 import { createApiResponse, ApiErrorResponse } from '@/lib/api/error-handler';
 
@@ -21,16 +21,8 @@ interface RouteParams {
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json<ApiErrorResponse>(
-        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
+    // Require authentication
+    const { supabase, userId } = await requireSupabaseClient();
 
     const revenueService = createRevenueService(supabase);
     const sale = await revenueService.getSaleDetails(id);
@@ -49,7 +41,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       .eq('id', id)
       .single();
 
-    if (purchase?.photographer_id !== user.id) {
+    if (purchase?.photographer_id !== userId) {
       return NextResponse.json<ApiErrorResponse>(
         { error: 'Sale not found', code: 'NOT_FOUND' },
         { status: 404 }
@@ -59,6 +51,15 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return createApiResponse(sale);
   } catch (error) {
     console.error('[SaleDetails] Error:', error);
+    
+    // Handle authentication errors
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json<ApiErrorResponse>(
+        { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
+    
     return NextResponse.json<ApiErrorResponse>(
       { error: 'Failed to fetch sale details', code: 'SALE_ERROR' },
       { status: 500 }

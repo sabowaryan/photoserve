@@ -12,10 +12,13 @@
  * - 4.6: Support Instagram, Facebook, Pinterest, LinkedIn, TikTok, YouTube
  * - 4.7: Display customizable CTA button
  * - 7.2: Apply brand colors to buttons and links
+ * - 9.5: Track CTA clicks
+ * - 9.6: Track social link clicks
  */
 
 'use client';
 
+import { useProfileTracking } from './profile-client-wrapper';
 import type { SocialLinks, CTAButton } from '@/types/public-profile';
 import type { BrandColors } from '@/types';
 
@@ -27,8 +30,6 @@ interface ProfileContactProps {
   socialLinks?: SocialLinks;
   ctaButton?: CTAButton;
   brandColors?: BrandColors;
-  onCTAClick?: () => void;
-  onSocialClick?: (platform: string) => void;
 }
 
 /**
@@ -104,9 +105,10 @@ export function ProfileContact({
   socialLinks,
   ctaButton,
   brandColors,
-  onCTAClick,
-  onSocialClick,
 }: ProfileContactProps) {
+  // Get tracking functions from context
+  const { trackCTAClick, trackSocialClick } = useProfileTracking();
+
   // If no contact information to display, return null
   if (!email && !phone && !website && !address && !socialLinks && !ctaButton) {
     return null;
@@ -128,15 +130,41 @@ export function ProfileContact({
     color: brandColors.accent,
   } as React.CSSProperties : undefined;
 
+  /**
+   * Handle CTA button click
+   * Tracks the click and opens the CTA URL
+   */
+  const handleCTAClick = () => {
+    // Track the CTA click (Requirement 9.5)
+    trackCTAClick();
+    
+    // Open the CTA URL if configured
+    if (ctaButton?.url) {
+      window.open(ctaButton.url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  /**
+   * Handle social link click
+   * Tracks the click before navigation
+   */
+  const handleSocialClick = (platform: string) => {
+    // Track the social link click (Requirement 9.6)
+    trackSocialClick(platform);
+  };
+
   return (
-    <section className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 sticky top-6">
+    <section 
+      className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border border-slate-200 lg:sticky lg:top-6"
+      aria-labelledby="contact-heading"
+    >
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg text-white shadow-lg shadow-green-500/30">
+        <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg text-white shadow-lg shadow-green-500/30" aria-hidden="true">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 className="text-lg font-bold text-slate-900">Contact</h2>
+        <h2 id="contact-heading" className="text-lg font-bold text-slate-900">Contact</h2>
       </div>
 
       <div className="space-y-3">
@@ -161,7 +189,9 @@ export function ProfileContact({
                 </svg>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-0.5">Email</p>
-                  <p className="text-xs font-semibold text-slate-900 break-all">{formatEmailForDisplay(email)}</p>
+                  <p className="text-xs font-semibold text-slate-900 break-all" aria-label={`Adresse email: ${email}`}>
+                    {formatEmailForDisplay(email)}
+                  </p>
                 </div>
               </div>
             )}
@@ -211,8 +241,9 @@ export function ProfileContact({
                     href={website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-semibold text-purple-700 hover:text-purple-900 hover:underline break-all"
+                    className="text-xs font-semibold text-purple-700 hover:text-purple-900 hover:underline break-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 rounded"
                     style={linkStyle}
+                    aria-label={`Visiter le site web: ${website}`}
                   >
                     {website}
                   </a>
@@ -244,36 +275,38 @@ export function ProfileContact({
                 </svg>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">Adresse</p>
-                  <p className="text-xs font-semibold text-slate-900 whitespace-pre-line">{address}</p>
+                  <address className="text-xs font-semibold text-slate-900 whitespace-pre-line not-italic">{address}</address>
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* Social Links */}
+        {/* Social Links - Responsive grid (Requirement 11.1) */}
         {activeSocialLinks.length > 0 && (
           <div className="pt-1">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Réseaux sociaux</p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {activeSocialLinks.map(([platform, url]) => {
-                const config = SOCIAL_PLATFORMS[platform];
-                return (
-                  <a
-                    key={platform}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => onSocialClick?.(platform)}
-                    className="flex items-center gap-1.5 px-2.5 py-2 bg-gradient-to-br from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 border border-slate-200 rounded-lg transition-all hover:scale-105 hover:shadow-sm"
-                    aria-label={`Visiter ${config.name}`}
-                  >
-                    <div className="text-slate-600 [&>svg]:w-4 [&>svg]:h-4">{config.icon}</div>
-                    <span className="text-[11px] font-semibold text-slate-700">{config.name}</span>
-                  </a>
-                );
-              })}
-            </div>
+            <nav aria-label="Liens vers les réseaux sociaux">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-1.5">
+                {activeSocialLinks.map(([platform, url]) => {
+                  const config = SOCIAL_PLATFORMS[platform];
+                  return (
+                    <a
+                      key={platform}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleSocialClick(platform)}
+                      className="flex items-center gap-1.5 px-2.5 py-2 bg-gradient-to-br from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 border border-slate-200 rounded-lg transition-all hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+                      aria-label={`Visiter ${config.name}`}
+                    >
+                      <div className="text-slate-600 [&>svg]:w-4 [&>svg]:h-4">{config.icon}</div>
+                      <span className="text-[11px] font-semibold text-slate-700">{config.name}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </nav>
           </div>
         )}
 
@@ -281,15 +314,16 @@ export function ProfileContact({
         {ctaButton && (
           <div className="pt-2">
             <button
-              onClick={onCTAClick}
-              className={`w-full px-4 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-lg ${
+              onClick={handleCTAClick}
+              className={`w-full px-4 py-3 rounded-lg font-bold text-sm transition-all hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 ${
                 !brandColors && ctaButton.style === 'primary'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 focus:ring-indigo-500'
                   : !brandColors && ctaButton.style === 'secondary'
-                  ? 'bg-white text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-50'
-                  : ''
+                  ? 'bg-white text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-50 focus:ring-indigo-500'
+                  : 'focus:ring-indigo-500'
               }`}
               style={ctaButtonStyle}
+              aria-label={ctaButton.text}
             >
               {ctaButton.text}
             </button>
