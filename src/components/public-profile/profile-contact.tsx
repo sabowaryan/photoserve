@@ -155,7 +155,7 @@ export function ProfileContact({
 
   return (
     <section 
-      className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border border-slate-200 lg:sticky lg:top-6"
+      className="bg-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border border-slate-200 lg:sticky lg:top-6 profile-card contact-card"
       aria-labelledby="contact-heading"
     >
       <div className="flex items-center gap-2.5 mb-4">
@@ -164,7 +164,7 @@ export function ProfileContact({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 id="contact-heading" className="text-lg font-bold text-slate-900">Contact</h2>
+        <h2 id="contact-heading" className="text-lg font-bold text-slate-900 profile-text-primary">Contact</h2>
       </div>
 
       <div className="space-y-3">

@@ -11,6 +11,7 @@
  * - 7.1: Apply custom logo if configured
  * - 7.2: Apply brand colors if configured
  * - 7.3: Display white-label footer if custom domain configured
+ * - 12.5: Configure CDN cache for public profiles
  */
 
 import type { Metadata } from 'next';
@@ -26,6 +27,14 @@ import { ProfileTestimonials } from '@/components/public-profile/profile-testimo
 import { ProfileFooter } from '@/components/public-profile/profile-footer';
 import { ProfileClientWrapper } from '@/components/public-profile/profile-client-wrapper';
 import type { ProfileBranding } from '@/types';
+
+// Enable static generation with revalidation (Requirement 12.6)
+// ISR (Incremental Static Regeneration) configuration:
+// - Pages are pre-generated at build time using generateStaticParams()
+// - After deployment, pages are revalidated every 3600 seconds (1 hour)
+// - When a profile is updated, revalidatePath() is called to invalidate the cache immediately
+// - This provides a balance between performance (static pages) and freshness (hourly updates)
+export const revalidate = 3600; // 1 hour in seconds
 
 interface PublicProfilePageProps {
   params: Promise<{ slug: string }>;

@@ -12,6 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { requireSupabaseClient } from '@/lib/auth';
 import { handleApiError } from '@/lib/api/error-handler';
 import { PublicProfileSchema } from '@/types/public-profile';
@@ -71,6 +72,13 @@ export async function PUT(request: Request) {
 
     try {
       const profile = await service.upsertProfile(userId, validatedData.data);
+
+      // Invalidate the cache for this profile's page (Requirement 12.6)
+      // This ensures the static page is regenerated on the next request
+      revalidatePath(`/p/${profile.slug}`);
+      
+      // Also revalidate the sitemap if it exists
+      revalidatePath('/sitemap.xml');
 
       return NextResponse.json(
         {

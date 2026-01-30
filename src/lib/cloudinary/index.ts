@@ -10,6 +10,7 @@ export {
   generateOptimizedUrl,
   generateThumbnailUrl,
   generateDisplayUrl,
+  generateResponsiveUrls,
   generateAllUrls,
   type CloudinaryUploadResult,
   type UploadOptions,

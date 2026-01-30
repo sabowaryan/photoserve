@@ -1,3 +1,6 @@
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 /**
  * Profile Bio Component
  * 
@@ -46,7 +49,17 @@ export function ProfileBio({
             <h2 id="bio-heading" className="text-xl sm:text-2xl font-bold text-slate-900 profile-text-primary">À propos</h2>
           </div>
           <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm sm:text-base profile-text-secondary">
-            {bio}
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              allowedElements={[
+                'p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li',
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'blockquote', 'code', 'pre'
+              ]}
+              unwrapDisallowed={true}
+            >
+              {bio}
+            </ReactMarkdown>
           </div>
         </section>
       )}

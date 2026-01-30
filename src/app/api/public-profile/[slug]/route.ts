@@ -9,12 +9,16 @@
  * - 6.3: Return 404 for non-existent slugs
  * - 6.4: Return 404 for disabled profiles
  * - 1.1: Only Pro users' profiles are accessible
+ * - 12.5: Configure CDN cache for public profiles
  */
 
 import { NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api/error-handler';
 import { createPublicProfileService } from '@/lib/services/public-profile.service';
 import { createAdminClient } from '@/lib/supabase/server';
+
+// Enable caching with revalidation (Requirement 12.5)
+export const revalidate = 3600; // 1 hour
 
 /**
  * GET /api/public-profile/[slug]
@@ -74,7 +78,15 @@ export async function GET(
       {
         data: profile,
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: {
+          // CDN caching headers (Requirement 12.5)
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'CDN-Cache-Control': 'public, s-maxage=3600',
+          'Vercel-CDN-Cache-Control': 'public, s-maxage=3600',
+        },
+      }
     );
   } catch (error) {
     return handleApiError(error);

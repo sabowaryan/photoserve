@@ -6,9 +6,17 @@
  * Requirements:
  * - 3.5: Display "New" badge for galleries < 7 days old
  * - 3.6: Display cover image, title, creation date, and image count
+ * - 12.1: Use WebP format and compression via Cloudinary
+ * - 12.2: Implement lazy loading for gallery images
+ * - 12.4: Implement prefetch on hover for better navigation performance
  */
 
+'use client';
+
 import { ImageIcon, Calendar, Lock } from 'lucide-react';
+import { OptimizedImage } from './optimized-image';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 interface GalleryCardProps {
   slug: string;
@@ -29,6 +37,8 @@ export function GalleryCard({
   isNew,
   isPasswordProtected,
 }: GalleryCardProps) {
+  const router = useRouter();
+  
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('fr-FR', {
       day: 'numeric',
@@ -37,19 +47,28 @@ export function GalleryCard({
     }).format(new Date(date));
   };
 
+  // Prefetch gallery on hover for faster navigation (Requirement 12.4)
+  const handleMouseEnter = useCallback(() => {
+    router.prefetch(`/g/${slug}`);
+  }, [router, slug]);
+
   return (
     <a
       href={`/g/${slug}`}
+      onMouseEnter={handleMouseEnter}
       className="group bg-white rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden h-full flex flex-col focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-offset-2 gallery-card gallery-card-hover"
       aria-label={`Voir la galerie ${title} contenant ${imageCount} ${imageCount === 1 ? 'photo' : 'photos'}`}
     >
-      {/* Image */}
+      {/* Image with lazy loading and WebP optimization (Requirements 12.1, 12.2) */}
       <div className="aspect-[16/10] bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
         {coverImageUrl ? (
-          <img
+          <OptimizedImage
             src={coverImageUrl}
             alt={`Image de couverture de la galerie ${title}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            className="w-full h-full group-hover:scale-105 transition-transform duration-500"
+            objectFit="cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-300" aria-label="Aucune image de couverture">

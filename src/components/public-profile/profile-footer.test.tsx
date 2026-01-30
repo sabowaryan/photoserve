@@ -33,7 +33,7 @@ describe('ProfileFooter', () => {
     it('should display Terms of Service link', () => {
       render(<ProfileFooter photographerName="John Doe" />);
       
-      const termsLink = screen.getByRole('link', { name: /Conditions Générales d'Utilisation/i });
+      const termsLink = screen.getByRole('link', { name: /CGU/i });
       expect(termsLink).toBeInTheDocument();
       expect(termsLink).toHaveAttribute('href', '/legal/terms');
     });
@@ -41,7 +41,7 @@ describe('ProfileFooter', () => {
     it('should display Privacy Policy link', () => {
       render(<ProfileFooter photographerName="John Doe" />);
       
-      const privacyLink = screen.getByRole('link', { name: /Politique de Confidentialité/i });
+      const privacyLink = screen.getByRole('link', { name: /Confidentialité/i });
       expect(privacyLink).toBeInTheDocument();
       expect(privacyLink).toHaveAttribute('href', '/legal/privacy');
     });
@@ -81,8 +81,8 @@ describe('ProfileFooter', () => {
       
       const currentYear = new Date().getFullYear();
       expect(screen.getByText(new RegExp(`© ${currentYear} John Doe`))).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /Conditions Générales/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /Politique de Confidentialité/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /CGU/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Confidentialité/i })).toBeInTheDocument();
     });
   });
 
@@ -94,8 +94,8 @@ describe('ProfileFooter', () => {
       expect(screen.getByText(/© \d{4} John Doe/)).toBeInTheDocument();
       
       // Legal links section
-      expect(screen.getByRole('link', { name: /Conditions Générales/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /Politique de Confidentialité/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /CGU/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Confidentialité/i })).toBeInTheDocument();
       
       // Branding section
       expect(screen.getByText(/Propulsé par/i)).toBeInTheDocument();

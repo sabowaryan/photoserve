@@ -1,0 +1,14 @@
+return {
+  _all = {
+    coverage = false,
+    verbose = true,
+    output = "TAP",
+  },
+  default = {
+    ROOT = {"tests/"},
+    pattern = "test_.+%.lua$",
+    exclude = {
+      "run_tests.lua",
+    },
+  },
+}

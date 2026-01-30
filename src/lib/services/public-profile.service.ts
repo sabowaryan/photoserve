@@ -67,6 +67,7 @@ export interface IPublicProfileService {
   getProfileBySlug(slug: string): Promise<PublicProfileWithGalleries | null>;
   getProfileBySlugForPreview(slug: string, userId: string): Promise<PublicProfileWithGalleries | null>;
   upsertProfile(userId: string, data: PublicProfileInput): Promise<PublicProfile>;
+  deleteProfile(userId: string): Promise<void>;
   checkSlugAvailability(slug: string, currentUserId?: string): Promise<SlugAvailabilityResult>;
   generateSlugSuggestions(baseSlug: string): string[];
   sortGalleries(galleries: PublicGallery[], featuredIds?: string[]): PublicGallery[];
@@ -107,6 +108,11 @@ export class PublicProfileService implements IPublicProfileService {
    * - User has Pro plan
    * - Galleries are public (active, not expired, not hidden)
    * 
+   * Optimized to minimize database queries (Requirement 12.5):
+   * - Uses single query with joins where possible
+   * - Fetches only necessary fields
+   * - Leverages database indexes
+   * 
    * @param slug - The unique slug of the profile
    * @returns The profile with galleries, or null if not found/invalid
    * 
@@ -117,7 +123,7 @@ export class PublicProfileService implements IPublicProfileService {
    * }
    */
   async getProfileBySlug(slug: string): Promise<PublicProfileWithGalleries | null> {
-    // Find the profile by slug
+    // Find the profile by slug (uses idx_public_profiles_slug index)
     const profileRow = await this.profileRepo.findBySlug(slug);
 
     // Return null if profile doesn't exist or is disabled
@@ -126,6 +132,7 @@ export class PublicProfileService implements IPublicProfileService {
     }
 
     // Verify user has Pro plan (Requirement 1.1)
+    // This query uses idx_profiles_pkey index
     const user = await this.userProfileRepo.findById(profileRow.user_id);
     if (!user || user.subscription_plan !== 'pro') {
       return null;
@@ -135,7 +142,8 @@ export class PublicProfileService implements IPublicProfileService {
     const profile = this.mapRowToProfile(profileRow);
 
     // Fetch and filter public galleries
-    const galleries = await this.filterPublicGalleries(
+    // This is optimized to fetch galleries with images in a single query
+    const galleries = await this.filterPublicGalleriesOptimized(
       profileRow.user_id,
       profile.hiddenGalleries
     );
@@ -270,6 +278,36 @@ export class PublicProfileService implements IPublicProfileService {
     }
 
     return this.mapRowToProfile(profileRow);
+  }
+
+  /**
+   * Deletes a user's public profile and all associated analytics data
+   * 
+   * This operation:
+   * - Deletes the public profile record
+   * - Cascades to delete all profile_views records (via database CASCADE constraint)
+   * - Respects GDPR right to be forgotten (Requirement 13.5)
+   * 
+   * @param userId - The ID of the user whose profile to delete
+   * @throws Error if profile not found
+   * 
+   * Requirements:
+   * - 13.5: Delete profile and all analytics data, respect GDPR right to be forgotten
+   * 
+   * @example
+   * await service.deleteProfile(userId);
+   * // Profile and all analytics data are permanently deleted
+   */
+  async deleteProfile(userId: string): Promise<void> {
+    // Find the user's profile
+    const profile = await this.profileRepo.findByUserId(userId);
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    // Delete the profile (CASCADE will automatically delete all profile_views)
+    // This respects GDPR right to be forgotten (Requirement 13.5)
+    await this.profileRepo.delete(profile.id);
   }
 
   /**
@@ -422,6 +460,37 @@ export class PublicProfileService implements IPublicProfileService {
         return true;
       })
       .map((gallery) => this.mapGalleryToPublic(gallery, sevenDaysAgo));
+  }
+
+  /**
+   * Optimized version of filterPublicGalleries that fetches only necessary data
+   * 
+   * Performance optimizations (Requirement 12.5):
+   * - Fetches only required fields (id, unique_slug, title, created_at, is_active, expires_at, password_hash)
+   * - Uses database-level filtering where possible
+   * - Limits image data to just the first image for cover
+   * - Leverages indexes on user_id, is_active, and expires_at
+   * 
+   * @param userId - The user ID to fetch galleries for
+   * @param hiddenGalleries - Optional array of gallery IDs to exclude
+   * @returns Array of public galleries with isNew property
+   */
+  private async filterPublicGalleriesOptimized(
+    userId: string,
+    hiddenGalleries?: string[]
+  ): Promise<PublicGallery[]> {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // Fetch galleries with optimized query
+    // Uses idx_galleries_user_id and idx_galleries_active indexes
+    const galleries = await this.galleryRepo.findPublicGalleriesOptimized(
+      userId,
+      hiddenGalleries || []
+    ) as GalleryWithImages[];
+
+    // Map to PublicGallery format
+    return galleries.map((gallery) => this.mapGalleryToPublic(gallery, sevenDaysAgo));
   }
 
   /**

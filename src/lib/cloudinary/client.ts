@@ -91,22 +91,33 @@ export async function deleteImage(publicId: string): Promise<void> {
 
 /**
  * Generate an optimized URL for an image
- * Uses auto format and quality for best performance
+ * Uses WebP format with auto quality for best performance
+ * Implements compression and WebP format (Requirement 12.1)
  * 
  * @param publicId - The public ID of the image
+ * @param options - Optional transformation options
  * @returns Optimized image URL
  */
-export function generateOptimizedUrl(publicId: string): string {
+export function generateOptimizedUrl(
+  publicId: string,
+  options?: {
+    width?: number;
+    height?: number;
+    crop?: string;
+  }
+): string {
   return cloudinary.url(publicId, {
-    fetch_format: 'auto',
-    quality: 'auto',
+    fetch_format: 'webp', // Force WebP format for better compression (Requirement 12.1)
+    quality: 'auto:good', // Automatic quality optimization
     secure: true,
+    ...options,
   });
 }
 
 /**
  * Generate a thumbnail URL for an image
- * Creates a 400x400 cropped thumbnail
+ * Creates a 400x400 cropped thumbnail with WebP format
+ * Implements compression and WebP format (Requirement 12.1)
  * 
  * @param publicId - The public ID of the image
  * @returns Thumbnail image URL
@@ -116,15 +127,16 @@ export function generateThumbnailUrl(publicId: string): string {
     width: 400,
     height: 400,
     crop: 'fill',
-    fetch_format: 'auto',
-    quality: 'auto',
+    fetch_format: 'webp', // Force WebP format (Requirement 12.1)
+    quality: 'auto:good',
     secure: true,
   });
 }
 
 /**
  * Generate a display URL for an image
- * Creates a responsive image with max width of 1920px
+ * Creates a responsive image with max width of 1920px and WebP format
+ * Implements compression and WebP format (Requirement 12.1)
  * 
  * @param publicId - The public ID of the image
  * @returns Display image URL
@@ -133,10 +145,47 @@ export function generateDisplayUrl(publicId: string): string {
   return cloudinary.url(publicId, {
     width: 1920,
     crop: 'limit',
-    fetch_format: 'auto',
-    quality: 'auto',
+    fetch_format: 'webp', // Force WebP format (Requirement 12.1)
+    quality: 'auto:good',
     secure: true,
   });
+}
+
+/**
+ * Generate responsive image URLs for srcset
+ * Creates multiple sizes for responsive images (Requirement 12.1)
+ * 
+ * @param publicId - The public ID of the image
+ * @param sizes - Array of widths to generate
+ * @returns Object with srcset string and sizes
+ */
+export function generateResponsiveUrls(
+  publicId: string,
+  sizes: number[] = [640, 750, 828, 1080, 1200, 1920, 2048, 3840]
+): {
+  srcset: string;
+  sizes: string;
+} {
+  const srcset = sizes
+    .map((width) => {
+      const url = cloudinary.url(publicId, {
+        width,
+        crop: 'limit',
+        fetch_format: 'webp',
+        quality: 'auto:good',
+        secure: true,
+      });
+      return `${url} ${width}w`;
+    })
+    .join(', ');
+
+  // Default sizes attribute for responsive images
+  const sizesAttr = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+
+  return {
+    srcset,
+    sizes: sizesAttr,
+  };
 }
 
 /**

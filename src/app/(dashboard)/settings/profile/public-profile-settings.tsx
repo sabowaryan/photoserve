@@ -36,6 +36,8 @@ import { GalleriesTab, type GalleriesTabData } from './components/galleries-tab'
 import { TestimonialsTab, type TestimonialsTabData } from './components/testimonials-tab';
 import { SeoTab, type SeoTabData } from './components/seo-tab';
 
+import { DeleteProfileDialog } from '@/components/public-profile/delete-profile-dialog';
+
 interface PublicProfileSettingsProps {
   currentPlan: SubscriptionPlan;
   initialProfile: any;
@@ -835,6 +837,17 @@ export function PublicProfileSettings({
     window.open('/settings/profile/preview', '_blank');
   };
 
+  const handleDeleteSuccess = () => {
+    // Reset the profile state
+    setInitialProfile(null);
+    setProfileSlug('');
+    setProfileUrl('');
+    setIsEnabled(false);
+    
+    // Optionally redirect or show a message
+    toast.success('Votre profil public a été supprimé');
+  };
+
   return (
     <div className="space-y-5">
       {/* Navigation / Breadcrumb */}
@@ -1245,6 +1258,40 @@ export function PublicProfileSettings({
           </div>
         </Tabs>
       </div>
+
+      {/* Danger Zone - Delete Profile */}
+      {initialProfile && isPro && (
+        <div className="bg-white rounded-2xl border-2 border-red-200 shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-5 duration-500">
+          <div className="bg-gradient-to-r from-red-50 to-rose-50 px-6 py-4 border-b border-red-200">
+            <h3 className="text-lg font-bold text-red-900 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5" />
+              Zone de danger
+            </h3>
+            <p className="text-sm text-red-700 mt-1">
+              Actions irréversibles sur votre profil public
+            </p>
+          </div>
+          <div className="p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h4 className="font-semibold text-slate-900 mb-1">
+                  Supprimer le profil public
+                </h4>
+                <p className="text-sm text-slate-600">
+                  Supprime définitivement votre profil public et toutes les données analytics associées. 
+                  Cette action respecte le droit à l'oubli (RGPD) et ne peut pas être annulée.
+                </p>
+              </div>
+              <div className="shrink-0">
+                <DeleteProfileDialog 
+                  onDeleteSuccess={handleDeleteSuccess}
+                  disabled={!isPro}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Loading Overlay */}
       {isLoading && (

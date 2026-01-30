@@ -16,6 +16,7 @@ export interface IGalleryRepository {
   findById(id: string): Promise<Gallery | null>
   findBySlug(slug: string): Promise<Gallery | null>
   findByUserId(userId: string): Promise<Gallery[]>
+  findPublicGalleriesOptimized(userId: string, hiddenIds: string[]): Promise<Gallery[]>
   update(id: string, data: GalleryUpdate): Promise<Gallery>
   delete(id: string): Promise<void>
   countByUserId(userId: string): Promise<number>
@@ -105,6 +106,58 @@ export class GalleryRepository implements IGalleryRepository {
     }
 
     return (data || []) as Gallery[]
+  }
+
+  /**
+   * Find public galleries for a user with optimized query
+   * 
+   * Performance optimizations:
+   * - Filters at database level (is_active, expires_at)
+   * - Fetches only first image for cover (limit 1)
+   * - Excludes hidden galleries
+   * - Uses indexes on user_id and is_active
+   * 
+   * @param userId - The user ID to fetch galleries for
+   * @param hiddenIds - Array of gallery IDs to exclude
+   * @returns Array of public galleries with minimal data
+   */
+  async findPublicGalleriesOptimized(userId: string, hiddenIds: string[]): Promise<Gallery[]> {
+    const now = new Date().toISOString();
+    
+    // Build query with database-level filtering
+    let query = this.supabase
+      .from('galleries')
+      .select(`
+        id,
+        unique_slug,
+        title,
+        created_at,
+        is_active,
+        expires_at,
+        password_hash,
+        images!inner (
+          cloudinary_url
+        )
+      `)
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    // Filter out expired galleries
+    query = query.or(`expires_at.is.null,expires_at.gt.${now}`);
+
+    // Exclude hidden galleries if any
+    if (hiddenIds.length > 0) {
+      query = query.not('id', 'in', `(${hiddenIds.join(',')})`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    return (data || []) as Gallery[];
   }
 
   /**

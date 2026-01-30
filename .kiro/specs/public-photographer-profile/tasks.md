@@ -393,71 +393,71 @@ Ce plan implémente la fonctionnalité de profil public pour les photographes Pr
   - Tester la navigation au clavier
   - _Exigences: 11.4, 11.5, 11.6_
 
-- [ ] 37. Implémenter le mode sombre
+- [x] 37. Implémenter le mode sombre
   - utiliser le composant existant  pour basculer entre clair/sombre
   - Détecter automatiquement la préférence système (prefers-color-scheme)
   - Persister le choix dans localStorage
   - Appliquer les styles appropriés pour chaque mode
   - _Exigences: 11.8, 11.9, 11.10_
 
-- [~] 38. Optimiser les images
+- [x] 38. Optimiser les images
   - Configurer Cloudinary pour la compression et le format WebP
   - Implémenter le lazy loading pour les images des galeries
   - Utiliser next/image pour l'optimisation automatique
   - Définir les tailles d'images appropriées (srcset)
   - _Exigences: 12.1, 12.2_
 
-- [~] 39. Optimiser les performances
+- [x] 39. Optimiser les performances
   - Implémenter le code splitting par route
   - Implémenter le prefetch des galeries au hover
   - Configurer le cache CDN pour les profils publics
   - Optimiser les requêtes de base de données (index, requêtes N+1)
   - _Exigences: 12.3, 12.4, 12.5_
 
-- [~] 40. Implémenter la génération statique (SSG)
+- [x] 40. Implémenter la génération statique (SSG)
   - Configurer `generateStaticParams()` pour pré-générer les profils actifs
   - Implémenter l'invalidation du cache lors de la mise à jour d'un profil
   - Configurer la revalidation incrémentale (ISR) avec un délai approprié
   - _Exigences: 12.6_
 
-- [~] 41. Ajouter les profils au sitemap
+- [x] 41. Ajouter les profils au sitemap
   - Créer ou modifier `app/sitemap.ts`
   - Ajouter tous les profils publics actifs au sitemap
   - Définir la priorité à 0.8 et la fréquence à "weekly"
   - Utiliser la date de mise à jour pour lastmod
   - _Exigences: 8.9, 8.10_
 
-- [~] 42. Implémenter le support du markdown dans la bio
+- [x] 42. Implémenter le support du markdown dans la bio
   - Installer et configurer une bibliothèque de rendu markdown (react-markdown)
   - Configurer les options de sécurité (sanitization)
   - Limiter les éléments HTML autorisés (pas de scripts)
   - Tester avec différents formats markdown
   - _Exigences: 2.3_
 
-- [~] 42.1 Écrire les tests de propriété pour le support markdown
+- [x] 42.1 Écrire les tests de propriété pour le support markdown
   - **Propriété 25: Support du markdown dans la bio**
   - **Valide: Exigences 2.3**
 
-- [~] 43. Implémenter la gestion des domaines personnalisés
+- [x] 43. Implémenter la gestion des domaines personnalisés
   - Vérifier si l'utilisateur a configuré un domaine personnalisé
   - Rendre le profil accessible via le domaine personnalisé
   - Appliquer le footer white-label pour les domaines personnalisés
   - Gérer les redirections appropriées
   - _Exigences: 6.2, 7.3_
 
-- [~] 43.1 Écrire les tests unitaires pour les domaines personnalisés
+- [x] 43.1 Écrire les tests unitaires pour les domaines personnalisés
   - Tester l'accessibilité via domaine custom
   - Tester l'application du footer white-label
   - _Exigences: 6.2, 7.3_
 
-- [~] 44. Implémenter la suppression du profil
+- [x] 44. Implémenter la suppression du profil
   - Ajouter un bouton "Supprimer le profil" dans les paramètres
   - Implémenter la confirmation de suppression
   - Supprimer le profil et toutes les données analytics associées (CASCADE)
   - Respecter le droit à l'oubli (RGPD)
   - _Exigences: 13.5_
 
-- [~] 45. Checkpoint final - Vérification complète
+- [x] 45. Checkpoint final - Vérification complète
   - Tester l'ensemble du parcours utilisateur (création, configuration, consultation, analytics)
   - Vérifier les performances (Lighthouse: LCP < 2.5s, FID < 100ms, CLS < 0.1)
   - Vérifier l'accessibilité (WCAG AA)

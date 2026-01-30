@@ -4,6 +4,7 @@
  * Feature: public-photographer-profile
  * Property 9: Affichage conditionnel des informations du photographe
  * Property 13: Protection anti-spam des emails
+ * Property 25: Support du markdown dans la bio
  * 
  * Validates: Requirements 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 4.1, 13.1
  */
@@ -572,6 +573,321 @@ describe('Property 13: Protection anti-spam des emails', () => {
               expect(platformLink).toBeTruthy();
             }
           });
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+});
+
+// ============================================================================
+// Property 25: Support du markdown dans la bio
+// ============================================================================
+
+/**
+ * Generator for markdown text with various formatting
+ */
+const markdownTextArb = fc.oneof(
+  // Bold text
+  fc.tuple(fc.string({ minLength: 1, maxLength: 50 })).map(([text]) => `**${text}**`),
+  // Italic text
+  fc.tuple(fc.string({ minLength: 1, maxLength: 50 })).map(([text]) => `*${text}*`),
+  // Links
+  fc.tuple(
+    fc.string({ minLength: 1, maxLength: 30 }),
+    fc.webUrl()
+  ).map(([text, url]) => `[${text}](${url})`),
+  // Unordered lists
+  fc.array(fc.string({ minLength: 1, maxLength: 30 }), { minLength: 1, maxLength: 3 })
+    .map(items => items.map(item => `- ${item}`).join('\n')),
+  // Ordered lists
+  fc.array(fc.string({ minLength: 1, maxLength: 30 }), { minLength: 1, maxLength: 3 })
+    .map(items => items.map((item, i) => `${i + 1}. ${item}`).join('\n')),
+  // Headings
+  fc.tuple(
+    fc.constantFrom(1, 2, 3, 4, 5, 6),
+    fc.string({ minLength: 1, maxLength: 50 })
+  ).map(([level, text]) => `${'#'.repeat(level)} ${text}`),
+  // Code inline
+  fc.tuple(fc.string({ minLength: 1, maxLength: 30 })).map(([text]) => `\`${text}\``),
+  // Blockquote
+  fc.tuple(fc.string({ minLength: 1, maxLength: 100 })).map(([text]) => `> ${text}`),
+  // Plain text
+  fc.string({ minLength: 1, maxLength: 100 })
+);
+
+/**
+ * Generator for bio with markdown
+ */
+const bioWithMarkdownArb = fc.array(markdownTextArb, { minLength: 1, maxLength: 5 })
+  .map(parts => parts.join('\n\n'));
+
+describe('Property 25: Support du markdown dans la bio', () => {
+  it('should render bold text correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => !s.includes('*')),
+        (text) => {
+          const bio = `**${text}**`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render a <strong> element
+          const strongElements = container.querySelectorAll('strong');
+          expect(strongElements.length).toBeGreaterThan(0);
+          
+          // The text should be in the strong element
+          const hasTextInStrong = Array.from(strongElements).some(
+            el => el.textContent === text
+          );
+          expect(hasTextInStrong).toBe(true);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render italic text correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => !s.includes('*')),
+        (text) => {
+          const bio = `*${text}*`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render an <em> element
+          const emElements = container.querySelectorAll('em');
+          expect(emElements.length).toBeGreaterThan(0);
+          
+          // The text should be in the em element
+          const hasTextInEm = Array.from(emElements).some(
+            el => el.textContent === text
+          );
+          expect(hasTextInEm).toBe(true);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render links correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 30 }).filter(s => !s.includes('[') && !s.includes(']')),
+        fc.webUrl(),
+        (text, url) => {
+          const bio = `[${text}](${url})`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render an <a> element with correct href
+          const links = container.querySelectorAll('a');
+          const matchingLink = Array.from(links).find(
+            link => link.getAttribute('href') === url && link.textContent === text
+          );
+          expect(matchingLink).toBeTruthy();
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render unordered lists correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.string({ minLength: 1, maxLength: 30 }).filter(s => !s.includes('\n')),
+          { minLength: 1, maxLength: 5 }
+        ),
+        (items) => {
+          const bio = items.map(item => `- ${item}`).join('\n');
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render a <ul> element
+          const ulElements = container.querySelectorAll('ul');
+          expect(ulElements.length).toBeGreaterThan(0);
+          
+          // Should render <li> elements for each item
+          const liElements = container.querySelectorAll('li');
+          expect(liElements.length).toBe(items.length);
+          
+          // Each item should be in an li element
+          items.forEach(item => {
+            const hasItem = Array.from(liElements).some(
+              li => li.textContent === item
+            );
+            expect(hasItem).toBe(true);
+          });
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render ordered lists correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.string({ minLength: 1, maxLength: 30 }).filter(s => !s.includes('\n')),
+          { minLength: 1, maxLength: 5 }
+        ),
+        (items) => {
+          const bio = items.map((item, i) => `${i + 1}. ${item}`).join('\n');
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render an <ol> element
+          const olElements = container.querySelectorAll('ol');
+          expect(olElements.length).toBeGreaterThan(0);
+          
+          // Should render <li> elements for each item
+          const liElements = container.querySelectorAll('li');
+          expect(liElements.length).toBe(items.length);
+          
+          // Each item should be in an li element
+          items.forEach(item => {
+            const hasItem = Array.from(liElements).some(
+              li => li.textContent === item
+            );
+            expect(hasItem).toBe(true);
+          });
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render headings correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom(1, 2, 3, 4, 5, 6),
+        fc.string({ minLength: 1, maxLength: 50 }).filter(s => !s.includes('#')),
+        (level, text) => {
+          const bio = `${'#'.repeat(level)} ${text}`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render an h1-h6 element
+          const headingElements = container.querySelectorAll(`h${level}`);
+          expect(headingElements.length).toBeGreaterThan(0);
+          
+          // The text should be in the heading element
+          const hasTextInHeading = Array.from(headingElements).some(
+            el => el.textContent === text
+          );
+          expect(hasTextInHeading).toBe(true);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render inline code correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 30 }).filter(s => !s.includes('`')),
+        (text) => {
+          const bio = `\`${text}\``;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render a <code> element
+          const codeElements = container.querySelectorAll('code');
+          expect(codeElements.length).toBeGreaterThan(0);
+          
+          // The text should be in the code element
+          const hasTextInCode = Array.from(codeElements).some(
+            el => el.textContent === text
+          );
+          expect(hasTextInCode).toBe(true);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should render blockquotes correctly', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 100 }).filter(s => !s.includes('\n')),
+        (text) => {
+          const bio = `> ${text}`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render a <blockquote> element
+          const blockquoteElements = container.querySelectorAll('blockquote');
+          expect(blockquoteElements.length).toBeGreaterThan(0);
+          
+          // The text should be in the blockquote
+          const hasTextInBlockquote = Array.from(blockquoteElements).some(
+            el => el.textContent?.includes(text)
+          );
+          expect(hasTextInBlockquote).toBe(true);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should not render script tags (security)', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 50 }),
+        (text) => {
+          const bio = `<script>alert('${text}')</script>`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should NOT render a <script> element
+          const scriptElements = container.querySelectorAll('script');
+          expect(scriptElements.length).toBe(0);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should not render iframe tags (security)', () => {
+    fc.assert(
+      fc.property(
+        fc.webUrl(),
+        (url) => {
+          const bio = `<iframe src="${url}"></iframe>`;
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should NOT render an <iframe> element
+          const iframeElements = container.querySelectorAll('iframe');
+          expect(iframeElements.length).toBe(0);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should handle mixed markdown formatting', () => {
+    fc.assert(
+      fc.property(
+        bioWithMarkdownArb,
+        (bio) => {
+          const { container } = render(<ProfileBio bio={bio} />);
+          
+          // Should render without errors
+          expect(container).toBeTruthy();
+          
+          // Should have some content
+          expect(container.textContent).toBeTruthy();
+          expect(container.textContent!.length).toBeGreaterThan(0);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should preserve plain text without markdown', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 200 }).filter(
+          s => !s.includes('*') && !s.includes('[') && !s.includes('#') && !s.includes('`')
+        ),
+        (text) => {
+          const { container } = render(<ProfileBio bio={text} />);
+          
+          // Plain text should be rendered
+          expect(container.textContent).toContain(text);
         }
       ),
       { numRuns: 100 }

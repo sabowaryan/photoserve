@@ -12,9 +12,12 @@
  * - 7.1: Display custom logo if configured
  * - 7.2: Apply brand colors if configured
  * - 11.1: Display responsive on mobile, tablet, and desktop
+ * - 12.1: Use WebP format and compression via Cloudinary
+ * - 12.2: Implement lazy loading for images
  */
 
 import type { BrandColors } from '@/types';
+import { OptimizedImage } from './optimized-image';
 
 interface ProfileHeaderProps {
   displayName: string;
@@ -52,10 +55,15 @@ export function ProfileHeader({
       >
         {coverImageUrl ? (
           <>
-            <img
+            {/* Cover image with WebP optimization and priority loading (Requirements 12.1, 12.2) */}
+            <OptimizedImage
               src={coverImageUrl}
               alt={`Image de couverture de ${displayName}`}
-              className="w-full h-full object-cover"
+              fill
+              priority
+              sizes="100vw"
+              className="w-full h-full"
+              objectFit="cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" aria-hidden="true" />
           </>
@@ -71,10 +79,15 @@ export function ProfileHeader({
         {/* Custom Logo in Header - Responsive sizing (Requirement 7.1, 11.1) */}
         {customLogo && (
           <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 lg:top-10 lg:left-10 z-10">
-            <img
+            {/* Logo with WebP optimization and priority loading (Requirements 12.1, 12.2) */}
+            <OptimizedImage
               src={customLogo}
               alt={`Logo de ${displayName}`}
+              width={200}
+              height={80}
+              priority
               className="h-10 sm:h-12 md:h-14 lg:h-20 w-auto object-contain bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 shadow-2xl border border-white/20 profile-logo-bg"
+              objectFit="contain"
             />
           </div>
         )}
@@ -90,10 +103,14 @@ export function ProfileHeader({
           <div className="relative group" role="img" aria-label={`Photo de profil de ${displayName}`}>
             <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 rounded-2xl sm:rounded-3xl border-4 border-white bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden shadow-2xl ring-4 ring-white/50 profile-avatar-border profile-avatar-ring profile-avatar-bg">
               {avatarUrl ? (
-                <img
+                <OptimizedImage
                   src={avatarUrl}
                   alt={`Photo de profil de ${displayName}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
+                  className="w-full h-full"
+                  objectFit="cover"
                 />
               ) : (
                 <div 

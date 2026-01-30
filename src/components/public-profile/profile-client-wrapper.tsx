@@ -16,7 +16,7 @@
  * - 11.10: Persist theme preference in localStorage
  */
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { useProfileTracker } from '@/hooks/use-profile-tracker';
 import { useProfileTheme } from '@/hooks/use-profile-theme';
 import { CookieConsentBanner, type ConsentChoice } from '@/components/public-profile/cookie-consent-banner';
@@ -69,8 +69,6 @@ export function ProfileClientWrapper({
   profileSlug,
   children,
 }: ProfileClientWrapperProps) {
-  const [consentGiven, setConsentGiven] = useState(false);
-  
   // Initialize profile tracker
   // This will automatically track the view on mount if consent is given
   const { trackCTAClick, trackSocialClick, trackGalleryClick, isTrackingEnabled, trackView } = useProfileTracker({
@@ -84,11 +82,8 @@ export function ProfileClientWrapper({
   // Handle consent changes
   const handleConsentChange = (consent: ConsentChoice) => {
     if (consent === 'accepted') {
-      setConsentGiven(true);
       // Track the view immediately after consent is given
       trackView();
-    } else {
-      setConsentGiven(false);
     }
   };
 

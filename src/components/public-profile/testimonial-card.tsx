@@ -7,9 +7,12 @@
  * - 5.3: Display client name, rating (stars), text, and date
  * - 5.4: Display client photo if available
  * - 5.6: Display rating as stars (1-5)
+ * - 12.1: Use WebP format and compression via Cloudinary
+ * - 12.2: Implement lazy loading for images
  */
 
 import type { Testimonial } from '@/types/public-profile';
+import { OptimizedImage } from './optimized-image';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -55,20 +58,24 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   });
 
   return (
-    <article className="bg-card rounded-lg p-6 shadow-sm h-full flex flex-col">
+    <article className="bg-white rounded-lg p-6 shadow-sm border border-slate-200 h-full flex flex-col profile-card testimonial-card">
       {/* Client Info */}
       <div className="flex items-center gap-4 mb-4">
-        {/* Client Photo */}
-        <div className="w-12 h-12 rounded-full bg-muted overflow-hidden flex-shrink-0" role="img" aria-label={`Photo de ${clientName}`}>
+        {/* Client Photo with lazy loading and WebP optimization (Requirements 12.1, 12.2) */}
+        <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex-shrink-0 profile-avatar-bg" role="img" aria-label={`Photo de ${clientName}`}>
           {clientPhoto ? (
-            <img
+            <OptimizedImage
               src={clientPhoto}
               alt={`Photo de ${clientName}`}
-              className="w-full h-full object-cover"
+              width={48}
+              height={48}
+              sizes="48px"
+              className="w-full h-full"
+              objectFit="cover"
             />
           ) : (
             <div 
-              className="w-full h-full flex items-center justify-center text-lg font-semibold text-muted-foreground"
+              className="w-full h-full flex items-center justify-center text-lg font-semibold text-slate-400 profile-text-muted"
               aria-label={`Initiale de ${clientName}`}
             >
               {clientName.charAt(0).toUpperCase()}
@@ -78,18 +85,18 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
         {/* Client Name and Rating */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground truncate">{clientName}</h3>
+          <h3 className="font-semibold text-slate-900 truncate profile-text-primary">{clientName}</h3>
           <StarRating rating={rating} />
         </div>
       </div>
 
       {/* Testimonial Text */}
-      <blockquote className="flex-1 text-muted-foreground mb-4 italic">
+      <blockquote className="flex-1 text-slate-600 mb-4 italic profile-text-secondary">
         "{text}"
       </blockquote>
 
       {/* Date */}
-      <time className="text-sm text-muted-foreground" dateTime={date}>
+      <time className="text-sm text-slate-500 profile-text-muted" dateTime={date}>
         {formattedDate}
       </time>
     </article>
