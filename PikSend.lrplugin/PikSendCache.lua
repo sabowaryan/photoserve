@@ -25,15 +25,20 @@ local PikSendCache = {}
 -- @param filePath string - Path to file
 -- @return string|nil - MD5 hash or nil on error
 function PikSendCache.calculateHash(filePath)
+  if not filePath or filePath == "" then
+    return nil
+  end
+  
   if not LrFileUtils.exists(filePath) then
     return nil
   end
   
   local content = LrFileUtils.readFile(filePath)
-  if not content then
+  if content == nil then
     return nil
   end
   
+  -- Empty files should still have a hash (MD5 of empty string)
   return LrMD5.digest(content)
 end
 
@@ -163,6 +168,64 @@ function PikSendCache.getCompressionSettings(settings)
   compression.format = settings.exportFormat or settings.LR_format or 'JPEG'
   
   return compression
+end
+
+-- Compress photo if needed based on quality settings
+-- @param photoPath string - Path to the photo file
+-- @param quality number - JPEG quality setting (1-100)
+-- @return string, boolean - (outputPath, wasCompressed)
+--
+-- This function determines if compression is needed and returns the appropriate path.
+-- In Lightroom, actual compression happens during the export process via export settings.
+-- This function serves as a decision utility and path manager for the compression workflow.
+--
+-- If quality < 100: Returns a path for the compressed version and true
+-- If quality >= 100: Returns the original path and false
+--
+-- Note: The actual compression is handled by Lightroom's export engine when
+-- processRenderedPhotos() is called with the appropriate quality settings.
+function PikSendCache.compressIfNeeded(photoPath, quality)
+  -- Validate inputs
+  if not photoPath or photoPath == "" then
+    return nil, false
+  end
+  
+  if not quality then
+    quality = 100
+  end
+  
+  -- Ensure quality is in valid range
+  if quality < 1 then
+    quality = 1
+  elseif quality > 100 then
+    quality = 100
+  end
+  
+  -- Check if file exists
+  if not LrFileUtils.exists(photoPath) then
+    return nil, false
+  end
+  
+  -- Determine if compression is needed
+  local needsCompression = quality < 100
+  
+  if needsCompression then
+    -- Generate a path for the compressed version
+    -- In practice, Lightroom's export process will create this file
+    local directory = LrPathUtils.parent(photoPath)
+    local filename = LrPathUtils.leafName(photoPath)
+    local basename = LrPathUtils.removeExtension(filename)
+    local extension = LrPathUtils.extension(photoPath)
+    
+    -- Create a compressed filename
+    local compressedFilename = basename .. "_q" .. quality .. "." .. extension
+    local compressedPath = LrPathUtils.child(directory, compressedFilename)
+    
+    return compressedPath, true
+  else
+    -- No compression needed, return original path
+    return photoPath, false
+  end
 end
 
 --------------------------------------------------------------------------------

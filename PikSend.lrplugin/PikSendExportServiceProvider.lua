@@ -38,6 +38,13 @@ exportServiceProvider.exportPresetFields = {
   { key = 'selectedGallery', default = nil },
   { key = 'exportFormat', default = 'jpeg' },
   { key = 'jpegQuality', default = 90 },
+  { key = 'resolution', default = 'original' },
+  { key = 'enableResize', default = false },
+  { key = 'maxWidth', default = 1920 },
+  { key = 'maxHeight', default = 1080 },
+  { key = 'enableWatermark', default = false },
+  { key = 'watermarkPosition', default = 'bottomRight' },
+  { key = 'watermarkOpacity', default = 50 },
   { key = 'includeMetadata', default = true },
   { key = 'includeGPS', default = false },
 }
@@ -87,6 +94,7 @@ function exportServiceProvider.sectionsForTopOfDialog(f, propertyTable)
     {
       title = 'Paramètres d\'export',
       
+      -- Format selection
       f:row {
         f:static_text {
           title = 'Format:',
@@ -102,6 +110,7 @@ function exportServiceProvider.sectionsForTopOfDialog(f, propertyTable)
         },
       },
       
+      -- JPEG quality
       f:row {
         f:static_text {
           title = 'Qualité JPEG:',
@@ -112,6 +121,12 @@ function exportServiceProvider.sectionsForTopOfDialog(f, propertyTable)
           min = 1,
           max = 100,
           width_in_digits = 3,
+          enabled = LrView.bind {
+            key = 'exportFormat',
+            transform = function(value)
+              return value == 'jpeg'
+            end,
+          },
         },
         f:static_text {
           title = LrView.bind {
@@ -123,6 +138,126 @@ function exportServiceProvider.sectionsForTopOfDialog(f, propertyTable)
         },
       },
       
+      f:spacer { height = 10 },
+      
+      -- Resolution preset
+      f:row {
+        f:static_text {
+          title = 'Résolution:',
+          width = LrView.share('label_width'),
+        },
+        f:popup_menu {
+          value = LrView.bind('resolution'),
+          items = {
+            { title = 'Originale', value = 'original' },
+            { title = 'HD (1920x1080)', value = 'hd' },
+            { title = 'Web (1280x720)', value = 'web' },
+            { title = 'Personnalisée', value = 'custom' },
+          },
+        },
+      },
+      
+      -- Custom resize options
+      f:row {
+        f:checkbox {
+          title = 'Redimensionner',
+          value = LrView.bind('enableResize'),
+          enabled = LrView.bind {
+            key = 'resolution',
+            transform = function(value)
+              return value == 'custom'
+            end,
+          },
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Largeur max:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableResize'),
+        },
+        f:edit_field {
+          value = LrView.bind('maxWidth'),
+          width_in_chars = 6,
+          enabled = LrView.bind('enableResize'),
+        },
+        f:static_text {
+          title = 'px',
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Hauteur max:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableResize'),
+        },
+        f:edit_field {
+          value = LrView.bind('maxHeight'),
+          width_in_chars = 6,
+          enabled = LrView.bind('enableResize'),
+        },
+        f:static_text {
+          title = 'px',
+        },
+      },
+      
+      f:spacer { height = 10 },
+      
+      -- Watermark settings
+      f:row {
+        f:checkbox {
+          title = 'Appliquer un watermark',
+          value = LrView.bind('enableWatermark'),
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Position:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:popup_menu {
+          value = LrView.bind('watermarkPosition'),
+          items = {
+            { title = 'Haut gauche', value = 'topLeft' },
+            { title = 'Haut droite', value = 'topRight' },
+            { title = 'Bas gauche', value = 'bottomLeft' },
+            { title = 'Bas droite', value = 'bottomRight' },
+            { title = 'Centre', value = 'center' },
+          },
+          enabled = LrView.bind('enableWatermark'),
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Opacité:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:slider {
+          value = LrView.bind('watermarkOpacity'),
+          min = 0,
+          max = 100,
+          width_in_digits = 3,
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:static_text {
+          title = LrView.bind {
+            key = 'watermarkOpacity',
+            transform = function(value)
+              return tostring(value or 50) .. '%'
+            end,
+          },
+        },
+      },
+      
+      f:spacer { height = 10 },
+      
+      -- Metadata options
       f:row {
         f:checkbox {
           title = 'Inclure les métadonnées',

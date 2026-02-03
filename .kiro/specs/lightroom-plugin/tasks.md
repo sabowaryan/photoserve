@@ -213,49 +213,49 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
     - **Valide: Exigences 10.7**
 
 - [~] 10. Implémenter le module de cache et optimisation (PikSendCache.lua)
-  - [-] 10.1 Créer calculateHash()
+  - [x] 10.1 Créer calculateHash()
     - Calculer le hash MD5 de chaque photo
     - _Exigences: 10.5_
   
-  - [~] 10.2 Implémenter checkDuplicate()
+  - [x] 10.2 Implémenter checkDuplicate()
     - Vérifier si une photo avec le même hash existe déjà
     - Éviter le re-upload
     - _Exigences: 10.4_
   
-  - [~] 10.3 Écrire les tests de propriété pour la détection de doublons
+  - [x] 10.3 Écrire les tests de propriété pour la détection de doublons
     - **Propriété 44: Détection de doublons par hash**
     - **Valide: Exigences 10.4, 10.5**
   
-  - [~] 10.4 Implémenter compressIfNeeded()
+  - [x] 10.4 Implémenter compressIfNeeded()
     - Compresser les photos si qualité < 100
     - _Exigences: 10.3_
   
-  - [~] 10.5 Écrire les tests de propriété pour la compression
+  - [x] 10.5 Écrire les tests de propriété pour la compression
     - **Propriété 43: Compression conditionnelle**
     - **Valide: Exigences 10.3**
 
 
 - [~] 11. Implémenter le module de presets (PikSendPresets.lua)
-  - [~] 11.1 Créer savePreset() et loadPreset()
+  - [x] 11.1 Créer savePreset() et loadPreset()
     - Sauvegarder les configurations d'export dans LrPrefs
     - Charger les presets existants
     - _Exigences: 4.8, 4.9_
   
-  - [~] 11.2 Écrire les tests de propriété pour les presets
+  - [x] 11.2 Écrire les tests de propriété pour les presets
     - **Propriété 14: Round-trip des presets d'export**
     - **Valide: Exigences 4.8**
   
-  - [~] 11.3 Implémenter validateExportSettings()
+  - [x] 11.3 Implémenter validateExportSettings()
     - Valider la taille max (500 MB)
     - Valider les paramètres de format et qualité
     - _Exigences: 4.10_
   
-  - [~] 11.4 Écrire les tests de propriété pour la validation
+  - [x] 11.4 Écrire les tests de propriété pour la validation
     - **Propriété 15: Validation de la taille maximale**
     - **Valide: Exigences 4.10**
 
 - [~] 12. Implémenter l'Export Service Provider (PikSendExportServiceProvider.lua)
-  - [~] 12.1 Créer sectionsForTopOfDialog()
+  - [ ] 12.1 Créer sectionsForTopOfDialog()
     - Section authentification avec bouton connexion/déconnexion
     - Section sélection de galerie avec boutons rafraîchir/créer
     - Section paramètres d'export (format, qualité, watermark)

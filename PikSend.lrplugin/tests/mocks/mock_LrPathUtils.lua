@@ -40,6 +40,15 @@ function mockLrPathUtils.extension(path)
   return ext
 end
 
+-- Remove file extension from path
+function mockLrPathUtils.removeExtension(path)
+  if not path then return nil end
+  
+  -- Remove the last extension
+  local withoutExt = path:match("(.+)%.[^%.]+$")
+  return withoutExt or path
+end
+
 -- Reset mock state (no state to reset, but included for consistency)
 function mockLrPathUtils.reset()
   -- No state to reset
