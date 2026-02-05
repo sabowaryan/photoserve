@@ -220,3 +220,16 @@ export {
   type RefundableAmountResult,
   type PartialRefundResult,
 } from './gallery-purchase.service';
+
+// API Key Service
+export {
+  APIKeyService,
+  createAPIKeyService,
+  apiKeyService,
+  type IAPIKeyService,
+  type APIKey,
+  type CreateAPIKeyParams,
+  type ValidationResult as APIKeyValidationResult,
+  createAPIKeySchema,
+  apiKeySchema,
+} from './api-key.service';

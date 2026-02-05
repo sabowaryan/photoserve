@@ -110,8 +110,13 @@ function AuthContent() {
       if (session.user.isAdmin) {
         router.push('/admin');
       } else {
-        const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-        router.push(callbackUrl);
+        const callbackUrl = searchParams.get('callbackUrl');
+        if (callbackUrl) {
+          // Decode and use the callback URL
+          router.push(decodeURIComponent(callbackUrl));
+        } else {
+          router.push('/dashboard');
+        }
       }
     }
   }, [session, status, router, searchParams]);
@@ -220,7 +225,13 @@ function AuthContent() {
         if (result?.error) {
           setError(t('auth.errors.invalidCredentials'));
         } else {
-          router.refresh();
+          // Check if there's a callback URL
+          const callbackUrl = searchParams.get('callbackUrl');
+          if (callbackUrl) {
+            router.push(decodeURIComponent(callbackUrl));
+          } else {
+            router.refresh();
+          }
         }
       } else {
         const response = await fetch('/api/auth/signup', {
@@ -253,9 +264,12 @@ function AuthContent() {
           const intent = searchParams.get('intent');
           const plan = searchParams.get('plan');
           const gallery = searchParams.get('gallery');
+          const callbackUrl = searchParams.get('callbackUrl');
           
           if (intent === 'subscribe' && plan) {
             await handleSubscriptionRedirect(plan, gallery);
+          } else if (callbackUrl) {
+            router.push(decodeURIComponent(callbackUrl));
           } else {
             router.push('/auth/callback');
             router.refresh();
@@ -277,6 +291,7 @@ function AuthContent() {
       const intent = searchParams.get('intent');
       const plan = searchParams.get('plan');
       const gallery = searchParams.get('gallery');
+      const callbackUrl = searchParams.get('callbackUrl');
       
       if (intent === 'subscribe' && plan) {
         localStorage.setItem('piksend_subscribe_intent', JSON.stringify({
@@ -286,8 +301,11 @@ function AuthContent() {
         }));
       }
       
+      // Use the provided callbackUrl or default to /auth/callback
+      const finalCallbackUrl = callbackUrl ? decodeURIComponent(callbackUrl) : '/auth/callback';
+      
       await signIn('google', { 
-        callbackUrl: '/auth/callback',
+        callbackUrl: finalCallbackUrl,
         redirect: true,
       });
     } catch {

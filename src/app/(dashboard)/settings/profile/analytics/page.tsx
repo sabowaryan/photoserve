@@ -22,7 +22,7 @@ import { getSession } from '@/lib/auth';
 import { generatePageMetadata } from '@/lib/services';
 import { AnalyticsDashboard } from './analytics-dashboard';
 
-export const metadata: Metadata = generatePageMetadata('analytics');
+export const metadata: Metadata = generatePageMetadata('dashboard');
 
 export default async function AnalyticsPage() {
   const session = await getSession();

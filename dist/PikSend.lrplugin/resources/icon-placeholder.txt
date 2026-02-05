@@ -1,0 +1,9 @@
+# PLACEHOLDER - Icon Required
+
+This is a placeholder file. Replace with actual icon.png:
+- Size: 256x256 pixels
+- Format: PNG with transparency
+- Max file size: 100 KB
+- Content: PikSend plugin icon
+
+See resources/ICON-SPECIFICATIONS.md for details.

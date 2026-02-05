@@ -1,10 +1,23 @@
 'use client';
 
+/**
+ * @deprecated This hook applies dark mode globally to the entire application.
+ * Use useGalleryTheme for galleries or useProfileTheme for photographer profiles instead.
+ * 
+ * Dark mode should only be applied to public-facing pages (galleries and profiles),
+ * not to the dashboard or other application pages.
+ */
+
 import { useEffect, useState } from 'react';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export function useTheme() {
+  console.warn(
+    'useTheme is deprecated. Use useGalleryTheme for galleries or useProfileTheme for profiles instead. ' +
+    'Dark mode should only be applied to public-facing pages.'
+  );
+
   // Initialize with system preference to avoid flash
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'system';
@@ -48,16 +61,8 @@ export function useTheme() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  // Apply theme to document
-  useEffect(() => {
-    const root = document.documentElement;
-    
-    // Remove both classes first
-    root.classList.remove('light', 'dark');
-    
-    // Add the resolved theme class
-    root.classList.add(resolvedTheme);
-  }, [resolvedTheme]);
+  // DO NOT apply theme to document root - this would affect the entire app
+  // Gallery and profile pages should use their own scoped theme hooks
 
   // Toggle theme function
   const toggleTheme = () => {

@@ -212,7 +212,7 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
     - **Propriété 45: Backoff exponentiel pour les retries**
     - **Valide: Exigences 10.7**
 
-- [~] 10. Implémenter le module de cache et optimisation (PikSendCache.lua)
+- [x] 10. Implémenter le module de cache et optimisation (PikSendCache.lua)
   - [x] 10.1 Créer calculateHash()
     - Calculer le hash MD5 de chaque photo
     - _Exigences: 10.5_
@@ -235,7 +235,7 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
     - **Valide: Exigences 10.3**
 
 
-- [~] 11. Implémenter le module de presets (PikSendPresets.lua)
+- [x] 11. Implémenter le module de presets (PikSendPresets.lua)
   - [x] 11.1 Créer savePreset() et loadPreset()
     - Sauvegarder les configurations d'export dans LrPrefs
     - Charger les presets existants
@@ -254,14 +254,14 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
     - **Propriété 15: Validation de la taille maximale**
     - **Valide: Exigences 4.10**
 
-- [~] 12. Implémenter l'Export Service Provider (PikSendExportServiceProvider.lua)
-  - [ ] 12.1 Créer sectionsForTopOfDialog()
+- [x] 12. Implémenter l'Export Service Provider (PikSendExportServiceProvider.lua)
+  - [x] 12.1 Créer sectionsForTopOfDialog()
     - Section authentification avec bouton connexion/déconnexion
     - Section sélection de galerie avec boutons rafraîchir/créer
     - Section paramètres d'export (format, qualité, watermark)
     - _Exigences: 2.1, 3.1, 3.2, 4.1-4.7_
   
-  - [~] 12.2 Implémenter processRenderedPhotos()
+  - [x] 12.2 Implémenter processRenderedPhotos()
     - Boucle sur les photos sélectionnées
     - Extraire les métadonnées
     - Uploader via PikSendUpload
@@ -269,183 +269,183 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
     - Nettoyer les fichiers temporaires
     - _Exigences: 5.1-5.10, 6.10_
   
-  - [~] 12.3 Écrire les tests de propriété pour l'export
+  - [x] 12.3 Écrire les tests de propriété pour l'export
     - **Propriété 16: Calcul du nombre et de la taille totale**
     - **Propriété 17: Application des paramètres d'export**
     - **Propriété 22: Nettoyage des fichiers temporaires**
     - **Propriété 38: Préservation de l'ordre des photos**
     - **Valide: Exigences 5.3, 5.4, 5.10, 8.10**
 
-- [~] 13. Checkpoint - Vérifier l'Export Service complet
+- [x] 13. Checkpoint - Vérifier l'Export Service complet
   - S'assurer que tous les tests passent
   - Tester manuellement un export complet de bout en bout
   - Vérifier que les métadonnées sont correctement transférées
   - Demander à l'utilisateur si des questions se posent
 
-- [~] 14. Implémenter le Publish Service Provider (PikSendPublishServiceProvider.lua)
-  - [~] 14.1 Créer la structure Published Collection
+- [x] 14. Implémenter le Publish Service Provider (PikSendPublishServiceProvider.lua)
+  - [x] 14.1 Créer la structure Published Collection
     - Lier chaque collection à une galerie PikSend
     - Stocker l'ID de galerie dans les métadonnées de la collection
     - _Exigences: 7.1, 7.2_
   
-  - [~] 14.2 Implémenter la détection des modifications
+  - [x] 14.2 Implémenter la détection des modifications
     - Détecter les changements de contenu (hash MD5)
     - Détecter les changements de métadonnées
     - Marquer les photos comme "à publier" ou "modifié"
     - _Exigences: 7.3, 7.4, 7.5_
   
-  - [~] 14.3 Écrire les tests de propriété pour la détection de modifications
+  - [x] 14.3 Écrire les tests de propriété pour la détection de modifications
     - **Propriété 30: Marquage des photos à publier**
     - **Propriété 31: Upload sélectif des photos modifiées**
     - **Propriété 32: Détection des modifications**
     - **Valide: Exigences 7.3, 7.4, 7.5**
   
-  - [~] 14.4 Implémenter processRenderedPhotos() pour Publish Service
+  - [x] 14.4 Implémenter processRenderedPhotos() pour Publish Service
     - Uploader uniquement les photos modifiées
     - Synchroniser les métadonnées
     - Mettre à jour le statut de publication
     - _Exigences: 7.4, 7.7, 7.8_
   
-  - [~] 14.5 Implémenter deletePhotosFromPublishedCollection()
+  - [x] 14.5 Implémenter deletePhotosFromPublishedCollection()
     - Appeler l'API DELETE pour supprimer les photos
     - Mettre à jour l'état local
     - _Exigences: 7.6_
   
-  - [~] 14.6 Écrire les tests de propriété pour la synchronisation
+  - [x] 14.6 Écrire les tests de propriété pour la synchronisation
     - **Propriété 33: Suppression synchronisée**
     - **Valide: Exigences 7.6**
   
-  - [~] 14.7 Implémenter la gestion des conflits
+  - [x] 14.7 Implémenter la gestion des conflits
     - Détecter les photos supprimées sur PikSend mais présentes dans Lightroom
     - Proposer des options de résolution
     - _Exigences: 7.10_
   
-  - [~] 14.8 Écrire les tests de propriété pour les conflits
+  - [x] 14.8 Écrire les tests de propriété pour les conflits
     - **Propriété 54: Synchronisation bidirectionnelle**
     - **Valide: Exigences 14.10**
 
-- [~] 15. Implémenter les fonctionnalités avancées de galerie (PikSendGallerySettings.lua)
-  - [~] 15.1 Créer configureGallerySettings()
+- [x] 15. Implémenter les fonctionnalités avancées de galerie (PikSendGallerySettings.lua)
+  - [x] 15.1 Créer configureGallerySettings()
     - Configurer protection par mot de passe
     - Configurer date d'expiration
     - Configurer watermark
     - Configurer visibilité (public/privé)
     - _Exigences: 14.1, 14.2, 14.3, 14.4_
   
-  - [~] 15.2 Écrire les tests de propriété pour les paramètres de galerie
+  - [x] 15.2 Écrire les tests de propriété pour les paramètres de galerie
     - **Propriété 51: Configuration complète de galerie**
     - **Valide: Exigences 14.1-14.4**
   
-  - [~] 15.3 Implémenter generateShareLink()
+  - [x] 15.3 Implémenter generateShareLink()
     - Générer le lien au format https://piksend.com/g/{galleryId}
     - _Exigences: 14.5_
   
-  - [~] 15.4 Écrire les tests de propriété pour le lien de partage
+  - [x] 15.4 Écrire les tests de propriété pour le lien de partage
     - **Propriété 52: Génération de lien de partage**
     - **Valide: Exigences 14.5**
   
-  - [~] 15.5 Implémenter fetchGalleryStats()
+  - [x] 15.5 Implémenter fetchGalleryStats()
     - Récupérer les statistiques (vues, téléchargements)
     - Afficher dans l'interface
     - _Exigences: 14.7_
   
-  - [~] 15.6 Écrire les tests de propriété pour les statistiques
+  - [x] 15.6 Écrire les tests de propriété pour les statistiques
     - **Propriété 53: Récupération des statistiques de galerie**
     - **Valide: Exigences 14.7**
 
-- [~] 16. Implémenter le système de mises à jour (PikSendUpdater.lua)
-  - [~] 16.1 Créer checkForUpdates()
+- [x] 16. Implémenter le système de mises à jour (PikSendUpdater.lua)
+  - [x] 16.1 Créer checkForUpdates()
     - Appeler l'API pour vérifier la version disponible
     - Comparer avec la version actuelle
     - _Exigences: 12.1_
   
-  - [~] 16.2 Écrire les tests de propriété pour les mises à jour
+  - [x] 16.2 Écrire les tests de propriété pour les mises à jour
     - **Propriété 49: Vérification des mises à jour**
     - **Propriété 50: Notification de mise à jour disponible**
     - **Valide: Exigences 12.1, 12.2**
   
-  - [~] 16.3 Implémenter showUpdateNotification()
+  - [x] 16.3 Implémenter showUpdateNotification()
     - Afficher une notification avec changelog
     - Fournir un lien de téléchargement
     - _Exigences: 12.2, 12.3, 12.4_
 
-- [~] 17. Checkpoint - Vérifier toutes les fonctionnalités
+- [x] 17. Checkpoint - Vérifier toutes les fonctionnalités
   - S'assurer que tous les tests passent
   - Tester manuellement le Publish Service
   - Tester les paramètres avancés de galerie
   - Tester le système de mises à jour
   - Demander à l'utilisateur si des questions se posent
 
-- [~] 18. Implémenter les composants UI (PikSendUI.lua)
-  - [~] 18.1 Créer les composants réutilisables
+- [x] 18. Implémenter les composants UI (PikSendUI.lua)
+  - [x] 18.1 Créer les composants réutilisables
     - Barre de progression avec détails
     - Dialog de confirmation
     - Dialog d'erreur avec options de retry
     - _Exigences: 6.1-6.6, 9.1_
   
-  - [~] 18.2 Implémenter showProgressDialog()
+  - [x] 18.2 Implémenter showProgressDialog()
     - Afficher la progression globale
     - Afficher le statut de chaque photo
     - Boutons pause/resume/cancel
     - _Exigences: 6.1-6.9_
 
-- [~] 19. Implémenter les utilitaires (PikSendUtils.lua)
-  - [~] 19.1 Créer les fonctions utilitaires
+- [ ] 19. Implémenter les utilitaires (PikSendUtils.lua)
+  - [x] 19.1 Créer les fonctions utilitaires
     - formatFileSize() - Convertir bytes en KB/MB/GB
     - formatDuration() - Convertir secondes en format lisible
     - sanitizeFilename() - Nettoyer les noms de fichiers
     - validateUrl() - Vérifier que les URLs sont HTTPS
     - _Exigences: 11.1_
   
-  - [~] 19.2 Écrire les tests de propriété pour les URLs
+  - [x] 19.2 Écrire les tests de propriété pour les URLs
     - **Propriété 46: Utilisation exclusive de HTTPS**
     - **Propriété 48: Restriction des requêtes réseau**
     - **Valide: Exigences 11.1, 11.6**
 
-- [~] 20. Implémenter la localisation (localization/)
-  - [~] 20.1 Créer les fichiers de traduction
+- [ ] 20. Implémenter la localisation (localization/)
+  - [x] 20.1 Créer les fichiers de traduction
     - en.lua - Traductions anglaises
     - fr.lua - Traductions françaises
     - _Exigences: 13.1-13.10_
   
-  - [~] 20.2 Intégrer les traductions dans tous les modules
+  - [x] 20.2 Intégrer les traductions dans tous les modules
     - Remplacer les chaînes en dur par des clés de traduction
     - Utiliser LOC() pour récupérer les traductions
 
-- [~] 21. Tests d'intégration complets
-  - [~] 21.1 Écrire les tests d'intégration pour le flux d'authentification
+- [ ] 21. Tests d'intégration complets
+  - [x] 21.1 Écrire les tests d'intégration pour le flux d'authentification
     - Tester le flux complet: saisie token → validation → récupération galeries
     - _Exigences: 2.1-2.10_
   
-  - [~] 21.2 Écrire les tests d'intégration pour le flux d'export
+  - [x] 21.2 Écrire les tests d'intégration pour le flux d'export
     - Tester le flux complet: sélection photos → configuration → upload → succès
     - _Exigences: 5.1-5.10_
   
-  - [~] 21.3 Écrire les tests d'intégration pour le Publish Service
+  - [x] 21.3 Écrire les tests d'intégration pour le Publish Service
     - Tester la synchronisation complète avec détection de modifications
     - _Exigences: 7.1-7.10_
 
-- [~] 22. Documentation et ressources
-  - [~] 22.1 Créer le guide d'installation
+- [ ] 22. Documentation et ressources
+  - [x] 22.1 Créer le guide d'installation
     - Instructions pas à pas avec captures d'écran
     - Troubleshooting des problèmes courants
     - _Exigences: 13.1_
   
-  - [~] 22.2 Créer le guide d'utilisation
+  - [-] 22.2 Créer le guide d'utilisation
     - Documentation de toutes les fonctionnalités
     - Exemples de workflows
     - _Exigences: 13.2_
   
-  - [~] 22.3 Créer la FAQ
+  - [x] 22.3 Créer la FAQ
     - Questions fréquentes et réponses
     - _Exigences: 13.3_
   
-  - [~] 22.4 Ajouter les ressources visuelles
+  - [x] 22.4 Ajouter les ressources visuelles
     - Icône du plugin (resources/icon.png)
     - Logo PikSend (resources/logo.png)
     - Watermark par défaut (resources/watermark-default.png)
 
-- [~] 23. Checkpoint final - Validation complète
+- [x] 23. Checkpoint final - Validation complète
   - S'assurer que tous les tests passent (unitaires, propriétés, intégration)
   - Tester manuellement sur Windows et macOS
   - Tester avec différentes versions de Lightroom (11.0, 12.0, 13.0)
@@ -453,18 +453,18 @@ Ce plan implémente un plugin Lightroom Classic en Lua qui permet aux photograph
   - Valider la sécurité (HTTPS, chiffrement token, sanitisation logs)
   - Demander à l'utilisateur si des questions se posent
 
-- [~] 24. Packaging et distribution
-  - [~] 24.1 Créer le package .lrplugin
+- [ ] 24. Packaging et distribution
+  - [x] 24.1 Créer le package .lrplugin
     - Compresser tous les fichiers
     - Vérifier que toutes les dépendances sont incluses
     - _Exigences: 1.1_
   
-  - [~] 24.2 Créer la page de téléchargement
+  - [-] 24.2 Créer la page de téléchargement
     - Uploader le plugin sur le dashboard PikSend
     - Créer le changelog
     - _Exigences: 12.8, 12.9_
   
-  - [~] 24.3 Tester l'installation depuis le dashboard
+  - [ ] 24.3 Tester l'installation depuis le dashboard
     - Télécharger et installer le plugin
     - Vérifier qu'il apparaît dans Lightroom
     - _Exigences: 1.1, 1.4_

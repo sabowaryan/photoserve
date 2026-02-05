@@ -157,7 +157,7 @@ export class GalleryRepository implements IGalleryRepository {
       throw error;
     }
 
-    return (data || []) as Gallery[];
+    return (data || []) as unknown as Gallery[];
   }
 
   /**

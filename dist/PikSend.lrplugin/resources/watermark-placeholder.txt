@@ -1,0 +1,9 @@
+# PLACEHOLDER - Watermark Required
+
+This is a placeholder file. Replace with actual watermark-default.png:
+- Size: 200x50 pixels
+- Format: PNG with transparency
+- Max file size: 50 KB
+- Content: Default watermark overlay
+
+See resources/WATERMARK-SPECIFICATIONS.md for details.

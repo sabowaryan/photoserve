@@ -90,21 +90,28 @@ export async function generateMetadata({ params }: PublicProfilePageProps): Prom
  * Implements Static Site Generation (SSG) (Requirement 12.6)
  */
 export async function generateStaticParams() {
-  const supabase = createAdminClient();
-  
-  // Fetch all enabled profiles
-  const { data: profiles } = await supabase
-    .from('public_profiles')
-    .select('slug')
-    .eq('is_enabled', true);
-  
-  if (!profiles) {
+  try {
+    const supabase = createAdminClient();
+    
+    // Fetch all enabled profiles
+    const { data: profiles } = await supabase
+      .from('public_profiles')
+      .select('slug')
+      .eq('is_enabled', true);
+    
+    if (!profiles) {
+      return [];
+    }
+    
+    return profiles.map((profile) => ({
+      slug: profile.slug,
+    }));
+  } catch (error) {
+    // During build time, if Supabase credentials are not available,
+    // return empty array to allow build to continue
+    console.warn('Could not generate static params for public profiles:', error);
     return [];
   }
-  
-  return profiles.map((profile) => ({
-    slug: profile.slug,
-  }));
 }
 
 /**

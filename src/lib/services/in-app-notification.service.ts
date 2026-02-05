@@ -114,54 +114,66 @@ export class InAppNotificationService implements IInAppNotificationService {
    * Get notifications for a user
    */
   async getNotifications(userId: string, filters?: NotificationFilters): Promise<InAppNotification[]> {
-    let query = (this.supabase as any)
-      .from('in_app_notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+    try {
+      let query = (this.supabase as any)
+        .from('in_app_notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
 
-    if (filters?.type) {
-      query = query.eq('type', filters.type);
+      if (filters?.type) {
+        query = query.eq('type', filters.type);
+      }
+
+      if (filters?.isRead !== undefined) {
+        query = query.eq('is_read', filters.isRead);
+      }
+
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+
+      if (filters?.offset) {
+        query = query.range(filters.offset, filters.offset + (filters.limit || 20) - 1);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('[InAppNotificationService] Failed to get notifications:', error);
+        // Return empty array instead of throwing to prevent blocking the UI
+        return [];
+      }
+
+      return (data || []).map((n: any) => this.mapToNotification(n));
+    } catch (error) {
+      console.error('[InAppNotificationService] Exception in getNotifications:', error);
+      // Return empty array instead of throwing to prevent blocking the UI
+      return [];
     }
-
-    if (filters?.isRead !== undefined) {
-      query = query.eq('is_read', filters.isRead);
-    }
-
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
-
-    if (filters?.offset) {
-      query = query.range(filters.offset, filters.offset + (filters.limit || 20) - 1);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('[InAppNotificationService] Failed to get notifications:', error);
-      throw new Error('Failed to get notifications');
-    }
-
-    return (data || []).map((n: any) => this.mapToNotification(n));
   }
 
   /**
    * Get unread notification count for a user
    */
   async getUnreadCount(userId: string): Promise<number> {
-    const { count, error } = await (this.supabase as any)
-      .from('in_app_notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('is_read', false);
+    try {
+      const { count, error } = await (this.supabase as any)
+        .from('in_app_notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_read', false);
 
-    if (error) {
-      console.error('[InAppNotificationService] Failed to get unread count:', error);
+      if (error) {
+        console.error('[InAppNotificationService] Failed to get unread count:', error);
+        return 0;
+      }
+
+      return count || 0;
+    } catch (error) {
+      console.error('[InAppNotificationService] Exception in getUnreadCount:', error);
       return 0;
     }
-
-    return count || 0;
   }
 
   /**

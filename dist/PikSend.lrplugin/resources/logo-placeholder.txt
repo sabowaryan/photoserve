@@ -1,0 +1,9 @@
+# PLACEHOLDER - Logo Required
+
+This is a placeholder file. Replace with actual logo.png:
+- Size: 512x128 pixels (4:1 ratio)
+- Format: PNG with transparency
+- Max file size: 200 KB
+- Content: PikSend branding logo
+
+See resources/LOGO-SPECIFICATIONS.md for details.

@@ -23,29 +23,62 @@ export async function GET(request: NextRequest) {
 
     const notificationService = createInAppNotificationService(supabase);
     
-    const notifications = await notificationService.getNotifications(userId, {
-      type: type || undefined,
-      isRead: isRead !== null ? isRead === 'true' : undefined,
-      limit,
-      offset,
+    // Use Promise.race to implement a timeout
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 5000); // 5 second timeout
     });
 
-    const unreadCount = await notificationService.getUnreadCount(userId);
+    try {
+      const [notifications, unreadCount] = await Promise.race([
+        Promise.all([
+          notificationService.getNotifications(userId, {
+            type: type || undefined,
+            isRead: isRead !== null ? isRead === 'true' : undefined,
+            limit,
+            offset,
+          }),
+          notificationService.getUnreadCount(userId),
+        ]),
+        timeoutPromise,
+      ]);
 
-    return NextResponse.json({
-      notifications,
-      unreadCount,
-      pagination: {
-        limit,
-        offset,
-        hasMore: notifications.length === limit,
-      },
-    });
+      return NextResponse.json({
+        notifications,
+        unreadCount,
+        pagination: {
+          limit,
+          offset,
+          hasMore: notifications.length === limit,
+        },
+      });
+    } catch (timeoutError) {
+      // If timeout or error, return empty results instead of failing
+      console.warn('[NotificationsAPI] Request timeout or error, returning empty results');
+      return NextResponse.json({
+        notifications: [],
+        unreadCount: 0,
+        pagination: {
+          limit,
+          offset,
+          hasMore: false,
+        },
+      });
+    }
   } catch (error) {
     if (error instanceof Error && error.message === 'Authentication required') {
       return handleApiError(new AuthenticationError());
     }
     console.error('[NotificationsAPI] Error:', error);
-    return handleApiError(error);
+    
+    // Return empty results instead of error to prevent blocking the UI
+    return NextResponse.json({
+      notifications: [],
+      unreadCount: 0,
+      pagination: {
+        limit: 20,
+        offset: 0,
+        hasMore: false,
+      },
+    });
   }
 }
