@@ -4,28 +4,48 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
-  dsn: "https://f38662b3b274e79a370144b9a5e78250@o4509445026152448.ingest.us.sentry.io/4510840176836608",
+// Only initialize Sentry in production to avoid massive dev performance hit
+const isProduction = process.env.NODE_ENV === 'production';
 
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration()],
+if (isProduction) {
+  Sentry.init({
+    dsn: "https://f38662b3b274e79a370144b9a5e78250@o4509445026152448.ingest.us.sentry.io/4510840176836608",
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
+    // Optimized integrations - replay is expensive, only on errors
+    integrations: [
+      Sentry.replayIntegration({
+        maskAllText: false,
+        blockAllMedia: false,
+      })
+    ],
 
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+    // Reduced sampling for better performance
+    tracesSampleRate: 0.1, // Reduced from 1 to 0.1 (10%)
+    
+    // Disable logs in production for performance
+    enableLogs: false,
 
-  // Define how likely Replay events are sampled when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
+    // Reduced replay sampling
+    replaysSessionSampleRate: 0.01, // Reduced from 0.1 to 0.01 (1%)
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
-});
+    // Keep error replay at 100%
+    replaysOnErrorSampleRate: 1.0,
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+    // Disable PII for better privacy and performance
+    sendDefaultPii: false,
+    
+    // Performance optimizations
+    beforeSend(event) {
+      // Filter out non-critical errors
+      if (event.level === 'info' || event.level === 'debug') {
+        return null;
+      }
+      return event;
+    },
+  });
+}
+
+// Export no-op in development, real function in production
+export const onRouterTransitionStart = isProduction 
+  ? Sentry.captureRouterTransitionStart 
+  : () => {};

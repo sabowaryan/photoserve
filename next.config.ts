@@ -35,7 +35,11 @@ const nextConfig: NextConfig = {
       '@radix-ui/react-icons',
       'recharts',
       'date-fns',
+      'react-hook-form',
+      '@hookform/resolvers',
     ],
+    // Optimize CSS
+    optimizeCss: true,
   },
 
   // Compiler optimizations
@@ -44,6 +48,33 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
+  },
+
+  // Webpack configuration for better tree-shaking
+  webpack: (config, { dev, isServer }) => {
+    // CRITICAL: Completely disable Sentry in development to save 1+ second of execution time
+    if (dev) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@sentry/nextjs': false,
+        '@sentry/browser': false,
+        '@sentry/core': false,
+        '@sentry/react': false,
+        '@sentry-internal/replay': false,
+        '@sentry-internal/browser-utils': false,
+      };
+    }
+    
+    // Optimize bundle size
+    if (!dev) {
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+      };
+    }
+    
+    return config;
   },
 
   // Headers for CDN caching (Requirement 12.5)
@@ -176,6 +207,18 @@ export default withSentryConfig(
           },
         },
         {
+          urlPattern: /^https:\/\/accounts\.google\.com\/.*/i,
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "google-oauth",
+            networkTimeoutSeconds: 5,
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60, // 1 hour
+            },
+          },
+        },
+        {
           urlPattern: /\/api\/galleries\/.*/i,
           handler: "NetworkFirst",
           options: {
@@ -248,6 +291,9 @@ export default withSentryConfig(
 
     // Hides source maps from generated client bundles
     hideSourceMaps: true,
+
+    // Disable Sentry in development for performance
+    disableLogger: process.env.NODE_ENV === 'development',
 
     // Webpack-specific options (not supported with Turbopack)
     webpack: {

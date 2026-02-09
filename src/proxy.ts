@@ -299,6 +299,7 @@ export async function proxy(request: NextRequest) {
     // Routes that are part of the email verification flow
     const VERIFICATION_ROUTES = [
       '/verify-email',
+      '/verify-email/confirm',
       '/verify-email/success',
       '/verify-email/error',
     ];

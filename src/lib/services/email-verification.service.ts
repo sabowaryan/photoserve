@@ -165,7 +165,7 @@ export class EmailVerificationService {
     let usedFallback = false;
     
     // Build verification link
-    const verificationLink = `${params.baseUrl}/verify-email?token=${params.token}`;
+    const verificationLink = `${params.baseUrl}/verify-email/confirm?token=${params.token}`;
     
     // Render email HTML
     const html = await render(

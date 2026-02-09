@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google"; // Changed from Plus_Jakarta_Sans
+import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
@@ -14,12 +14,15 @@ import "./globals.css";
 // Force dynamic rendering to ensure session is always fresh
 export const dynamic = 'force-dynamic';
 
-const inter = Inter({ // Changed from plusJakarta
-  variable: "--font-inter", // Changed variable name to generic or inter specific
+// Optimized font loading - only 2 weights for better performance
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"], // Inter supports these
+  weight: ["400", "600"], // Only essential weights (reduced from 6 to 2)
   display: 'swap', // Prevent FOIT (Flash of Invisible Text)
-  preload: true, // Preload the font for better performance
+  preload: true,
+  adjustFontFallback: true, // Better CLS
+  fallback: ['system-ui', 'arial'], // System fallback
 });
 
 export const metadata: Metadata = {
@@ -81,6 +84,11 @@ export default async function RootLayout({
   // Default to 'en' for SSR to avoid hydration mismatches.
   return (
     <html lang="en" suppressHydrationWarning style={{ colorScheme: 'light' }}>
+      <head>
+        {/* Preconnect to critical origins for better performance */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+      </head>
       <body
         className={`${inter.variable} antialiased font-sans`}
         style={{ colorScheme: 'light' }}
