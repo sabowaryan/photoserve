@@ -53,8 +53,8 @@ export function AdminHeader({ adminName, adminEmail }: AdminHeaderProps) {
         <div className="flex items-center gap-1.5 sm:gap-3">
           <Link href="/admin" className="flex items-center gap-2 group">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-all">
-              <LogoIcon size={16} className="text-white sm:hidden" />
-              <LogoIcon size={20} className="text-white hidden sm:block" />
+              <LogoIcon size={16} variant="white" className="sm:hidden" />
+              <LogoIcon size={20} variant="white" className="hidden sm:block" />
             </div>
             <div className="flex flex-col">
               <span className="font-black text-base sm:text-lg tracking-tight text-white" dir="ltr">

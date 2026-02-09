@@ -296,7 +296,7 @@
     "finalCta": {
       "title": "Professionelle fotoleverings-",
       "titleHighlight": "gallerier venter.",
-      "subtitle": "Slut dig til 500+ fotografer, der leverer originalkvalitet til deres kunder. Ingen komprimering, nul friktion.",
+      "subtitle": "Slut dig til {{count}}+ fotografer, der leverer originalkvalitet til deres kunder. Ingen komprimering, nul friktion.",
       "button": "Opret mit gratis galleri",
       "note": "Intet kort påkrævet • Ingen komprimering • Originalkvalitet"
     }
@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "Fotodelingsplatformen som kreative elsker.",
+    "signin": {
+      "title": "Velkommen tilbage",
+      "subtitle": "Log ind for at få adgang til dine gallerier"
+    },
     "tabs": {
       "signIn": "Log ind",
       "signUp": "Registrer"
     },
     "signup": {
+      "title": "Opret konto",
+      "subtitle": "Tilmeld dig {{count}}+ fotografer på PikSend",
       "step": "Trin",
       "stepEmail": "Din e-mail",
       "stepPassword": "Sikkerhed",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "Adgangskoden er nulstillet!",
       "canNowSignIn": "Du kan nu logge ind med din nye adgangskode."
     },
-      "resetButton": "Nulstil adgangskode"
+    "verification": {
+      "title": "Bekræft din e-mail",
+      "subtitle": "Vi har sendt en bekræftelses-e-mail til din indbakke",
+      "checkEmail": "Tjek din e-mail",
+      "clickLink": "Klik på linket i e-mailen for at bekræfte din konto",
+      "didntReceive": "Modtog du ikke e-mailen?",
+      "resend": "Send bekræftelses-e-mail igen",
+      "verifying": "Bekræfter...",
+      "success": "E-mail bekræftet!",
+      "error": "Bekræftelse mislykkedes. Prøv igen.",
+      "expired": "Bekræftelseslinket er udløbet",
+      "alreadyVerified": "E-mail er allerede bekræftet"
+    },
+    "sidebar": {
+      "headline": "Lever dine billeder på 5 minutter. Sælg dine gallerier. Behold 90%.",
+      "subheadline": "Slut dig til {{count}}+ fotografer, der leverer original kvalitet til deres kunder.",
+      "benefit1Title": "Unikt Lightroom Plugin",
+      "benefit1Desc": "Eksporter og del direkte fra Lightroom med ét klik",
+      "benefit2Title": "Laveste Provision",
+      "benefit2Desc": "Behold 90% af dit salg. Kun 10% provision",
+      "benefit3Title": "2t Support",
+      "benefit3Desc": "Garanteret svar på mindre end 2 arbejdstimer",
+      "trustUsers": "{{count}}+ fotografer",
+      "trustUsersDesc": "Stoler på os",
+      "trustRating": "4.8/5 stjerner",
+      "trustRatingDesc": "Gennemsnitlig vurdering",
+      "testimonialQuote": "PikSend transformerede hvordan jeg leverer mine billeder. Mine kunder elsker kvaliteten og enkelheden.",
+      "testimonialAuthor": "Marie Dubois",
+      "testimonialRole": "Bryllupsfotograf",
+      "title": "Hvorfor vælge PikSend?",
+      "features": {
+        "quality": {
+          "title": "Original kvalitet",
+          "description": "Ingen komprimering, dine billeder forbliver perfekte"
+        },
+        "security": {
+          "title": "Sikker deling",
+          "description": "Adgangskodebeskyttelse og udløbende links"
+        },
+        "fast": {
+          "title": "Lynhurtigt",
+          "description": "Optimeret levering, øjeblikkelig indlæsning"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "Registrering mislykkedes",
       "accountCreatedSuccess": "Konto oprettet",
       "passwordResetSuccess": "Adgangskode nulstillet",
+      "passwordResetFailed": "Kunne ikke nulstille adgangskode",
       "passwordResetEmailSent": "Hvis en konto findes med denne e-mailadresse, vil du modtage et nulstillingslink.",
+      "verificationFailed": "Verifikation mislykkedes",
+      "emailVerifiedSuccess": "E-mail verificeret",
+      "verificationEmailSent": "Verifikations-e-mail sendt",
+      "emailAlreadyVerified": "Denne e-mail er allerede verificeret",
+      "emailSendFailed": "Kunne ikke sende e-mail",
+      "userNotFound": "Bruger ikke fundet",
       "invalidData": "Ugyldige data",
       "profileUpdateFailed": "Kunne ikke opdatere profil",
       "profileFetchFailed": "Kunne ikke hente profil",
+      "profileNotFound": "Profil ikke fundet",
       "updateError": "Fejl under opdatering",
-      "serverError": "Serverfejl"
+      "serverError": "Serverfejl",
+      "authRequired": "Godkendelse påkrævet",
+      "authenticationRequired": "Godkendelse påkrævet",
+      "invalidKeyId": "Ugyldig nøgle-ID",
+      "apiKeyNotFound": "API-nøgle ikke fundet",
+      "proPlanRequired": "Pro-plan påkrævet",
+      "proRequired": "Pro-plan påkrævet for denne funktion",
+      "slugTaken": "Dette slug er allerede taget",
+      "invalidSlug": "Ugyldigt slug",
+      "missingSlug": "Slug-parameter er påkrævet",
+      "invalidSlugLength": "Slug skal være mellem 1 og 100 tegn",
+      "notFound": "Ressource ikke fundet",
+      "invalidAction": "Ugyldig handling",
+      "rateLimitExceeded": "For mange forsøg. Prøv igen senere."
     }
   }
 }

@@ -55,11 +55,13 @@ export const metadata: Metadata = {
   other: {
     'msapplication-TileColor': '#ffffff',
     'msapplication-TileImage': '/icons/ms-icon-144x144.png',
+    'color-scheme': 'light',
   },
 };
 
 export const viewport: Viewport = {
   themeColor: '#ffffff',
+  colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -78,9 +80,10 @@ export default async function RootLayout({
   // on the client side based on the user's locale preference.
   // Default to 'en' for SSR to avoid hydration mismatches.
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning style={{ colorScheme: 'light' }}>
       <body
         className={`${inter.variable} antialiased font-sans`}
+        style={{ colorScheme: 'light' }}
       >
         <SessionProvider session={session}>
           <I18nProviderWrapper>{children}</I18nProviderWrapper>

@@ -18,30 +18,31 @@ const ErrorMessage = React.forwardRef<HTMLDivElement, ErrorMessageProps>(
       <div
         ref={ref}
         role="alert"
+        aria-live="assertive"
         className={cn(
           "flex items-start gap-3 p-4 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300",
-          "bg-rose-950/30 border border-rose-500/30 text-rose-200 backdrop-blur-md shadow-lg shadow-rose-900/10",
+          "bg-red-50 border border-red-200 text-red-800 shadow-lg",
           className
         )}
       >
-        <div className="bg-rose-900/50 p-1.5 rounded-lg flex-shrink-0 mt-0.5">
+        <div className="bg-red-100 p-1.5 rounded-lg flex-shrink-0 mt-0.5">
           <AlertCircle
-            className="text-rose-400"
+            className="text-red-600"
             size={18}
             aria-hidden="true"
           />
         </div>
         <div className="flex-1 min-w-0 pt-0.5">
           {title && (
-            <p className="text-sm font-bold text-rose-100 mb-1 tracking-wide">{title}</p>
+            <p className="text-sm font-bold text-red-900 mb-1 tracking-wide">{title}</p>
           )}
-          <p className="text-sm text-rose-200/90 leading-relaxed font-medium">{message}</p>
+          <p className="text-sm text-red-800 leading-relaxed font-medium">{message}</p>
         </div>
         {dismissible && onDismiss && (
           <button
             type="button"
             onClick={onDismiss}
-            className="flex-shrink-0 p-1 text-rose-300 hover:text-white hover:bg-rose-500/20 rounded-lg transition-colors -mr-1"
+            className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors -mr-1"
             aria-label="Dismiss error message"
           >
             <X size={16} aria-hidden="true" />

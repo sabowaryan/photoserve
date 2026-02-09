@@ -62,4 +62,75 @@ describe("ErrorMessage", () => {
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });
+
+  // Edge cases for error message dismissal
+  it("dismissal works with keyboard (Enter key)", async () => {
+    const handleDismiss = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <ErrorMessage
+        message="Error message"
+        dismissible
+        onDismiss={handleDismiss}
+      />
+    );
+    
+    const dismissButton = screen.getByLabelText(/dismiss error message/i);
+    dismissButton.focus();
+    await user.keyboard("{Enter}");
+    expect(handleDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("dismissal works with keyboard (Space key)", async () => {
+    const handleDismiss = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <ErrorMessage
+        message="Error message"
+        dismissible
+        onDismiss={handleDismiss}
+      />
+    );
+    
+    const dismissButton = screen.getByLabelText(/dismiss error message/i);
+    dismissButton.focus();
+    await user.keyboard(" ");
+    expect(handleDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders without dismiss button when onDismiss is not provided", () => {
+    render(
+      <ErrorMessage
+        message="Error message"
+        dismissible
+      />
+    );
+    expect(screen.queryByLabelText(/dismiss error message/i)).not.toBeInTheDocument();
+  });
+
+  it("displays long error messages correctly", () => {
+    const longMessage = "This is a very long error message that should still be displayed correctly without breaking the layout or causing any visual issues.";
+    render(<ErrorMessage message={longMessage} />);
+    expect(screen.getByText(longMessage)).toBeInTheDocument();
+  });
+
+  it("handles multiple error messages with different titles", () => {
+    const { rerender } = render(
+      <ErrorMessage title="Validation Error" message="Invalid input" />
+    );
+    expect(screen.getByText("Validation Error")).toBeInTheDocument();
+
+    rerender(
+      <ErrorMessage title="Network Error" message="Connection failed" />
+    );
+    expect(screen.getByText("Network Error")).toBeInTheDocument();
+    expect(screen.getByText("Connection failed")).toBeInTheDocument();
+  });
+
+  it("has correct styling classes", () => {
+    const { container } = render(<ErrorMessage message="Error" />);
+    const errorDiv = container.firstChild as HTMLElement;
+    expect(errorDiv).toHaveClass("bg-rose-950/30");
+    expect(errorDiv).toHaveClass("border-rose-500/30");
+  });
 });

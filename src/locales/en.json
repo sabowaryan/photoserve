@@ -101,7 +101,7 @@
     "location": "Location",
     "backToHome": "Back to home",
     "backToPreviousStep": "Back to previous step",
-    "google": "Sign in with Google",
+    "googleSignIn": "Sign in with Google",
     "contactUs": "Contact us",
     "generalQuestions": "General questions",
     "technicalIssues": "Technical issues",
@@ -310,12 +310,18 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "The photo sharing platform loved by creatives.",
+    "signin": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your galleries"
+    },
     "tabs": {
       "signIn": "Sign In",
       "signUp": "Sign Up",
       "navigation": "Authentication tabs"
     },
     "signup": {
+      "title": "Create account",
+      "subtitle": "Join {{count}}+ photographers on PikSend",
       "step": "Step",
       "stepEmail": "Your email",
       "stepPassword": "Security",
@@ -409,7 +415,7 @@
     },
     "sidebar": {
       "headline": "Deliver your photos in 5 minutes. Sell your galleries. Keep 90%.",
-      "subheadline": "Join 500+ photographers delivering original quality to their clients.",
+      "subheadline": "Join {{count}}+ photographers delivering original quality to their clients.",
       "benefit1Title": "Unique Lightroom Plugin",
       "benefit1Desc": "Export and share directly from Lightroom in one click",
       "benefit2Title": "Lowest Commission",
@@ -445,7 +451,7 @@
       "emailResent": "Verification email sent! Please check your inbox.",
       "didntReceive": "Didn't receive the email?",
       "checkSpam": "Check your spam or junk folder",
-      "checkEmail": "Make sure the email address is correct",
+      "checkEmailAddress": "Make sure the email address is correct",
       "waitFewMinutes": "Wait a few minutes and try resending",
       "needHelp": "Need help?",
       "contactSupport": "Contact support",
@@ -1159,7 +1165,7 @@
       "description": "Get a unique link to share your gallery instantly."
     },
     "skip": "Skip",
-    "finish": "Get Started"
+    "getStarted": "Get Started"
   },
   "myGalleries": {
     "title": "My Galleries",
@@ -1303,12 +1309,33 @@
       "registrationFailed": "Registration failed",
       "accountCreatedSuccess": "Account created successfully",
       "passwordResetSuccess": "Password reset successfully",
+      "passwordResetFailed": "Failed to reset password",
       "passwordResetEmailSent": "If an account exists with this email address, you will receive a reset link.",
+      "verificationFailed": "Verification failed",
+      "emailVerifiedSuccess": "Email verified successfully",
+      "verificationEmailSent": "Verification email sent",
+      "emailAlreadyVerified": "This email is already verified",
+      "emailSendFailed": "Failed to send email",
+      "userNotFound": "User not found",
       "invalidData": "Invalid data",
       "profileUpdateFailed": "Failed to update profile",
       "profileFetchFailed": "Failed to fetch profile",
+      "profileNotFound": "Profile not found",
       "updateError": "Error during update",
-      "serverError": "Server error"
+      "serverError": "Server error",
+      "authRequired": "Authentication required",
+      "authenticationRequired": "Authentication required",
+      "invalidKeyId": "Invalid key ID",
+      "apiKeyNotFound": "API key not found",
+      "proPlanRequired": "Pro plan required",
+      "proRequired": "Pro plan required for this feature",
+      "slugTaken": "This slug is already taken",
+      "invalidSlug": "Invalid slug",
+      "missingSlug": "The slug parameter is required",
+      "invalidSlugLength": "Slug must be between 1 and 100 characters",
+      "notFound": "Resource not found",
+      "invalidAction": "Invalid action",
+      "rateLimitExceeded": "Too many attempts. Please try again later."
     }
   },
   "emails": {

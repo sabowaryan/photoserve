@@ -19,15 +19,16 @@ export function useProfileTheme() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   
-  // Initialize with 'system' for SSR to avoid hydration mismatch
-  const [theme, setTheme] = useState<ProfileTheme>('system');
+  // Initialize with 'light' for SSR and default behavior
+  const [theme, setTheme] = useState<ProfileTheme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   // Load theme from localStorage after mount (Requirement 11.10)
+  // Default to 'light' instead of 'system' to prevent automatic dark mode
   useEffect(() => {
     setMounted(true);
     
-    const savedTheme = (localStorage.getItem('profile-theme') as ProfileTheme) || 'system';
+    const savedTheme = (localStorage.getItem('profile-theme') as ProfileTheme) || 'light';
     setTheme(savedTheme);
     
     // Determine initial resolved theme (Requirement 11.8)

@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "크리에이터가 사랑하는 사진 공유 플랫폼.",
+    "signin": {
+      "title": "다시 오신 것을 환영합니다",
+      "subtitle": "갤러리에 액세스하려면 로그인하세요"
+    },
     "tabs": {
       "signIn": "로그인",
       "signUp": "회원가입"
     },
     "signup": {
+      "title": "계정 만들기",
+      "subtitle": "PikSend의 {{count}}명 이상의 사진작가와 함께하세요",
       "step": "단계",
       "stepEmail": "이메일",
       "stepPassword": "보안",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "비밀번호가 성공적으로 재설정되었습니다!",
       "canNowSignIn": "이제 새 비밀번호로 로그인할 수 있습니다."
     },
-      "resetButton": "비밀번호 재설정"
+    "verification": {
+      "title": "이메일 확인",
+      "subtitle": "받은 편지함으로 확인 이메일을 보냈습니다",
+      "checkEmail": "이메일을 확인하세요",
+      "clickLink": "이메일의 링크를 클릭하여 계정을 확인하세요",
+      "didntReceive": "이메일을 받지 못하셨나요?",
+      "resend": "확인 이메일 다시 보내기",
+      "verifying": "확인 중...",
+      "success": "이메일이 확인되었습니다!",
+      "error": "확인에 실패했습니다. 다시 시도하세요.",
+      "expired": "확인 링크가 만료되었습니다",
+      "alreadyVerified": "이메일이 이미 확인되었습니다"
+    },
+    "sidebar": {
+      "headline": "5분 안에 사진을 전달하세요. 갤러리를 판매하세요. 90%를 유지하세요.",
+      "subheadline": "{{count}}명 이상의 사진작가가 고객에게 원본 품질을 제공하고 있습니다.",
+      "benefit1Title": "독특한 Lightroom 플러그인",
+      "benefit1Desc": "Lightroom에서 직접 한 번의 클릭으로 내보내기 및 공유",
+      "benefit2Title": "최저 수수료",
+      "benefit2Desc": "판매의 90%를 유지하세요. 수수료는 10%만",
+      "benefit3Title": "2시간 지원",
+      "benefit3Desc": "2 영업시간 이내 응답 보장",
+      "trustUsers": "{{count}}명 이상의 사진작가",
+      "trustUsersDesc": "우리를 신뢰합니다",
+      "trustRating": "4.8/5 별",
+      "trustRatingDesc": "평균 평점",
+      "testimonialQuote": "PikSend는 사진 전달 방식을 변화시켰습니다. 고객들은 품질과 단순함을 좋아합니다.",
+      "testimonialAuthor": "마리 뒤부아",
+      "testimonialRole": "웨딩 포토그래퍼",
+      "title": "왜 PikSend를 선택해야 할까요?",
+      "features": {
+        "quality": {
+          "title": "원본 품질",
+          "description": "압축 없음, 사진이 완벽하게 유지됩니다"
+        },
+        "security": {
+          "title": "안전한 공유",
+          "description": "비밀번호 보호 및 만료 링크"
+        },
+        "fast": {
+          "title": "초고속",
+          "description": "최적화된 전송, 즉시 로딩"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "등록 실패",
       "accountCreatedSuccess": "계정이 성공적으로 생성되었습니다",
       "passwordResetSuccess": "비밀번호가 성공적으로 재설정되었습니다",
+      "passwordResetFailed": "비밀번호 재설정 실패",
       "passwordResetEmailSent": "이 이메일 주소로 계정이 존재하면 재설정 링크를 받게 됩니다.",
+      "verificationFailed": "검증 실패",
+      "emailVerifiedSuccess": "이메일이 성공적으로 검증되었습니다",
+      "verificationEmailSent": "검증 이메일이 전송되었습니다",
+      "emailAlreadyVerified": "이 이메일은 이미 검증되었습니다",
+      "emailSendFailed": "이메일 전송 실패",
+      "userNotFound": "사용자를 찾을 수 없습니다",
       "invalidData": "유효하지 않은 데이터",
       "profileUpdateFailed": "프로필 업데이트 실패",
       "profileFetchFailed": "프로필 가져오기 실패",
+      "profileNotFound": "프로필을 찾을 수 없습니다",
       "updateError": "업데이트 중 오류",
-      "serverError": "서버 오류"
+      "serverError": "서버 오류",
+      "authRequired": "인증이 필요합니다",
+      "authenticationRequired": "인증이 필요합니다",
+      "invalidKeyId": "유효하지 않은 키 ID",
+      "apiKeyNotFound": "API 키를 찾을 수 없습니다",
+      "proPlanRequired": "Pro 플랜이 필요합니다",
+      "proRequired": "이 기능에는 Pro 플랜이 필요합니다",
+      "slugTaken": "이 슬러그는 이미 사용 중입니다",
+      "invalidSlug": "유효하지 않은 슬러그",
+      "missingSlug": "슬러그 매개변수가 필요합니다",
+      "invalidSlugLength": "슬러그는 1~100자 사이여야 합니다",
+      "notFound": "리소스를 찾을 수 없습니다",
+      "invalidAction": "유효하지 않은 작업",
+      "rateLimitExceeded": "시도 횟수가 너무 많습니다. 나중에 다시 시도하세요."
     }
   }
 }

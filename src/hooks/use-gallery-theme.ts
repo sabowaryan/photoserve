@@ -13,15 +13,16 @@ export function useGalleryTheme() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   
-  // Initialize with 'light' for SSR to avoid hydration mismatch
+  // Initialize with 'light' for SSR and default behavior
   const [theme, setTheme] = useState<GalleryTheme>('light');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   // Load theme from localStorage after mount
+  // Default to 'light' instead of 'system' to prevent automatic dark mode
   useEffect(() => {
     setMounted(true);
     
-    const savedTheme = (localStorage.getItem('gallery-theme') as GalleryTheme) || 'system';
+    const savedTheme = (localStorage.getItem('gallery-theme') as GalleryTheme) || 'light';
     setTheme(savedTheme);
     
     // Determine initial resolved theme

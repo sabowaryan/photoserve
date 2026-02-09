@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "منصة مشاركة الصور المحبوبة من المبدعين.",
+    "signin": {
+      "title": "مرحبًا بعودتك",
+      "subtitle": "سجل الدخول للوصول إلى معارضك"
+    },
     "tabs": {
       "signIn": "تسجيل الدخول",
       "signUp": "إنشاء حساب"
     },
     "signup": {
+      "title": "إنشاء حساب",
+      "subtitle": "انضم إلى أكثر من {{count}} مصور على PikSend",
       "step": "الخطوة",
       "stepEmail": "بريدك الإلكتروني",
       "stepPassword": "الأمان",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "تم إعادة تعيين كلمة المرور بنجاح!",
       "canNowSignIn": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
     },
-      "resetButton": "إعادة تعيين كلمة المرور"
+    "verification": {
+      "title": "تحقق من بريدك الإلكتروني",
+      "subtitle": "لقد أرسلنا بريد تحقق إلى صندوق الوارد الخاص بك",
+      "checkEmail": "تحقق من بريدك الإلكتروني",
+      "clickLink": "انقر على الرابط في البريد الإلكتروني للتحقق من حسابك",
+      "didntReceive": "لم تتلق البريد الإلكتروني؟",
+      "resend": "إعادة إرسال بريد التحقق",
+      "verifying": "جارٍ التحقق...",
+      "success": "تم التحقق من البريد الإلكتروني بنجاح!",
+      "error": "فشل التحقق. حاول مرة أخرى.",
+      "expired": "انتهت صلاحية رابط التحقق",
+      "alreadyVerified": "تم التحقق من البريد الإلكتروني بالفعل"
+    },
+    "sidebar": {
+      "headline": "قدم صورك في 5 دقائق. بع معارضك. احتفظ بـ 90%.",
+      "subheadline": "انضم إلى أكثر من {{count}} مصور يقدمون جودة أصلية لعملائهم.",
+      "benefit1Title": "إضافة Lightroom فريدة",
+      "benefit1Desc": "صدّر وشارك مباشرة من Lightroom بنقرة واحدة",
+      "benefit2Title": "أقل عمولة",
+      "benefit2Desc": "احتفظ بـ 90% من مبيعاتك. عمولة 10% فقط",
+      "benefit3Title": "دعم خلال ساعتين",
+      "benefit3Desc": "استجابة مضمونة في أقل من ساعتي عمل",
+      "trustUsers": "{{count}}+ مصور",
+      "trustUsersDesc": "يثقون بنا",
+      "trustRating": "4.8/5 نجوم",
+      "trustRatingDesc": "متوسط التقييم",
+      "testimonialQuote": "غيّر PikSend طريقة تسليم صوري. عملائي يحبون الجودة والبساطة.",
+      "testimonialAuthor": "ماري دوبوا",
+      "testimonialRole": "مصورة أعراس",
+      "title": "لماذا تختار PikSend؟",
+      "features": {
+        "quality": {
+          "title": "جودة أصلية",
+          "description": "بدون ضغط، تبقى صورك مثالية"
+        },
+        "security": {
+          "title": "مشاركة آمنة",
+          "description": "حماية بكلمة مرور وروابط منتهية الصلاحية"
+        },
+        "fast": {
+          "title": "سريع كالبرق",
+          "description": "تسليم محسّن، تحميل فوري"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "فشل التسجيل",
       "accountCreatedSuccess": "تم إنشاء الحساب بنجاح",
       "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+      "passwordResetFailed": "فشل إعادة تعيين كلمة المرور",
       "passwordResetEmailSent": "إذا كان هناك حساب بهذا البريد الإلكتروني، ستتلقى رابط إعادة التعيين.",
+      "verificationFailed": "فشل التحقق",
+      "emailVerifiedSuccess": "تم التحقق من البريد الإلكتروني بنجاح",
+      "verificationEmailSent": "تم إرسال بريد التحقق الإلكتروني",
+      "emailAlreadyVerified": "تم التحقق من هذا البريد الإلكتروني بالفعل",
+      "emailSendFailed": "فشل إرسال البريد الإلكتروني",
+      "userNotFound": "المستخدم غير موجود",
       "invalidData": "بيانات غير صالحة",
       "profileUpdateFailed": "فشل تحديث الملف الشخصي",
       "profileFetchFailed": "فشل جلب الملف الشخصي",
+      "profileNotFound": "الملف الشخصي غير موجود",
       "updateError": "خطأ أثناء التحديث",
-      "serverError": "خطأ في الخادم"
+      "serverError": "خطأ في الخادم",
+      "authRequired": "المصادقة مطلوبة",
+      "authenticationRequired": "المصادقة مطلوبة",
+      "invalidKeyId": "معرف المفتاح غير صالح",
+      "apiKeyNotFound": "مفتاح API غير موجود",
+      "proPlanRequired": "خطة Pro مطلوبة",
+      "proRequired": "خطة Pro مطلوبة لهذه الميزة",
+      "slugTaken": "هذا الاسم المستعار مستخدم بالفعل",
+      "invalidSlug": "اسم مستعار غير صالح",
+      "missingSlug": "معامل الاسم المستعار مطلوب",
+      "invalidSlugLength": "يجب أن يكون الاسم المستعار بين 1 و 100 حرف",
+      "notFound": "المورد غير موجود",
+      "invalidAction": "إجراء غير صالح",
+      "rateLimitExceeded": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
     }
   }
 }

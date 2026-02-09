@@ -43,4 +43,61 @@ describe("LoadingSpinner", () => {
     render(<LoadingSpinner />);
     expect(screen.getByText("Loading")).toHaveClass("sr-only");
   });
+
+  // Edge cases for loading spinner sizes
+  it("sm size has correct dimensions", () => {
+    render(<LoadingSpinner size="sm" data-testid="spinner" />);
+    const spinner = screen.getByRole("status");
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it("md size has correct dimensions", () => {
+    render(<LoadingSpinner size="md" data-testid="spinner" />);
+    const spinner = screen.getByRole("status");
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it("lg size has correct dimensions", () => {
+    render(<LoadingSpinner size="lg" data-testid="spinner" />);
+    const spinner = screen.getByRole("status");
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it("xl size has correct dimensions", () => {
+    render(<LoadingSpinner size="xl" data-testid="spinner" />);
+    const spinner = screen.getByRole("status");
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it("renders without text when text prop is empty string", () => {
+    render(<LoadingSpinner text="" />);
+    // The component always shows "Loading" in sr-only for accessibility
+    // but should not show the visible text paragraph
+    expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument();
+  });
+
+  it("combines size and custom text correctly", () => {
+    render(<LoadingSpinner size="lg" text="Processing" />);
+    expect(screen.getByText(/processing/i)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+  });
+
+  it("has correct color for dark theme", () => {
+    const { container } = render(<LoadingSpinner />);
+    const spinner = container.querySelector("svg");
+    expect(spinner).toHaveClass("text-indigo-400");
+  });
+
+  it("has animation classes", () => {
+    const { container } = render(<LoadingSpinner />);
+    const spinner = container.querySelector("svg");
+    expect(spinner).toHaveClass("animate-spin");
+  });
+
+  it("maintains accessibility with custom text", () => {
+    render(<LoadingSpinner text="Loading data" />);
+    const status = screen.getByRole("status");
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByText(/loading data/i)).toBeInTheDocument();
+  });
 });

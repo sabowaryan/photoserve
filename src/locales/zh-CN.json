@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "创作者喜爱的照片分享平台。",
+    "signin": {
+      "title": "欢迎回来",
+      "subtitle": "登录以访问您的相册"
+    },
     "tabs": {
       "signIn": "登录",
       "signUp": "注册"
     },
     "signup": {
+      "title": "创建账户",
+      "subtitle": "加入PikSend的{{count}}多位摄影师",
       "step": "步骤",
       "stepEmail": "您的邮箱",
       "stepPassword": "安全性",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "密码重置成功！",
       "canNowSignIn": "您现在可以使用新密码登录。"
     },
-      "resetButton": "重置密码"
+    "verification": {
+      "title": "验证您的邮箱",
+      "subtitle": "我们已向您发送验证链接",
+      "checkEmail": "查看您的邮箱",
+      "clickLink": "点击邮件中的链接验证您的账户",
+      "didntReceive": "没有收到邮件？",
+      "resend": "重新发送验证邮件",
+      "verifying": "正在验证...",
+      "success": "邮箱验证成功！",
+      "error": "验证失败。请重试。",
+      "expired": "验证链接已过期",
+      "alreadyVerified": "邮箱已验证"
+    },
+    "sidebar": {
+      "headline": "5分钟内交付您的照片。销售您的相册。保留90%。",
+      "subheadline": "加入{{count}}多位向客户交付原始品质的摄影师。",
+      "benefit1Title": "独特的Lightroom插件",
+      "benefit1Desc": "直接从Lightroom一键导出和分享",
+      "benefit2Title": "最低佣金",
+      "benefit2Desc": "保留您销售额的90%。仅10%佣金",
+      "benefit3Title": "2小时支持",
+      "benefit3Desc": "保证在2个工作小时内回复",
+      "trustUsers": "{{count}}多位摄影师",
+      "trustUsersDesc": "信任我们",
+      "trustRating": "4.8/5星",
+      "trustRatingDesc": "平均评分",
+      "testimonialQuote": "PikSend改变了我交付照片的方式。我的客户喜欢品质和简洁性。",
+      "testimonialAuthor": "玛丽·杜布瓦",
+      "testimonialRole": "婚礼摄影师",
+      "title": "为什么选择PikSend？",
+      "features": {
+        "quality": {
+          "title": "原始品质",
+          "description": "零压缩，保持您的照片完美"
+        },
+        "security": {
+          "title": "安全分享",
+          "description": "密码保护和过期链接"
+        },
+        "fast": {
+          "title": "闪电般快速",
+          "description": "优化的交付，即时加载"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "注册失败",
       "accountCreatedSuccess": "账户创建成功",
       "passwordResetSuccess": "密码重置成功",
+      "passwordResetFailed": "密码重置失败",
       "passwordResetEmailSent": "如果此邮箱地址存在账户，您将收到重置链接。",
+      "verificationFailed": "验证失败",
+      "emailVerifiedSuccess": "邮箱验证成功",
+      "verificationEmailSent": "验证邮件已发送",
+      "emailAlreadyVerified": "此邮箱已验证",
+      "emailSendFailed": "邮件发送失败",
+      "userNotFound": "未找到用户",
       "invalidData": "数据无效",
       "profileUpdateFailed": "更新个人资料失败",
       "profileFetchFailed": "获取个人资料失败",
+      "profileNotFound": "未找到个人资料",
       "updateError": "更新时出错",
-      "serverError": "服务器错误"
+      "serverError": "服务器错误",
+      "authRequired": "需要身份验证",
+      "authenticationRequired": "需要身份验证",
+      "invalidKeyId": "无效的密钥ID",
+      "apiKeyNotFound": "未找到API密钥",
+      "proPlanRequired": "需要Pro计划",
+      "proRequired": "此功能需要Pro计划",
+      "slugTaken": "此slug已被使用",
+      "invalidSlug": "无效的slug",
+      "missingSlug": "需要slug参数",
+      "invalidSlugLength": "slug必须在1到100个字符之间",
+      "notFound": "未找到资源",
+      "invalidAction": "无效的操作",
+      "rateLimitExceeded": "尝试次数过多。请稍后重试。"
     }
   }
 }

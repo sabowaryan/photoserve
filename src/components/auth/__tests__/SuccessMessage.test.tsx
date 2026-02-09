@@ -57,9 +57,78 @@ describe("SuccessMessage", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(
-      <SuccessMessage message="Success" className="custom-class" />
+    render(<SuccessMessage message="Success" className="custom-class" />);
+    expect(screen.getByRole("status")).toHaveClass("custom-class");
+  });
+
+  // Edge cases for success message dismissal
+  it("dismissal works with keyboard (Enter key)", async () => {
+    const handleDismiss = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <SuccessMessage
+        message="Success message"
+        dismissible
+        onDismiss={handleDismiss}
+      />
     );
-    expect(container.firstChild).toHaveClass("custom-class");
+    
+    const dismissButton = screen.getByLabelText(/dismiss success message/i);
+    dismissButton.focus();
+    await user.keyboard("{Enter}");
+    expect(handleDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("dismissal works with keyboard (Space key)", async () => {
+    const handleDismiss = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <SuccessMessage
+        message="Success message"
+        dismissible
+        onDismiss={handleDismiss}
+      />
+    );
+    
+    const dismissButton = screen.getByLabelText(/dismiss success message/i);
+    dismissButton.focus();
+    await user.keyboard(" ");
+    expect(handleDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders without dismiss button when onDismiss is not provided", () => {
+    render(
+      <SuccessMessage
+        message="Success message"
+        dismissible
+      />
+    );
+    expect(screen.queryByLabelText(/dismiss success message/i)).not.toBeInTheDocument();
+  });
+
+  it("displays long success messages correctly", () => {
+    const longMessage = "This is a very long success message that should still be displayed correctly without breaking the layout or causing any visual issues.";
+    render(<SuccessMessage message={longMessage} />);
+    expect(screen.getByText(longMessage)).toBeInTheDocument();
+  });
+
+  it("handles multiple success messages with different titles", () => {
+    const { rerender } = render(
+      <SuccessMessage title="Account Created" message="Welcome!" />
+    );
+    expect(screen.getByText("Account Created")).toBeInTheDocument();
+
+    rerender(
+      <SuccessMessage title="Email Sent" message="Check your inbox" />
+    );
+    expect(screen.getByText("Email Sent")).toBeInTheDocument();
+    expect(screen.getByText("Check your inbox")).toBeInTheDocument();
+  });
+
+  it("has correct styling classes", () => {
+    render(<SuccessMessage message="Success" />);
+    const successDiv = screen.getByRole("status");
+    expect(successDiv).toHaveClass("bg-emerald-950/30");
+    expect(successDiv).toHaveClass("border-emerald-500/30");
   });
 });

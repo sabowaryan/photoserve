@@ -48,8 +48,8 @@ describe("FormInput", () => {
       />
     );
     const input = screen.getByLabelText(/email/i);
-    expect(input).toHaveClass("border-rose-500");
-    expect(input).toHaveClass("bg-rose-50");
+    expect(input).toHaveClass("border-rose-500/50");
+    expect(input).toHaveClass("bg-rose-950/20");
   });
 
   it("shows success state correctly", () => {
@@ -61,8 +61,8 @@ describe("FormInput", () => {
       />
     );
     const input = screen.getByLabelText(/email/i);
-    expect(input).toHaveClass("border-emerald-500");
-    expect(input).toHaveClass("bg-emerald-50");
+    expect(input).toHaveClass("border-emerald-500/50");
+    expect(input).toHaveClass("bg-emerald-950/20");
   });
 
   it("renders with icon", () => {
@@ -161,5 +161,139 @@ describe("FormInput", () => {
     );
     const input = screen.getByLabelText(/email/i);
     expect(input).toHaveAttribute("aria-describedby");
+  });
+
+  // Edge cases for input states
+  it("default state has correct styling", () => {
+    render(<FormInput id="email" label="Email" />);
+    const input = screen.getByLabelText(/email/i);
+    expect(input).toHaveClass("bg-slate-900/50");
+    expect(input).toHaveClass("border-white/10");
+  });
+
+  it("focus state applies correct border color", () => {
+    render(<FormInput id="email" label="Email" />);
+    const input = screen.getByLabelText(/email/i);
+    expect(input).toHaveClass("focus:border-indigo-500");
+  });
+
+  it("error state overrides success state", () => {
+    render(
+      <FormInput
+        id="email"
+        label="Email"
+        error="Error message"
+        success
+      />
+    );
+    const input = screen.getByLabelText(/email/i);
+    expect(input).toHaveClass("border-rose-500/50");
+    expect(input).not.toHaveClass("border-emerald-500/50");
+  });
+
+  it("disabled state prevents interaction", async () => {
+    const handleChange = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <FormInput
+        id="email"
+        label="Email"
+        disabled
+        onChange={handleChange}
+      />
+    );
+    
+    const input = screen.getByLabelText(/email/i);
+    await user.type(input, "test");
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
+  it("password toggle button has correct aria-label", () => {
+    render(
+      <FormInput
+        id="password"
+        label="Password"
+        type="password"
+        showPasswordToggle
+      />
+    );
+    expect(screen.getByLabelText("Show password")).toBeInTheDocument();
+  });
+
+  it("password toggle updates aria-label when toggled", async () => {
+    const user = userEvent.setup();
+    render(
+      <FormInput
+        id="password"
+        label="Password"
+        type="password"
+        showPasswordToggle
+      />
+    );
+    
+    const toggleButton = screen.getByLabelText("Show password");
+    await user.click(toggleButton);
+    expect(screen.getByLabelText("Hide password")).toBeInTheDocument();
+  });
+
+  it("icon color changes based on state", () => {
+    const { rerender, container } = render(
+      <FormInput
+        id="email"
+        label="Email"
+        icon={<Mail data-testid="icon" />}
+      />
+    );
+    let iconContainer = container.querySelector(".absolute.left-4");
+    expect(iconContainer).toHaveClass("text-slate-500");
+
+    rerender(
+      <FormInput
+        id="email"
+        label="Email"
+        icon={<Mail data-testid="icon" />}
+        error="Error"
+      />
+    );
+    iconContainer = container.querySelector(".absolute.left-4");
+    expect(iconContainer).toHaveClass("text-rose-400");
+
+    rerender(
+      <FormInput
+        id="email"
+        label="Email"
+        icon={<Mail data-testid="icon" />}
+        success
+      />
+    );
+    iconContainer = container.querySelector(".absolute.left-4");
+    expect(iconContainer).toHaveClass("text-emerald-400");
+  });
+
+  it("error message has role alert", () => {
+    render(
+      <FormInput
+        id="email"
+        label="Email"
+        error="Invalid email"
+      />
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Invalid email");
+  });
+
+  it("combines multiple props correctly", () => {
+    render(
+      <FormInput
+        id="email"
+        label="Email"
+        required
+        helperText="Helper"
+        icon={<Mail data-testid="icon" />}
+      />
+    );
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByText("*")).toBeInTheDocument();
+    expect(screen.getByText("Helper")).toBeInTheDocument();
+    expect(screen.getByTestId("icon")).toBeInTheDocument();
   });
 });

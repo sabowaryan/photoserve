@@ -309,12 +309,18 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "La plateforme de partage de photos préférée des créatifs.",
+    "signin": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous pour accéder à vos galeries"
+    },
     "tabs": {
       "signIn": "Connexion",
       "signUp": "Inscription",
       "navigation": "Onglets d'authentification"
     },
     "signup": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez {{count}}+ photographes sur PikSend",
       "step": "Étape",
       "stepEmail": "Votre email",
       "stepPassword": "Sécurité",
@@ -416,7 +422,7 @@
     },
     "sidebar": {
       "headline": "Livrez vos photos en 5 minutes. Vendez vos galeries. Gardez 90%.",
-      "subheadline": "Rejoignez 500+ photographes qui livrent en qualité originale à leurs clients.",
+      "subheadline": "Rejoignez {{count}}+ photographes qui livrent en qualité originale à leurs clients.",
       "benefit1Title": "Plugin Lightroom Unique",
       "benefit1Desc": "Exportez et partagez directement depuis Lightroom en un clic",
       "benefit2Title": "Commission la plus basse",
@@ -1242,12 +1248,33 @@
       "registrationFailed": "Échec de l'inscription",
       "accountCreatedSuccess": "Compte créé avec succès",
       "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
+      "passwordResetFailed": "Échec de la réinitialisation du mot de passe",
       "passwordResetEmailSent": "Si un compte existe avec cette adresse email, vous recevrez un lien de réinitialisation.",
+      "verificationFailed": "Échec de la vérification",
+      "emailVerifiedSuccess": "Email vérifié avec succès",
+      "verificationEmailSent": "Email de vérification envoyé",
+      "emailAlreadyVerified": "Cet email est déjà vérifié",
+      "emailSendFailed": "Échec de l'envoi de l'email",
+      "userNotFound": "Utilisateur non trouvé",
       "invalidData": "Données invalides",
       "profileUpdateFailed": "Échec de la mise à jour du profil",
       "profileFetchFailed": "Échec de la récupération du profil",
+      "profileNotFound": "Profil non trouvé",
       "updateError": "Erreur lors de la mise à jour",
-      "serverError": "Erreur serveur"
+      "serverError": "Erreur serveur",
+      "authRequired": "Authentification requise",
+      "authenticationRequired": "Authentification requise",
+      "invalidKeyId": "ID de clé invalide",
+      "apiKeyNotFound": "Clé API non trouvée",
+      "proPlanRequired": "Plan Pro requis",
+      "proRequired": "Plan Pro requis pour cette fonctionnalité",
+      "slugTaken": "Ce slug est déjà utilisé",
+      "invalidSlug": "Slug invalide",
+      "missingSlug": "Le paramètre slug est requis",
+      "invalidSlugLength": "Le slug doit contenir entre 1 et 100 caractères",
+      "notFound": "Ressource non trouvée",
+      "invalidAction": "Action invalide",
+      "rateLimitExceeded": "Trop de tentatives. Veuillez réessayer plus tard."
     }
   }
 }

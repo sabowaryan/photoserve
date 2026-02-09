@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "クリエイターに愛される写真共有プラットフォーム。",
+    "signin": {
+      "title": "おかえりなさい",
+      "subtitle": "ギャラリーにアクセスするにはログインしてください"
+    },
     "tabs": {
       "signIn": "ログイン",
       "signUp": "新規登録"
     },
     "signup": {
+      "title": "アカウント作成",
+      "subtitle": "PikSendの{{count}}人以上の写真家に参加",
       "step": "ステップ",
       "stepEmail": "メールアドレス",
       "stepPassword": "セキュリティ",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "パスワードがリセットされました！",
       "canNowSignIn": "新しいパスワードでログインできます。"
     },
-      "resetButton": "パスワードをリセット"
+    "verification": {
+      "title": "メールアドレスを確認",
+      "subtitle": "確認メールを受信トレイに送信しました",
+      "checkEmail": "メールを確認してください",
+      "clickLink": "メール内のリンクをクリックしてアカウントを確認してください",
+      "didntReceive": "メールが届きませんでしたか？",
+      "resend": "確認メールを再送信",
+      "verifying": "確認中...",
+      "success": "メールアドレスが確認されました！",
+      "error": "確認に失敗しました。もう一度お試しください。",
+      "expired": "確認リンクの有効期限が切れています",
+      "alreadyVerified": "メールアドレスは既に確認済みです"
+    },
+    "sidebar": {
+      "headline": "5分で写真を配信。ギャラリーを販売。90%を保持。",
+      "subheadline": "{{count}}人以上のフォトグラファーがオリジナル品質をクライアントに提供しています。",
+      "benefit1Title": "ユニークなLightroomプラグイン",
+      "benefit1Desc": "Lightroomから直接ワンクリックでエクスポートと共有",
+      "benefit2Title": "最低手数料",
+      "benefit2Desc": "売上の90%を保持。手数料はわずか10%",
+      "benefit3Title": "2時間サポート",
+      "benefit3Desc": "2営業時間以内の応答を保証",
+      "trustUsers": "{{count}}人以上のフォトグラファー",
+      "trustUsersDesc": "私たちを信頼",
+      "trustRating": "4.8/5つ星",
+      "trustRatingDesc": "平均評価",
+      "testimonialQuote": "PikSendは写真の配信方法を変えました。クライアントは品質とシンプルさを気に入っています。",
+      "testimonialAuthor": "マリー・デュボワ",
+      "testimonialRole": "ウェディングフォトグラファー",
+      "title": "なぜPikSendを選ぶのか？",
+      "features": {
+        "quality": {
+          "title": "オリジナル品質",
+          "description": "圧縮なし、写真は完璧なまま"
+        },
+        "security": {
+          "title": "安全な共有",
+          "description": "パスワード保護と期限付きリンク"
+        },
+        "fast": {
+          "title": "超高速",
+          "description": "最適化された配信、即座に読み込み"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "登録に失敗しました",
       "accountCreatedSuccess": "アカウントが正常に作成されました",
       "passwordResetSuccess": "パスワードが正常にリセットされました",
+      "passwordResetFailed": "パスワードのリセットに失敗しました",
       "passwordResetEmailSent": "このメールアドレスでアカウントが存在する場合、リセットリンクが届きます。",
+      "verificationFailed": "検証に失敗しました",
+      "emailVerifiedSuccess": "メールアドレスが正常に検証されました",
+      "verificationEmailSent": "検証メールが送信されました",
+      "emailAlreadyVerified": "このメールアドレスは既に検証済みです",
+      "emailSendFailed": "メールの送信に失敗しました",
+      "userNotFound": "ユーザーが見つかりません",
       "invalidData": "無効なデータ",
       "profileUpdateFailed": "プロフィールの更新に失敗しました",
       "profileFetchFailed": "プロフィールの取得に失敗しました",
+      "profileNotFound": "プロフィールが見つかりません",
       "updateError": "更新中にエラーが発生しました",
-      "serverError": "サーバーエラー"
+      "serverError": "サーバーエラー",
+      "authRequired": "認証が必要です",
+      "authenticationRequired": "認証が必要です",
+      "invalidKeyId": "無効なキーID",
+      "apiKeyNotFound": "APIキーが見つかりません",
+      "proPlanRequired": "Proプランが必要です",
+      "proRequired": "この機能にはProプランが必要です",
+      "slugTaken": "このスラッグは既に使用されています",
+      "invalidSlug": "無効なスラッグ",
+      "missingSlug": "スラッグパラメータが必要です",
+      "invalidSlugLength": "スラッグは1〜100文字である必要があります",
+      "notFound": "リソースが見つかりません",
+      "invalidAction": "無効なアクション",
+      "rateLimitExceeded": "試行回数が多すぎます。後でもう一度お試しください。"
     }
   }
 }

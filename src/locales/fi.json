@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "Kuvienjakoalusta, jota luovat rakastavat.",
+    "signin": {
+      "title": "Tervetuloa takaisin",
+      "subtitle": "Kirjaudu sisään päästäksesi gallerioihisi"
+    },
     "tabs": {
       "signIn": "Kirjaudu sisään",
       "signUp": "Rekisteröidy"
     },
     "signup": {
+      "title": "Luo tili",
+      "subtitle": "Liity yli {{count}} valokuvaajaan PikSendissä",
       "step": "Vaihe",
       "stepEmail": "Sähköpostisi",
       "stepPassword": "Turvallisuus",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "Salasana nollattu onnistuneesti!",
       "canNowSignIn": "Voit nyt kirjautua sisään uudella salasanallasi."
     },
-      "resetButton": "Nollaa salasana"
+    "verification": {
+      "title": "Vahvista sähköpostisi",
+      "subtitle": "Olemme lähettäneet vahvistussähköpostin postilaatikkoosi",
+      "checkEmail": "Tarkista sähköpostisi",
+      "clickLink": "Napsauta sähköpostissa olevaa linkkiä vahvistaaksesi tilisi",
+      "didntReceive": "Etkö saanut sähköpostia?",
+      "resend": "Lähetä vahvistussähköposti uudelleen",
+      "verifying": "Vahvistetaan...",
+      "success": "Sähköposti vahvistettu onnistuneesti!",
+      "error": "Vahvistus epäonnistui. Yritä uudelleen.",
+      "expired": "Vahvistuslinkki on vanhentunut",
+      "alreadyVerified": "Sähköposti on jo vahvistettu"
+    },
+    "sidebar": {
+      "headline": "Toimita kuvasi 5 minuutissa. Myy gallerioitasi. Pidä 90%.",
+      "subheadline": "Liity {{count}}+ valokuvaajaan, jotka toimittavat alkuperäistä laatua asiakkailleen.",
+      "benefit1Title": "Ainutlaatuinen Lightroom-laajennus",
+      "benefit1Desc": "Vie ja jaa suoraan Lightroomista yhdellä klikkauksella",
+      "benefit2Title": "Alhaisin Provisio",
+      "benefit2Desc": "Pidä 90% myynnistäsi. Vain 10% provisio",
+      "benefit3Title": "2h Tuki",
+      "benefit3Desc": "Taattu vastaus alle 2 työpäivän kuluessa",
+      "trustUsers": "{{count}}+ valokuvaajaa",
+      "trustUsersDesc": "Luottaa meihin",
+      "trustRating": "4.8/5 tähteä",
+      "trustRatingDesc": "Keskimääräinen arvosana",
+      "testimonialQuote": "PikSend muutti tapaa, jolla toimitan kuvani. Asiakkaani rakastavat laatua ja yksinkertaisuutta.",
+      "testimonialAuthor": "Marie Dubois",
+      "testimonialRole": "Häävalokuvaaja",
+      "title": "Miksi valita PikSend?",
+      "features": {
+        "quality": {
+          "title": "Alkuperäinen laatu",
+          "description": "Ei pakkausta, kuvasi pysyvät täydellisinä"
+        },
+        "security": {
+          "title": "Turvallinen jakaminen",
+          "description": "Salasanasuojaus ja vanhentuvat linkit"
+        },
+        "fast": {
+          "title": "Salamannopea",
+          "description": "Optimoitu toimitus, välitön lataus"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "Rekisteröinti epäonnistui",
       "accountCreatedSuccess": "Tili luotu onnistuneesti",
       "passwordResetSuccess": "Salasana nollattu onnistuneesti",
+      "passwordResetFailed": "Salasanan nollaus epäonnistui",
       "passwordResetEmailSent": "Jos tili on olemassa tällä sähköpostiosoitteella, saat nollauslinkin.",
+      "verificationFailed": "Vahvistus epäonnistui",
+      "emailVerifiedSuccess": "Sähköposti vahvistettu onnistuneesti",
+      "verificationEmailSent": "Vahvistussähköposti lähetetty",
+      "emailAlreadyVerified": "Tämä sähköposti on jo vahvistettu",
+      "emailSendFailed": "Sähköpostin lähetys epäonnistui",
+      "userNotFound": "Käyttäjää ei löytynyt",
       "invalidData": "Virheelliset tiedot",
       "profileUpdateFailed": "Profiilin päivitys epäonnistui",
       "profileFetchFailed": "Profiilin haku epäonnistui",
+      "profileNotFound": "Profiilia ei löytynyt",
       "updateError": "Virhe päivityksessä",
-      "serverError": "Palvelinvirhe"
+      "serverError": "Palvelinvirhe",
+      "authRequired": "Todennus vaaditaan",
+      "authenticationRequired": "Todennus vaaditaan",
+      "invalidKeyId": "Virheellinen avain-ID",
+      "apiKeyNotFound": "API-avainta ei löytynyt",
+      "proPlanRequired": "Pro-tilaus vaaditaan",
+      "proRequired": "Pro-tilaus vaaditaan tälle ominaisuudelle",
+      "slugTaken": "Tämä slug on jo käytössä",
+      "invalidSlug": "Virheellinen slug",
+      "missingSlug": "Slug-parametri vaaditaan",
+      "invalidSlugLength": "Slugin on oltava 1-100 merkkiä",
+      "notFound": "Resurssia ei löytynyt",
+      "invalidAction": "Virheellinen toiminto",
+      "rateLimitExceeded": "Liian monta yritystä. Yritä myöhemmin uudelleen."
     }
   }
 }

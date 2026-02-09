@@ -296,7 +296,7 @@
     "finalCta": {
       "title": "Professionella fotoleverans-",
       "titleHighlight": "gallerier väntar.",
-      "subtitle": "Gå med 500+ fotografer som levererar originalkvalitet till sina kunder. Ingen komprimering, noll friktion.",
+      "subtitle": "Gå med {{count}}+ fotografer som levererar originalkvalitet till sina kunder. Ingen komprimering, noll friktion.",
       "button": "Skapa mitt gratis galleri",
       "note": "Inget kort krävs • Ingen komprimering • Originalkvalitet"
     }
@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "Fotodelningsplattformen som kreativa älskar.",
+    "signin": {
+      "title": "Välkommen tillbaka",
+      "subtitle": "Logga in för att komma åt dina gallerier"
+    },
     "tabs": {
       "signIn": "Logga in",
       "signUp": "Registrera"
     },
     "signup": {
+      "title": "Skapa konto",
+      "subtitle": "Gå med {{count}}+ fotografer på PikSend",
       "step": "Steg",
       "stepEmail": "Din e-post",
       "stepPassword": "Säkerhet",
@@ -392,7 +398,50 @@
       "passwordResetSuccessful": "Lösenordet har återställts!",
       "canNowSignIn": "Du kan nu logga in med ditt nya lösenord."
     },
-      "resetButton": "Återställ lösenord"
+    "verification": {
+      "title": "Verifiera din e-post",
+      "subtitle": "Vi har skickat ett verifieringsmail till din inkorg",
+      "checkEmail": "Kolla din e-post",
+      "clickLink": "Klicka på länken i e-postmeddelandet för att verifiera ditt konto",
+      "didntReceive": "Fick du inte e-postmeddelandet?",
+      "resend": "Skicka verifieringsmail igen",
+      "verifying": "Verifierar...",
+      "success": "E-post verifierad!",
+      "error": "Verifiering misslyckades. Försök igen.",
+      "expired": "Verifieringslänken har utgått",
+      "alreadyVerified": "E-posten är redan verifierad"
+    },
+    "sidebar": {
+      "headline": "Leverera dina foton på 5 minuter. Sälj dina gallerier. Behåll 90%.",
+      "subheadline": "Gå med {{count}}+ fotografer som levererar originalkvalitet till sina kunder.",
+      "benefit1Title": "Unikt Lightroom-plugin",
+      "benefit1Desc": "Exportera och dela direkt från Lightroom med ett klick",
+      "benefit2Title": "Lägsta Provision",
+      "benefit2Desc": "Behåll 90% av din försäljning. Endast 10% provision",
+      "benefit3Title": "2h Support",
+      "benefit3Desc": "Garanterat svar på mindre än 2 arbetstimmar",
+      "trustUsers": "{{count}}+ fotografer",
+      "trustUsersDesc": "Litar på oss",
+      "trustRating": "4.8/5 stjärnor",
+      "trustRatingDesc": "Genomsnittligt betyg",
+      "testimonialQuote": "PikSend förändrade hur jag levererar mina foton. Mina kunder älskar kvaliteten och enkelheten.",
+      "testimonialAuthor": "Marie Dubois",
+      "testimonialRole": "Bröllopsfotograf",
+      "title": "Varför välja PikSend?",
+      "features": {
+        "quality": {
+          "title": "Original kvalitet",
+          "description": "Ingen komprimering, dina foton förblir perfekta"
+        },
+        "security": {
+          "title": "Säker delning",
+          "description": "Lösenordsskydd och utgående länkar"
+        },
+        "fast": {
+          "title": "Blixtsnabbt",
+          "description": "Optimerad leverans, omedelbar laddning"
+        }
+      }
     }
   },
   "dashboard": {
@@ -1168,12 +1217,33 @@
       "registrationFailed": "Registrering misslyckades",
       "accountCreatedSuccess": "Konto skapat framgångsrikt",
       "passwordResetSuccess": "Lösenord återställt framgångsrikt",
+      "passwordResetFailed": "Kunde inte återställa lösenord",
       "passwordResetEmailSent": "Om ett konto finns med denna e-postadress kommer du att få en återställningslänk.",
+      "verificationFailed": "Verifiering misslyckades",
+      "emailVerifiedSuccess": "E-post verifierad framgångsrikt",
+      "verificationEmailSent": "Verifieringsmail skickat",
+      "emailAlreadyVerified": "Denna e-post är redan verifierad",
+      "emailSendFailed": "Kunde inte skicka e-post",
+      "userNotFound": "Användare hittades inte",
       "invalidData": "Ogiltig data",
       "profileUpdateFailed": "Kunde inte uppdatera profil",
       "profileFetchFailed": "Kunde inte hämta profil",
+      "profileNotFound": "Profil hittades inte",
       "updateError": "Fel vid uppdatering",
-      "serverError": "Serverfel"
+      "serverError": "Serverfel",
+      "authRequired": "Autentisering krävs",
+      "authenticationRequired": "Autentisering krävs",
+      "invalidKeyId": "Ogiltigt nyckel-ID",
+      "apiKeyNotFound": "API-nyckel hittades inte",
+      "proPlanRequired": "Pro-plan krävs",
+      "proRequired": "Pro-plan krävs för denna funktion",
+      "slugTaken": "Denna slug är redan tagen",
+      "invalidSlug": "Ogiltig slug",
+      "missingSlug": "Slug-parameter krävs",
+      "invalidSlugLength": "Slug måste vara mellan 1 och 100 tecken",
+      "notFound": "Resurs hittades inte",
+      "invalidAction": "Ogiltig åtgärd",
+      "rateLimitExceeded": "För många försök. Försök igen senare."
     }
   }
 }

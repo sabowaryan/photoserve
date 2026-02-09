@@ -28,11 +28,11 @@ const LoadingSpinner = React.forwardRef<HTMLDivElement, LoadingSpinnerProps>(
       >
         <Loader2
           size={sizeMap[size]}
-          className="animate-spin text-indigo-600"
+          className="animate-spin animate-pulse text-indigo-400"
           aria-hidden="true"
         />
         {text && (
-          <p className="text-sm font-medium text-slate-600">
+          <p className="text-sm font-medium text-slate-300">
             {text}
             <span className="animate-pulse">...</span>
           </p>

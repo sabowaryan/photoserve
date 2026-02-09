@@ -304,11 +304,17 @@
   "auth": {
     "title": "PikSend",
     "subtitle": "創作者喜愛的照片分享平台。",
+    "signin": {
+      "title": "歡迎回來",
+      "subtitle": "登入以存取您的相簿"
+    },
     "tabs": {
       "signIn": "登入",
       "signUp": "註冊"
     },
     "signup": {
+      "title": "建立帳戶",
+      "subtitle": "加入PikSend的{{count}}多位攝影師",
       "step": "步驟",
       "stepEmail": "您的電子郵件",
       "stepPassword": "安全性",
@@ -392,9 +398,39 @@
       "passwordResetSuccessful": "密碼重設成功！",
       "canNowSignIn": "您現在可以使用新密碼登入。"
     },
-      "resetButton": "重設密碼"
+    "verification": {
+      "title": "驗證您的電子郵件",
+      "subtitle": "我們已向您的收件匣發送驗證郵件",
+      "emailSentTo": "郵件已發送至",
+      "checkEmail": "查看您的郵箱",
+      "emailSent": "我們已向以下地址發送驗證郵件",
+      "clickLink": "點擊郵件中的連結以驗證您的帳戶並開始使用。",
+      "checkEmailCorrect": "確保您輸入了正確的電子郵件地址",
+      "didntReceive": "沒有收到郵件？",
+      "checkSpam": "檢查您的垃圾郵件或垃圾信件資料夾",
+      "waitFewMinutes": "等待幾分鐘後重試發送",
+      "needHelp": "需要協助？",
+      "contactSupport": "聯絡支援"
+    },
+    "sidebar": {
+      "headline": "5分鐘內交付您的照片。銷售您的相簿。保留90%。",
+      "subheadline": "加入{{count}}多位向客戶交付原始品質的攝影師。",
+      "benefit1Title": "獨特的Lightroom外掛",
+      "benefit1Desc": "直接從Lightroom一鍵匯出和分享",
+      "benefit2Title": "最低佣金",
+      "benefit2Desc": "保留90%的銷售額。僅10%佣金",
+      "benefit3Title": "2小時支援",
+      "benefit3Desc": "保證在2個工作小時內回覆",
+      "trustUsers": "500多位攝影師",
+      "trustUsersDesc": "信任我們",
+      "trustRating": "4.8/5星",
+      "trustRatingDesc": "平均評分",
+      "testimonialQuote": "PikSend改變了我交付照片的方式。我的客戶喜歡品質和簡潔性。",
+      "testimonialAuthor": "Marie Dubois",
+      "testimonialRole": "婚禮攝影師"
     }
   },
+      
   "dashboard": {
     "badge": "控制台",
     "greeting": "您好，",
@@ -1168,12 +1204,33 @@
       "registrationFailed": "註冊失敗",
       "accountCreatedSuccess": "帳戶建立成功",
       "passwordResetSuccess": "密碼重設成功",
+      "passwordResetFailed": "密碼重設失敗",
       "passwordResetEmailSent": "如果此電子郵件地址存在帳戶，您將收到重設連結。",
+      "verificationFailed": "驗證失敗",
+      "emailVerifiedSuccess": "電子郵件驗證成功",
+      "verificationEmailSent": "驗證郵件已發送",
+      "emailAlreadyVerified": "此電子郵件已驗證",
+      "emailSendFailed": "郵件發送失敗",
+      "userNotFound": "找不到使用者",
       "invalidData": "資料無效",
       "profileUpdateFailed": "更新個人資料失敗",
       "profileFetchFailed": "取得個人資料失敗",
+      "profileNotFound": "找不到個人資料",
       "updateError": "更新時發生錯誤",
-      "serverError": "伺服器錯誤"
+      "serverError": "伺服器錯誤",
+      "authRequired": "需要驗證",
+      "authenticationRequired": "需要驗證",
+      "invalidKeyId": "無效的金鑰ID",
+      "apiKeyNotFound": "找不到API金鑰",
+      "proPlanRequired": "需要Pro方案",
+      "proRequired": "此功能需要Pro方案",
+      "slugTaken": "此slug已被使用",
+      "invalidSlug": "無效的slug",
+      "missingSlug": "需要slug參數",
+      "invalidSlugLength": "slug必須在1到100個字元之間",
+      "notFound": "找不到資源",
+      "invalidAction": "無效的操作",
+      "rateLimitExceeded": "嘗試次數過多。請稍後重試。"
     }
   }
 }

@@ -32,27 +32,38 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [isFocused, setIsFocused] = React.useState(false);
+    const [shouldShake, setShouldShake] = React.useState(false);
 
     const hasError = Boolean(error);
     const inputType = showPasswordToggle && showPassword ? "text" : type;
+
+    // Trigger shake animation when error appears
+    React.useEffect(() => {
+      if (hasError) {
+        setShouldShake(true);
+        const timer = setTimeout(() => setShouldShake(false), 400);
+        return () => clearTimeout(timer);
+      }
+      return undefined;
+    }, [hasError]);
 
     return (
       <div className={cn("space-y-1.5", className)}>
         <label
           htmlFor={id}
-          className="block text-xs font-bold text-slate-300 uppercase tracking-wider ml-1"
+          className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1"
         >
           {label}
-          {required && <span className="text-rose-400 ml-1">*</span>}
+          {required && <span className="text-red-600 ml-1">*</span>}
         </label>
 
         <div className="relative group">
           {icon && (
             <div className={cn(
               "absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-200",
-              isFocused ? "text-indigo-400" : "text-slate-500",
-              hasError && "text-rose-400",
-              success && !hasError && "text-emerald-400"
+              isFocused ? "text-primary" : "text-slate-400",
+              hasError && "text-red-600",
+              success && !hasError && "text-green-600"
             )}>
               {icon}
             </div>
@@ -78,17 +89,17 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               props.onBlur?.(e);
             }}
             className={cn(
-              "flex h-12 w-full rounded-xl border px-4 py-3 text-sm transition-all duration-200 outline-none",
-              "bg-slate-900/50 backdrop-blur-sm text-slate-100 placeholder:text-slate-500",
-              "shadow-inner",
+              "flex h-12 w-full rounded-lg border px-4 py-3 text-sm transition-all duration-200 outline-none",
+              "bg-white text-slate-900 placeholder:text-slate-400",
               icon && "pl-11",
               (showPasswordToggle || success) && "pr-11",
               hasError
-                ? "border-rose-500/50 bg-rose-950/20 focus:border-rose-500 focus:shadow-[0_0_0_4px_rgba(244,63,94,0.15)]"
+                ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
                 : success
-                  ? "border-emerald-500/50 bg-emerald-950/20 focus:border-emerald-500 focus:shadow-[0_0_0_4px_rgba(16,185,129,0.15)]"
-                  : "border-white/10 hover:border-white/20 focus:border-indigo-500 focus:shadow-[0_0_0_4px_rgba(99,102,241,0.15)] focus:bg-slate-900/80",
-              "disabled:cursor-not-allowed disabled:opacity-50"
+                  ? "border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  : "border-slate-300 hover:border-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              shouldShake && "animate-shake"
             )}
             {...props}
           />
@@ -97,7 +108,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-500 hover:text-slate-200 hover:bg-white/5 rounded-lg transition-all"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -110,7 +121,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
 
           {success && !hasError && !showPasswordToggle && (
             <CheckCircle
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-green-600"
               size={20}
               aria-hidden="true"
             />
@@ -118,7 +129,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         </div>
 
         {helperText && !hasError && (
-          <p id={`${id}-helper`} className="text-xs text-slate-400 ml-1">
+          <p id={`${id}-helper`} className="text-xs text-slate-500 ml-1">
             {helperText}
           </p>
         )}
@@ -126,8 +137,9 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         {hasError && (
           <div
             id={`${id}-error`}
-            className="flex items-center gap-1.5 text-xs font-medium text-rose-400 ml-1 animate-slide-in-from-top-2"
+            className="flex items-center gap-1.5 text-xs font-medium text-red-600 ml-1 animate-in fade-in slide-in-from-top-2 duration-300"
             role="alert"
+            aria-live="assertive"
           >
             <AlertCircle size={14} aria-hidden="true" />
             <span>{error}</span>
