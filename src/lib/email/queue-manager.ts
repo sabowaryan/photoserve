@@ -337,13 +337,43 @@ export class QueueManager {
    */
   private async processEmail(email: QueueItem): Promise<ProcessResult> {
     try {
-      // This is a placeholder - actual email sending will be done by EmailService
-      // which will use the provider to send the email
+      // Get the email provider service
+      const { EmailProviderService } = await import('@/lib/services/email-provider.service');
+      const providerService = new EmailProviderService(this.supabase);
       
-      // For now, we'll just mark it as sent
-      // In a real implementation, this would call the EmailService
+      const provider = await providerService.getActiveProvider();
       
-      // Update status to sent
+      if (!provider) {
+        throw new Error('No active email provider configured');
+      }
+      
+      // Send the email via the provider
+      const sendResult = await provider.sendEmail({
+        from: email.from_address,
+        to: email.to_address,
+        cc: email.cc_addresses || undefined,
+        bcc: email.bcc_addresses || undefined,
+        subject: email.subject,
+        html: email.html_content,
+        text: email.text_content || undefined,
+      });
+      
+      // Log the email
+      await this.supabase
+        .from('email_logs')
+        .insert({
+          queue_id: email.id,
+          provider: provider.name,
+          provider_message_id: sendResult.id,
+          from_address: email.from_address,
+          to_address: email.to_address,
+          subject: email.subject,
+          template_id: email.template_id,
+          status: 'sent',
+          metadata: sendResult.metadata,
+        });
+      
+      // Update queue status to sent
       const { error } = await this.supabase
         .from('email_queue')
         .update({
@@ -362,7 +392,23 @@ export class QueueManager {
         shouldRetry: false,
       };
     } catch (error) {
-      console.error(`Error processing email ${email.id}:`, error);
+      // Log the error
+      try {
+        await this.supabase
+          .from('email_logs')
+          .insert({
+            queue_id: email.id,
+            provider: 'unknown',
+            from_address: email.from_address,
+            to_address: email.to_address,
+            subject: email.subject,
+            template_id: email.template_id,
+            status: 'failed',
+            error_message: error instanceof Error ? error.message : 'Unknown error',
+          });
+      } catch (logError) {
+        console.error('Failed to log email error:', logError);
+      }
       
       // Determine if we should retry
       const shouldRetry = email.retry_count < email.max_retries;

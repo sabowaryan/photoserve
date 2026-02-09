@@ -33,8 +33,8 @@ import { metricsService } from '@/lib/services/metrics.service';
  */
 export async function GET(request: NextRequest) {
   try {
-    // Apply rate limiting
-    const rateLimitResponse = rateLimitMiddleware(request);
+    // Apply rate limiting for downloads
+    const rateLimitResponse = rateLimitMiddleware(request, 'download');
     if (rateLimitResponse) {
       // Add CORS headers to rate limit response
       const corsHeaders = getCorsHeaders(request);
@@ -132,28 +132,40 @@ export async function GET(request: NextRequest) {
     metricsService.trackPluginDownload(true);
     metricsService.trackEndpointError('/api/plugin/download', false);
     
-    // Redirect to Cloudinary URL (302)
+    // Proxy the file to control headers and ensure correct filename
+    const filename = `PikSend-${pluginVersion.version}.zip`;
+    
     // Use versioned URL for cache busting
     const versionedUrl = generateVersionedUrl(pluginVersion.fileUrl, pluginVersion.version);
-    const response = NextResponse.redirect(versionedUrl, 302);
     
-    // Add CDN cache headers (1 year cache for immutable plugin files)
+    // Fetch the file from Cloudinary with a longer timeout
+    const fileResponse = await fetch(versionedUrl, {
+      signal: AbortSignal.timeout(30000), // 30 seconds timeout
+    });
+    
+    if (!fileResponse.ok) {
+      console.error('[Plugin Download] Failed to fetch from Cloudinary:', fileResponse.status);
+      throw new Error('Failed to fetch file from Cloudinary');
+    }
+    
+    // Get the file as a buffer
+    const fileBuffer = await fileResponse.arrayBuffer();
+    
+    // Get CDN cache headers (1 year cache for immutable plugin files)
     const cacheHeaders = getCacheHeaders('plugin-file');
-    Object.entries(cacheHeaders).forEach(([key, value]) => {
-      response.headers.set(key, value);
-    });
     
-    // Add CORS headers
-    const corsHeaders = getCorsHeaders(request);
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      response.headers.set(key, value);
+    // Create response with correct headers
+    const response = new NextResponse(fileBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': pluginVersion.fileSize.toString(),
+        'X-Content-Type-Options': 'nosniff',
+        ...cacheHeaders,
+        ...getCorsHeaders(request),
+      },
     });
-    
-    // Add content disposition header to force download
-    response.headers.set(
-      'Content-Disposition',
-      `attachment; filename="PikSend-${pluginVersion.version}.lrplugin"`
-    );
     
     return response;
     

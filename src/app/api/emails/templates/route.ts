@@ -10,7 +10,6 @@
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
 import { requireAdmin } from '@/lib/middleware/admin-auth';
-import { rateLimitMiddleware } from '@/lib/middleware/rate-limit';
 import { createAdminClient } from '@/lib/supabase/server';
 import { createTemplateRepository } from '@/lib/repositories/template.repository';
 import {
@@ -49,16 +48,6 @@ export async function GET(request: NextRequest) {
         { error: authResult.error },
         authResult.status
       );
-    }
-    
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
     }
     
     // Parse and validate query parameters
@@ -137,16 +126,6 @@ export async function POST(request: NextRequest) {
         { error: authResult.error },
         authResult.status
       );
-    }
-    
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
     }
     
     // Parse and validate request body

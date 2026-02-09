@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Mail,
   CheckCircle,
   Clock,
@@ -41,6 +51,7 @@ export function SenderList({
   onSenderDeleted,
 }: SenderListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [senderToDelete, setSenderToDelete] = useState<string | null>(null);
   const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
   const [checkingVerificationId, setCheckingVerificationId] = useState<
     string | null
@@ -49,20 +60,19 @@ export function SenderList({
     null
   );
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   /**
    * Handle delete sender
    */
-  const handleDelete = async (senderId: string) => {
-    if (!confirm("Are you sure you want to delete this sender address?")) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!senderToDelete) return;
 
-    setDeletingId(senderId);
+    setDeletingId(senderToDelete);
     setError(null);
 
     try {
-      const response = await fetch(`/api/admin/emails/senders/${senderId}`, {
+      const response = await fetch(`/api/admin/emails/senders/${senderToDelete}`, {
         method: "DELETE",
       });
 
@@ -71,7 +81,8 @@ export function SenderList({
         throw new Error(error.error || "Failed to delete sender address");
       }
 
-      onSenderDeleted(senderId);
+      onSenderDeleted(senderToDelete);
+      setSenderToDelete(null);
     } catch (error) {
       console.error("Error deleting sender:", error);
       setError(
@@ -121,6 +132,7 @@ export function SenderList({
   const handleCheckVerification = async (senderId: string) => {
     setCheckingVerificationId(senderId);
     setError(null);
+    setSuccessMessage(null);
 
     try {
       const response = await fetch(
@@ -138,12 +150,20 @@ export function SenderList({
       const result = await response.json();
 
       if (result.isVerified) {
+        setSuccessMessage("✅ Domain verified successfully! Reloading...");
         // Reload page to update sender status
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert(
-          `Verification status: ${result.status}. Please complete the DNS setup if not done yet.`
+        // Show info message and open instructions
+        setSuccessMessage(
+          `ℹ️ Verification status: ${result.status}. ${
+            result.status === 'pending' 
+              ? 'Please complete the DNS setup if not done yet.' 
+              : 'Check the verification instructions below.'
+          }`
         );
+        // Auto-open instructions for this sender
+        setShowInstructionsFor(senderId);
       }
     } catch (error) {
       console.error("Error checking verification:", error);
@@ -186,7 +206,26 @@ export function SenderList({
       {error && (
         <div className="mx-6 mt-4 flex items-start gap-3 p-4 rounded-lg bg-red-50 border border-red-200">
           <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-          <p className="text-sm font-medium text-red-800">{error}</p>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-800">{error}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-red-400 hover:text-red-600 transition-colors"
+          >
+            <XCircle className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Success Display */}
+      {successMessage && (
+        <div className="mx-6 mt-4 flex items-start gap-3 p-4 rounded-lg bg-green-50 border border-green-200">
+          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-green-800">{successMessage}</p>
+          </div>
         </div>
       )}
 
@@ -270,7 +309,7 @@ export function SenderList({
 
                 {/* Delete Button */}
                 <LoadingButton
-                  onClick={() => handleDelete(sender.id)}
+                  onClick={() => setSenderToDelete(sender.id)}
                   isLoading={deletingId === sender.id}
                   variant="outline"
                   size="sm"
@@ -295,6 +334,32 @@ export function SenderList({
           </div>
         ))}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <AlertDialog open={!!senderToDelete} onOpenChange={(open) => !open && setSenderToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Sender Address</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this sender address? This action cannot be undone.
+              {senders.find(s => s.id === senderToDelete)?.is_default && (
+                <span className="block mt-2 text-amber-600 font-medium">
+                  ⚠️ This is your default sender address. You'll need to set a new default after deletion.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

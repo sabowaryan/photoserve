@@ -385,13 +385,22 @@
       "signupFailed": "注册时出错",
       "googleFailed": "Google登录出错",
       "accountExists": "此邮箱已存在账户。请使用密码登录。",
+      "emailExists": "此邮箱已存在账户",
+      "emailExistsUnverified": "此邮箱已存在账户。请登录以重新发送验证邮件。",
       "oauthError": "Google登录出错。请重试。",
       "genericError": "发生错误",
       "accountCreationError": "创建账户时出错",
+      "accountCreationFailed": "创建账户失败",
       "profileCreationError": "创建资料时出错",
+      "profileCreationFailed": "创建资料失败",
+      "profileNotFound": "未找到资料",
       "resetLinkInvalid": "重置链接无效或已过期",
+      "invalidResetToken": "重置链接无效或已过期",
       "passwordUpdateError": "更新密码时出错",
-      "resetEmailError": "发送重置邮件时出错"
+      "passwordUpdateFailed": "更新密码失败",
+      "resetEmailError": "发送重置邮件时出错",
+      "resetEmailFailed": "发送重置邮件失败",
+      "rateLimitExceeded": "尝试次数过多。请稍后再试。"
     },
     "success": {
       "accountCreated": "账户已创建！您现在可以登录了。",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "发生意外错误。请重试。",
+      "unexpectedError": "发生意外错误。请重试。",
       "networkError": "网络错误。请检查您的连接。",
       "retry": "出了点问题。请重试。",
       "validationFailed": "验证失败",
@@ -1322,7 +1332,13 @@
       "invalidSlugLength": "slug必须在1到100个字符之间",
       "notFound": "未找到资源",
       "invalidAction": "无效的操作",
-      "rateLimitExceeded": "尝试次数过多。请稍后重试。"
+      "rateLimitExceeded": "尝试次数过多。请稍后重试。",
+      "resourceExists": "资源已存在",
+      "invalidReference": "未找到引用的资源",
+      "missingField": "缺少必填字段",
+      "accessDenied": "访问被拒绝",
+      "multipleFound": "找到多个资源",
+      "databaseError": "数据库操作失败"
     }
   }
 }

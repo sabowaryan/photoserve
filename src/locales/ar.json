@@ -385,13 +385,22 @@
       "signupFailed": "خطأ أثناء التسجيل",
       "googleFailed": "خطأ في تسجيل الدخول بـ Google",
       "accountExists": "يوجد حساب بهذا البريد الإلكتروني. سجل الدخول بكلمة المرور.",
+      "emailExists": "يوجد حساب بهذا البريد الإلكتروني",
+      "emailExistsUnverified": "يوجد حساب بهذا البريد الإلكتروني. سجل الدخول لإعادة إرسال بريد التحقق.",
       "oauthError": "خطأ في تسجيل الدخول بـ Google. يرجى المحاولة مرة أخرى.",
       "genericError": "حدث خطأ",
       "accountCreationError": "خطأ في إنشاء الحساب",
+      "accountCreationFailed": "فشل إنشاء الحساب",
       "profileCreationError": "خطأ في إنشاء الملف الشخصي",
+      "profileCreationFailed": "فشل إنشاء الملف الشخصي",
+      "profileNotFound": "الملف الشخصي غير موجود",
       "resetLinkInvalid": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية",
+      "invalidResetToken": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية",
       "passwordUpdateError": "خطأ في تحديث كلمة المرور",
-      "resetEmailError": "خطأ في إرسال بريد إعادة التعيين"
+      "passwordUpdateFailed": "فشل تحديث كلمة المرور",
+      "resetEmailError": "خطأ في إرسال بريد إعادة التعيين",
+      "resetEmailFailed": "فشل إرسال بريد إعادة التعيين",
+      "rateLimitExceeded": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
     },
     "success": {
       "accountCreated": "تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+      "unexpectedError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
       "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
       "retry": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
       "validationFailed": "فشل التحقق",
@@ -1322,7 +1332,14 @@
       "invalidSlugLength": "يجب أن يكون الاسم المستعار بين 1 و 100 حرف",
       "notFound": "المورد غير موجود",
       "invalidAction": "إجراء غير صالح",
-      "rateLimitExceeded": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+      "rateLimitExceeded": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
+      "resourceExists": "المورد موجود بالفعل",
+      "invalidReference": "المورد المشار إليه غير موجود",
+      "missingField": "حقل مطلوب مفقود",
+      "accessDenied": "تم رفض الوصول",
+      "multipleFound": "تم العثور على موارد متعددة",
+      "databaseError": "فشلت عملية قاعدة البيانات"
     }
   }
+}
 }

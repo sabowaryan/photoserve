@@ -395,13 +395,21 @@
       "signupFailed": "We couldn't create your account. Please try again or contact support if the problem persists.",
       "googleFailed": "Google sign-in failed. Please try again or use email/password instead.",
       "accountExists": "An account with this email already exists. Please sign in instead, or use 'Forgot Password' if you don't remember your password.",
+      "emailExists": "An account with this email already exists",
+      "emailExistsUnverified": "An account with this email already exists. Please sign in to resend the verification email.",
       "oauthError": "Google sign-in encountered an error. Please try again or use email/password instead.",
       "genericError": "Something went wrong. Please try again or contact support if the issue continues.",
       "accountCreationError": "We couldn't create your account. Please try again.",
+      "accountCreationFailed": "Failed to create account",
       "profileCreationError": "Account created but profile setup failed. You can complete this in Settings later.",
+      "profileCreationFailed": "Failed to create profile",
+      "profileNotFound": "Profile not found",
       "resetLinkInvalid": "This password reset link has expired or is invalid. Please request a new one.",
+      "invalidResetToken": "The reset link is invalid or has expired",
       "passwordUpdateError": "We couldn't update your password. Please try again.",
+      "passwordUpdateFailed": "Failed to update password",
       "resetEmailError": "We couldn't send the reset email. Please check your email address and try again.",
+      "resetEmailFailed": "Failed to send reset email",
       "rateLimitExceeded": "Too many attempts. Please wait before trying again."
     },
     "success": {
@@ -1092,6 +1100,7 @@
     },
     "generic": {
       "unexpected": "An unexpected error occurred. Please try again.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
       "networkError": "Network error. Please check your connection.",
       "retry": "Something went wrong. Please try again.",
       "validationFailed": "Validation failed",
@@ -1356,7 +1365,13 @@
       "invalidSlugLength": "Slug must be between 1 and 100 characters",
       "notFound": "Resource not found",
       "invalidAction": "Invalid action",
-      "rateLimitExceeded": "Too many attempts. Please try again later."
+      "rateLimitExceeded": "Too many attempts. Please try again later.",
+      "resourceExists": "Resource already exists",
+      "invalidReference": "Referenced resource not found",
+      "missingField": "Required field missing",
+      "accessDenied": "Access denied",
+      "multipleFound": "Multiple resources found",
+      "databaseError": "Database operation failed"
     }
   },
   "emails": {

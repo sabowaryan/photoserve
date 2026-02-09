@@ -80,8 +80,30 @@ export async function POST(request: NextRequest) {
     // Invalidate all previous verification tokens for this user (requirement 7.3)
     await tokenService.invalidateAllForUser(userData.id, 'verification');
 
-    // Generate new verification token (requirement 7.2)
-    const { token } = await tokenService.generate(userData.id, 'verification');
+    // Generate new verification token (requirement 7.2) with error handling
+    let token: string;
+    try {
+      const result = await tokenService.generate(userData.id, 'verification');
+      token = result.token;
+    } catch (error: any) {
+      console.error('[ResendVerification] Token generation failed:', error);
+      
+      // Return translation key for user-friendly error message
+      const errorKey = error.message?.includes('timeout') || error.message?.includes('Network')
+        ? 'errors.generic.networkError'
+        : 'auth.errors.genericError';
+      
+      return NextResponse.json(
+        {
+          error: errorKey,
+          code: 'TOKEN_GENERATION_FAILED',
+        },
+        { 
+          status: 503, // Service Unavailable
+          headers: createRateLimitHeaders(rateLimitResult),
+        }
+      );
+    }
 
     // Send verification email
     const emailService = new EmailVerificationService(supabase);

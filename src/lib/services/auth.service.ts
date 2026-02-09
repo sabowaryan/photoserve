@@ -64,13 +64,13 @@ export class AuthService implements IAuthService {
       if (!existingProfile.email_verified) {
         return {
           success: false,
-          error: 'Un compte existe déjà avec cette adresse email. Veuillez vous connecter pour renvoyer l\'email de vérification.',
+          error: 'auth.errors.emailExistsUnverified',
         };
       }
       
       return {
         success: false,
-        error: 'Un compte existe déjà avec cette adresse email',
+        error: 'auth.errors.emailExists',
       };
     }
 
@@ -91,7 +91,7 @@ export class AuthService implements IAuthService {
       console.error('[AuthService] Failed to create auth user:', authError);
       return {
         success: false,
-        error: 'Erreur lors de la création du compte',
+        error: 'auth.errors.accountCreationFailed',
       };
     }
 
@@ -111,7 +111,7 @@ export class AuthService implements IAuthService {
       await supabase.auth.admin.deleteUser(authUser.user.id);
       return {
         success: false,
-        error: 'Erreur lors de la création du profil',
+        error: 'auth.errors.profileCreationFailed',
       };
     }
 
@@ -141,7 +141,7 @@ export class AuthService implements IAuthService {
     if (signInError || !signInData.user || !signInData.session) {
       return {
         success: false,
-        error: 'Email ou mot de passe incorrect',
+        error: 'auth.errors.invalidCredentials',
       };
     }
 
@@ -155,7 +155,7 @@ export class AuthService implements IAuthService {
     if (profileError || !profile) {
       return {
         success: false,
-        error: 'Profil non trouvé',
+        error: 'auth.errors.profileNotFound',
       };
     }
 
@@ -214,7 +214,7 @@ export class AuthService implements IAuthService {
       console.error('[AuthService] Failed to send reset email:', error);
       return {
         success: false,
-        error: 'Erreur lors de l\'envoi de l\'email de réinitialisation',
+        error: 'auth.errors.resetEmailFailed',
       };
     }
 
@@ -237,7 +237,7 @@ export class AuthService implements IAuthService {
       console.error('[AuthService] Invalid reset token:', error);
       return {
         success: false,
-        error: 'Le lien de réinitialisation est invalide ou a expiré',
+        error: 'auth.errors.invalidResetToken',
       };
     }
 
@@ -250,7 +250,7 @@ export class AuthService implements IAuthService {
       console.error('[AuthService] Failed to update password:', updateError);
       return {
         success: false,
-        error: 'Erreur lors de la mise à jour du mot de passe',
+        error: 'auth.errors.passwordUpdateFailed',
       };
     }
 

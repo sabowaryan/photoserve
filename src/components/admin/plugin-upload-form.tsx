@@ -62,16 +62,19 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
     setError(null);
     setSuccess(false);
 
-    // Validate file extension
-    if (!selectedFile.name.toLowerCase().endsWith(".lrplugin")) {
-      setError("File must have .lrplugin extension");
+    // Validate file extension - accept both .lrplugin and .zip
+    const fileName = selectedFile.name.toLowerCase();
+    const hasValidExtension = fileName.endsWith(".zip") || fileName.endsWith(".lrplugin");
+    
+    if (!hasValidExtension) {
+      setError("Please upload a .zip archive or .lrplugin file");
       return;
     }
 
-    // Validate file size (max 50MB)
-    const maxSize = 50 * 1024 * 1024;
+    // Validate file size (max 100MB)
+    const maxSize = 100 * 1024 * 1024;
     if (selectedFile.size > maxSize) {
-      setError("File size must not exceed 50MB");
+      setError("File size must not exceed 100MB");
       return;
     }
 
@@ -155,25 +158,59 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
     setUploadProgress(0);
 
     try {
-      // Step 1: Upload file to Cloudinary
-      setUploadProgress(10);
+      // Step 1: Upload file to Cloudinary with progress tracking
+      setUploadProgress(5);
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadResponse = await fetch("/api/admin/plugin/upload", {
-        method: "POST",
-        body: formData,
+      // Use XMLHttpRequest for progress tracking
+      const uploadResult = await new Promise<{ url: string; fileSize: number }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        // Track upload progress
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 45) + 5; // 5-50%
+            setUploadProgress(percentComplete);
+          }
+        });
+
+        // Handle completion
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              setUploadProgress(50);
+              resolve(response);
+            } catch (err) {
+              reject(new Error("Failed to parse upload response"));
+            }
+          } else {
+            try {
+              const error = JSON.parse(xhr.responseText);
+              reject(new Error(error.error || "Failed to upload file"));
+            } catch {
+              reject(new Error(`Upload failed with status ${xhr.status}`));
+            }
+          }
+        });
+
+        // Handle errors
+        xhr.addEventListener("error", () => {
+          reject(new Error("Network error during upload"));
+        });
+
+        xhr.addEventListener("abort", () => {
+          reject(new Error("Upload cancelled"));
+        });
+
+        // Send request
+        xhr.open("POST", "/api/admin/plugin/upload");
+        xhr.send(formData);
       });
 
-      if (!uploadResponse.ok) {
-        const uploadError = await uploadResponse.json();
-        throw new Error(uploadError.error || "Failed to upload file");
-      }
-
-      const uploadResult = await uploadResponse.json();
-      setUploadProgress(50);
-
       // Step 2: Create version record
+      setUploadProgress(60);
       const versionResponse = await fetch("/api/admin/plugin/versions", {
         method: "POST",
         headers: {
@@ -260,14 +297,14 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
                 <Upload className="h-6 w-6 text-slate-400" />
               </div>
               <p className="text-slate-700 font-medium mb-1">
-                Drop your .lrplugin file here
+                Drop your plugin file here
               </p>
               <p className="text-sm text-slate-500 mb-4">
-                or click to browse (max 50MB)
+                Supports .zip archives or .lrplugin files (max 100MB)
               </p>
               <input
                 type="file"
-                accept=".lrplugin"
+                accept=".zip,.lrplugin"
                 onChange={handleFileInputChange}
                 className="hidden"
                 id="file-input"
@@ -279,6 +316,7 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
                 size="sm"
                 onClick={() => document.getElementById("file-input")?.click()}
                 disabled={isUploading}
+                className="rounded-xl"
               >
                 Select File
               </Button>
@@ -367,27 +405,36 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
 
       {/* Upload Progress */}
       {isUploading && (
-        <div className="space-y-2">
+        <div className="space-y-3 bg-slate-50 border border-slate-200 rounded-[20px] p-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Uploading...</span>
-            <span className="font-medium text-slate-800">{uploadProgress}%</span>
+            <span className="text-slate-600 font-medium">
+              {uploadProgress < 50 ? "Uploading file..." : uploadProgress < 100 ? "Creating version..." : "Complete!"}
+            </span>
+            <span className="font-bold text-slate-800">{uploadProgress}%</span>
           </div>
           <Progress value={uploadProgress} className="h-2" />
+          <p className="text-xs text-slate-500">
+            {uploadProgress < 50 
+              ? "Transferring file to cloud storage" 
+              : uploadProgress < 100 
+              ? "Saving version information" 
+              : "Upload successful!"}
+          </p>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-          <p className="text-sm text-rose-700">{error}</p>
+        <div className="bg-rose-50 border border-rose-200 rounded-[20px] p-4">
+          <p className="text-sm text-rose-700 font-medium">{error}</p>
         </div>
       )}
 
       {/* Success Message */}
       {success && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-emerald-600" />
-          <p className="text-sm text-emerald-700">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-[20px] p-4 flex items-center gap-3">
+          <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+          <p className="text-sm text-emerald-700 font-medium">
             Plugin version uploaded successfully!
           </p>
         </div>
@@ -397,7 +444,7 @@ export function PluginUploadForm({ onSuccess }: PluginUploadFormProps) {
       <Button
         type="submit"
         disabled={isUploading || !file || !version || !changelog}
-        className="w-full"
+        className="w-full rounded-xl"
       >
         {isUploading ? (
           <>

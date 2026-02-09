@@ -12,14 +12,14 @@ import { cloudinary } from '@/lib/cloudinary/client';
 import { z } from 'zod';
 
 /**
- * Maximum file size for plugin uploads (50MB)
+ * Maximum file size for plugin uploads (100MB)
  */
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB in bytes
 
 /**
- * Allowed file extension for plugin files
+ * Allowed file extensions for plugin files
  */
-const ALLOWED_EXTENSION = '.lrplugin';
+const ALLOWED_EXTENSIONS = ['.lrplugin', '.zip'];
 
 /**
  * Validation schema for file upload
@@ -31,8 +31,8 @@ const uploadValidationSchema = z.object({
     .max(MAX_FILE_SIZE, `File size must not exceed ${MAX_FILE_SIZE / 1024 / 1024}MB`),
   fileExtension: z.string()
     .refine(
-      (ext) => ext.toLowerCase() === ALLOWED_EXTENSION,
-      `File must have ${ALLOWED_EXTENSION} extension`
+      (ext) => ALLOWED_EXTENSIONS.includes(ext.toLowerCase()),
+      `File must have ${ALLOWED_EXTENSIONS.join(' or ')} extension`
     ),
 });
 
@@ -87,7 +87,7 @@ async function uploadPluginFile(
  * Requirements:
  * - 4.1: Admin can upload plugin files
  * - 10.2: Provide file upload interface
- * - 10.3: Validate file is .lrplugin extension
+ * - 10.3: Validate file is .lrplugin or .zip extension
  * - 10.4: Upload to Cloudinary and return URL
  */
 export async function POST(request: NextRequest) {

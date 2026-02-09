@@ -89,14 +89,22 @@ export function TemplateEditorContent({
     () =>
       new Promise<{ html: string; design: any }>((resolve, reject) => {
         if (!emailEditorRef.current) {
-          reject(new Error("Email editor not initialized"));
+          reject(new Error("Email editor not initialized. Please wait for the editor to load."));
           return;
         }
 
-        emailEditorRef.current.exportHtml((data: any) => {
-          const { design, html } = data;
-          resolve({ html, design });
-        });
+        try {
+          emailEditorRef.current.exportHtml((data: any) => {
+            if (!data) {
+              reject(new Error("Failed to export email design"));
+              return;
+            }
+            const { design, html } = data;
+            resolve({ html, design });
+          });
+        } catch (error) {
+          reject(error);
+        }
       }),
     []
   );
@@ -113,7 +121,13 @@ export function TemplateEditorContent({
     setIsSaving(true);
 
     try {
-      const { html, design } = await exportHtml();
+      // Add timeout to prevent infinite loading
+      const exportPromise = exportHtml();
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Export timeout - editor may not be ready")), 10000)
+      );
+      
+      const { html, design } = await Promise.race([exportPromise, timeoutPromise]);
 
       const templateData = {
         name,
@@ -179,7 +193,13 @@ export function TemplateEditorContent({
     setIsPublishing(true);
 
     try {
-      const { html, design } = await exportHtml();
+      // Add timeout to prevent infinite loading
+      const exportPromise = exportHtml();
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Export timeout - editor may not be ready")), 10000)
+      );
+      
+      const { html, design } = await Promise.race([exportPromise, timeoutPromise]);
 
       const templateData = {
         name,
@@ -251,22 +271,22 @@ export function TemplateEditorContent({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-1.5">
-            <Link href="/admin/emails/templates">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <h1 className="text-2xl font-semibold text-slate-900">
+        <div className="flex items-center gap-4">
+          <Link href="/admin/emails/templates">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               {mode === "create" ? "Create Email Template" : "Edit Email Template"}
             </h1>
+            <p className="text-sm text-slate-600 mt-1">
+              {mode === "create"
+                ? "Design a new email template using the drag-and-drop editor"
+                : "Update your email template design and settings"}
+            </p>
           </div>
-          <p className="text-sm text-slate-600 ml-11">
-            {mode === "create"
-              ? "Design a new email template using the drag-and-drop editor"
-              : "Update your email template design and settings"}
-          </p>
         </div>
 
         {/* Action buttons */}
@@ -451,7 +471,7 @@ export function TemplateEditorContent({
         <EmailEditor
           ref={emailEditorRef}
           initialDesign={
-            template?.content && typeof template.content === "object"
+            mode === "edit" && template?.content && typeof template.content === "object"
               ? (template.content as any).design
               : undefined
           }

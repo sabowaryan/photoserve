@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Calendar, Package, ChevronDown, ChevronUp } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface VersionInfoProps {
   version: string;
@@ -78,13 +80,11 @@ export function VersionInfo({ version, fileSize, releaseDate, changelog }: Versi
           </button>
           
           {isChangelogExpanded && (
-            <div className="px-4 py-3 bg-white border-t border-slate-200">
-              <div className="prose prose-sm max-w-none text-slate-600">
-                {changelog.split('\n').map((line, index) => (
-                  <p key={index} className="mb-2 last:mb-0">
-                    {line}
-                  </p>
-                ))}
+            <div className="px-6 py-5 bg-white border-t border-slate-200">
+              <div className="markdown-content prose prose-slate max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {changelog}
+                </ReactMarkdown>
               </div>
             </div>
           )}

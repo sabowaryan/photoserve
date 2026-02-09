@@ -1,26 +1,18 @@
 import { redirect } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
-import { AdminHeader } from "@/components/admin/admin-header";
-import { AdminNavWrapper } from "@/components/admin/admin-nav-wrapper";
 import { AdminSessionMarker } from "@/components/admin/admin-session-marker";
+import { AdminLayoutClient } from "@/components/admin/admin-layout-client";
 
-/**
- * Check if the current user has admin privileges
- * Requirements: 1.1, 1.2
- */
-async function checkAdminAccess(userId: string): Promise<{ isAdmin: boolean; name: string | null }> {
+async function getProfile(userId: string) {
   const { supabase } = await requireSupabaseClient();
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, is_admin")
+    .select("name, is_admin, avatar_url")
     .eq("id", userId)
     .maybeSingle();
 
-  return {
-    isAdmin: profile?.is_admin === true,
-    name: profile?.name ?? null,
-  };
+  return profile;
 }
 
 /**
@@ -45,28 +37,27 @@ export default async function AdminLayout({
     redirect("/auth");
   }
 
-  const { isAdmin, name } = await checkAdminAccess(session.user.id);
+  const profile = await getProfile(session.user.id);
 
   // Redirect to 403 if not admin (Requirement 1.2)
-  if (!isAdmin) {
+  if (!profile?.is_admin) {
     redirect("/403");
   }
 
-  const adminName = name || session.user.email?.split("@")[0] || "Admin";
+  const adminName = profile.name || session.user.email?.split("@")[0] || "Admin";
   const adminEmail = session.user.email || "";
+  const adminAvatar = profile.avatar_url || session.user.image || null;
 
   return (
-    <div className="min-h-screen bg-slate-50 overflow-x-hidden">
+    <div className="h-screen bg-[#f8fafc] overflow-hidden flex">
       <AdminSessionMarker />
-      <AdminHeader adminName={adminName} adminEmail={adminEmail} />
-      <div className="flex pt-16">
-        <AdminNavWrapper />
-        <main className="flex-1 min-w-0 lg:ml-56 p-3 sm:p-4 lg:p-6">
-          <div className="max-w-full overflow-x-auto">
-            {children}
-          </div>
-        </main>
-      </div>
+      <AdminLayoutClient
+        adminName={adminName}
+        adminEmail={adminEmail}
+        adminAvatar={adminAvatar}
+      >
+        {children}
+      </AdminLayoutClient>
     </div>
   );
 }

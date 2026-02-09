@@ -88,10 +88,10 @@ export const createPluginVersionSchema = z.object({
     ),
   fileSize: z.number()
     .positive('File size must be positive')
-    .max(52428800, 'File size must not exceed 50MB'), // 50MB in bytes
+    .max(104857600, 'File size must not exceed 100MB'), // 100MB in bytes
   changelog: z.string()
     .min(1, 'Changelog is required')
-    .max(10000, 'Changelog must be 10,000 characters or less'),
+    .max(50000, 'Changelog must be 50,000 characters or less'),
   isStable: z.boolean().default(false),
   minLightroomVersion: z.string()
     .regex(LIGHTROOM_VERSION_REGEX, 'Minimum Lightroom version must be in format X.Y (e.g., 11.0)')
@@ -114,8 +114,8 @@ export const pluginFileUploadSchema = z.object({
       'File must have .lrplugin or .zip extension'
     )
     .refine(
-      (file) => file.size <= 52428800, // 50MB
-      'File size must not exceed 50MB'
+      (file) => file.size <= 104857600, // 100MB
+      'File size must not exceed 100MB'
     ),
 });
 

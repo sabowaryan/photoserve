@@ -385,13 +385,22 @@
       "signupFailed": "Fejl under registrering",
       "googleFailed": "Fejl ved login med Google",
       "accountExists": "En konto findes allerede med denne e-mail. Log ind med din adgangskode.",
+      "emailExists": "En konto findes allerede med denne e-mail",
+      "emailExistsUnverified": "En konto findes allerede med denne e-mail. Log ind for at sende verifikations-e-mail igen.",
       "oauthError": "Fejl ved login med Google. Prøv igen.",
       "genericError": "Der opstod en fejl",
       "accountCreationError": "Fejl ved oprettelse af konto",
+      "accountCreationFailed": "Kunne ikke oprette konto",
       "profileCreationError": "Fejl ved oprettelse af profil",
+      "profileCreationFailed": "Kunne ikke oprette profil",
+      "profileNotFound": "Profil ikke fundet",
       "resetLinkInvalid": "Nulstillingslinket er ugyldigt eller udløbet",
+      "invalidResetToken": "Nulstillingslinket er ugyldigt eller udløbet",
       "passwordUpdateError": "Fejl ved opdatering af adgangskode",
-      "resetEmailError": "Fejl ved afsendelse af nulstillings-e-mail"
+      "passwordUpdateFailed": "Kunne ikke opdatere adgangskode",
+      "resetEmailError": "Fejl ved afsendelse af nulstillings-e-mail",
+      "resetEmailFailed": "Kunne ikke sende nulstillings-e-mail",
+      "rateLimitExceeded": "For mange forsøg. Prøv igen senere."
     },
     "success": {
       "accountCreated": "Konto oprettet! Du kan nu logge ind.",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "En uventet fejl opstod. Prøv igen.",
+      "unexpectedError": "En uventet fejl opstod. Prøv igen.",
       "networkError": "Netværksfejl. Tjek din forbindelse.",
       "retry": "Noget gik galt. Prøv igen.",
       "validationFailed": "Validering mislykkedes",
@@ -1322,7 +1332,13 @@
       "invalidSlugLength": "Slug skal være mellem 1 og 100 tegn",
       "notFound": "Ressource ikke fundet",
       "invalidAction": "Ugyldig handling",
-      "rateLimitExceeded": "For mange forsøg. Prøv igen senere."
+      "rateLimitExceeded": "For mange forsøg. Prøv igen senere.",
+      "resourceExists": "Ressourcen findes allerede",
+      "invalidReference": "Refereret ressource ikke fundet",
+      "missingField": "Påkrævet felt mangler",
+      "accessDenied": "Adgang nægtet",
+      "multipleFound": "Flere ressourcer fundet",
+      "databaseError": "Databaseoperation mislykkedes"
     }
   }
 }

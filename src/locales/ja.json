@@ -385,13 +385,22 @@
       "signupFailed": "登録中にエラーが発生しました",
       "googleFailed": "Googleログインでエラーが発生しました",
       "accountExists": "このメールアドレスでアカウントが既に存在します。パスワードでログインしてください。",
+      "emailExists": "このメールアドレスでアカウントが既に存在します",
+      "emailExistsUnverified": "このメールアドレスでアカウントが既に存在します。ログインして確認メールを再送信してください。",
       "oauthError": "Googleログインでエラーが発生しました。もう一度お試しください。",
       "genericError": "エラーが発生しました",
       "accountCreationError": "アカウント作成エラー",
+      "accountCreationFailed": "アカウント作成に失敗しました",
       "profileCreationError": "プロフィール作成エラー",
+      "profileCreationFailed": "プロフィール作成に失敗しました",
+      "profileNotFound": "プロフィールが見つかりません",
       "resetLinkInvalid": "リセットリンクが無効または期限切れです",
+      "invalidResetToken": "リセットリンクが無効または期限切れです",
       "passwordUpdateError": "パスワード更新エラー",
-      "resetEmailError": "リセットメール送信エラー"
+      "passwordUpdateFailed": "パスワード更新に失敗しました",
+      "resetEmailError": "リセットメール送信エラー",
+      "resetEmailFailed": "リセットメール送信に失敗しました",
+      "rateLimitExceeded": "試行回数が多すぎます。後でもう一度お試しください。"
     },
     "success": {
       "accountCreated": "アカウントが作成されました！ログインできます。",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "予期しないエラーが発生しました。もう一度お試しください。",
+      "unexpectedError": "予期しないエラーが発生しました。もう一度お試しください。",
       "networkError": "ネットワークエラー。接続を確認してください。",
       "retry": "問題が発生しました。もう一度お試しください。",
       "validationFailed": "検証に失敗しました",
@@ -1322,7 +1332,13 @@
       "invalidSlugLength": "スラッグは1〜100文字である必要があります",
       "notFound": "リソースが見つかりません",
       "invalidAction": "無効なアクション",
-      "rateLimitExceeded": "試行回数が多すぎます。後でもう一度お試しください。"
+      "rateLimitExceeded": "試行回数が多すぎます。後でもう一度お試しください。",
+      "resourceExists": "リソースは既に存在します",
+      "invalidReference": "参照されたリソースが見つかりません",
+      "missingField": "必須フィールドがありません",
+      "accessDenied": "アクセスが拒否されました",
+      "multipleFound": "複数のリソースが見つかりました",
+      "databaseError": "データベース操作に失敗しました"
     }
   }
 }

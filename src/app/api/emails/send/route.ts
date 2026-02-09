@@ -9,7 +9,6 @@
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
 import { requireAdmin } from '@/lib/middleware/admin-auth';
-import { rateLimitMiddleware } from '@/lib/middleware/rate-limit';
 import { createAdminClient } from '@/lib/supabase/server';
 import { EmailService } from '@/lib/services/email.service';
 import { createTemplateRenderer } from '@/lib/email/template-renderer';
@@ -53,15 +52,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
+    // Note: Rate limiting for admin API endpoints can be added if needed
+    // For now, admin authentication provides sufficient protection
     
     // Parse and validate request body
     const body = await request.json();

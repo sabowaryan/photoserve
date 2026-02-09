@@ -1,0 +1,417 @@
+--[[----------------------------------------------------------------------------
+
+PikSendExportServiceProvider.lua
+Export Service Provider for PikSend plugin
+
+Handles:
+- Export dialog configuration
+- Photo rendering and export
+- Upload to PikSend galleries
+- Progress tracking
+
+------------------------------------------------------------------------------]]
+
+local LrView = import 'LrView'
+local LrBinding = import 'LrBinding'
+local LrDialogs = import 'LrDialogs'
+local LrTasks = import 'LrTasks'
+local LrFileUtils = import 'LrFileUtils'
+local LrPathUtils = import 'LrPathUtils'
+local LrPrefs = import 'LrPrefs'
+
+local PikSendAPI = require 'PikSendAPI'
+local PikSendAuth = require 'PikSendAuth'
+local PikSendGallery = require 'PikSendGallery'
+local PikSendUpload = require 'PikSendUpload'
+local PikSendMetadata = require 'PikSendMetadata'
+local PikSendLogger = require 'PikSendLogger'
+local PikSendUI = require 'PikSendUI'
+local PikSendLocalization = require 'PikSendLocalization'
+local LOC = PikSendLocalization.LOC
+
+--------------------------------------------------------------------------------
+-- Service Provider Definition
+--------------------------------------------------------------------------------
+
+local exportServiceProvider = {}
+
+-- Plugin name
+exportServiceProvider.exportPresetFields = {
+  { key = 'selectedGallery', default = nil },
+  { key = 'exportFormat', default = 'jpeg' },
+  { key = 'jpegQuality', default = 90 },
+  { key = 'resolution', default = 'original' },
+  { key = 'enableResize', default = false },
+  { key = 'maxWidth', default = 1920 },
+  { key = 'maxHeight', default = 1080 },
+  { key = 'enableWatermark', default = false },
+  { key = 'watermarkPosition', default = 'bottomRight' },
+  { key = 'watermarkOpacity', default = 50 },
+  { key = 'includeMetadata', default = true },
+  { key = 'includeGPS', default = false },
+}
+
+-- Allow file formats
+exportServiceProvider.allowFileFormats = {'JPEG', 'PNG', 'TIFF'}
+
+-- Allow color spaces
+exportServiceProvider.allowColorSpaces = {'sRGB', 'AdobeRGB'}
+
+-- Hide sections we don't need
+exportServiceProvider.hideSections = {'exportLocation'}
+
+-- Can export video
+exportServiceProvider.canExportVideo = false
+
+--------------------------------------------------------------------------------
+-- Dialog Sections
+--------------------------------------------------------------------------------
+
+-- Sections for top of dialog
+function exportServiceProvider.sectionsForTopOfDialog(f, propertyTable)
+  -- Initialize property table
+  if not propertyTable.galleries then
+    propertyTable.galleries = {}
+  end
+  
+  -- Load user info if authenticated
+  if PikSendAuth.isAuthenticated() then
+    local userInfo = PikSendAuth.getUserInfo()
+    if userInfo then
+      propertyTable.userName = userInfo.name
+    end
+    
+    -- Load galleries
+    PikSendGallery.refreshGalleries(propertyTable)
+  end
+  
+  return {
+    -- Authentication section
+    PikSendUI.createAuthSection(f, propertyTable),
+    
+    -- Gallery selection section
+    PikSendUI.createGallerySection(f, propertyTable),
+    
+    -- Export settings section
+    {
+      title = LOC('exportSettings'),
+      
+      -- Format selection
+      f:row {
+        f:static_text {
+          title = LOC('exportFormat'),
+          width = LrView.share('label_width'),
+        },
+        f:popup_menu {
+          value = LrView.bind('exportFormat'),
+          items = {
+            { title = LOC('exportFormatJPEG'), value = 'jpeg' },
+            { title = LOC('exportFormatPNG'), value = 'png' },
+            { title = LOC('exportFormatTIFF'), value = 'tiff' },
+          },
+        },
+      },
+      
+      -- JPEG quality
+      f:row {
+        f:static_text {
+          title = LOC('exportQuality'),
+          width = LrView.share('label_width'),
+        },
+        f:slider {
+          value = LrView.bind('jpegQuality'),
+          min = 1,
+          max = 100,
+          width_in_digits = 3,
+          enabled = LrView.bind {
+            key = 'exportFormat',
+            transform = function(value)
+              return value == 'jpeg'
+            end,
+          },
+        },
+        f:static_text {
+          title = LrView.bind {
+            key = 'jpegQuality',
+            transform = function(value)
+              return tostring(value or 90)
+            end,
+          },
+        },
+      },
+      
+      f:spacer { height = 10 },
+      
+      -- Resolution preset
+      f:row {
+        f:static_text {
+          title = 'Résolution:',
+          width = LrView.share('label_width'),
+        },
+        f:popup_menu {
+          value = LrView.bind('resolution'),
+          items = {
+            { title = 'Originale', value = 'original' },
+            { title = 'HD (1920x1080)', value = 'hd' },
+            { title = 'Web (1280x720)', value = 'web' },
+            { title = 'Personnalisée', value = 'custom' },
+          },
+        },
+      },
+      
+      -- Custom resize options
+      f:row {
+        f:checkbox {
+          title = LOC('exportResize'),
+          value = LrView.bind('enableResize'),
+          enabled = LrView.bind {
+            key = 'resolution',
+            transform = function(value)
+              return value == 'custom'
+            end,
+          },
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = LOC('exportMaxWidth'),
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableResize'),
+        },
+        f:edit_field {
+          value = LrView.bind('maxWidth'),
+          width_in_chars = 6,
+          enabled = LrView.bind('enableResize'),
+        },
+        f:static_text {
+          title = LOC('exportPixels'),
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = LOC('exportMaxHeight'),
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableResize'),
+        },
+        f:edit_field {
+          value = LrView.bind('maxHeight'),
+          width_in_chars = 6,
+          enabled = LrView.bind('enableResize'),
+        },
+        f:static_text {
+          title = LOC('exportPixels'),
+        },
+      },
+      
+      f:spacer { height = 10 },
+      
+      -- Watermark settings
+      f:row {
+        f:checkbox {
+          title = LOC('galleryWatermarkEnabled'),
+          value = LrView.bind('enableWatermark'),
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Position:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:popup_menu {
+          value = LrView.bind('watermarkPosition'),
+          items = {
+            { title = 'Haut gauche', value = 'topLeft' },
+            { title = 'Haut droite', value = 'topRight' },
+            { title = 'Bas gauche', value = 'bottomLeft' },
+            { title = 'Bas droite', value = 'bottomRight' },
+            { title = 'Centre', value = 'center' },
+          },
+          enabled = LrView.bind('enableWatermark'),
+        },
+      },
+      
+      f:row {
+        f:static_text {
+          title = 'Opacité:',
+          width = LrView.share('label_width'),
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:slider {
+          value = LrView.bind('watermarkOpacity'),
+          min = 0,
+          max = 100,
+          width_in_digits = 3,
+          enabled = LrView.bind('enableWatermark'),
+        },
+        f:static_text {
+          title = LrView.bind {
+            key = 'watermarkOpacity',
+            transform = function(value)
+              return tostring(value or 50) .. '%'
+            end,
+          },
+        },
+      },
+      
+      f:spacer { height = 10 },
+      
+      -- Metadata options
+      f:row {
+        f:checkbox {
+          title = LOC('exportMetadata'),
+          value = LrView.bind('includeMetadata'),
+        },
+      },
+      
+      f:row {
+        f:checkbox {
+          title = LOC('exportGPS'),
+          value = LrView.bind('includeGPS'),
+          enabled = LrView.bind('includeMetadata'),
+        },
+      },
+    },
+  }
+end
+
+--------------------------------------------------------------------------------
+-- Export Process
+--------------------------------------------------------------------------------
+
+-- Process rendered photos
+function exportServiceProvider.processRenderedPhotos(functionContext, exportContext)
+  local exportSession = exportContext.exportSession
+  local exportSettings = exportContext.propertyTable
+  
+  PikSendLogger.info('Starting export process', 'ExportService')
+  
+  -- Ensure authenticated
+  if not PikSendAuth.ensureAuthenticated() then
+    LrDialogs.message(
+      'Authentification requise',
+      'Veuillez vous connecter à votre compte PikSend pour continuer.',
+      'critical'
+    )
+    return
+  end
+  
+  local apiToken = PikSendAuth.getToken()
+  
+  -- Check gallery selection
+  local galleryId = exportSettings.selectedGallery
+  if not galleryId then
+    LrDialogs.message(
+      'Galerie requise',
+      'Veuillez sélectionner ou créer une galerie de destination.',
+      'critical'
+    )
+    return
+  end
+  
+  PikSendLogger.info('Exporting to gallery: ' .. galleryId, 'ExportService')
+  
+  -- Get number of photos
+  local nPhotos = exportSession:countRenditions()
+  
+  -- Configure progress
+  local progressScope = exportContext:configureProgress {
+    title = LOC('progressUploadingTo'),
+  }
+  
+  -- Process each photo
+  local successCount = 0
+  local failCount = 0
+  
+  for i, rendition in exportContext:renditions() do
+    -- Check for cancellation
+    if progressScope:isCanceled() then
+      break
+    end
+    
+    -- Update progress
+    progressScope:setPortionComplete(i - 1, nPhotos)
+    progressScope:setCaption(string.format('Upload %d sur %d', i, nPhotos))
+    
+    -- Wait for render
+    local success, pathOrMessage = rendition:waitForRender()
+    
+    if success then
+      local photo = rendition.photo
+      
+      -- Extract metadata
+      local metadata = nil
+      if exportSettings.includeMetadata then
+        local metadataSettings = {
+          metadata = {
+            includeTitle = true,
+            includeDescription = true,
+            includeKeywords = true,
+            includeCopyright = true,
+            includeExif = true,
+            includeGPS = exportSettings.includeGPS,
+          },
+        }
+        metadata = PikSendMetadata.extractMetadata(photo, metadataSettings)
+        metadata = PikSendMetadata.formatForAPI(metadata)
+      end
+      
+      -- Upload photo
+      PikSendLogger.debug('Uploading photo: ' .. pathOrMessage, 'ExportService')
+      local result = PikSendAPI.uploadImage(apiToken, galleryId, pathOrMessage, metadata)
+      
+      if result and result.imageId then
+        -- Success
+        successCount = successCount + 1
+        rendition:recordPublishedPhotoId(result.imageId)
+        PikSendLogger.info('Photo uploaded successfully: ' .. result.imageId, 'ExportService')
+      else
+        -- Failure
+        failCount = failCount + 1
+        rendition:recordPublishError('Échec de l\'upload')
+        PikSendLogger.error('Failed to upload photo: ' .. pathOrMessage, 'ExportService')
+      end
+      
+      -- Clean up temporary file
+      if LrFileUtils.exists(pathOrMessage) then
+        LrFileUtils.delete(pathOrMessage)
+      end
+    else
+      -- Render failed
+      failCount = failCount + 1
+      PikSendLogger.error('Failed to render photo: ' .. pathOrMessage, 'ExportService')
+    end
+  end
+  
+  -- Complete progress
+  progressScope:done()
+  
+  -- Show completion message
+  local gallery = PikSendGallery.getGalleryById(galleryId)
+  local galleryUrl = PikSendGallery.generateShareLink(galleryId)
+  
+  if failCount == 0 then
+    LrDialogs.message(
+      'Export terminé',
+      string.format('%d photo(s) uploadée(s) avec succès vers la galerie "%s".\n\nLien: %s',
+        successCount, gallery and gallery.title or 'Unknown', galleryUrl),
+      'info'
+    )
+  else
+    LrDialogs.message(
+      'Export terminé avec erreurs',
+      string.format('%d photo(s) uploadée(s), %d échec(s).\n\nLien: %s',
+        successCount, failCount, galleryUrl),
+      'warning'
+    )
+  end
+  
+  PikSendLogger.info(string.format('Export complete: %d success, %d failed', successCount, failCount), 'ExportService')
+end
+
+--------------------------------------------------------------------------------
+
+return exportServiceProvider

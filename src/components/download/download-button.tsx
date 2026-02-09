@@ -35,22 +35,60 @@ export function DownloadButton({ version }: DownloadButtonProps) {
       return;
     }
 
-    // If Pro, call GET /api/plugin/download
+    // If Pro, initiate download
     setIsDownloading(true);
     try {
       const url = version 
         ? `/api/plugin/download?version=${encodeURIComponent(version)}`
         : '/api/plugin/download';
       
-      // Redirect to the download endpoint which will redirect to Cloudinary
-      window.location.href = url;
+      // Call our API to download the file (API proxies from Cloudinary)
+      const response = await fetch(url, {
+        credentials: 'include',
+      });
       
-      // Keep loading state for a bit to show feedback
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: response.statusText }));
+        console.error('Download failed:', response.status, errorData);
+        throw new Error(errorData.error || `Download failed: ${response.statusText}`);
+      }
+      
+      // Get the filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `PikSend-${version || 'latest'}.zip`;
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      // Convert response to blob
+      const blob = await response.blob();
+      
+      // Create a download link and trigger it
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
       setTimeout(() => {
-        setIsDownloading(false);
-      }, 2000);
+        window.URL.revokeObjectURL(downloadUrl);
+      }, 100);
+      
+      setIsDownloading(false);
     } catch (error) {
       console.error('Download error:', error);
+      
+      // Show user-friendly error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to download plugin: ${errorMessage}\n\nPlease try again or contact support if the problem persists.`);
+      
       setIsDownloading(false);
     }
   };

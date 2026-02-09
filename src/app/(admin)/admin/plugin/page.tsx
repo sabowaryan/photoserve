@@ -111,40 +111,25 @@ export default function AdminPluginPage() {
   });
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-indigo-100 rounded-lg">
-              <Package className="h-4 w-4 text-indigo-600" />
-            </div>
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-              Plugin Management
-            </h1>
-          </div>
-          <p className="text-xs text-slate-500 mt-0.5 ml-8">
-            Manage Lightroom plugin versions, uploads, and usage analytics
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6 lg:space-y-8">
+      {/* Header - Removed, title is now in AdminHeader */}
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
-          <TabsTrigger value="versions" className="gap-2">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex bg-white rounded-2xl p-1 border border-slate-100">
+          <TabsTrigger value="versions" className="gap-2 rounded-xl">
             <Package className="h-4 w-4" />
             <span className="hidden sm:inline">Versions</span>
           </TabsTrigger>
-          <TabsTrigger value="upload" className="gap-2">
+          <TabsTrigger value="upload" className="gap-2 rounded-xl">
             <Upload className="h-4 w-4" />
             <span className="hidden sm:inline">Upload</span>
           </TabsTrigger>
-          <TabsTrigger value="statistics" className="gap-2">
+          <TabsTrigger value="statistics" className="gap-2 rounded-xl">
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Statistics</span>
           </TabsTrigger>
-          <TabsTrigger value="logs" className="gap-2">
+          <TabsTrigger value="logs" className="gap-2 rounded-xl">
             <FileText className="h-4 w-4" />
             <span className="hidden sm:inline">Usage Logs</span>
           </TabsTrigger>
@@ -156,16 +141,16 @@ export default function AdminPluginPage() {
             <p className="text-sm text-slate-600">
               Manage plugin versions and their stability status
             </p>
-            <Button onClick={() => setActiveTab("upload")} size="sm">
+            <Button onClick={() => setActiveTab("upload")} size="sm" className="rounded-xl">
               <Upload className="h-4 w-4 mr-2" />
               Upload New Version
             </Button>
           </div>
 
           {versionsError ? (
-            <div className="bg-rose-50 border border-rose-200 rounded-xl p-6 text-center">
+            <div className="bg-rose-50 border border-rose-200 rounded-[24px] p-6 text-center">
               <p className="text-rose-700 mb-4">{versionsError}</p>
-              <Button onClick={fetchVersions} variant="outline" size="sm">
+              <Button onClick={fetchVersions} variant="outline" size="sm" className="rounded-xl">
                 Retry
               </Button>
             </div>
@@ -182,7 +167,7 @@ export default function AdminPluginPage() {
         {/* Tab 2: Upload */}
         <TabsContent value="upload" className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-800 mb-1">
+            <h2 className="text-base lg:text-lg font-bold text-slate-800 mb-1">
               Upload New Plugin Version
             </h2>
             <p className="text-sm text-slate-600">
@@ -198,7 +183,7 @@ export default function AdminPluginPage() {
         {/* Tab 3: Statistics */}
         <TabsContent value="statistics" className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-800 mb-1">
+            <h2 className="text-base lg:text-lg font-bold text-slate-800 mb-1">
               Plugin Usage Statistics
             </h2>
             <p className="text-sm text-slate-600">
@@ -212,7 +197,7 @@ export default function AdminPluginPage() {
         {/* Tab 4: Usage Logs */}
         <TabsContent value="logs" className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-800 mb-1">
+            <h2 className="text-base lg:text-lg font-bold text-slate-800 mb-1">
               Usage Logs
             </h2>
             <p className="text-sm text-slate-600">

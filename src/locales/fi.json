@@ -385,13 +385,22 @@
       "signupFailed": "Virhe rekisteröinnissä",
       "googleFailed": "Virhe Google-kirjautumisessa",
       "accountExists": "Tili on jo olemassa tällä sähköpostilla. Kirjaudu salasanallasi.",
+      "emailExists": "Tili on jo olemassa tällä sähköpostilla",
+      "emailExistsUnverified": "Tili on jo olemassa tällä sähköpostilla. Kirjaudu lähettääksesi vahvistussähköpostin uudelleen.",
       "oauthError": "Virhe Google-kirjautumisessa. Yritä uudelleen.",
       "genericError": "Tapahtui virhe",
       "accountCreationError": "Virhe tilin luomisessa",
+      "accountCreationFailed": "Tilin luominen epäonnistui",
       "profileCreationError": "Virhe profiilin luomisessa",
+      "profileCreationFailed": "Profiilin luominen epäonnistui",
+      "profileNotFound": "Profiilia ei löytynyt",
       "resetLinkInvalid": "Nollauslinkki on virheellinen tai vanhentunut",
+      "invalidResetToken": "Nollauslinkki on virheellinen tai vanhentunut",
       "passwordUpdateError": "Virhe salasanan päivityksessä",
-      "resetEmailError": "Virhe nollaussähköpostin lähettämisessä"
+      "passwordUpdateFailed": "Salasanan päivitys epäonnistui",
+      "resetEmailError": "Virhe nollaussähköpostin lähettämisessä",
+      "resetEmailFailed": "Nollaussähköpostin lähettäminen epäonnistui",
+      "rateLimitExceeded": "Liian monta yritystä. Yritä myöhemmin uudelleen."
     },
     "success": {
       "accountCreated": "Tili luotu! Voit nyt kirjautua sisään.",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "Odottamaton virhe tapahtui. Yritä uudelleen.",
+      "unexpectedError": "Odottamaton virhe tapahtui. Yritä uudelleen.",
       "networkError": "Verkkovirhe. Tarkista yhteytesi.",
       "retry": "Jokin meni pieleen. Yritä uudelleen.",
       "validationFailed": "Validointi epäonnistui",
@@ -1322,7 +1332,13 @@
       "invalidSlugLength": "Slugin on oltava 1-100 merkkiä",
       "notFound": "Resurssia ei löytynyt",
       "invalidAction": "Virheellinen toiminto",
-      "rateLimitExceeded": "Liian monta yritystä. Yritä myöhemmin uudelleen."
+      "rateLimitExceeded": "Liian monta yritystä. Yritä myöhemmin uudelleen.",
+      "resourceExists": "Resurssi on jo olemassa",
+      "invalidReference": "Viitattua resurssia ei löytynyt",
+      "missingField": "Pakollinen kenttä puuttuu",
+      "accessDenied": "Pääsy evätty",
+      "multipleFound": "Useita resursseja löytyi",
+      "databaseError": "Tietokantaoperaatio epäonnistui"
     }
   }
 }

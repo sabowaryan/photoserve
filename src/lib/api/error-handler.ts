@@ -81,20 +81,20 @@ function isDatabaseError(error: unknown): error is PostgrestError {
 }
 
 /**
- * Maps database error codes to user-friendly messages
+ * Maps database error codes to user-friendly translation keys
  * Requirements: 13.5 - Catch database errors and return generic error messages
  */
 function mapDatabaseError(error: PostgrestError): { message: string; code: string; status: number } {
   // Common PostgreSQL error codes
   const errorCodeMap: Record<string, { message: string; code: string; status: number }> = {
-    '23505': { message: 'Resource already exists', code: 'DUPLICATE_RESOURCE', status: 409 },
-    '23503': { message: 'Referenced resource not found', code: 'INVALID_REFERENCE', status: 400 },
-    '23502': { message: 'Required field missing', code: 'MISSING_FIELD', status: 400 },
-    '23514': { message: 'Invalid data format', code: 'INVALID_DATA', status: 400 },
-    '42501': { message: 'Access denied', code: 'ACCESS_DENIED', status: 403 },
-    '42P01': { message: 'Resource not found', code: 'NOT_FOUND', status: 404 },
-    'PGRST116': { message: 'Resource not found', code: 'NOT_FOUND', status: 404 },
-    'PGRST301': { message: 'Multiple resources found', code: 'MULTIPLE_FOUND', status: 409 },
+    '23505': { message: 'api.errors.resourceExists', code: 'DUPLICATE_RESOURCE', status: 409 },
+    '23503': { message: 'api.errors.invalidReference', code: 'INVALID_REFERENCE', status: 400 },
+    '23502': { message: 'api.errors.missingField', code: 'MISSING_FIELD', status: 400 },
+    '23514': { message: 'api.errors.invalidData', code: 'INVALID_DATA', status: 400 },
+    '42501': { message: 'api.errors.accessDenied', code: 'ACCESS_DENIED', status: 403 },
+    '42P01': { message: 'api.errors.notFound', code: 'NOT_FOUND', status: 404 },
+    'PGRST116': { message: 'api.errors.notFound', code: 'NOT_FOUND', status: 404 },
+    'PGRST301': { message: 'api.errors.multipleFound', code: 'MULTIPLE_FOUND', status: 409 },
   };
 
   const mapped = errorCodeMap[error.code];
@@ -104,7 +104,7 @@ function mapDatabaseError(error: PostgrestError): { message: string; code: strin
 
   // Default database error response
   return {
-    message: 'Database operation failed',
+    message: 'api.errors.databaseError',
     code: 'DATABASE_ERROR',
     status: 500,
   };
@@ -201,7 +201,7 @@ export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
   if (error instanceof ZodError) {
     return NextResponse.json(
       {
-        error: 'Validation failed',
+        error: 'api.errors.validationFailed',
         code: 'VALIDATION_ERROR',
         details: error.issues.map(issue => ({
           field: issue.path.join('.'),
@@ -261,7 +261,7 @@ export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
   // Requirements: 13.6 - Security error sanitization
   return NextResponse.json(
     {
-      error: 'An unexpected error occurred',
+      error: 'errors.generic.unexpectedError',
       code: 'INTERNAL_ERROR',
       status: 500,
     },

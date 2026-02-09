@@ -84,10 +84,10 @@ export async function GET(request: NextRequest) {
     // Create Supabase admin client
     const supabase = await createAdminClient();
 
-    // Build query
+    // Build query - Try to join with profiles, but handle if relationship doesn't exist
     let query = supabase
       .from('plugin_usage_logs')
-      .select('*, profiles!plugin_usage_logs_user_id_fkey(name, email)', { count: 'exact' });
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (startDate) {
@@ -117,11 +117,33 @@ export async function GET(request: NextRequest) {
       throw new Error('Failed to fetch usage logs');
     }
 
+    // Fetch user profiles separately if logs exist
+    let enrichedLogs = logs || [];
+    if (logs && logs.length > 0) {
+      const userIds = [...new Set(logs.map(log => log.user_id).filter(Boolean))];
+      
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, name, email')
+          .in('id', userIds);
+
+        // Create a map of user profiles
+        const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+        // Enrich logs with profile data
+        enrichedLogs = logs.map(log => ({
+          ...log,
+          profiles: log.user_id ? profileMap.get(log.user_id) || null : null,
+        }));
+      }
+    }
+
     // Calculate total pages
     const totalPages = count ? Math.ceil(count / limit) : 0;
 
     return createApiResponse({
-      logs: logs || [],
+      logs: enrichedLogs,
       total: count || 0,
       page,
       limit,

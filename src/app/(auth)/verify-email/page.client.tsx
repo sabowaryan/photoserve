@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useCachedSession } from '@/hooks/use-cached-session';
+import { useCachedSession, clearSessionCache } from '@/hooks/use-cached-session';
 import { 
   Mail, 
   Loader2,
@@ -11,10 +11,12 @@ import {
   CheckCircle2,
   Clock,
   RefreshCw,
-  LogOut
+  LogOut,
+  ChevronDown
 } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/context';
 import { signOut } from 'next-auth/react';
+import * as Collapsible from '@radix-ui/react-collapsible';
 
 function VerifyEmailContent() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ function VerifyEmailContent() {
   const [nextResendTime, setNextResendTime] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>('');
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const router = useRouter();
   const { data: session, status} = useCachedSession();
@@ -90,7 +93,9 @@ function VerifyEmailContent() {
           // User is already verified, redirect to dashboard
           router.push('/dashboard');
         } else {
-          setError(data.error || t('auth.errors.genericError'));
+          // Translate error key from API or use generic error
+          const errorKey = data.error || 'auth.errors.genericError';
+          setError(t(errorKey));
         }
       } else {
         setSuccess(t('auth.verification.emailResent'));
@@ -111,7 +116,17 @@ function VerifyEmailContent() {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
-      await signOut({ callbackUrl: '/auth' });
+      // 1. Call logout API to clean server-side session
+      await fetch("/api/auth/logout", { method: "POST" });
+      
+      // 2. Clear session cache
+      clearSessionCache();
+      
+      // 3. Sign out from NextAuth (without auto-redirect)
+      await signOut({ redirect: false });
+      
+      // 4. Force full page refresh to clear all caches and redirect to auth
+      window.location.href = "/auth";
     } catch (err) {
       console.error('Sign out error:', err);
       setIsSigningOut(false);
@@ -160,48 +175,33 @@ function VerifyEmailContent() {
             </p>
           </div>
 
-          {/* Instructions */}
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-bold text-indigo-600">1</span>
+          {/* Instructions - Compact version */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <Mail className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-700 mb-1">
-                  {t('auth.verification.step1Title')}
-                </p>
-                <p className="text-sm text-slate-600">
-                  {t('auth.verification.step1Desc')}
-                </p>
-              </div>
+              <p className="text-sm text-slate-700">
+                {t('auth.verification.step1Desc')}
+              </p>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-bold text-indigo-600">2</span>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-700 mb-1">
-                  {t('auth.verification.step2Title')}
-                </p>
-                <p className="text-sm text-slate-600">
-                  {t('auth.verification.step2Desc')}
-                </p>
-              </div>
+              <p className="text-sm text-slate-700">
+                {t('auth.verification.step2Desc')}
+              </p>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-sm font-bold text-indigo-600">3</span>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-700 mb-1">
-                  {t('auth.verification.step3Title')}
-                </p>
-                <p className="text-sm text-slate-600">
-                  {t('auth.verification.step3Desc')}
-                </p>
-              </div>
+              <p className="text-sm text-slate-700">
+                {t('auth.verification.step3Desc')}
+              </p>
             </div>
           </div>
 
@@ -286,18 +286,40 @@ function VerifyEmailContent() {
             )}
           </button>
 
-          {/* Help Text */}
-          <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-indigo-900 mb-2 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" aria-hidden="true" />
-              {t('auth.verification.didntReceive')}
-            </h3>
-            <ul className="space-y-1 text-sm text-indigo-800 ml-6 list-disc">
-              <li>{t('auth.verification.checkSpam')}</li>
-              <li>{t('auth.verification.checkEmail')}</li>
-              <li>{t('auth.verification.waitFewMinutes')}</li>
-            </ul>
-          </div>
+          {/* Help Text - Collapsible */}
+          <Collapsible.Root open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+            <Collapsible.Trigger asChild>
+              <button
+                className="w-full p-4 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                aria-expanded={isHelpOpen}
+                aria-controls="help-content"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-indigo-900 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" aria-hidden="true" />
+                    {t('auth.verification.didntReceive')}
+                  </h3>
+                  <ChevronDown 
+                    className={`w-5 h-5 text-indigo-600 transition-transform duration-200 ${isHelpOpen ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
+                </div>
+              </button>
+            </Collapsible.Trigger>
+            
+            <Collapsible.Content
+              id="help-content"
+              className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp"
+            >
+              <div className="pt-3">
+                <ul className="space-y-2 text-sm text-indigo-800 ml-6 list-disc">
+                  <li>{t('auth.verification.checkSpam')}</li>
+                  <li>{t('auth.verification.checkEmailAddress')}</li>
+                  <li>{t('auth.verification.waitFewMinutes')}</li>
+                </ul>
+              </div>
+            </Collapsible.Content>
+          </Collapsible.Root>
 
           {/* Sign Out Button */}
           <button

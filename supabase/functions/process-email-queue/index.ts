@@ -234,7 +234,7 @@ async function getActiveProvider(supabase: any): Promise<EmailProvider | null> {
   try {
     const { data, error } = await supabase
       .from('email_providers')
-      .select('name, config')
+      .select('name')
       .eq('is_active', true)
       .single();
 
@@ -243,7 +243,26 @@ async function getActiveProvider(supabase: any): Promise<EmailProvider | null> {
       return null;
     }
 
-    return data as EmailProvider;
+    // Get API keys from Supabase secrets instead of encrypted database config
+    const provider: EmailProvider = {
+      name: data.name,
+      config: {},
+    };
+
+    if (data.name === 'resend') {
+      const resendKey = Deno.env.get('RESEND_API_KEY');
+      if (!resendKey) {
+        logError('RESEND_API_KEY not found in environment', {});
+        return null;
+      }
+      provider.config.apiKey = resendKey;
+    } else if (data.name === 'aws-ses') {
+      provider.config.accessKeyId = Deno.env.get('AWS_ACCESS_KEY_ID');
+      provider.config.secretAccessKey = Deno.env.get('AWS_SECRET_ACCESS_KEY');
+      provider.config.region = Deno.env.get('AWS_REGION') || 'us-east-1';
+    }
+
+    return provider;
   } catch (error) {
     logError('Error getting active provider', error);
     return null;

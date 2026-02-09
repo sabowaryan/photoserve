@@ -11,7 +11,6 @@
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse, createNoContentResponse } from '@/lib/api/error-handler';
 import { requireAdmin } from '@/lib/middleware/admin-auth';
-import { rateLimitMiddleware } from '@/lib/middleware/rate-limit';
 import { createAdminClient } from '@/lib/supabase/server';
 import { createTemplateRepository } from '@/lib/repositories/template.repository';
 import { updateTemplateSchema } from '@/lib/validators/email.schemas';
@@ -47,16 +46,6 @@ export async function GET(
         { error: authResult.error },
         authResult.status
       );
-    }
-    
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
     }
     
     const { id } = await params;
@@ -118,16 +107,6 @@ export async function PUT(
       );
     }
     
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-    
     const { id } = await params;
     
     // Parse and validate request body
@@ -177,16 +156,6 @@ export async function DELETE(
         { error: authResult.error },
         authResult.status
       );
-    }
-    
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
     }
     
     const { id } = await params;

@@ -9,7 +9,6 @@
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
 import { requireAdmin } from '@/lib/middleware/admin-auth';
-import { rateLimitMiddleware } from '@/lib/middleware/rate-limit';
 import { createAdminClient } from '@/lib/supabase/server';
 import { listLogsSchema } from '@/lib/validators/email.schemas';
 
@@ -47,24 +46,14 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Apply rate limiting (100 requests per minute)
-    const rateLimitResponse = rateLimitMiddleware(request, {
-      requestsPerMinute: 100,
-      burstLimit: 10,
-    });
-    
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-    
     // Parse and validate query parameters
     const searchParams = request.nextUrl.searchParams;
     const queryParams = {
       page: searchParams.get('page'),
-      limit: searchParams.get('limit'),
+      limit: searchParams.get('limit') || searchParams.get('pageSize'), // Support both limit and pageSize
       status: searchParams.get('status'),
-      from: searchParams.get('from'),
-      to: searchParams.get('to'),
+      from: searchParams.get('from') || searchParams.get('dateFrom'), // Support both from and dateFrom
+      to: searchParams.get('to') || searchParams.get('dateTo'), // Support both to and dateTo
       recipient: searchParams.get('recipient'),
       templateId: searchParams.get('templateId'),
     };
@@ -86,11 +75,19 @@ export async function GET(request: NextRequest) {
     }
     
     if (validatedQuery.from) {
-      query = query.gte('created_at', validatedQuery.from);
+      // Convert Date to ISO string for Supabase
+      const fromDate = validatedQuery.from instanceof Date 
+        ? validatedQuery.from.toISOString() 
+        : validatedQuery.from;
+      query = query.gte('created_at', fromDate);
     }
     
     if (validatedQuery.to) {
-      query = query.lte('created_at', validatedQuery.to);
+      // Convert Date to ISO string for Supabase
+      const toDate = validatedQuery.to instanceof Date 
+        ? validatedQuery.to.toISOString() 
+        : validatedQuery.to;
+      query = query.lte('created_at', toDate);
     }
     
     if (validatedQuery.recipient) {

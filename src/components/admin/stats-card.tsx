@@ -28,6 +28,7 @@ interface AdminStatsCardProps {
  * 
  * Displays a single statistic with icon, label, value, and optional trend indicator.
  * Used in the admin dashboard to show key metrics.
+ * Styled to match wastebank design.
  * 
  * Requirements: 2.1, 2.2, 2.3, 2.4
  */
@@ -43,67 +44,57 @@ export function AdminStatsCard({
   
   const variantStyles = {
     default: {
-      bg: "bg-slate-50",
-      icon: "bg-slate-100 text-slate-600",
-      iconHover: "group-hover:bg-slate-200",
+      iconBg: "bg-slate-100",
+      iconColor: "text-slate-600",
     },
     primary: {
-      bg: "bg-indigo-50",
-      icon: "bg-indigo-100 text-indigo-600",
-      iconHover: "group-hover:bg-indigo-200",
+      iconBg: "bg-indigo-100",
+      iconColor: "text-indigo-600",
     },
     success: {
-      bg: "bg-emerald-50",
-      icon: "bg-emerald-100 text-emerald-600",
-      iconHover: "group-hover:bg-emerald-200",
+      iconBg: "bg-emerald-100",
+      iconColor: "text-emerald-600",
     },
     warning: {
-      bg: "bg-amber-50",
-      icon: "bg-amber-100 text-amber-600",
-      iconHover: "group-hover:bg-amber-200",
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
     },
     danger: {
-      bg: "bg-rose-50",
-      icon: "bg-rose-100 text-rose-600",
-      iconHover: "group-hover:bg-rose-200",
+      iconBg: "bg-rose-100",
+      iconColor: "text-rose-600",
     },
   };
 
   const styles = variantStyles[variant];
 
   return (
-    <div className="group bg-white rounded-xl p-4 border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-slate-300">
-      <div className="flex items-start justify-between mb-3">
-        <div
-          className={`p-2 rounded-lg transition-colors ${styles.icon} ${styles.iconHover}`}
-        >
-          <Icon size={18} strokeWidth={2} />
-        </div>
-        {trend && (
-          <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-              trend.positive
-                ? "text-emerald-600 bg-emerald-50"
-                : "text-rose-600 bg-rose-50"
-            }`}
-          >
-            {trend.positive ? "+" : ""}
-            {trend.value}
-          </span>
-        )}
+    <div className="bg-white rounded-[28px] p-6 flex items-center gap-5 shadow-sm border border-slate-50 flex-1 min-w-[220px] hover:shadow-md hover:-translate-y-1 transition-all duration-300 group cursor-default">
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:rotate-6 ${styles.iconBg}`}>
+        <Icon size={24} strokeWidth={2} className={styles.iconColor} />
       </div>
-
-      <div>
-        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">
+      <div className="flex-1">
+        <p className="text-xs text-slate-400 font-semibold mb-1 uppercase tracking-wider">
           {label}
         </p>
-        <h4 className="text-xl font-bold text-slate-800 tracking-tight">
+        <p className="text-3xl font-bold text-slate-800 tracking-tight">
           {typeof value === "number" ? value.toLocaleString("fr-FR") : value}
-        </h4>
+        </p>
         {subtitle && (
           <p className="text-xs text-slate-500 font-medium mt-0.5">{subtitle}</p>
         )}
       </div>
+      {trend && (
+        <span
+          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+            trend.positive
+              ? "text-emerald-600 bg-emerald-50"
+              : "text-rose-600 bg-rose-50"
+          }`}
+        >
+          {trend.positive ? "+" : ""}
+          {trend.value}
+        </span>
+      )}
     </div>
   );
 }

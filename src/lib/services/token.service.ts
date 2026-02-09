@@ -73,28 +73,56 @@ export class TokenService implements ITokenService {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + expiryHours);
 
-      // Store token in database
+      // Store token in database with timeout and retry
       const supabase = createAdminClient();
-      const { error } = await supabase
-        .from('email_verification_tokens')
-        .insert({
-          user_id: userId,
-          token,
-          token_type: tokenType,
-          expires_at: expiresAt.toISOString(),
-        });
+      
+      // Create an AbortController with 5 second timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      try {
+        const { error } = await supabase
+          .from('email_verification_tokens')
+          .insert({
+            user_id: userId,
+            token,
+            token_type: tokenType,
+            expires_at: expiresAt.toISOString(),
+          })
+          .abortSignal(controller.signal);
 
-      if (error) {
-        console.error('[TokenService] Failed to store token:', error);
-        throw new Error('Failed to generate token');
+        clearTimeout(timeoutId);
+
+        if (error) {
+          console.error('[TokenService] Failed to store token:', error);
+          throw new Error('Failed to generate token');
+        }
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        
+        // Handle timeout or network errors
+        if (err.name === 'AbortError') {
+          console.error('[TokenService] Token storage timeout after 5s');
+          throw new Error('Database timeout - please try again');
+        }
+        throw err;
       }
 
       return {
         token,
         expiresAt,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('[TokenService] Error generating token:', error);
+      
+      // Provide more specific error messages
+      if (error.message?.includes('timeout')) {
+        throw new Error('Database connection timeout - please try again');
+      }
+      if (error.message?.includes('ECONNRESET') || error.message?.includes('fetch failed')) {
+        throw new Error('Network error - please check your connection and try again');
+      }
+      
       throw new Error('Failed to generate token');
     }
   }

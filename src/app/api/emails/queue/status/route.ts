@@ -12,14 +12,24 @@ export async function GET() {
   try {
     const supabase = createAdminClient();
 
-    // Get counts by status
+    // Get counts by status with timeout
     const { data: statusCounts, error: statusError } = await supabase
       .from("email_queue")
       .select("status")
       .in("status", ["pending", "processing", "failed"]);
 
     if (statusError) {
-      throw new Error(`Failed to fetch queue status: ${statusError.message}`);
+      console.error("Error fetching queue status:", statusError);
+      // Return empty counts instead of throwing
+      return NextResponse.json({
+        status: {
+          pending: 0,
+          processing: 0,
+          failed: 0,
+        },
+        scheduled: [],
+        error: statusError.message,
+      });
     }
 
     // Count by status
@@ -51,9 +61,15 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching queue status:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch queue status" },
-      { status: 500 }
-    );
+    // Return empty data instead of error to prevent UI crashes
+    return NextResponse.json({
+      status: {
+        pending: 0,
+        processing: 0,
+        failed: 0,
+      },
+      scheduled: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 }

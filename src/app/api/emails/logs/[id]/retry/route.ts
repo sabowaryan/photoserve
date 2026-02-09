@@ -11,14 +11,15 @@ import { createEmailLogRepository } from "@/lib/repositories/email-log.repositor
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createAdminClient();
     const repository = createEmailLogRepository(supabase);
 
     // Get the log to verify it exists and is failed
-    const log = await repository.getLogById(params.id);
+    const log = await repository.getLogById(id);
 
     if (!log) {
       return NextResponse.json(
@@ -80,7 +81,7 @@ export async function POST(
         error_message: null,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (logUpdateError) {
       throw logUpdateError;

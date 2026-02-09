@@ -282,6 +282,16 @@ const existing = data?.users?.find(
             provider: "google",
           },
         });
+
+        // Ensure email is marked as verified for Google OAuth users
+        await supabase
+          .from("profiles")
+          .update({
+            email_verified: true,
+            email_verified_at: new Date().toISOString(),
+          })
+          .eq("id", userId)
+          .eq("email_verified", false); // Only update if not already verified
       } else {
         const { data: created } = await supabase.auth.admin.createUser({
           email,
@@ -301,6 +311,15 @@ const existing = data?.users?.find(
           await supabase.auth.admin.deleteUser(userId);
           return false;
         }
+
+        // Mark email as verified for Google OAuth users (Google already verified it)
+        await supabase
+          .from("profiles")
+          .update({
+            email_verified: true,
+            email_verified_at: new Date().toISOString(),
+          })
+          .eq("id", userId);
       }
 
       await updateUserSignIn(supabase, userId, "google");

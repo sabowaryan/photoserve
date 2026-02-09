@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Configure image qualities to support both 75 (default) and 85
+    qualities: [75, 85],
   },
 
   // Performance optimizations (Requirement 12.3, 12.4, 12.5)
@@ -112,7 +114,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.supabase.co https://accounts.google.com https://www.google-analytics.com",
+              "connect-src 'self' https://*.supabase.co https://accounts.google.com https://www.google-analytics.com https://res.cloudinary.com wss://*.supabase.co",
               "frame-src 'self' https://accounts.google.com",
               "object-src 'none'",
               "base-uri 'self'",

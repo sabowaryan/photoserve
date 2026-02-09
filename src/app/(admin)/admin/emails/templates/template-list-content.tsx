@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { TemplateFilters } from "./template-filters";
 import { TemplateTable } from "./template-table";
 import type { Database } from "@/lib/supabase/types";
@@ -108,14 +111,22 @@ export function TemplateListContent({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-slate-800 tracking-tight">
-          Email Templates
-        </h1>
-        <p className="text-slate-500 mt-0.5 text-sm">
-          Manage email templates for transactional and marketing emails
-        </p>
+      {/* Header with Create Button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Email Templates
+          </h1>
+          <p className="text-slate-600 mt-1 text-sm">
+            Manage email templates for transactional and marketing emails
+          </p>
+        </div>
+        <Link href="/admin/emails/templates/new">
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Template
+          </Button>
+        </Link>
       </div>
 
       {/* Filters */}

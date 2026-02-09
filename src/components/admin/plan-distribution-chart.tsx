@@ -54,13 +54,13 @@ export function PlanDistributionChart({
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+    <div className="bg-white rounded-[32px] p-6 lg:p-8 border border-slate-50 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-sm font-bold text-slate-800">
+          <h3 className="text-base lg:text-lg font-bold text-slate-800">
             Distribution des plans
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-[10px] lg:text-xs text-slate-400 mt-1">
             {total.toLocaleString("fr-FR")} utilisateurs au total
           </p>
         </div>
@@ -85,7 +85,7 @@ export function PlanDistributionChart({
           return (
             <div
               key={plan.name}
-              className={`${plan.bgColor} rounded-xl p-4 transition-all hover:scale-[1.02]`}
+              className={`${plan.bgColor} rounded-2xl p-4 transition-all hover:scale-[1.02]`}
             >
               <div className="flex items-center gap-2 mb-2">
                 <div className={`p-1.5 rounded-lg ${plan.color} bg-opacity-20`}>

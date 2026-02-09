@@ -40,15 +40,15 @@ function StatsCard({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-slate-500 mb-1">{title}</p>
-          <p className="text-2xl font-bold text-slate-800">{value}</p>
-        </div>
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          <Icon className="h-6 w-6" />
-        </div>
+    <div className="bg-white rounded-[28px] p-6 flex items-center gap-5 shadow-sm border border-slate-50 flex-1 min-w-[220px] hover:shadow-md hover:-translate-y-1 transition-all duration-300 group cursor-default">
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:rotate-6 ${colorClasses[color]}`}>
+        <Icon className="h-6 w-6" />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs text-slate-400 font-semibold mb-1 uppercase tracking-wider">
+          {title}
+        </p>
+        <p className="text-3xl font-bold text-slate-800 tracking-tight">{value}</p>
       </div>
     </div>
   );
@@ -77,8 +77,8 @@ function BarChart({
   const maxValue = Math.max(...entries.map(([, value]) => value), 1);
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h3 className="text-sm font-bold text-slate-800 mb-4">{title}</h3>
+    <div className="bg-white rounded-[32px] border border-slate-50 shadow-sm p-6 lg:p-8">
+      <h3 className="text-base lg:text-lg font-bold text-slate-800 mb-6">{title}</h3>
       {entries.length === 0 ? (
         <div className="text-center py-8 text-slate-500">No data available</div>
       ) : (
@@ -133,8 +133,8 @@ function PieChart({
   const total = entries.reduce((sum, [, value]) => sum + value, 0);
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h3 className="text-sm font-bold text-slate-800 mb-4">{title}</h3>
+    <div className="bg-white rounded-[32px] border border-slate-50 shadow-sm p-6 lg:p-8">
+      <h3 className="text-base lg:text-lg font-bold text-slate-800 mb-6">{title}</h3>
       {entries.length === 0 ? (
         <div className="text-center py-8 text-slate-500">No data available</div>
       ) : (
@@ -222,9 +222,9 @@ export function PluginStatistics({ dateRange }: PluginStatisticsProps) {
 
   if (error) {
     return (
-      <div className="bg-rose-50 border border-rose-200 rounded-xl p-6 text-center">
+      <div className="bg-rose-50 border border-rose-200 rounded-[24px] p-6 text-center">
         <p className="text-rose-700 mb-4">{error}</p>
-        <Button onClick={fetchStats} variant="outline" size="sm">
+        <Button onClick={fetchStats} variant="outline" size="sm" className="rounded-xl">
           Retry
         </Button>
       </div>
@@ -240,9 +240,9 @@ export function PluginStatistics({ dateRange }: PluginStatisticsProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-8">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         <StatsCard
           title="Total Actions"
           value={stats.totalActions.toLocaleString()}
@@ -274,7 +274,7 @@ export function PluginStatistics({ dateRange }: PluginStatisticsProps) {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         {/* Most Common Actions */}
         <BarChart
           title="Most Common Actions"
@@ -290,7 +290,7 @@ export function PluginStatistics({ dateRange }: PluginStatisticsProps) {
       </div>
 
       {/* Additional Info */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+      <div className="bg-slate-50 border border-slate-200 rounded-[24px] p-6">
         <h3 className="text-sm font-bold text-slate-800 mb-2">
           Statistics Period
         </h3>

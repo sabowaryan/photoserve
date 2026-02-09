@@ -78,7 +78,7 @@ async function DashboardContent() {
       </div>
 
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         <AdminStatsCard
           icon="users"
           label="Utilisateurs"
@@ -111,20 +111,20 @@ async function DashboardContent() {
 
       {/* Guest Gallery Conversion Metrics - Requirements: 11.4 */}
       <div>
-        <h2 className="text-base font-semibold text-slate-800 mb-3">
+        <h2 className="text-base lg:text-lg font-bold text-slate-800 mb-4">
           Métriques Guest Galleries
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl p-4 border border-slate-200">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+          <div className="bg-white rounded-[28px] p-6 border border-slate-50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-start justify-between mb-3">
-              <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <Users className="h-5 w-5 text-purple-600" />
+              <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center transition-all duration-500 group-hover:rotate-6">
+                <Users className="h-6 w-6 text-purple-600" />
               </div>
             </div>
-            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-0.5">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
               Galeries Guest
             </p>
-            <p className="text-2xl font-bold text-slate-800">
+            <p className="text-3xl font-bold text-slate-800 tracking-tight">
               {stats.guestGalleryMetrics.totalGuestGalleries}
             </p>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -132,16 +132,16 @@ async function DashboardContent() {
             </p>
           </div>
           
-          <div className="bg-white rounded-xl p-4 border border-slate-200">
+          <div className="bg-white rounded-[28px] p-6 border border-slate-50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-start justify-between mb-3">
-              <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <RefreshCw className="h-5 w-5 text-blue-600" />
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center transition-all duration-500 group-hover:rotate-6">
+                <RefreshCw className="h-6 w-6 text-blue-600" />
               </div>
             </div>
-            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-0.5">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
               Galeries Converties
             </p>
-            <p className="text-2xl font-bold text-slate-800">
+            <p className="text-3xl font-bold text-slate-800 tracking-tight">
               {stats.guestGalleryMetrics.convertedGalleries}
             </p>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -149,16 +149,16 @@ async function DashboardContent() {
             </p>
           </div>
           
-          <div className="bg-white rounded-xl p-4 border border-slate-200">
+          <div className="bg-white rounded-[28px] p-6 border border-slate-50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-start justify-between mb-3">
-              <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-green-600" />
+              <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center transition-all duration-500 group-hover:rotate-6">
+                <TrendingUp className="h-6 w-6 text-green-600" />
               </div>
             </div>
-            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-0.5">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
               Taux de Conversion
             </p>
-            <p className="text-2xl font-bold text-slate-800">
+            <p className="text-3xl font-bold text-slate-800 tracking-tight">
               {stats.guestGalleryMetrics.conversionRate}%
             </p>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -169,7 +169,7 @@ async function DashboardContent() {
       </div>
 
       {/* Charts and Activity Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
         <PlanDistributionChart distribution={stats.planDistribution} />
         <RecentActivity
           recentSignups={stats.recentSignups}

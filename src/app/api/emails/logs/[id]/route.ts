@@ -10,14 +10,15 @@ import { createEmailLogRepository } from "@/lib/repositories/email-log.repositor
  * Requirements: 8.3
  */
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createAdminClient();
     const repository = createEmailLogRepository(supabase);
 
-    const log = await repository.getLogById(params.id);
+    const log = await repository.getLogById(id);
 
     if (!log) {
       return NextResponse.json(

@@ -111,8 +111,8 @@ export const listTemplatesSchema = z.object({
  * Schema for listing email logs
  */
 export const listLogsSchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(20),
+  page: z.coerce.number().int().positive().catch(1).default(1),
+  limit: z.coerce.number().int().positive().max(100).catch(20).default(20),
   status: emailStatusSchema.nullable().optional(),
   from: z.coerce.date({ message: 'Invalid from date' }).nullable().optional(),
   to: z.coerce.date({ message: 'Invalid to date' }).nullable().optional(),

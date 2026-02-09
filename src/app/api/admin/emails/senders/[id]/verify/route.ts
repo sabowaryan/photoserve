@@ -17,10 +17,10 @@ import { EmailProviderService } from '@/lib/services/email-provider.service';
  */
 export async function POST(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const supabase = createAdminClient();
     const repository = createSenderAddressRepository(supabase);
@@ -48,9 +48,17 @@ export async function POST(
     // Check verification status
     const status = await provider.getVerificationStatus(sender.email);
 
+    console.log('[Verify] Verification status check:', {
+      senderId: id,
+      email: sender.email,
+      status,
+      currentlyVerified: sender.is_verified
+    });
+
     // Update sender if verified
     if (status === 'verified' && !sender.is_verified) {
       await repository.updateVerificationStatus(id, true);
+      console.log('[Verify] Updated sender to verified status');
     }
 
     return NextResponse.json({ 

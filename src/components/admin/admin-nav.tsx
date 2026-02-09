@@ -11,12 +11,16 @@ import {
   CreditCard,
   FileText,
   Settings,
-  Menu,
   X,
   Mail,
   ChevronDown,
   ChevronRight,
+  ArrowLeft,
+  Package,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { LogoIcon } from "@/components/shared/logo";
+import { useAdminLayout } from "./admin-layout-context";
 
 /**
  * Navigation item type with optional sub-menu support
@@ -30,7 +34,7 @@ interface NavItem {
     href: string;
     label: string;
   }[];
-  badge?: boolean; // Whether to show a notification badge
+  badge?: boolean;
 }
 
 /**
@@ -45,13 +49,18 @@ const navItems: NavItem[] = [
   },
   {
     href: "/admin/users",
-    label: "Utilisateurs",
+    label: "Users",
     icon: Users,
   },
   {
     href: "/admin/galleries",
-    label: "Galeries",
+    label: "Galleries",
     icon: Image,
+  },
+  {
+    href: "/admin/plugin",
+    label: "Plugin",
+    icon: Package,
   },
   {
     href: "/admin/analytics",
@@ -60,7 +69,7 @@ const navItems: NavItem[] = [
   },
   {
     href: "/admin/subscriptions",
-    label: "Abonnements",
+    label: "Subscriptions",
     icon: CreditCard,
   },
   {
@@ -101,12 +110,12 @@ const navItems: NavItem[] = [
   },
   {
     href: "/admin/audit-logs",
-    label: "Journal d'audit",
+    label: "Audit Logs",
     icon: FileText,
   },
   {
     href: "/admin/settings",
-    label: "Paramètres",
+    label: "Settings",
     icon: Settings,
   },
 ];
@@ -114,23 +123,22 @@ const navItems: NavItem[] = [
 /**
  * Admin Navigation Component
  * 
- * Responsive sidebar navigation for the admin dashboard with:
- * - Links to Dashboard, Users, Galleries, Analytics, Subscriptions, Audit Logs
- * - Active state highlighting based on current route
- * - Mobile hamburger menu
- * - Sub-menu support for Emails section
- * - Notification badge for failed emails
+ * Modern, clean sidebar navigation for the admin dashboard with:
+ * - Smooth animations and transitions
+ * - Active state highlighting with gradient accent
+ * - Collapsible sub-menus
+ * - Real-time notification badges
+ * - Mobile-responsive with slide-out menu
  * 
  * Requirements: 1.3, 9.5
  */
 export function AdminNav() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isMobileMenuOpen, setIsMobileMenuOpen } = useAdminLayout();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [failedEmailCount, setFailedEmailCount] = useState<number | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Set mounted state to prevent hydration mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -152,7 +160,6 @@ export function AdminNav() {
     };
 
     fetchFailedCount();
-    // Refresh every 30 seconds
     const interval = setInterval(fetchFailedCount, 30000);
     return () => clearInterval(interval);
   }, [isMounted]);
@@ -173,23 +180,20 @@ export function AdminNav() {
     setExpandedItems(expanded);
   }, [pathname]);
 
-  // Close mobile menu on route change
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    setIsMobileMenuOpen(false);
+  }, [pathname, setIsMobileMenuOpen]);
 
-  // Close mobile menu on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, []);
+  }, [setIsMobileMenuOpen]);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
-    if (isOpen) {
+    if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -197,33 +201,22 @@ export function AdminNav() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [isMobileMenuOpen]);
 
-  /**
-   * Check if a nav item is active based on current pathname
-   */
   const isActive = (href: string, exact?: boolean) => {
-    // Always use pathname for consistent SSR/client rendering
     if (exact) {
       return pathname === href;
     }
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  /**
-   * Toggle expansion of a nav item with sub-items
-   */
   const toggleExpanded = (href: string) => {
     setExpandedItems((prev) =>
       prev.includes(href) ? prev.filter((h) => h !== href) : [...prev, href]
     );
   };
 
-  /**
-   * Get badge count for a nav item
-   */
   const getBadgeCount = (item: NavItem): number | null => {
-    // Always return null during SSR to prevent hydration mismatch
     if (typeof window === 'undefined' || !isMounted) {
       return null;
     }
@@ -236,16 +229,30 @@ export function AdminNav() {
 
   const NavContent = () => {
     return (
-      <div className="flex flex-col h-full">
-        {/* Scrollable navigation area */}
-        <div className="flex-1 overflow-y-auto pb-20">
-          <nav className="p-3 space-y-0.5">
-            <div className="px-2.5 py-1.5 mb-3">
-              <h2 className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                Administration
-              </h2>
+      <div className="flex flex-col h-full py-8">
+        {/* Logo Section */}
+        <div className="flex items-center justify-between px-8 mb-12">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-piksend-gradient flex items-center justify-center">
+              <LogoIcon size={18} variant="white" />
             </div>
+            <span className="text-xl font-bold text-slate-800" dir="ltr">
+              PikSend
+            </span>
+          </div>
+          {/* Mobile Close Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="lg:hidden text-slate-400 p-1 hover:bg-slate-50 rounded-lg transition-colors"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
+        {/* Scrollable navigation area */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <nav className="space-y-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href, item.exact);
@@ -264,37 +271,38 @@ export function AdminNav() {
                           e.preventDefault();
                           toggleExpanded(item.href);
                         } else {
-                          setIsOpen(false);
+                          setIsMobileMenuOpen(false);
                         }
                       }}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-semibold text-xs transition-all ${
+                      className={cn(
+                        "flex items-center gap-4 px-6 py-3 font-medium text-sm transition-all cursor-pointer relative",
                         active
-                          ? "bg-indigo-50 text-indigo-600 shadow-sm"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                      }`}
+                          ? "text-primary"
+                          : "text-slate-500 hover:text-primary/70"
+                      )}
                     >
-                      <Icon
-                        className={`w-4 h-4 ${active ? "text-indigo-600" : "text-slate-400"}`}
-                        strokeWidth={2}
-                      />
+                      {active && (
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary rounded-full" />
+                      )}
+                      <div className={cn(active ? "text-primary" : "text-slate-400")}>
+                        <Icon className="w-5 h-5" strokeWidth={2} />
+                      </div>
                       <span className="flex-1">{item.label}</span>
                       
-                      {/* Badge for notifications - only render after mount to prevent hydration mismatch */}
+                      {/* Badge */}
                       {isMounted && item.badge && badgeCount !== null && (
-                        <span 
-                          className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full"
-                        >
+                        <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold text-white bg-red-500 rounded-full shadow-sm">
                           {badgeCount > 99 ? "99+" : badgeCount}
                         </span>
                       )}
                       
-                      {/* Expand/collapse icon for items with sub-items */}
+                      {/* Expand/collapse icon */}
                       {hasSubItems && (
                         <>
                           {isExpanded ? (
-                            <ChevronDown className="w-3.5 h-3.5 text-slate-400" strokeWidth={2} />
+                            <ChevronDown className="w-4 h-4 text-slate-400" strokeWidth={2} />
                           ) : (
-                            <ChevronRight className="w-3.5 h-3.5 text-slate-400" strokeWidth={2} />
+                            <ChevronRight className="w-4 h-4 text-slate-400" strokeWidth={2} />
                           )}
                         </>
                       )}
@@ -303,7 +311,7 @@ export function AdminNav() {
 
                   {/* Sub-menu items */}
                   {hasSubItems && isExpanded && (
-                    <div className="mt-1 space-y-0.5 pl-8">
+                    <div className="ml-9 pl-3 border-l-2 border-slate-200 animate-in slide-in-from-top-2 duration-200">
                       {item.subItems!.map((subItem) => {
                         const subActive = isActive(subItem.href, subItem.href === item.href);
                         
@@ -311,14 +319,18 @@ export function AdminNav() {
                           <Link
                             key={subItem.href}
                             href={subItem.href}
-                            onClick={() => setIsOpen(false)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={cn(
+                              "flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all cursor-pointer",
                               subActive
-                                ? "bg-indigo-50 text-indigo-600"
-                                : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                            }`}
+                                ? "text-primary"
+                                : "text-slate-500 hover:text-primary/70"
+                            )}
                           >
-                            <span className={`w-1.5 h-1.5 rounded-full ${subActive ? "bg-indigo-600" : "bg-slate-300"}`}></span>
+                            <span className={cn(
+                              "w-1.5 h-1.5 rounded-full transition-all",
+                              subActive ? "bg-primary" : "bg-slate-300"
+                            )} />
                             {subItem.label}
                           </Link>
                         );
@@ -332,26 +344,22 @@ export function AdminNav() {
         </div>
 
         {/* Fixed footer */}
-        <div className="flex-shrink-0 p-3 border-t border-slate-200 bg-white">
+        <div className="px-6 mt-auto">
           <Link
             href="/dashboard"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center justify-between bg-slate-50 rounded-xl p-3 hover:bg-slate-100 transition-colors cursor-pointer"
           >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Retour à mon espace
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <ArrowLeft className="w-4 h-4 text-primary" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-slate-400 font-medium">Return to</span>
+                <span className="text-xs font-semibold text-slate-800 line-clamp-1">Dashboard</span>
+              </div>
+            </div>
+            <ChevronDown size={14} className="text-slate-400" />
           </Link>
         </div>
       </div>
@@ -360,37 +368,25 @@ export function AdminNav() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-20 left-3 z-50 p-1.5 bg-white rounded-lg border border-slate-200 shadow-md hover:bg-slate-50 transition-colors"
-        aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
-      >
-        {isOpen ? (
-          <X className="w-5 h-5 text-slate-600" />
-        ) : (
-          <Menu className="w-5 h-5 text-slate-600" />
-        )}
-      </button>
-
       {/* Mobile Overlay */}
-      {isOpen && (
+      {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 top-16 bg-black/50 z-40"
-          onClick={() => setIsOpen(false)}
+          className="lg:hidden fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[60] animate-in fade-in duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-56 bg-white border-r border-slate-200">
+      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-slate-50 z-30">
         <NavContent />
       </aside>
 
       {/* Mobile Sidebar */}
       <aside
-        className={`lg:hidden fixed left-0 top-16 bottom-0 w-56 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={cn(
+          "lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-slate-50 z-[70] transition-transform duration-300 ease-in-out",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        )}
       >
         <NavContent />
       </aside>

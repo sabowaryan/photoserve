@@ -29,6 +29,7 @@ export const RATE_LIMITS: Record<string, RateLimitConfig> = {
   verifyEmail: { requests: 10, window: 60 * 60 * 1000 }, // 10 verifications per hour
   resendVerification: { requests: 3, window: 60 * 60 * 1000 }, // 3 resends per hour
   requestPasswordReset: { requests: 3, window: 60 * 60 * 1000 }, // 3 requests per hour
+  download: { requests: 10, window: 60 * 60 * 1000 }, // 10 downloads per hour
 };
 
 /**
@@ -166,4 +167,27 @@ export function createRateLimitErrorResponse(result: ReturnType<typeof checkRate
       },
     }
   );
+}
+
+/**
+ * Rate limit middleware for API routes
+ * Returns a Response if rate limit is exceeded, null otherwise
+ * 
+ * Usage:
+ * ```ts
+ * const rateLimitResponse = rateLimitMiddleware(request, 'download');
+ * if (rateLimitResponse) return rateLimitResponse;
+ * ```
+ */
+export function rateLimitMiddleware(
+  request: Request,
+  endpoint: keyof typeof RATE_LIMITS = 'signin'
+): Response | null {
+  const result = checkRateLimit(request, endpoint);
+  
+  if (!result.allowed) {
+    return createRateLimitErrorResponse(result);
+  }
+  
+  return null;
 }

@@ -258,12 +258,27 @@ export class ResendProvider extends BaseEmailProvider {
     try {
       const domain = email.includes('@') ? this.extractDomain(email) : email;
 
-      // Create domain in Resend
+      // Try to create domain in Resend
       const result = await this.executeWithRetry(async () => {
         return await this.client.domains.create({ name: domain });
       });
 
+      // If domain already exists, that's okay - just get the records
       if (result.error) {
+        // Check if error is because domain already exists
+        if (result.error.message?.includes('already been registered') || 
+            result.error.message?.includes('already exists')) {
+          console.log(`[Resend] Domain ${domain} already registered, fetching records...`);
+          // Domain exists, just get the records
+          const records = await this.getDomainRecords(domain);
+          return {
+            success: true,
+            status: 'pending',
+            records,
+          };
+        }
+        
+        // Other errors should be thrown
         throw new VerificationError(
           result.error.message || 'Failed to initiate domain verification',
           'resend',
@@ -311,31 +326,61 @@ export class ResendProvider extends BaseEmailProvider {
     try {
       const domain = email.includes('@') ? this.extractDomain(email) : email;
 
-      // Get domain details from Resend
-      const result = await this.executeWithRetry(async () => {
-        return await this.client.domains.get(domain);
+      console.log('[Resend] Checking verification status for domain:', domain);
+
+      // List all domains to find the one we're looking for
+      // Note: Resend's domains.get() requires UUID, not domain name
+      const listResult = await this.executeWithRetry(async () => {
+        return await this.client.domains.list();
       });
 
-      if (result.error) {
-        // Domain not found or error - return pending
+      console.log('[Resend] Raw list result from Resend API:', JSON.stringify(listResult, null, 2));
+
+      if (listResult.error) {
+        console.log('[Resend] Error listing domains:', listResult.error);
+        return 'pending';
+      }
+
+      // Find the domain in the list
+      const domains = listResult.data?.data || [];
+      const domainData = domains.find((d: any) => d.name === domain);
+
+      if (!domainData) {
+        console.log('[Resend] Domain not found in list');
         return 'pending';
       }
 
       // Map Resend status to our status
-      const resendStatus = result.data?.status;
+      const resendStatus = domainData.status;
       
-      switch (resendStatus) {
-        case 'verified':
-          return 'verified';
-        case 'not_started':
-        case 'pending':
-          return 'pending';
-        case 'failed':
-          return 'failed';
-        default:
-          return 'pending';
+      console.log('[Resend] Domain status from Resend:', {
+        domain,
+        resendStatus,
+        region: domainData.region,
+        capabilities: domainData.capabilities,
+        fullData: domainData
+      });
+      
+      // Resend uses 'verified' status
+      if (resendStatus === 'verified') {
+        console.log('[Resend] Domain is VERIFIED');
+        return 'verified';
       }
+      
+      if (resendStatus === 'not_started' || resendStatus === 'pending') {
+        console.log('[Resend] Domain is PENDING');
+        return 'pending';
+      }
+      
+      if (resendStatus === 'failed' || resendStatus === 'temporary_failure') {
+        console.log('[Resend] Domain verification FAILED');
+        return 'failed';
+      }
+      
+      console.log('[Resend] Unknown status, defaulting to pending:', resendStatus);
+      return 'pending';
     } catch (error) {
+      console.error('[Resend] Error checking verification status:', error);
       // On error, return pending status
       return 'pending';
     }
@@ -349,9 +394,38 @@ export class ResendProvider extends BaseEmailProvider {
    */
   async getDomainRecords(domain: string): Promise<DomainRecords> {
     try {
-      // Get domain details from Resend
+      // List all domains to find the one we're looking for
+      // Note: Resend's domains.get() requires UUID, not domain name
+      const listResult = await this.executeWithRetry(async () => {
+        return await this.client.domains.list();
+      });
+
+      if (listResult.error) {
+        throw new VerificationError(
+          listResult.error.message || 'Failed to list domains',
+          'resend',
+          domain,
+          'GET_RECORDS_FAILED',
+          { error: listResult.error }
+        );
+      }
+
+      // Find the domain in the list
+      const domains = listResult.data?.data || [];
+      const domainData = domains.find((d: any) => d.name === domain);
+
+      if (!domainData) {
+        throw new VerificationError(
+          'Domain not found',
+          'resend',
+          domain,
+          'DOMAIN_NOT_FOUND'
+        );
+      }
+
+      // Now get the full domain details using the UUID
       const result = await this.executeWithRetry(async () => {
-        return await this.client.domains.get(domain);
+        return await this.client.domains.get(domainData.id);
       });
 
       if (result.error) {
@@ -364,7 +438,7 @@ export class ResendProvider extends BaseEmailProvider {
         );
       }
 
-      const domainData = result.data;
+      const fullDomainData = result.data;
       const records: DomainRecords = {
         dkim: [],
         spf: {
@@ -376,8 +450,8 @@ export class ResendProvider extends BaseEmailProvider {
       };
 
       // Add DKIM records if available
-      if (domainData?.records) {
-        for (const record of domainData.records as any[]) {
+      if (fullDomainData?.records) {
+        for (const record of fullDomainData.records as any[]) {
           if (record.record_type === 'TXT' && record.name?.includes('_domainkey')) {
             records.dkim.push({
               type: 'TXT',

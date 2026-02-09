@@ -385,13 +385,22 @@
       "signupFailed": "註冊時發生錯誤",
       "googleFailed": "Google登入發生錯誤",
       "accountExists": "此電子郵件已存在帳戶。請使用密碼登入。",
+      "emailExists": "此電子郵件已存在帳戶",
+      "emailExistsUnverified": "此電子郵件已存在帳戶。請登入以重新傳送驗證郵件。",
       "oauthError": "Google登入發生錯誤。請重試。",
       "genericError": "發生錯誤",
       "accountCreationError": "建立帳戶時發生錯誤",
+      "accountCreationFailed": "建立帳戶失敗",
       "profileCreationError": "建立個人資料時發生錯誤",
+      "profileCreationFailed": "建立個人資料失敗",
+      "profileNotFound": "未找到個人資料",
       "resetLinkInvalid": "重設連結無效或已過期",
+      "invalidResetToken": "重設連結無效或已過期",
       "passwordUpdateError": "更新密碼時發生錯誤",
-      "resetEmailError": "傳送重設郵件時發生錯誤"
+      "passwordUpdateFailed": "更新密碼失敗",
+      "resetEmailError": "傳送重設郵件時發生錯誤",
+      "resetEmailFailed": "傳送重設郵件失敗",
+      "rateLimitExceeded": "嘗試次數過多。請稍後再試。"
     },
     "success": {
       "accountCreated": "帳戶已建立！您現在可以登入了。",
@@ -1079,6 +1088,7 @@
     },
     "generic": {
       "unexpected": "發生意外錯誤。請重試。",
+      "unexpectedError": "發生意外錯誤。請重試。",
       "networkError": "網路錯誤。請檢查您的連線。",
       "retry": "出了點問題。請重試。",
       "validationFailed": "驗證失敗",
@@ -1308,7 +1318,13 @@
       "invalidSlugLength": "slug必須在1到100個字元之間",
       "notFound": "找不到資源",
       "invalidAction": "無效的操作",
-      "rateLimitExceeded": "嘗試次數過多。請稍後重試。"
+      "rateLimitExceeded": "嘗試次數過多。請稍後重試。",
+      "resourceExists": "資源已存在",
+      "invalidReference": "找不到引用的資源",
+      "missingField": "缺少必填欄位",
+      "accessDenied": "存取被拒絕",
+      "multipleFound": "找到多個資源",
+      "databaseError": "資料庫操作失敗"
     }
   }
 }

@@ -60,13 +60,13 @@ export function LanguageSwitcher({ className, variant = 'default' }: LanguageSwi
       return (
         <div 
           className={cn(
-            'flex items-center gap-2 px-3 py-2 h-10 rounded-lg border border-gray-200 bg-white shadow-sm',
+            'flex items-center gap-2 px-2.5 py-2 rounded-xl bg-transparent',
             className
           )}
           role="button"
           aria-label="Language selector loading"
         >
-          <Globe className="h-4 w-4 text-gray-600" aria-hidden="true" />
+          <Globe className="h-[18px] w-[18px] text-slate-400" aria-hidden="true" />
           {currentLocale?.flagSvg && (
             <img 
               src={currentLocale.flagSvg} 
@@ -107,15 +107,15 @@ export function LanguageSwitcher({ className, variant = 'default' }: LanguageSwi
       <Select value={locale} onValueChange={handleLocaleChange}>
         <SelectTrigger
           className={cn(
-            'w-auto gap-2 px-3 py-2 h-10 rounded-lg border border-gray-200 bg-white shadow-sm',
-            'hover:bg-gray-50 hover:border-gray-300 transition-all duration-200',
-            'focus:ring-2 focus:ring-piksend-violet focus:ring-offset-2 focus:border-piksend-violet',
-            'data-[state=open]:ring-2 data-[state=open]:ring-piksend-violet data-[state=open]:border-piksend-violet',
+            'w-auto gap-2 px-2.5 py-2 h-auto rounded-xl border-none bg-transparent',
+            'hover:bg-slate-50 transition-all duration-200',
+            'focus:ring-0 focus:ring-offset-0',
+            'data-[state=open]:bg-slate-50',
             className
           )}
           aria-label={`Current language: ${getLanguageName(locale)}. Click to change language`}
         >
-          <Globe className="h-4 w-4 text-gray-600" aria-hidden="true" />
+          <Globe className="h-[18px] w-[18px] text-slate-400" aria-hidden="true" />
           {currentLocale?.flagSvg && (
             <img 
               src={currentLocale.flagSvg} 
@@ -127,17 +127,17 @@ export function LanguageSwitcher({ className, variant = 'default' }: LanguageSwi
         </SelectTrigger>
         <SelectContent 
           align="end" 
-          className="min-w-[200px] max-h-[400px] overflow-y-auto"
+          className="min-w-[200px] max-h-[400px] overflow-y-auto rounded-[20px] border border-slate-100 shadow-2xl shadow-slate-200 p-2"
           aria-label="Available languages"
         >
           {SUPPORTED_LOCALES.map((loc) => (
             <SelectItem 
               key={loc.code} 
               value={loc.code}
-              className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 transition-colors"
+              className="cursor-pointer rounded-xl hover:bg-slate-50 focus:bg-slate-50 transition-colors px-3 py-2.5"
               aria-label={`Switch to ${getLanguageName(loc.code)}`}
             >
-              <span className="flex items-center gap-3 py-1">
+              <span className="flex items-center gap-3">
                 {loc.flagSvg && (
                   <img 
                     src={loc.flagSvg} 
@@ -146,9 +146,9 @@ export function LanguageSwitcher({ className, variant = 'default' }: LanguageSwi
                     aria-hidden="true"
                   />
                 )}
-                <span className="text-sm font-medium text-gray-700 flex-1">{getLanguageName(loc.code)}</span>
+                <span className="text-sm font-bold text-slate-800 flex-1">{getLanguageName(loc.code)}</span>
                 {loc.code === locale && (
-                  <Check className="h-4 w-4 text-piksend-violet" aria-label="Currently selected" />
+                  <Check className="h-4 w-4 text-primary" aria-label="Currently selected" />
                 )}
               </span>
             </SelectItem>

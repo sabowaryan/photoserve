@@ -385,13 +385,22 @@
       "signupFailed": "Fel vid registrering",
       "googleFailed": "Fel vid inloggning med Google",
       "accountExists": "Ett konto finns redan med denna e-post. Logga in med ditt lösenord.",
+      "emailExists": "Ett konto finns redan med denna e-post",
+      "emailExistsUnverified": "Ett konto finns redan med denna e-post. Logga in för att skicka verifieringsmail igen.",
       "oauthError": "Fel vid inloggning med Google. Försök igen.",
       "genericError": "Ett fel uppstod",
       "accountCreationError": "Fel vid skapande av konto",
+      "accountCreationFailed": "Misslyckades skapa konto",
       "profileCreationError": "Fel vid skapande av profil",
+      "profileCreationFailed": "Misslyckades skapa profil",
+      "profileNotFound": "Profil hittades inte",
       "resetLinkInvalid": "Återställningslänken är ogiltig eller har utgått",
+      "invalidResetToken": "Återställningslänken är ogiltig eller har utgått",
       "passwordUpdateError": "Fel vid uppdatering av lösenord",
-      "resetEmailError": "Fel vid sändning av återställningsmail"
+      "passwordUpdateFailed": "Misslyckades uppdatera lösenord",
+      "resetEmailError": "Fel vid sändning av återställningsmail",
+      "resetEmailFailed": "Misslyckades skicka återställningsmail",
+      "rateLimitExceeded": "För många försök. Försök igen senare."
     },
     "success": {
       "accountCreated": "Konto skapat! Du kan nu logga in.",
@@ -1093,6 +1102,7 @@
     },
     "generic": {
       "unexpected": "Ett oväntat fel uppstod. Försök igen.",
+      "unexpectedError": "Ett oväntat fel uppstod. Försök igen.",
       "networkError": "Nätverksfel. Kontrollera din anslutning.",
       "retry": "Något gick fel. Försök igen.",
       "validationFailed": "Validering misslyckades",
@@ -1322,7 +1332,13 @@
       "invalidSlugLength": "Slug måste vara mellan 1 och 100 tecken",
       "notFound": "Resurs hittades inte",
       "invalidAction": "Ogiltig åtgärd",
-      "rateLimitExceeded": "För många försök. Försök igen senare."
+      "rateLimitExceeded": "För många försök. Försök igen senare.",
+      "resourceExists": "Resursen finns redan",
+      "invalidReference": "Refererad resurs hittades inte",
+      "missingField": "Obligatoriskt fält saknas",
+      "accessDenied": "Åtkomst nekad",
+      "multipleFound": "Flera resurser hittades",
+      "databaseError": "Databasoperation misslyckades"
     }
   }
 }

@@ -391,13 +391,22 @@
       "signupFailed": "Erreur lors de l'inscription",
       "googleFailed": "Erreur lors de la connexion avec Google",
       "accountExists": "Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.",
+      "emailExists": "Un compte existe déjà avec cette adresse email",
+      "emailExistsUnverified": "Un compte existe déjà avec cette adresse email. Veuillez vous connecter pour renvoyer l'email de vérification.",
       "oauthError": "Erreur lors de la connexion avec Google. Veuillez réessayer.",
       "genericError": "Une erreur est survenue",
       "accountCreationError": "Erreur lors de la création du compte",
+      "accountCreationFailed": "Échec de la création du compte",
       "profileCreationError": "Erreur lors de la création du profil",
+      "profileCreationFailed": "Échec de la création du profil",
+      "profileNotFound": "Profil non trouvé",
       "resetLinkInvalid": "Le lien de réinitialisation est invalide ou a expiré",
+      "invalidResetToken": "Le lien de réinitialisation est invalide ou a expiré",
       "passwordUpdateError": "Erreur lors de la mise à jour du mot de passe",
-      "resetEmailError": "Erreur lors de l'envoi de l'email de réinitialisation"
+      "passwordUpdateFailed": "Échec de la mise à jour du mot de passe",
+      "resetEmailError": "Erreur lors de l'envoi de l'email de réinitialisation",
+      "resetEmailFailed": "Échec de l'envoi de l'email de réinitialisation",
+      "rateLimitExceeded": "Trop de tentatives. Veuillez réessayer plus tard."
     },
     "success": {
       "accountCreated": "Compte créé ! Vous pouvez maintenant vous connecter.",
@@ -1087,6 +1096,7 @@
     },
     "generic": {
       "unexpected": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
       "networkError": "Erreur réseau. Vérifiez votre connexion.",
       "retry": "Une erreur s'est produite. Veuillez réessayer.",
       "validationFailed": "Échec de la validation",
@@ -1351,7 +1361,13 @@
       "invalidSlugLength": "Le slug doit contenir entre 1 et 100 caractères",
       "notFound": "Ressource non trouvée",
       "invalidAction": "Action invalide",
-      "rateLimitExceeded": "Trop de tentatives. Veuillez réessayer plus tard."
+      "rateLimitExceeded": "Trop de tentatives. Veuillez réessayer plus tard.",
+      "resourceExists": "La ressource existe déjà",
+      "invalidReference": "Ressource référencée non trouvée",
+      "missingField": "Champ requis manquant",
+      "accessDenied": "Accès refusé",
+      "multipleFound": "Plusieurs ressources trouvées",
+      "databaseError": "Erreur de base de données"
     }
   }
 }

@@ -28,7 +28,7 @@ export function InstallationInstructions() {
                 <h3 className="font-semibold text-slate-900">Download the Plugin</h3>
               </div>
               <p className="text-sm text-slate-600">
-                Click the download button above to get the latest version of the plugin.
+                Click the download button above to get the latest version as a ZIP file.
               </p>
             </div>
           </div>
@@ -37,6 +37,22 @@ export function InstallationInstructions() {
           <div className="flex gap-4">
             <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
               2
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <FolderOpen size={18} className="text-green-600" />
+                <h3 className="font-semibold text-slate-900">Extract the ZIP File</h3>
+              </div>
+              <p className="text-sm text-slate-600">
+                Extract the downloaded ZIP file to reveal the <code className="px-2 py-1 bg-slate-100 rounded text-xs">PikSend.lrplugin</code> folder.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+              3
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -64,10 +80,10 @@ export function InstallationInstructions() {
             </div>
           </div>
 
-          {/* Step 3 */}
+          {/* Step 4 */}
           <div className="flex gap-4">
             <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
-              3
+              4
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -80,10 +96,10 @@ export function InstallationInstructions() {
             </div>
           </div>
 
-          {/* Step 4 */}
+          {/* Step 5 */}
           <div className="flex gap-4">
             <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
-              4
+              5
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
