@@ -12,12 +12,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-// Lazy load components with better loading state
+// Lazy load components with better loading state and priority
 const GoogleSignInButton = dynamic(
   () => import('@/components/auth/google-sign-in-button').then(mod => ({ default: mod.GoogleSignInButton })),
   { 
     loading: () => (
-      <div className="h-11 bg-slate-100 animate-pulse rounded-lg" role="status" aria-label="Loading Google sign in button">
+      <div className="h-11 bg-slate-100 rounded-lg" role="status" aria-label="Loading Google sign in button">
         <span className="sr-only">Loading...</span>
       </div>
     ), 

@@ -5,9 +5,13 @@
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
 
-/* Smooth transitions */
+/* Reduce transitions for better performance */
 * {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-property: none;
+}
+
+button, a, input {
+  transition-property: color, background-color, border-color, opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -18,7 +22,7 @@
   outline-offset: 2px;
 }
 
-/* Loading spinner animation */
+/* Loading spinner animation - optimized */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -27,21 +31,10 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
+  will-change: transform;
 }
 
-/* Pulse animation for decorative elements */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+/* Remove pulse animation - not critical */
 
 /* Prevent flash of unstyled content */
 .auth-container {
@@ -60,4 +53,15 @@
   .hidden.lg\:flex {
     display: flex !important;
   }
+}
+
+/* Optimize blur effects */
+.blur-3xl {
+  will-change: auto;
+}
+
+/* Optimize backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }

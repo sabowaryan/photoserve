@@ -7,11 +7,11 @@ import { LogoIcon } from '@/components/shared/logo';
 import { getUserCount } from '@/lib/services/user-stats.service';
 import { generateStructuredData } from '@/lib/services/seo.service';
 
-// Preload Inter font with optimal settings
+// Preload Inter font with optimal settings - reduced weights for performance
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'], // Reduced from 5 to 3 weights
   display: 'swap',
   preload: true,
   adjustFontFallback: true,
@@ -97,12 +97,14 @@ export default async function AuthLayout({
   const locale = await getServerLocale();
   const userCount = await getUserCount();
   
-  // Generate structured data for SEO
+  // Generate structured data for SEO (only once)
   const organizationSchema = generateStructuredData('Organization');
   const softwareSchema = generateStructuredData('SoftwareApplication');
   
-  // Import translations for server component
+  // Import translations for server component (cached by Next.js)
   const translations = (await import(`@/locales/${locale}.json`)).default;
+  
+  // Optimized translation function
   const t = (key: string, params?: Record<string, any>) => {
     const keys = key.split('.');
     let value: any = translations;
@@ -123,14 +125,15 @@ export default async function AuthLayout({
 
   return (
     <I18nProvider initialLocale={locale}>
-      {/* JSON-LD Structured Data for SEO */}
+      {/* JSON-LD Structured Data for SEO - Combined into single script tag */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': [organizationSchema, softwareSchema]
+          })
+        }}
       />
       
       <div 
@@ -142,8 +145,13 @@ export default async function AuthLayout({
           className="w-full lg:w-1/2 xl:w-2/5 bg-piksend-gradient relative overflow-hidden lg:block hidden"
           aria-label={t('auth.sidebar.headline')}
         >
-          {/* Decorative elements - hidden from screen readers */}
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" aria-hidden="true" />
+          {/* Decorative elements - hidden from screen readers - CSS only, no images */}
+          <div className="absolute inset-0 opacity-10" aria-hidden="true">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+              backgroundSize: '20px 20px'
+            }} />
+          </div>
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" aria-hidden="true" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-piksend-violet/20 rounded-full blur-3xl" aria-hidden="true" />
           
