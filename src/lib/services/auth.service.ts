@@ -55,11 +55,19 @@ export class AuthService implements IAuthService {
     // Check if user already exists
     const { data: existingProfile } = await supabase
       .from('profiles')
-      .select('id')
+      .select('id, email_verified')
       .eq('email', normalizedEmail)
       .single();
 
     if (existingProfile) {
+      // If user exists but email not verified, provide helpful message
+      if (!existingProfile.email_verified) {
+        return {
+          success: false,
+          error: 'Un compte existe déjà avec cette adresse email. Veuillez vous connecter pour renvoyer l\'email de vérification.',
+        };
+      }
+      
       return {
         success: false,
         error: 'Un compte existe déjà avec cette adresse email',
@@ -71,7 +79,7 @@ export class AuthService implements IAuthService {
     const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
       email: normalizedEmail,
       password,
-      email_confirm: true,
+      email_confirm: true, // Auto-confirm in Supabase Auth, but we track verification separately in profiles
       user_metadata: {
         name: name || null,
         full_name: name || null, // Le trigger utilise 'full_name' ou 'name'

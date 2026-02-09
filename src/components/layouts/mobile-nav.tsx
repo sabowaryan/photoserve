@@ -15,6 +15,7 @@ import {
   LogOut,
   Globe,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { useTranslation } from '@/lib/i18n/context';
 
@@ -45,7 +46,6 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
       await fetch("/api/auth/logout", { method: "POST" });
       clearSessionCache();
       await signOut({ redirect: false });
-      // Force un refresh complet pour vider tous les caches
       window.location.href = "/";
     } catch (error) {
       console.error("Erreur déconnexion:", error);
@@ -62,53 +62,57 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
   return (
     <>
       {/* Burger Button */}
-      <button
+      <Button
+        variant="outline"
+        size="icon"
         onClick={() => setIsOpen(true)}
-        className="md:hidden p-2 bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition-all active:scale-90 border border-slate-100"
+        className="md:hidden h-10 w-10 bg-background/90 backdrop-blur-sm text-primary hover:text-primary hover:bg-background active:scale-95 rounded-xl border-border shadow-sm"
         aria-label={t('common.open')}
       >
-        <Menu size={18} />
-      </button>
+        <Menu size={24} strokeWidth={2.5} />
+      </Button>
 
       {/* Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-[200] md:hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200"
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300"
             onClick={() => setIsOpen(false)}
           />
 
           {/* Drawer */}
-          <div className="absolute right-0 top-0 bottom-0 w-[80%] max-w-xs bg-white shadow-xl animate-in slide-in-from-right duration-300 flex flex-col">
+          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-xs bg-background shadow-2xl animate-in slide-in-from-right duration-400 flex flex-col">
             {/* Header */}
-            <div className="p-4 flex items-center justify-between border-b border-slate-100">
-              <div className="flex items-center gap-1.5">
-                <div className="p-1 bg-indigo-50 rounded-lg">
-                  <img 
-                    src="/icons/logo.svg" 
-                    alt="PikSend" 
+            <div className="p-5 flex items-center justify-between border-b border-border/60">
+              <div className="flex items-center gap-2">
+                <div className="logo-wrapper p-1 rounded-lg bg-primary/5">
+                  <img
+                    src="/icons/logo.svg"
+                    alt="PikSend"
                     className="h-5 w-auto"
                   />
                 </div>
-                <span className="font-bold text-base text-slate-900" dir="ltr">PikSend</span>
+                <span className="font-display font-extrabold text-lg brand-text" dir="ltr">PikSend</span>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
+                className="h-9 w-9 text-muted-foreground hover:text-foreground rounded-lg"
                 aria-label={t('common.close')}
               >
-                <X size={18} />
-              </button>
+                <X size={20} />
+              </Button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
               {/* Language Switcher */}
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 mb-3">
-                <div className="flex items-center gap-2 text-slate-500">
-                  <Globe size={14} />
-                  <span className="text-xs font-medium">{t('common.language')}</span>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 mb-4 border border-border/40">
+                <div className="flex items-center gap-2.5 text-muted-foreground">
+                  <Globe size={16} />
+                  <span className="text-sm font-semibold">{t('common.language')}</span>
                 </div>
                 <LanguageSwitcher variant="compact" />
               </div>
@@ -122,17 +126,16 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
                     key={item.id}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg font-medium transition-all ${
-                      isActive
-                        ? 'bg-indigo-50 text-indigo-600'
-                        : 'text-slate-600 hover:bg-slate-50'
-                    }`}
+                    className={`w-full flex items-center justify-between p-3.5 rounded-xl font-semibold transition-all ${isActive
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                      }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <Icon size={16} />
+                    <div className="flex items-center gap-3">
+                      <Icon size={18} />
                       <span className="text-sm">{t(item.labelKey)}</span>
                     </div>
-                    <ChevronRight size={14} className={isActive ? 'text-indigo-300' : 'text-slate-300'} />
+                    <ChevronRight size={16} className={isActive ? 'text-primary/40' : 'text-muted-foreground/30'} />
                   </Link>
                 );
               })}
@@ -141,41 +144,43 @@ export function MobileNav({ isOpen, setIsOpen }: MobileNavProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center justify-between p-2.5 rounded-lg font-medium transition-all bg-indigo-50 text-indigo-600"
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl font-bold transition-all bg-primary/10 text-primary mt-2 shadow-sm border border-primary/5"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard size={16} />
+                  <div className="flex items-center gap-3">
+                    <LayoutDashboard size={18} />
                     <span className="text-sm">{t('nav.dashboard')}</span>
                   </div>
-                  <ChevronRight size={14} className="text-indigo-300" />
+                  <ChevronRight size={16} className="text-primary/40" />
                 </Link>
               )}
             </nav>
 
             {/* Footer */}
-            <div className="p-3 border-t border-slate-100 space-y-2">
+            <div className="p-4 border-t border-border/60 space-y-3 bg-muted/10">
               {isAuthenticated ? (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={handleSignOut}
-                  className="w-full flex items-center gap-2.5 p-2.5 text-rose-600 font-medium rounded-lg hover:bg-rose-50 transition-all"
+                  className="w-full flex items-center justify-start gap-3 p-4 text-destructive font-bold rounded-xl hover:bg-destructive/5 hover:text-destructive transition-all"
                 >
-                  <LogOut size={16} />
+                  <LogOut size={18} />
                   <span className="text-sm">{t('nav.signOut')}</span>
-                </button>
+                </Button>
               ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <button
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    variant="outline"
                     onClick={onLogin}
-                    className="py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-all text-xs"
+                    className="font-bold rounded-xl text-xs py-5"
                   >
                     {t('nav.signIn')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={onSignUp}
-                    className="py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition-all text-xs"
+                    className="font-bold rounded-xl shadow-lg shadow-primary/20 text-xs py-5"
                   >
                     {t('nav.getStarted')}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

@@ -28,8 +28,10 @@ local PikSendAPI = {}
 -- Configuration
 --------------------------------------------------------------------------------
 
-PikSendAPI.baseURL = 'https://piksend.com'
-PikSendAPI.timeout = 30  -- seconds
+-- DEVELOPMENT: Change this to your local URL when testing
+-- PRODUCTION: Use https://piksend.com
+PikSendAPI.baseURL = 'https://piksend.com'  -- Production URL
+PikSendAPI.timeout = 10  -- seconds
 
 --------------------------------------------------------------------------------
 -- Helper Functions
@@ -115,6 +117,13 @@ end
 -- @param apiToken string - The API token to validate
 -- @return boolean, table|nil, table|nil - (valid, user, errorInfo) 
 function PikSendAPI.validateToken(apiToken)
+  -- Log entry
+  local logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] validateToken: entry\n', os.date('%Y-%m-%d %H:%M:%S')))
+    logFile:close()
+  end
+  
   if not apiToken or apiToken == '' then
     local errorInfo = PikSendErrorHandler.handleValidationError('TOKEN_INVALID')
     return false, nil, errorInfo
@@ -122,14 +131,52 @@ function PikSendAPI.validateToken(apiToken)
   
   local url = PikSendAPI.baseURL .. '/api/plugin/auth/validate'
   
+  -- Log URL
+  logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] validateToken: URL=%s\n', os.date('%Y-%m-%d %H:%M:%S'), url))
+    logFile:close()
+  end
+  
   -- Security: Validate URL before making request (Requirements 11.1, 11.6)
-  validateRequestUrl(url)
+  local urlValid = validateRequestUrl(url)
+  
+  -- Log URL validation
+  logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] validateToken: URL valid=%s\n', os.date('%Y-%m-%d %H:%M:%S'), tostring(urlValid)))
+    logFile:close()
+  end
   
   local headers = buildHeaders(apiToken)
   
   PikSendLogger.debug('Validating token', 'PikSendAPI')
   
+  -- Log before HTTP call
+  logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] validateToken: calling LrHttp.post\n', os.date('%Y-%m-%d %H:%M:%S')))
+    logFile:write(string.format('[%s] [DEBUG] validateToken: headers count=%d\n', os.date('%Y-%m-%d %H:%M:%S'), #headers))
+    logFile:close()
+  end
+  
+  -- Try simple POST without any optional parameters
   local response, hdrs = LrHttp.post(url, '', headers)
+  
+  -- Log HTTP response
+  logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] validateToken: POST returned\n', os.date('%Y-%m-%d %H:%M:%S')))
+    logFile:write(string.format('[%s] [DEBUG] validateToken: response=%s, hdrs=%s\n', os.date('%Y-%m-%d %H:%M:%S'), tostring(response ~= nil), tostring(hdrs ~= nil)))
+    if hdrs and hdrs.status then
+      logFile:write(string.format('[%s] [DEBUG] validateToken: status=%s\n', os.date('%Y-%m-%d %H:%M:%S'), tostring(hdrs.status)))
+    end
+    if response then
+      logFile:write(string.format('[%s] [DEBUG] validateToken: response body length=%d\n', os.date('%Y-%m-%d %H:%M:%S'), #response))
+      logFile:write(string.format('[%s] [DEBUG] validateToken: response body=%s\n', os.date('%Y-%m-%d %H:%M:%S'), response))
+    end
+    logFile:close()
+  end
   
   if response then
     local data, err = parseResponse(response)
@@ -144,6 +191,11 @@ function PikSendAPI.validateToken(apiToken)
     end
   else
     -- Network error - no response received
+    logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+    if logFile then
+      logFile:write(string.format('[%s] [DEBUG] validateToken: no response received\n', os.date('%Y-%m-%d %H:%M:%S')))
+      logFile:close()
+    end
     local errorInfo = PikSendErrorHandler.handleNetworkError('No response from server')
     return false, nil, errorInfo
   end

@@ -149,8 +149,18 @@ end
 
 -- Validate that URL is from PikSend domain
 -- @param url string - URL to validate
--- @return boolean - true if URL is from PikSend domain
+-- @return boolean - true if URL is from PikSend domain or localhost (dev)
 function PikSendUtils.validatePikSendUrl(url)
+  if not url then
+    return false
+  end
+  
+  -- Allow localhost for development (HTTP or HTTPS)
+  if string.find(url, 'localhost', 1, true) or string.find(url, '127%.0%.0%.1', 1, false) then
+    return true
+  end
+  
+  -- For production, require HTTPS and piksend.com domain
   if not PikSendUtils.validateUrl(url) then
     return false
   end

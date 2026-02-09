@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { 
-  Clock, 
-  Zap, 
+import {
+  Clock,
+  Zap,
   AlertTriangle,
   TrendingUp,
   Minus,
@@ -15,10 +15,12 @@ import {
   Star,
   ArrowRight
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { LandingHeader } from '@/components/layouts/landing-header';
 import { Footer } from '@/components/layouts';
 import { PricingSection } from '@/components/pricing';
 import { GuestUploadForm } from '@/components/guest';
+import { ComparisonTable } from '@/components/conversion/comparison-table';
 import { useTranslation } from '@/lib/i18n/context';
 import type { LandingContent } from '@/lib/content/landing';
 
@@ -47,214 +49,240 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 overflow-x-hidden selection:bg-indigo-100 selection:text-indigo-900 font-sans">
+    <div className="min-h-screen bg-background overflow-x-hidden selection:bg-primary/10 selection:text-primary font-sans">
       <LandingHeader />
 
       {/* HERO SECTION */}
-      <section className="relative pt-24 pb-10 md:pt-28 md:pb-16 px-4 overflow-hidden">
-        {/* Background Elements */}
+      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 px-4 overflow-hidden" aria-label="Hero Section">
+        {/* Advanced Background Elements */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-16 left-[10%] w-[300px] h-[300px] md:w-[450px] md:h-[450px] bg-indigo-500/15 rounded-full blur-[100px] animate-pulse" />
-          <div className="absolute bottom-0 right-[5%] w-[250px] h-[250px] md:w-[400px] md:h-[400px] bg-violet-500/10 rounded-full blur-[80px] animate-pulse delay-700" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150px] h-[150px] bg-amber-500/8 rounded-full blur-[60px]" />
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
+          <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-primary/5 rounded-full blur-[120px] animate-pulse-slow" />
+          <div className="absolute bottom-0 right-[5%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-accent/5 rounded-full blur-[100px] animate-pulse-slow delay-1000" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-warning/5 rounded-full blur-[80px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.15]" />
         </div>
-        
+
         <div className="container mx-auto relative z-10 max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Text Content */}
-            <div className="text-center lg:text-left order-2 lg:order-1">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200/80 mb-4 shadow-sm animate-in fade-in slide-in-from-bottom-4">
-                <span className="flex items-center justify-center w-4 h-4 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full text-white">
-                  <Sparkles size={8} />
+            <div className="text-center lg:text-left order-2 lg:order-1 space-y-8">
+              {/* Premium Badge */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/50 backdrop-blur-xl border border-border shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <span className="flex items-center justify-center w-5 h-5 bg-primary rounded-full text-primary-foreground shadow-sm">
+                  <Sparkles size={10} />
                 </span>
-                <span className="text-[9px] md:text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                <span className="text-[10px] md:text-xs font-black text-foreground uppercase tracking-[0.2em]">
                   {t('landing.badge')}
                 </span>
               </div>
-              
-              {/* Main Headline - H1 with primary SEO keyword */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-4 animate-in fade-in slide-in-from-bottom-4 delay-100">
+
+              {/* Editorial Headline - Updated per Requirement 10.1 */}
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-foreground tracking-tight leading-[1.05] animate-in fade-in slide-in-from-bottom-4 delay-100 duration-1000">
                 <span className="sr-only">Professional Photo Delivery Galleries — </span>
-                {t('landing.title')}{' '}
+                Livrez vos photos en{' '}
                 <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
-                    {t('landing.titleHighlight')}
+                  <span className="text-primary italic">
+                    5 minutes
                   </span>
-                  <svg className="absolute -bottom-1 left-0 w-full h-2 text-indigo-500/30" viewBox="0 0 200 12" preserveAspectRatio="none">
-                    <path d="M0,8 Q50,0 100,8 T200,8" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                  <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/20" viewBox="0 0 200 12" preserveAspectRatio="none">
+                    <path d="M0,8 Q50,0 100,8 T200,8" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                   </svg>
                 </span>
+                .{' '}
+                <span className="block mt-2">
+                  Vendez vos galeries.{' '}
+                  <span className="text-primary">Gardez 90%</span>.
+                </span>
               </h1>
-              
-              {/* Subtitle */}
-              <p className="text-sm md:text-base lg:text-lg text-slate-600 max-w-lg mx-auto lg:mx-0 mb-6 animate-in fade-in slide-in-from-bottom-4 delay-200 font-medium leading-relaxed">
-                {t('landing.subtitle')}
-                <span className="text-slate-900 font-bold"> {t('landing.subtitleHighlight')} </span> 
-                {t('landing.subtitleEnd')}
+
+              {/* Premium Subtitle */}
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 animate-in fade-in slide-in-from-bottom-4 delay-200 duration-1000 font-medium leading-relaxed">
+                La plateforme de livraison photo professionnelle qui vous permet de{' '}
+                <span className="text-foreground font-bold">partager vos galeries en quelques clics</span>
+                {' '}et de{' '}
+                <span className="text-foreground font-bold">vendre vos photos avec la commission la plus basse du marché</span>.
               </p>
-              
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 animate-in fade-in slide-in-from-bottom-4 delay-300 mb-6">
-                <button 
+
+              {/* Badges under hero - Requirement 10.2 */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 animate-in fade-in slide-in-from-bottom-4 delay-250 duration-1000">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-full">
+                  <Sparkles size={16} strokeWidth={2.5} />
+                  <span className="text-xs font-black uppercase tracking-wider">Plugin Lightroom Unique</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-success/10 text-success border border-success/20 rounded-full">
+                  <TrendingUp size={16} strokeWidth={2.5} />
+                  <span className="text-xs font-black uppercase tracking-wider">Commission 10%</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-accent/10 text-accent border border-accent/20 rounded-full">
+                  <Clock size={16} strokeWidth={2.5} />
+                  <span className="text-xs font-black uppercase tracking-wider">Support &lt; 2h</span>
+                </div>
+              </div>
+
+              {/* Modern CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 animate-in fade-in slide-in-from-bottom-4 delay-300 duration-1000">
+                <Button
                   onClick={onScrollToUpload}
-                  className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm rounded-xl hover:from-indigo-700 hover:to-violet-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 active:scale-[0.98] group"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-7 text-base font-bold rounded-2xl shadow-xl shadow-primary/20 hover:-translate-y-0.5 transition-all group"
+                  aria-label={t('landing.cta.primary')}
                 >
-                  <Upload size={16} />
+                  <Upload size={20} className="mr-2" />
                   {t('landing.cta.primary')}
-                  <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                </button>
-                <button 
+                  <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button
                   onClick={onViewFeatures}
-                  className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-3.5 bg-white text-slate-700 font-bold text-sm rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm active:scale-[0.98]"
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-7 text-base font-bold rounded-2xl border-border bg-white/50 backdrop-blur-md hover:bg-white hover:border-primary transition-all shadow-sm active:scale-[0.98]"
+                  aria-label={t('landing.cta.secondary')}
                 >
                   {t('landing.cta.secondary')}
-                </button>
+                </Button>
               </div>
-              
-              {/* Trust Indicators */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 animate-in fade-in slide-in-from-bottom-4 delay-500">
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Check size={14} className="text-emerald-500" />
-                  <span className="text-[10px] font-bold">{t('common.zeroCompression')}</span>
+
+              {/* Refined Trust Indicators */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 animate-in fade-in slide-in-from-bottom-4 delay-500 duration-1000">
+                <div className="flex items-center gap-2 text-muted-foreground group">
+                  <div className="p-1.5 bg-success/10 text-success rounded-lg group-hover:bg-success group-hover:text-white transition-colors">
+                    <Check size={14} strokeWidth={3} />
+                  </div>
+                  <span className="text-xs font-extrabold uppercase tracking-widest">{t('common.zeroCompression')}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Shield size={14} className="text-indigo-500" />
-                  <span className="text-[10px] font-bold">{t('common.fullySecure')}</span>
+                <div className="flex items-center gap-2 text-muted-foreground group">
+                  <div className="p-1.5 bg-primary/10 text-primary rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">
+                    <Shield size={14} strokeWidth={3} />
+                  </div>
+                  <span className="text-xs font-extrabold uppercase tracking-widest">{t('common.fullySecure')}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-500">
-                  <Zap size={14} className="text-amber-500" />
-                  <span className="text-[10px] font-bold">{t('common.readyIn2Min')}</span>
+                <div className="flex items-center gap-2 text-muted-foreground group">
+                  <div className="p-1.5 bg-warning/10 text-warning rounded-lg group-hover:bg-warning group-hover:text-white transition-colors">
+                    <Zap size={14} strokeWidth={3} />
+                  </div>
+                  <span className="text-xs font-extrabold uppercase tracking-widest">{t('common.readyIn2Min')}</span>
                 </div>
               </div>
             </div>
-            
+
             {/* Right Column - Visual Element */}
-            <div className="order-1 lg:order-2 animate-in fade-in slide-in-from-right-8 delay-300">
+            <div className="order-1 lg:order-2 animate-in fade-in slide-in-from-right-8 delay-300 duration-1000">
               <div className="relative max-w-md mx-auto lg:max-w-none">
-                {/* Main Gallery Preview Card */}
-                <div className="relative bg-white rounded-2xl md:rounded-3xl p-3 md:p-5 shadow-xl shadow-slate-200/60 border border-slate-200/80 transform hover:scale-[1.01] transition-transform duration-500">
+                {/* Main Gallery Preview Card - Professional Glassmorphism */}
+                <div className="relative bg-white/70 backdrop-blur-2xl rounded-3xl p-5 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/40 transform hover:scale-[1.02] transition-all duration-700 ease-out group">
                   {/* Gallery Header */}
-                  <div className="flex items-center justify-between mb-3 px-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-lg flex items-center justify-center text-white">
-                        <ImageIcon size={14} />
+                  <div className="flex items-center justify-between mb-5 px-1">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                        <ImageIcon size={18} strokeWidth={2.5} />
                       </div>
                       <div>
-                        <p className="text-xs font-black text-slate-900">{t('common.exampleWeddingSession')}</p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{t('common.examplePhotosHd')}</p>
+                        <p className="text-sm font-extrabold text-foreground tracking-tight">{t('common.exampleWeddingSession')}</p>
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('common.examplePhotosHd')}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-[8px] font-black uppercase tracking-wider">{t('common.active')}</span>
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-success/10 text-success border border-success/20 rounded-full">
+                      <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">{t('common.active')}</span>
                     </div>
                   </div>
-                  
-                  {/* Photo Grid Preview */}
-                  <div className="grid grid-cols-3 gap-1.5 md:gap-2 mb-3">
+
+                  {/* Photo Grid Preview - Editorial Style */}
+                  <div className="grid grid-cols-3 gap-2 md:gap-3 mb-5">
                     {[
                       'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=400&fit=crop',
                       'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=400&fit=crop',
-                      'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400&h=400&fit=crop',
                       'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=400&fit=crop',
                       'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=400&h=400&fit=crop',
+                      'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=400&h=400&fit=crop',
                       null
                     ].map((imageUrl, i) => (
-                      <div 
-                        key={i} 
-                        className={`aspect-square rounded-lg md:rounded-xl overflow-hidden ${i === 5 ? 'bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center' : 'bg-slate-100'}`}
+                      <div
+                        key={i}
+                        className={`aspect-square rounded-2xl overflow-hidden transition-transform duration-500 hover:scale-105 ${i === 5 ? 'bg-primary/10 flex items-center justify-center border-2 border-dashed border-primary/20' : 'bg-muted shadow-sm'}`}
                       >
                         {i === 5 ? (
-                          <span className="text-white font-black text-sm md:text-base">+18</span>
+                          <span className="text-primary font-black text-sm md:text-lg">+24</span>
                         ) : (
-                          <img 
-                            src={imageUrl!} 
-                            alt={`Photo ${i + 1}`}
+                          <img
+                            src={imageUrl!}
+                            alt={`Photo Preview ${i + 1}`}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         )}
                       </div>
                     ))}
                   </div>
-                  
-                  {/* Gallery Stats */}
-                  <div className="flex items-center justify-between px-2 py-2 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="text-center">
-                        <p className="text-sm font-black text-slate-900">847</p>
-                        <p className="text-[8px] font-bold text-slate-400 uppercase">{t('common.views')}</p>
+
+                  {/* Gallery Stats - Modern Dashboard Feel */}
+                  <div className="flex items-center justify-between px-3 py-3 bg-primary/5 rounded-2xl border border-primary/10">
+                    <div className="flex items-center gap-4">
+                      <div className="text-left">
+                        <p className="text-base font-black text-foreground tracking-tight">1.2k</p>
+                        <p className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest">{t('common.views')}</p>
                       </div>
-                      <div className="w-px h-6 bg-slate-200" />
-                      <div className="text-center">
-                        <p className="text-sm font-black text-slate-900">156</p>
-                        <p className="text-[8px] font-bold text-slate-400 uppercase">{t('common.downloads')}</p>
+                      <div className="w-px h-8 bg-primary/10" />
+                      <div className="text-left">
+                        <p className="text-base font-black text-foreground tracking-tight">342</p>
+                        <p className="text-[9px] font-extrabold text-muted-foreground uppercase tracking-widest">{t('common.downloads')}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-0.5">
+                    <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={10} className="text-amber-400 fill-amber-400" />
+                        <Star key={i} size={12} className="text-warning fill-warning" />
                       ))}
                     </div>
                   </div>
                 </div>
-                
-                {/* Floating Elements */}
-                <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-white rounded-xl p-2 md:p-2.5 shadow-lg border border-slate-100 animate-bounce-slow">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
-                      <Check size={12} className="text-emerald-600" />
+
+                {/* Floating Micro-UI Elements */}
+                <div className="absolute -top-6 -right-4 md:-top-8 md:-right-6 bg-white/90 backdrop-blur-xl rounded-2xl p-3 shadow-xl border border-border animate-bounce-slow">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 bg-success/10 rounded-xl flex items-center justify-center">
+                      <Check size={16} strokeWidth={3} className="text-success" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-slate-900">{t('common.hdQuality')}</p>
-                      <p className="text-[8px] text-slate-400 font-bold">{t('common.noCompression')}</p>
+                      <p className="text-xs font-black text-foreground">{t('common.hdQuality')}</p>
+                      <p className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-tight">{t('common.noCompression')}</p>
                     </div>
                   </div>
                 </div>
-                
-                <div className="absolute -bottom-3 -left-3 md:-bottom-4 md:-left-4 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl p-2 md:p-2.5 shadow-lg text-white animate-bounce-slow delay-500">
-                  <div className="flex items-center gap-1.5">
-                    <Zap size={14} />
+
+                <div className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-6 bg-primary rounded-2xl p-3 shadow-2xl text-primary-foreground animate-bounce-slow delay-700">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                      <Zap size={16} strokeWidth={2.5} className="fill-white" />
+                    </div>
                     <div>
-                      <p className="text-[10px] font-black">{t('common.instantDelivery')}</p>
-                      <p className="text-[8px] text-white/70 font-bold">{t('common.secureUniqueLink')}</p>
+                      <p className="text-xs font-black">{t('common.instantDelivery')}</p>
+                      <p className="text-[10px] text-white/70 font-extrabold uppercase tracking-tight">{t('common.secureUniqueLink')}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Stats Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10 md:mt-12 max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 md:mt-24 max-w-4xl mx-auto">
             {[
-              { value: '500+', label: t('landing.stats.experts'), icon: '👨‍💼', color: 'indigo' },
-              { value: '12K+', label: t('landing.stats.galleries'), icon: '📸', color: 'violet' },
-              { value: '150K+', label: t('landing.stats.photos'), icon: '🖼️', color: 'purple' },
-              { value: '4.9/5', label: t('landing.stats.satisfaction'), icon: '⭐', color: 'amber' }
+              { value: '500+', label: t('landing.stats.experts'), icon: '💼', color: 'primary' },
+              { value: '12K+', label: t('landing.stats.galleries'), icon: '📸', color: 'accent' },
+              { value: '150K+', label: t('landing.stats.photos'), icon: '✨', color: 'primary' },
+              { value: '4.9/5', label: t('landing.stats.satisfaction'), icon: '🌟', color: 'warning' }
             ].map((stat, i) => (
-              <div 
+              <div
                 key={i}
-                className="relative group"
+                className="group relative"
               >
-                {/* Glow effect on hover */}
-                <div className={`absolute -inset-0.5 bg-gradient-to-r from-${stat.color}-500 to-${stat.color}-600 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-300`} />
-                
-                {/* Card */}
-                <div className="relative bg-white rounded-xl p-3 border border-slate-200/60 group-hover:border-slate-300 transition-all group-hover:shadow-md">
-                  {/* Icon */}
-                  <div className="text-lg mb-1.5 transform group-hover:scale-110 transition-transform">
-                    {stat.icon}
-                  </div>
-                  
-                  {/* Value */}
-                  <p className="text-xl md:text-2xl font-black text-slate-900 mb-0.5">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-border group-hover:border-primary/30 transition-all shadow-sm">
+                  <div className="text-xl mb-2 filter drop-shadow-sm">{stat.icon}</div>
+                  <p className="text-2xl font-display font-black text-foreground mb-0.5 tracking-tighter">
                     {stat.value}
                   </p>
-                  
-                  {/* Label */}
-                  <p className="text-[9px] text-slate-500 font-medium uppercase tracking-wider">
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">
                     {stat.label}
                   </p>
                 </div>
@@ -265,27 +293,24 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
       </section>
 
       {/* GUEST UPLOAD SECTION */}
-      <section id="guest-upload" className="py-14 md:py-20 px-4 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-500/5 rounded-full blur-[80px]" />
-        </div>
-        
-        <div className="container mx-auto max-w-3xl relative z-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-widest mb-3">
-              <Upload size={10} />
+      <section id="guest-upload" className="py-20 md:py-32 px-4 bg-muted/30 relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+        <div className="container mx-auto max-w-4xl relative z-10">
+          <div className="text-center mb-12 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-[10px] font-black uppercase tracking-widest animate-in fade-in zoom-in">
+              <Upload size={12} strokeWidth={3} />
               {t('common.upload')}
             </div>
-            <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-3 leading-tight">
+            <h2 className="text-3xl md:text-5xl font-display font-black text-foreground tracking-tight">
               {t('guest.upload.title')}
             </h2>
-            <p className="text-slate-500 font-medium text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+            <p className="text-muted-foreground font-medium text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
               {t('guest.upload.subtitle')}
             </p>
           </div>
-          
-          <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-lg shadow-slate-200/50 border border-slate-100">
-            <GuestUploadForm 
+
+          <div className="bg-white/80 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-12 shadow-[0_32px_64px_rgba(0,0,0,0.08)] border border-white/60">
+            <GuestUploadForm
               onUploadComplete={handleUploadComplete}
               onError={handleUploadError}
             />
@@ -293,37 +318,29 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
         </div>
       </section>
 
-      {/* PROBLEM SECTION - SEO: "Don't let an algorithm destroy your pixels" */}
-      <section className="py-10 md:py-14 bg-gradient-to-b from-slate-900 to-slate-800 text-white relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-rose-500/10 rounded-full blur-[80px]" />
-          <div className="absolute bottom-0 right-1/4 w-[150px] h-[150px] bg-indigo-500/10 rounded-full blur-[60px]" />
+      {/* PROBLEM SECTION - Premium Dark UI */}
+      <section className="py-20 md:py-32 bg-slate-950 text-white relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px]" />
         </div>
-        
-        <div className="container mx-auto px-4 max-w-5xl relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-10">
-            {/* Left Column - Text Content */}
-            <div className="lg:w-1/2 text-center lg:text-left">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[8px] font-black uppercase tracking-widest mb-3">
-                <AlertTriangle size={9} />
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16 md:gap-24">
+            <div className="lg:w-1/2 text-center lg:text-left space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-black uppercase tracking-[0.2em]">
+                <AlertTriangle size={12} strokeWidth={3} />
                 <span>{t('landing.problem.badge')}</span>
               </div>
-              
-              {/* H2 - SEO keyword: WhatsApp compresses photos */}
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 leading-[1.15] tracking-tight">
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black leading-[1.1] tracking-tight">
                 {t('landing.problem.title')}{' '}
-                <span className="relative inline-block text-rose-400">
+                <span className="text-destructive italic">
                   {t('landing.problem.titleHighlight')}
-                  <svg className="absolute -bottom-0.5 left-0 w-full h-1.5 text-rose-500/30" viewBox="0 0 200 8" preserveAspectRatio="none">
-                    <path d="M0,6 Q50,0 100,6 T200,6" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                  </svg>
                 </span>
               </h2>
-              
-              {/* Paragraphs */}
-              <div className="space-y-2.5 text-slate-400 font-medium text-[11px] md:text-xs leading-relaxed max-w-md mx-auto lg:mx-0">
+
+              <div className="space-y-4 text-slate-400 font-medium text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
                 <p>
                   {t('landing.problem.paragraph1')}{' '}
                   <span className="text-white font-bold">{t('landing.problem.paragraph1Highlight')}</span>
@@ -334,39 +351,32 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
                 </p>
                 <p>
                   {t('landing.problem.paragraph3')}{' '}
-                  <span className="text-rose-400 font-bold">{t('landing.problem.paragraph3Highlight')}</span> {t('landing.problem.paragraph3End')}
+                  <span className="text-destructive font-bold">{t('landing.problem.paragraph3Highlight')}</span> {t('landing.problem.paragraph3End')}
                 </p>
               </div>
             </div>
-            
-            {/* Right Column - Comparison Card */}
-            <div className="lg:w-1/2 w-full max-w-sm mx-auto lg:max-w-none">
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-5 shadow-lg space-y-3">
-                {/* PikSend - Original Quality */}
-                <div className="bg-indigo-600/10 border border-indigo-500/20 p-3 md:p-4 rounded-lg group hover:bg-indigo-600/15 transition-colors">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-wider">{t('landing.problem.comparison.original')}</p>
-                    <TrendingUp size={14} className="text-indigo-400" />
+
+            <div className="lg:w-1/2 w-full max-w-md">
+              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl space-y-6">
+                {/* PikSend Comparison */}
+                <div className="bg-primary/20 border border-primary/30 p-5 rounded-2xl group transition-all hover:bg-primary/25 cursor-default">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{t('landing.problem.comparison.original')}</p>
+                    <TrendingUp size={20} className="text-primary" />
                   </div>
-                  <p className="text-base md:text-lg font-black text-white tracking-tight">{t('landing.problem.comparison.originalSpec')}</p>
-                  <p className="text-[8px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
+                  <p className="text-2xl font-display font-black text-white">{t('landing.problem.comparison.originalSpec')}</p>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
                     {t('landing.problem.comparison.originalDesc')}
                   </p>
                 </div>
-                
-                {/* Divider */}
-                <div className="flex justify-center">
-                  <div className="w-px h-4 bg-slate-700/50" />
-                </div>
-                
-                {/* WhatsApp/WeTransfer - Compressed */}
-                <div className="bg-rose-600/10 border border-rose-500/20 p-3 md:p-4 rounded-lg group hover:bg-rose-600/15 transition-colors">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-[9px] font-bold text-rose-400 uppercase tracking-wider">{t('landing.problem.comparison.classic')}</p>
-                    <Minus size={14} className="text-rose-400" />
+
+                <div className="bg-destructive/10 border border-destructive/20 p-5 rounded-2xl group transition-all hover:bg-destructive/15 cursor-default opacity-60">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-black text-destructive uppercase tracking-[0.2em]">{t('landing.problem.comparison.classic')}</p>
+                    <Minus size={20} className="text-destructive" />
                   </div>
-                  <p className="text-base md:text-lg font-black text-white tracking-tight opacity-50">{t('landing.problem.comparison.classicSpec')}</p>
-                  <p className="text-[8px] text-slate-500 mt-1 font-bold uppercase tracking-widest">
+                  <p className="text-2xl font-display font-black text-white">{t('landing.problem.comparison.classicSpec')}</p>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
                     {t('landing.problem.comparison.classicDesc')}
                   </p>
                 </div>
@@ -377,57 +387,38 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
       </section>
 
       {/* BENEFITS SECTION */}
-      <section id="features" className="py-16 md:py-24 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[9px] font-black uppercase tracking-widest mb-3">
-              {t('landing.benefits.badge')}
-            </div>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-4 leading-tight">
+      <section id="features" className="py-24 md:py-36 px-4 bg-background relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-16 md:mb-24 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-display font-black text-foreground tracking-tight">
               {t('landing.benefits.title')}
             </h2>
-            <p className="text-slate-500 font-medium text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-              {t('landing.benefits.subtitle')}{' '}
-              <span className="text-indigo-600 font-bold">{t('landing.benefits.subtitleHighlight')}</span>
+            <p className="text-muted-foreground font-medium text-base md:text-xl max-w-2xl mx-auto leading-relaxed">
+              {t('landing.benefits.subtitle')}
             </p>
           </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[
-              { 
-                icon: ImageIcon, 
-                title: t('landing.benefits.features.quality.title'), 
-                desc: t('landing.benefits.features.quality.desc'), 
-                highlight: t('landing.benefits.features.quality.highlight')
-              },
-              { 
-                icon: Clock, 
-                title: t('landing.benefits.features.friction.title'), 
-                desc: t('landing.benefits.features.friction.desc'), 
-                highlight: t('landing.benefits.features.friction.highlight')
-              },
-              { 
-                icon: Zap, 
-                title: t('landing.benefits.features.gallery.title'), 
-                desc: t('landing.benefits.features.gallery.desc'), 
-                highlight: t('landing.benefits.features.gallery.highlight')
-              }
-            ].map((feature, i) => (
-              <div 
-                key={i} 
-                className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group"
+              { icon: Zap, title: t('landing.benefit1.title'), desc: t('landing.benefit1.desc'), color: 'primary' },
+              { icon: Shield, title: t('landing.benefit2.title'), desc: t('landing.benefit2.desc'), color: 'success' },
+              { icon: ImageIcon, title: t('landing.benefit3.title'), desc: t('landing.benefit3.desc'), color: 'accent' },
+              { icon: TrendingUp, title: t('landing.benefit4.title'), desc: t('landing.benefit4.desc'), color: 'warning' },
+              { icon: Check, title: t('landing.benefit5.title'), desc: t('landing.benefit5.desc'), color: 'primary' },
+              { icon: Star, title: t('landing.benefit6.title'), desc: t('landing.benefit6.desc'), color: 'accent' }
+            ].map((benefit, i) => (
+              <div
+                key={i}
+                className="group relative bg-white rounded-[2rem] p-8 border border-border hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1"
               >
-                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl w-fit mb-5 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-500">
-                  <feature.icon size={22} />
+                <div className={`mb-6 inline-flex p-4 rounded-2xl bg-${benefit.color}/10 text-${benefit.color} group-hover:bg-${benefit.color} group-hover:text-white transition-colors duration-500`}>
+                  <benefit.icon size={28} strokeWidth={2.5} />
                 </div>
-                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest mb-1.5">
-                  {feature.highlight}
-                </p>
-                <h3 className="text-lg md:text-xl font-black text-slate-900 mb-2 tracking-tight">
-                  {feature.title}
+                <h3 className="text-xl font-display font-black text-foreground mb-3 tracking-tight">
+                  {benefit.title}
                 </h3>
-                <p className="text-slate-500 font-medium leading-relaxed text-xs md:text-sm">
-                  {feature.desc}
+                <p className="text-muted-foreground font-medium text-sm leading-relaxed">
+                  {benefit.desc}
                 </p>
               </div>
             ))}
@@ -435,40 +426,267 @@ export function LandingPageClient({ content }: LandingPageClientProps) {
         </div>
       </section>
 
+      {/* LIGHTROOM PLUGIN HIGHLIGHT SECTION - Requirement 10.6 */}
+      <section className="py-20 md:py-32 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-primary/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="text-center lg:text-left space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+                <Sparkles size={12} strokeWidth={3} />
+                <span>Exclusif PikSend</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black leading-[1.1] tracking-tight text-foreground">
+                Le seul avec un{' '}
+                <span className="text-primary italic">
+                  Plugin Lightroom
+                </span>
+              </h2>
+
+              <div className="space-y-4 text-muted-foreground font-medium text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+                <p>
+                  Exportez et uploadez vos photos{' '}
+                  <span className="text-foreground font-bold">directement depuis Lightroom</span>
+                  {' '}en un seul clic. Plus besoin de jongler entre plusieurs applications.
+                </p>
+                <p>
+                  Créez vos galeries en{' '}
+                  <span className="text-foreground font-bold">moins de 2 minutes</span>
+                  {' '}et concentrez-vous sur ce qui compte vraiment : votre photographie.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
+                <Button
+                  onClick={onScrollToUpload}
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-6 text-base font-bold rounded-2xl shadow-xl shadow-primary/20 hover:-translate-y-0.5 transition-all group"
+                >
+                  Essayer maintenant
+                  <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="bg-white/80 backdrop-blur-2xl rounded-[2.5rem] p-8 shadow-[0_32px_64px_rgba(0,0,0,0.08)] border border-white/60">
+                <div className="space-y-4">
+                  {[
+                    { step: '1', title: 'Sélectionnez vos photos', desc: 'Dans Lightroom Classic' },
+                    { step: '2', title: 'Cliquez sur "Exporter vers PikSend"', desc: 'Un seul bouton' },
+                    { step: '3', title: 'Votre galerie est prête', desc: 'En moins de 2 minutes' }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 hover:bg-primary/10 transition-colors">
+                      <div className="flex-shrink-0 w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-black text-lg shadow-lg shadow-primary/20">
+                        {item.step}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-foreground mb-1">{item.title}</h4>
+                        <p className="text-sm text-muted-foreground">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* POURQUOI PIKSEND VS CONCURRENTS SECTION - Requirement 10.4 */}
+      <section className="py-24 md:py-36 px-4 bg-background relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-16 md:mb-24 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/20 text-success text-[10px] font-black uppercase tracking-[0.2em]">
+              <TrendingUp size={12} strokeWidth={3} />
+              <span>Comparaison</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-display font-black text-foreground tracking-tight">
+              Pourquoi PikSend vs Concurrents ?
+            </h2>
+            <p className="text-muted-foreground font-medium text-base md:text-xl max-w-2xl mx-auto leading-relaxed">
+              La commission la plus basse, le plugin Lightroom unique, et le support le plus rapide du marché.
+            </p>
+          </div>
+
+          {/* Import and use ComparisonTable component */}
+          <div className="mb-12">
+            <ComparisonTable highlightPikSend={true} />
+          </div>
+
+          {/* Key Differentiators */}
+          <div className="grid md:grid-cols-3 gap-6 mt-16">
+            {[
+              {
+                icon: TrendingUp,
+                title: 'Commission la plus basse',
+                desc: '10% vs 15% chez les concurrents',
+                highlight: 'Économisez 5% sur chaque vente'
+              },
+              {
+                icon: Sparkles,
+                title: 'Plugin Lightroom unique',
+                desc: 'Exportez directement depuis Lightroom',
+                highlight: 'Gagnez 80% de temps'
+              },
+              {
+                icon: Clock,
+                title: 'Support ultra-rapide',
+                desc: 'Réponse en moins de 2h',
+                highlight: 'vs 24-48h ailleurs'
+              }
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-[2rem] p-8 border border-border hover:border-primary/30 hover:shadow-xl transition-all">
+                <div className="mb-4 inline-flex p-3 rounded-xl bg-primary/10 text-primary">
+                  <item.icon size={24} strokeWidth={2.5} />
+                </div>
+                <h3 className="text-xl font-display font-black text-foreground mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground font-medium text-sm mb-3">
+                  {item.desc}
+                </p>
+                <p className="text-primary font-bold text-sm">
+                  {item.highlight}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS SECTION - Requirement 10.5 */}
+      <section className="py-24 md:py-36 px-4 bg-muted/30 relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-16 md:mb-24 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/10 border border-warning/20 text-warning text-[10px] font-black uppercase tracking-[0.2em]">
+              <Star size={12} strokeWidth={3} />
+              <span>Témoignages</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-display font-black text-foreground tracking-tight">
+              500+ photographes nous font confiance
+            </h2>
+            <p className="text-muted-foreground font-medium text-base md:text-xl max-w-2xl mx-auto leading-relaxed">
+              Découvrez pourquoi les photographes professionnels choisissent PikSend
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: 'Sophie Martin',
+                role: 'Photographe Mariage',
+                location: 'Paris, France',
+                photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
+                quote: 'Le plugin Lightroom a transformé mon workflow. Je livre mes galeries en 5 minutes au lieu de 30. Un gain de temps incroyable !',
+                rating: 5,
+                metric: '+2500€/mois de revenus'
+              },
+              {
+                name: 'Thomas Dubois',
+                role: 'Photographe Événementiel',
+                location: 'Lyon, France',
+                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+                quote: 'La commission à 10% fait toute la différence. J\'économise 500€ par mois comparé à mon ancien service. Et le support est ultra-réactif !',
+                rating: 5,
+                metric: '500€ économisés/mois'
+              },
+              {
+                name: 'Marie Lefebvre',
+                role: 'Photographe Portrait',
+                location: 'Bordeaux, France',
+                photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
+                quote: 'Mes clients adorent la qualité des galeries. Zéro compression, téléchargement rapide, interface élégante. PikSend est parfait !',
+                rating: 5,
+                metric: '4.9/5 satisfaction clients'
+              }
+            ].map((testimonial, i) => (
+              <div key={i} className="bg-white rounded-[2rem] p-8 border border-border hover:shadow-2xl transition-all">
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, j) => (
+                    <Star key={j} size={16} className="text-warning fill-warning" />
+                  ))}
+                </div>
+                <p className="text-foreground font-medium text-base leading-relaxed mb-6">
+                  "{testimonial.quote}"
+                </p>
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src={testimonial.photo}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="font-bold text-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.location}</p>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-border">
+                  <p className="text-primary font-bold text-sm">{testimonial.metric}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              onClick={() => router.push('/testimonials')}
+              variant="outline"
+              size="lg"
+              className="px-8 py-6 text-base font-bold rounded-2xl"
+            >
+              Voir tous les témoignages
+              <ArrowRight size={18} className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* PRICING SECTION */}
       <PricingSection content={content} />
 
-      {/* FINAL CTA */}
-      <section className="py-16 md:py-20 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="bg-slate-900 rounded-3xl md:rounded-[3rem] p-10 md:p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0 z-0">
-              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_2px_2px,rgba(255,255,255,0.03)_1px,transparent_0)] bg-[length:24px_24px]" />
-              <div className="absolute -bottom-16 -right-16 w-60 h-60 bg-indigo-600/15 rounded-full blur-[80px]" />
+      {/* FINAL CTA SECTION */}
+      <section className="py-24 md:py-36 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-primary/[0.02]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--primary-foreground)_0%,transparent_70%)] opacity-20" />
+        </div>
+
+        <div className="container mx-auto max-w-4xl relative z-10 text-center">
+          <div className="bg-primary rounded-[3rem] p-10 md:p-20 text-primary-foreground shadow-2xl relative overflow-hidden group">
+            {/* CTA Background Sparkles */}
+            <div className="absolute top-0 right-0 p-8 opacity-20">
+              <Sparkles size={120} className="animate-pulse-slow" />
             </div>
-            
-            <div className="relative z-10 space-y-6">
-              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
-                {t('landing.finalCta.title')} <br />
-                <span className="text-indigo-400">{t('landing.finalCta.titleHighlight')}</span>
+
+            <div className="relative z-10 space-y-8">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-black tracking-tight leading-tight">
+                {t('landing.finalCta.title')}
               </h2>
-              
-              <p className="text-slate-400 text-sm md:text-base max-w-xl mx-auto font-medium leading-relaxed">
+              <p className="text-primary-foreground/80 font-medium text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                 {t('landing.finalCta.subtitle')}
               </p>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button 
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <Button
                   onClick={onGetStarted}
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:bg-indigo-500 hover:text-white transition-all shadow-xl active:scale-95 text-base"
+                  size="xl"
+                  variant="secondary"
+                  className="w-full sm:w-auto px-10 py-8 text-lg font-black rounded-2xl shadow-xl hover:-translate-y-1 transition-all group"
                 >
                   {t('landing.finalCta.button')}
-                </button>
+                  <ArrowRight size={22} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <p className="text-xs font-black uppercase tracking-[0.2em] opacity-60">
+                  {t('landing.finalCta.noCreditCard')}
+                </p>
               </div>
-              
-              <p className="text-slate-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.15em]">
-                {t('landing.finalCta.note')}
-              </p>
             </div>
           </div>
         </div>

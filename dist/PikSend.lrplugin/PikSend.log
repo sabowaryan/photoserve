@@ -1,1 +1,109 @@
 [2026-02-05 09:39:56] [INFO] PikSend: PikSend plugin initialized
+pk_live_pIrPJATn-QeDUQ7kTFgNMNMvX4a8YNdP
+[2026-02-05 10:36:27] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:37:10] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:39:27] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:39:31] [DEBUG] Login button clicked
+[2026-02-05 10:41:18] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:41:50] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:44:08] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:44:22] [DEBUG] Login button clicked
+[2026-02-05 10:49:23] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:49:23] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:49:23] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:49:23] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:49:41] [DEBUG] Login button clicked
+[2026-02-05 10:49:47] [DEBUG] Dialog result: ok
+[2026-02-05 10:49:47] [DEBUG] Token length: 40
+[2026-02-05 10:49:47] [DEBUG] Calling validateToken
+[2026-02-05 10:51:13] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:51:13] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:51:14] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:51:14] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:51:15] [DEBUG] Login button clicked
+[2026-02-05 10:51:20] [DEBUG] Dialog result: ok
+[2026-02-05 10:51:20] [DEBUG] Token length: 40
+[2026-02-05 10:51:20] [DEBUG] Calling validateToken
+[2026-02-05 10:51:20] [DEBUG] validateToken: entry
+[2026-02-05 10:51:20] [DEBUG] validateToken: URL=http://localhost:3000/api/plugin/auth/validate
+[2026-02-05 10:51:20] [DEBUG] validateToken: URL valid=true
+[2026-02-05 10:51:20] [DEBUG] validateToken: calling LrHttp.post
+[2026-02-05 10:55:03] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:55:03] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:55:03] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:55:03] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 10:55:05] [DEBUG] Login button clicked
+[2026-02-05 10:55:08] [DEBUG] Dialog result: ok
+[2026-02-05 10:55:08] [DEBUG] Token length: 40
+[2026-02-05 10:55:08] [DEBUG] Calling validateToken
+[2026-02-05 10:55:08] [DEBUG] validateToken: entry
+[2026-02-05 10:55:08] [DEBUG] validateToken: URL=http://127.0.0.1:3000/api/plugin/auth/validate
+[2026-02-05 10:55:08] [DEBUG] validateToken: URL valid=true
+[2026-02-05 10:55:08] [DEBUG] validateToken: calling LrHttp.post with timeout=30
+[2026-02-05 11:02:10] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 11:02:10] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:02:11] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:02:11] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:02:14] [DEBUG] Login button clicked
+[2026-02-05 11:02:37] [DEBUG] Dialog result: ok
+[2026-02-05 11:02:37] [DEBUG] Token length: 40
+[2026-02-05 11:02:37] [DEBUG] Calling validateToken
+[2026-02-05 11:02:37] [DEBUG] validateToken: entry
+[2026-02-05 11:02:37] [DEBUG] validateToken: URL=http://127.0.0.1:3000/api/plugin/auth/validate
+[2026-02-05 11:02:37] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:02:37] [DEBUG] validateToken: calling LrHttp.post with timeout=10
+[2026-02-05 11:06:02] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 11:06:02] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:06:02] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:06:02] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:06:05] [DEBUG] Login button clicked
+[2026-02-05 11:06:11] [DEBUG] Dialog result: ok
+[2026-02-05 11:06:11] [DEBUG] Token length: 40
+[2026-02-05 11:06:11] [DEBUG] Calling validateToken
+[2026-02-05 11:06:11] [DEBUG] validateToken: entry
+[2026-02-05 11:06:11] [DEBUG] validateToken: URL=https://piksend.com/api/plugin/auth/validate
+[2026-02-05 11:06:11] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:06:11] [DEBUG] validateToken: calling LrHttp.post with timeout=10
+[2026-02-05 11:10:15] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 11:10:15] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:10:16] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:10:16] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:10:19] [DEBUG] Login button clicked
+[2026-02-05 11:10:24] [DEBUG] Dialog result: ok
+[2026-02-05 11:10:24] [DEBUG] Token length: 40
+[2026-02-05 11:10:24] [DEBUG] Calling validateToken
+[2026-02-05 11:10:24] [DEBUG] validateToken: entry
+[2026-02-05 11:10:24] [DEBUG] validateToken: URL=https://piksend.com/api/plugin/auth/validate
+[2026-02-05 11:10:24] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:10:24] [DEBUG] validateToken: calling LrHttp.post
+[2026-02-05 11:12:45] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 11:12:45] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:12:45] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:12:45] [DEBUG] PluginInfoProvider.startDialog called
+[2026-02-05 11:12:47] [DEBUG] Login button clicked
+[2026-02-05 11:12:52] [DEBUG] Dialog result: ok
+[2026-02-05 11:12:52] [DEBUG] Token length: 40
+[2026-02-05 11:12:52] [DEBUG] Calling validateToken
+[2026-02-05 11:12:52] [DEBUG] validateToken: entry
+[2026-02-05 11:12:52] [DEBUG] validateToken: URL=https://piksend.com/api/plugin/auth/validate
+[2026-02-05 11:12:52] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:12:52] [DEBUG] validateToken: calling LrHttp.post
+[2026-02-05 11:12:52] [DEBUG] validateToken: headers count=1
+[2026-02-05 11:13:57] [DEBUG] Login button clicked
+[2026-02-05 11:14:01] [DEBUG] Dialog result: ok
+[2026-02-05 11:14:01] [DEBUG] Token length: 40
+[2026-02-05 11:14:01] [DEBUG] Calling validateToken
+[2026-02-05 11:14:01] [DEBUG] validateToken: entry
+[2026-02-05 11:14:01] [DEBUG] validateToken: URL=https://piksend.com/api/plugin/auth/validate
+[2026-02-05 11:14:01] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:14:01] [DEBUG] validateToken: calling LrHttp.post
+[2026-02-05 11:14:01] [DEBUG] validateToken: headers count=1
+[2026-02-05 11:14:18] [DEBUG] Login button clicked
+[2026-02-05 11:14:22] [DEBUG] Dialog result: ok
+[2026-02-05 11:14:22] [DEBUG] Token length: 40
+[2026-02-05 11:14:22] [DEBUG] Calling validateToken
+[2026-02-05 11:14:22] [DEBUG] validateToken: entry
+[2026-02-05 11:14:22] [DEBUG] validateToken: URL=https://piksend.com/api/plugin/auth/validate
+[2026-02-05 11:14:22] [DEBUG] validateToken: URL valid=true
+[2026-02-05 11:14:22] [DEBUG] validateToken: calling LrHttp.post
+[2026-02-05 11:14:22] [DEBUG] validateToken: headers count=1

@@ -308,6 +308,19 @@
       "signIn": "Kirjaudu sisään",
       "signUp": "Rekisteröidy"
     },
+    "signup": {
+      "step": "Vaihe",
+      "stepEmail": "Sähköpostisi",
+      "stepPassword": "Turvallisuus",
+      "stepProfile": "Profiili (valinnainen)",
+      "noCreditCard": "Luottokorttia ei tarvita",
+      "continue": "Jatka",
+      "continueWithGoogle": "Jatka Googlella",
+      "profileTitle": "Täydennä profiilisi",
+      "profileSubtitle": "Auta meitä personoimaan kokemuksesi (voit tehdä tämän myöhemmin)",
+      "completeProfile": "Valmis",
+      "skipForNow": "Teen tämän myöhemmin"
+    },
     "form": {
       "name": "Koko nimi",
       "namePlaceholder": "Matti Meikäläinen",
@@ -363,13 +376,22 @@
       "subtitle": "Syötä sähköpostisi saadaksesi nollauslinkin",
       "sendLink": "Lähetä nollauslinkki",
       "emailSentTo": "Sähköposti lähetetty:",
-      "backToLogin": "Takaisin kirjautumiseen"
+      "backToLogin": "Takaisin kirjautumiseen",
+      "checkYourEmail": "Tarkista sähköpostisi!",
+      "clickLinkToReset": "Napsauta sähköpostissa olevaa linkkiä nollataksesi salasanasi. Linkki vanhenee 1 tunnin kuluttua.",
+      "didntReceiveEmail": "Etkö saanut sähköpostia? Tarkista roskapostikansiosi tai yritä uudelleen.",
+      "weWillEmailYou": "Lähetämme sinulle nollauslinkin"
     },
     "resetPassword": {
       "title": "Nollaa salasana",
       "subtitle": "Syötä uusi salasanasi",
       "newPassword": "Uusi salasana",
       "confirmPassword": "Vahvista salasana",
+      "resetButton": "Nollaa salasana",
+      "createStrongPassword": "Luo vahva salasana",
+      "passwordResetSuccessful": "Salasana nollattu onnistuneesti!",
+      "canNowSignIn": "Voit nyt kirjautua sisään uudella salasanallasi."
+    },
       "resetButton": "Nollaa salasana"
     }
   },

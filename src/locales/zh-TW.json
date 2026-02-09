@@ -308,6 +308,19 @@
       "signIn": "登入",
       "signUp": "註冊"
     },
+    "signup": {
+      "step": "步驟",
+      "stepEmail": "您的電子郵件",
+      "stepPassword": "安全性",
+      "stepProfile": "個人資料（選填）",
+      "noCreditCard": "無需信用卡",
+      "continue": "繼續",
+      "continueWithGoogle": "使用Google繼續",
+      "profileTitle": "完善您的個人資料",
+      "profileSubtitle": "幫助我們個性化您的體驗（您可以稍後完成）",
+      "completeProfile": "完成",
+      "skipForNow": "稍後再說"
+    },
     "form": {
       "name": "姓名",
       "namePlaceholder": "王小明",
@@ -363,13 +376,22 @@
       "subtitle": "輸入您的電子郵件以接收重設連結",
       "sendLink": "傳送重設連結",
       "emailSentTo": "郵件已傳送至：",
-      "backToLogin": "返回登入"
+      "backToLogin": "返回登入",
+      "checkYourEmail": "查看您的郵箱！",
+      "clickLinkToReset": "點擊郵件中的連結重設您的密碼。連結將在1小時後過期。",
+      "didntReceiveEmail": "沒有收到郵件？檢查您的垃圾郵件資料夾或重試。",
+      "weWillEmailYou": "我們將向您傳送重設連結"
     },
     "resetPassword": {
       "title": "重設密碼",
       "subtitle": "輸入您的新密碼",
       "newPassword": "新密碼",
       "confirmPassword": "確認密碼",
+      "resetButton": "重設密碼",
+      "createStrongPassword": "建立強密碼",
+      "passwordResetSuccessful": "密碼重設成功！",
+      "canNowSignIn": "您現在可以使用新密碼登入。"
+    },
       "resetButton": "重設密碼"
     }
   },

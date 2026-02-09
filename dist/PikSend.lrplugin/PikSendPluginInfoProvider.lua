@@ -38,6 +38,65 @@ function pluginInfoProvider.sectionsForTopOfDialog(f, propertyTable)
   
   return {
     {
+      title = 'Authentification',
+      
+      f:column {
+        spacing = f:control_spacing(),
+        
+        f:static_text {
+          title = 'Statut de connexion',
+          font = '<system/bold>',
+        },
+        
+        f:row {
+          f:static_text {
+            title = LrView.bind {
+              key = 'authStatus',
+              transform = function(value)
+                return value or 'Non connecté'
+              end,
+            },
+          },
+        },
+        
+        f:spacer { height = 10 },
+        
+        f:row {
+          f:push_button {
+            title = 'Se connecter',
+            action = function()
+              -- Log to file
+              local logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+              if logFile then
+                logFile:write(string.format('[%s] [DEBUG] Login button clicked\n', os.date('%Y-%m-%d %H:%M:%S')))
+                logFile:close()
+              end
+              
+              local PikSendAuth = require 'PikSendAuth'
+              if PikSendAuth.showLoginDialog() then
+                local userInfo = PikSendAuth.getUserInfo()
+                if userInfo then
+                  propertyTable.authStatus = 'Connecté: ' .. userInfo.name
+                  LrDialogs.message('Succès', 'Authentification réussie!', 'info')
+                end
+              end
+            end,
+          },
+          
+          f:push_button {
+            title = 'Se déconnecter',
+            action = function()
+              local PikSendAuth = require 'PikSendAuth'
+              if PikSendAuth.showLogoutDialog() then
+                propertyTable.authStatus = 'Non connecté'
+              end
+            end,
+          },
+        },
+      },
+    },
+    
+    {
       title = LOC('pluginAbout'),
       
       f:column {
@@ -248,10 +307,30 @@ end
 
 -- Start dialog
 function pluginInfoProvider.startDialog(propertyTable)
+  -- Log immediately to verify plugin loads
+  local logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+  if logFile then
+    logFile:write(string.format('[%s] [DEBUG] PluginInfoProvider.startDialog called\n', os.date('%Y-%m-%d %H:%M:%S')))
+    logFile:close()
+  end
+  
   local prefs = LrPrefs.prefsForPlugin()
   
   -- Initialize property table with preferences
   propertyTable.debugMode = PikSendLogger.isDebugMode()
+  
+  -- Initialize auth status
+  local PikSendAuth = require 'PikSendAuth'
+  if PikSendAuth.isAuthenticated() then
+    local userInfo = PikSendAuth.getUserInfo()
+    if userInfo then
+      propertyTable.authStatus = 'Connecté: ' .. userInfo.name
+    else
+      propertyTable.authStatus = 'Connecté'
+    end
+  else
+    propertyTable.authStatus = 'Non connecté'
+  end
   
   -- Observe changes to debug mode
   propertyTable:addObserver('debugMode', function()

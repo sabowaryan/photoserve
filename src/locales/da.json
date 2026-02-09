@@ -308,6 +308,19 @@
       "signIn": "Log ind",
       "signUp": "Registrer"
     },
+    "signup": {
+      "step": "Trin",
+      "stepEmail": "Din e-mail",
+      "stepPassword": "Sikkerhed",
+      "stepProfile": "Profil (valgfrit)",
+      "noCreditCard": "Intet kreditkort påkrævet",
+      "continue": "Fortsæt",
+      "continueWithGoogle": "Fortsæt med Google",
+      "profileTitle": "Fuldfør din profil",
+      "profileSubtitle": "Hjælp os med at tilpasse din oplevelse (du kan gøre dette senere)",
+      "completeProfile": "Fuldfør",
+      "skipForNow": "Jeg gør dette senere"
+    },
     "form": {
       "name": "Fulde navn",
       "namePlaceholder": "Johan Hansen",
@@ -363,13 +376,22 @@
       "subtitle": "Indtast din e-mail for at modtage et nulstillingslink",
       "sendLink": "Send nulstillingslink",
       "emailSentTo": "E-mail sendt til:",
-      "backToLogin": "Tilbage til login"
+      "backToLogin": "Tilbage til login",
+      "checkYourEmail": "Tjek din e-mail!",
+      "clickLinkToReset": "Klik på linket i e-mailen for at nulstille din adgangskode. Linket udløber om 1 time.",
+      "didntReceiveEmail": "Modtog du ikke e-mailen? Tjek din spam-mappe eller prøv igen.",
+      "weWillEmailYou": "Vi sender dig et nulstillingslink"
     },
     "resetPassword": {
       "title": "Nulstil adgangskode",
       "subtitle": "Indtast din nye adgangskode",
       "newPassword": "Ny adgangskode",
       "confirmPassword": "Bekræft adgangskode",
+      "resetButton": "Nulstil adgangskode",
+      "createStrongPassword": "Opret en stærk adgangskode",
+      "passwordResetSuccessful": "Adgangskoden er nulstillet!",
+      "canNowSignIn": "Du kan nu logge ind med din nye adgangskode."
+    },
       "resetButton": "Nulstil adgangskode"
     }
   },

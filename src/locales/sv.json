@@ -308,6 +308,19 @@
       "signIn": "Logga in",
       "signUp": "Registrera"
     },
+    "signup": {
+      "step": "Steg",
+      "stepEmail": "Din e-post",
+      "stepPassword": "Säkerhet",
+      "stepProfile": "Profil (valfritt)",
+      "noCreditCard": "Inget kreditkort krävs",
+      "continue": "Fortsätt",
+      "continueWithGoogle": "Fortsätt med Google",
+      "profileTitle": "Slutför din profil",
+      "profileSubtitle": "Hjälp oss att anpassa din upplevelse (du kan göra detta senare)",
+      "completeProfile": "Slutför",
+      "skipForNow": "Jag gör detta senare"
+    },
     "form": {
       "name": "Fullständigt namn",
       "namePlaceholder": "Johan Svensson",
@@ -363,13 +376,22 @@
       "subtitle": "Ange din e-post för att få en återställningslänk",
       "sendLink": "Skicka återställningslänk",
       "emailSentTo": "E-post skickad till:",
-      "backToLogin": "Tillbaka till inloggning"
+      "backToLogin": "Tillbaka till inloggning",
+      "checkYourEmail": "Kolla din e-post!",
+      "clickLinkToReset": "Klicka på länken i e-postmeddelandet för att återställa ditt lösenord. Länken går ut om 1 timme.",
+      "didntReceiveEmail": "Fick du inte e-postmeddelandet? Kolla din skräppost eller försök igen.",
+      "weWillEmailYou": "Vi skickar dig en återställningslänk"
     },
     "resetPassword": {
       "title": "Återställ lösenord",
       "subtitle": "Ange ditt nya lösenord",
       "newPassword": "Nytt lösenord",
       "confirmPassword": "Bekräfta lösenord",
+      "resetButton": "Återställ lösenord",
+      "createStrongPassword": "Skapa ett starkt lösenord",
+      "passwordResetSuccessful": "Lösenordet har återställts!",
+      "canNowSignIn": "Du kan nu logga in med ditt nya lösenord."
+    },
       "resetButton": "Återställ lösenord"
     }
   },

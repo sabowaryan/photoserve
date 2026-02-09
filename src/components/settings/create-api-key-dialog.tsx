@@ -115,7 +115,7 @@ export function CreateAPIKeyDialog({ open, onOpenChange, onSuccess }: CreateAPIK
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[500px]">
+      <AlertDialogContent className="sm:max-w-[500px] bg-white">
         <form onSubmit={handleSubmit}>
           <AlertDialogHeader>
             <AlertDialogTitle>Create API Key</AlertDialogTitle>

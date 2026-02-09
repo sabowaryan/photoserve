@@ -2,6 +2,7 @@
 
 import { ServerCrash, RefreshCw, Home, Mail } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 // Since global-error can't use React context, we need to get translations directly
 // This is a fallback for when the app crashes before context is available
@@ -61,7 +62,10 @@ export default function GlobalError({
       : 'en';
     setLocale(storedLocale === 'fr' ? 'fr' : 'en');
     
-    // Log the error to an error reporting service
+    // Log the error to Sentry
+    Sentry.captureException(error);
+    
+    // Also log to console for debugging
     console.error(error);
   }, [error]);
 

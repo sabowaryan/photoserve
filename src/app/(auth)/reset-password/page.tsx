@@ -3,18 +3,20 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Lock, Loader2, CheckCircle2, ArrowLeft, AlertCircle, Eye, EyeOff, ArrowRight, ShieldCheck, XCircle } from 'lucide-react';
+import { Lock, CheckCircle2, ArrowLeft, ArrowRight, ShieldCheck, XCircle } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 import { useTranslation } from '@/lib/i18n/context';
 import { z } from 'zod';
+import { AuthButton } from '@/components/auth/AuthButton';
+import { FormInput } from '@/components/auth/FormInput';
+import { ErrorMessage } from '@/components/auth/ErrorMessage';
+import { LoadingSpinner } from '@/components/auth/LoadingSpinner';
 
 function ResetPasswordContent() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -112,7 +114,7 @@ function ResetPasswordContent() {
           <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-x-1/3 translate-y-1/3" />
           
           <div className="relative flex flex-col items-center text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3">
+            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3" style={{ minWidth: '3.5rem', minHeight: '3.5rem' }}>
               {isSuccess ? (
                 <CheckCircle2 size={28} className="text-emerald-500" />
               ) : (
@@ -132,96 +134,89 @@ function ResetPasswordContent() {
         <div className="p-5">
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl animate-in slide-in-from-top-2 flex items-center gap-2">
-              <AlertCircle size={16} className="text-rose-500 flex-shrink-0" />
-              <span className="text-xs text-rose-600 font-medium">{error}</span>
-            </div>
+            <ErrorMessage
+              message={error}
+              dismissible
+              onDismiss={() => setError(null)}
+              className="mb-4"
+            />
           )}
 
           {isSuccess ? (
             <div className="text-center space-y-4">
-              <p className="text-sm text-slate-500">
-                {t('auth.forgotPassword.backToLogin')}
-              </p>
-              <button
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center shadow-sm">
+                <CheckCircle2 size={32} className="text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-800 mb-2">{t('auth.resetPassword.passwordResetSuccessful')}</h3>
+                <p className="text-sm text-slate-600">
+                  {t('auth.resetPassword.canNowSignIn')}
+                </p>
+              </div>
+              <AuthButton
                 onClick={() => router.push('/auth')}
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-bold rounded-xl shadow-lg transition-all active:scale-[0.98]"
+                fullWidth
+                size="md"
+                variant="primary"
+                icon={<ArrowRight size={14} />}
               >
                 {t('auth.buttons.signIn')}
-                <ArrowRight size={14} />
-              </button>
+              </AuthButton>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Password Input */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                  {t('auth.resetPassword.newPassword')}
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
-                    <Lock className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    placeholder={t('common.atLeast6Characters')}
-                    required
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
-                  >
-                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
+              {/* Info box */}
+              <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-start gap-2.5">
+                <ShieldCheck size={18} className="text-indigo-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-semibold text-indigo-900 mb-1">
+                    {t('auth.resetPassword.createStrongPassword')}
+                  </p>
+                  <p className="text-[11px] text-indigo-700 leading-relaxed">
+                    {t('auth.resetPassword.subtitle')}
+                  </p>
                 </div>
               </div>
+              
+              {/* Password Input */}
+              <FormInput
+                id="password-input"
+                type="password"
+                name="password"
+                label={t('auth.resetPassword.newPassword')}
+                placeholder={t('common.atLeast6Characters')}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<Lock size={14} />}
+                showPasswordToggle
+                required
+              />
 
               {/* Confirm Password Input */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                  {t('auth.resetPassword.confirmPassword')}
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
-                    <ShieldCheck className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
-                  </div>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-11 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                    placeholder={t('common.confirmYourPassword')}
-                    required
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
-                  >
-                    {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
-                </div>
-              </div>
+              <FormInput
+                id="confirm-password-input"
+                type="password"
+                name="confirmPassword"
+                label={t('auth.resetPassword.confirmPassword')}
+                placeholder={t('common.confirmYourPassword')}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                icon={<ShieldCheck size={14} />}
+                showPasswordToggle
+                required
+              />
 
               {/* Submit Button */}
-              <button
+              <AuthButton
                 type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
+                loading={isLoading}
+                fullWidth
+                size="md"
+                variant="primary"
+                icon={<ArrowRight size={14} />}
               >
-                {isLoading ? (
-                  <Loader2 className="animate-spin" size={16} />
-                ) : (
-                  <>
-                    <span>{t('common.reset')}</span>
-                    <ArrowRight size={14} />
-                  </>
-                )}
-              </button>
+                {t('common.reset')}
+              </AuthButton>
             </form>
           )}
         </div>
@@ -241,19 +236,16 @@ export default function ResetPasswordPage() {
         <ArrowLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
       </Link>
 
-      {/* Background Decorative Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-64 h-64 bg-violet-200/40 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" />
+      {/* Background Decorative Orbs - Fixed dimensions to prevent CLS */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-violet-200/40 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
       </div>
 
       <Suspense fallback={
         <div className="flex flex-col items-center gap-3">
-          <div className="p-3 bg-indigo-100 rounded-xl">
-            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
-          </div>
-          <p className="text-sm font-medium text-slate-400">Loading...</p>
+          <LoadingSpinner size="lg" text="Loading" />
         </div>
       }>
         <ResetPasswordContent />

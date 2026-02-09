@@ -661,7 +661,7 @@ export class SeoService implements ISeoService {
       '@type': 'Organization',
       name: 'PikSend',
       url: this.baseUrl,
-      logo: `${this.baseUrl}/logo.svg`,
+      logo: `${this.baseUrl}/icons/logo.svg`,
       description: DEFAULT_DESCRIPTION,
       sameAs: [],
       contactPoint: {

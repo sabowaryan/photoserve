@@ -5,33 +5,71 @@
 
 /* Tailwind v4 - Animation utilities (replacing v3 animate-in/out) */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { opacity: 0; transform: translateY(1rem); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInFromTop {
-  from { opacity: 0; transform: translateY(-1rem); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInFromRight {
-  from { opacity: 0; transform: translateX(1rem); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @utility animate-in {
@@ -70,9 +108,34 @@
 
 @theme {
   /* Font families */
-  --font-sans: var(--font-plus-jakarta), system-ui, sans-serif;
-  --font-display: var(--font-plus-jakarta), system-ui, sans-serif;
-  
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-inter), system-ui, sans-serif;
+
+  /* Colors - Mapping to HSL Variables for Tailwind v4 */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
   /* Border radius */
   --radius-ultra: 3rem;
   --radius-xxl: 2.5rem;
@@ -80,10 +143,11 @@
   --radius-lg: 1.5rem;
   --radius-md: 1rem;
   --radius-sm: 0.75rem;
-  
+
   /* Animations */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-slow: pulse-slow 4s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
   --animate-shimmer: shimmer 2s infinite;
   --animate-fade-in: fadeIn 0.5s ease-out forwards;
@@ -94,119 +158,254 @@
 
 /* Keyframes */
 @keyframes accordion-down {
-  from { height: 0; }
-  to { height: var(--radix-accordion-content-height); }
+  from {
+    height: 0;
+  }
+
+  to {
+    height: var(--radix-accordion-content-height);
+  }
 }
 
 @keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height); }
-  to { height: 0; }
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+
+  to {
+    height: 0;
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px hsl(262 83% 58% / 0.3); }
-  50% { box-shadow: 0 0 40px hsl(262 83% 58% / 0.5); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px hsl(282 55% 47% / 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px hsl(282 55% 47% / 0.5);
+  }
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
 }
 
 @keyframes zoom-in-95 {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* CSS Variables - PikSend Premium Theme */
 :root {
+  /* Palette PikSend - Redesign 2026 */
+  --piksend-deep-blue: 226 71% 40%;
+  /* #1E40AF */
+  --piksend-indigo: 239 84% 67%;
+  /* #6366F1 */
+  --piksend-orange: 25 95% 53%;
+  /* #F97316 */
+  --piksend-slate-dark: 222 47% 11%;
+  /* #0F172A */
+  --piksend-slate-grey: 215 16% 47%;
+  /* #64748B */
+
+  /* Theme variables - Light Mode */
   --background: 210 40% 98%;
+  /* Off White #F8FAFC */
   --foreground: 222 47% 11%;
+  /* Slate Dark #0F172A */
   --card: 0 0% 100%;
+  /* Pure White */
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --primary: 239 84% 67%;
+
+  --primary: 226 71% 40%;
+  /* Deep Blue */
   --primary-foreground: 0 0% 100%;
+
   --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
+  /* Slate 50-100 range equivalent for UI elements */
+  --secondary-foreground: 226 71% 40%;
+  /* Deep Blue */
+
+  --muted: 210 40% 96.1%;
   --muted-foreground: 215 16% 47%;
+  /* Slate Grey */
+
   --accent: 239 84% 67%;
+  /* Vibrant Indigo */
   --accent-foreground: 0 0% 100%;
-  --destructive: 343 84% 60%;
+
+  --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 239 84% 67%;
-  --radius: 2rem;
+
+  --border: 214.3 31.8% 91.4%;
+  /* Slate 200 */
+  --input: 214.3 31.8% 91.4%;
+  --ring: 226 71% 40%;
+  /* Deep Blue */
+
+  --radius: 0.5rem;
+  /* Rounded-lg (8px) as per guidelines */
+
   --success: 142 76% 36%;
+  /* Emerald 500 equivalent */
   --success-foreground: 0 0% 100%;
-  --warning: 343 84% 60%;
+
+  --warning: 25 95% 53%;
+  /* Orange */
   --warning-foreground: 0 0% 100%;
-  --sidebar-background: 222 47% 7%;
+
+  --sidebar-background: 222 47% 11%;
+  /* Slate Dark */
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 222 47% 12%;
+  /* Off White */
+  --sidebar-primary: 239 84% 67%;
+  /* Indigo */
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 215 16% 47%;
+  /* Slate Grey */
   --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-border: 222 47% 16%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-border: 215 16% 47%;
+  --sidebar-ring: 239 84% 67%;
 }
 
 .dark {
-  --background: 222 47% 6%;
+  /* Palette PikSend - Dark Mode */
+  --background: 222 47% 11%;
+  /* Slate Dark #0F172A */
   --foreground: 210 40% 98%;
-  --card: 222 47% 8%;
+  /* Off White */
+
+  --card: 217 33% 17%;
+  /* Slate 900+ (slightly lighter than bg) */
   --card-foreground: 210 40% 98%;
-  --popover: 222 47% 8%;
+
+  --popover: 222 47% 11%;
   --popover-foreground: 210 40% 98%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 222 47% 12%;
+
+  --primary: 226 71% 40%;
+  /* Deep Blue - maybe lighter for dark mode? Keeping consistent for brand identity first */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 217 33% 17%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 222 47% 14%;
-  --muted-foreground: 215 20% 55%;
-  --accent: 262 83% 58%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 222 47% 16%;
-  --input: 222 47% 14%;
-  --ring: 262 83% 58%;
-  --sidebar-background: 222 47% 7%;
+
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 239 84% 67%;
+  /* Vibrant Indigo */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 224 76% 48%;
+
+  --sidebar-background: 222 47% 11%;
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 222 47% 12%;
+  --sidebar-primary: 239 84% 67%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 217 33% 17%;
   --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-border: 222 47% 16%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-border: 217 33% 17%;
+  --sidebar-ring: 224 76% 48%;
 }
 
 /* Base styles */
@@ -217,19 +416,24 @@
 body {
   background-color: rgb(248 250 252);
   color: hsl(var(--foreground));
-  font-family: var(--font-plus-jakarta), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 800;
   letter-spacing: -0.05em;
 }
 
 /* Utility classes */
 @utility gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #2B4B93 0%, #6B3186 40%, #AF4C83 70%, #E9725D 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -237,12 +441,19 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Brand text utility - always displays with gradient, immune to RTL changes */
 @utility brand-text {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #2B4B93 0%, #6B3186 40%, #AF4C83 70%, #E9725D 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
   display: inline-block;
+}
+
+/* Logo wrapper utility - uses new PikSend colors */
+@utility logo-wrapper {
+  background: linear-gradient(135deg, hsl(282 55% 47% / 0.08) 0%, hsl(330 44% 48% / 0.08) 100%);
+  padding: 0.25rem;
+  border-radius: 0.5rem;
 }
 
 @utility animation-delay-100 {
@@ -412,24 +623,27 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Hide scrollbar utility */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
 }
 
 /* Selection styling */
 ::selection {
-  background-color: rgb(99 102 241);
+  background-color: #6B3186;
   color: white;
 }
 
 /* Focus visible styling */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px hsl(239 84% 67% / 0.2);
+  box-shadow: 0 0 0 4px hsl(282 55% 47% / 0.2);
   outline-offset: 2px;
 }
 
@@ -443,47 +657,168 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Mirror horizontal padding for RTL */
-[dir="rtl"] .ps-2 { padding-inline-start: 0.5rem; }
-[dir="rtl"] .ps-3 { padding-inline-start: 0.75rem; }
-[dir="rtl"] .ps-4 { padding-inline-start: 1rem; }
-[dir="rtl"] .pe-2 { padding-inline-end: 0.5rem; }
-[dir="rtl"] .pe-3 { padding-inline-end: 0.75rem; }
-[dir="rtl"] .pe-4 { padding-inline-end: 1rem; }
+[dir="rtl"] .ps-2 {
+  padding-inline-start: 0.5rem;
+}
+
+[dir="rtl"] .ps-3 {
+  padding-inline-start: 0.75rem;
+}
+
+[dir="rtl"] .ps-4 {
+  padding-inline-start: 1rem;
+}
+
+[dir="rtl"] .pe-2 {
+  padding-inline-end: 0.5rem;
+}
+
+[dir="rtl"] .pe-3 {
+  padding-inline-end: 0.75rem;
+}
+
+[dir="rtl"] .pe-4 {
+  padding-inline-end: 1rem;
+}
 
 /* Mirror horizontal margins for RTL */
-[dir="rtl"] .ms-2 { margin-inline-start: 0.5rem; }
-[dir="rtl"] .ms-3 { margin-inline-start: 0.75rem; }
-[dir="rtl"] .ms-4 { margin-inline-start: 1rem; }
-[dir="rtl"] .ms-auto { margin-inline-start: auto; }
-[dir="rtl"] .me-2 { margin-inline-end: 0.5rem; }
-[dir="rtl"] .me-3 { margin-inline-end: 0.75rem; }
-[dir="rtl"] .me-4 { margin-inline-end: 1rem; }
-[dir="rtl"] .me-auto { margin-inline-end: auto; }
+[dir="rtl"] .ms-2 {
+  margin-inline-start: 0.5rem;
+}
+
+[dir="rtl"] .ms-3 {
+  margin-inline-start: 0.75rem;
+}
+
+[dir="rtl"] .ms-4 {
+  margin-inline-start: 1rem;
+}
+
+[dir="rtl"] .ms-auto {
+  margin-inline-start: auto;
+}
+
+[dir="rtl"] .me-2 {
+  margin-inline-end: 0.5rem;
+}
+
+[dir="rtl"] .me-3 {
+  margin-inline-end: 0.75rem;
+}
+
+[dir="rtl"] .me-4 {
+  margin-inline-end: 1rem;
+}
+
+[dir="rtl"] .me-auto {
+  margin-inline-end: auto;
+}
 
 /* Mirror positioning for RTL - Only for single-sided positioning */
 /* Note: Don't apply when both left-0 AND right-0 are used together (full-width elements) */
-[dir="rtl"] .left-0:not(.right-0) { left: auto; right: 0; }
-[dir="rtl"] .left-2:not(.right-0):not(.right-2) { left: auto; right: 0.5rem; }
-[dir="rtl"] .left-3:not(.right-0):not(.right-3) { left: auto; right: 0.75rem; }
-[dir="rtl"] .left-4:not(.right-0):not(.right-4) { left: auto; right: 1rem; }
-[dir="rtl"] .right-0:not(.left-0) { right: auto; left: 0; }
-[dir="rtl"] .right-2:not(.left-0):not(.left-2) { right: auto; left: 0.5rem; }
-[dir="rtl"] .right-3:not(.left-0):not(.left-3) { right: auto; left: 0.75rem; }
-[dir="rtl"] .right-4:not(.left-0):not(.left-4) { right: auto; left: 1rem; }
+[dir="rtl"] .left-0:not(.right-0) {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .left-2:not(.right-0):not(.right-2) {
+  left: auto;
+  right: 0.5rem;
+}
+
+[dir="rtl"] .left-3:not(.right-0):not(.right-3) {
+  left: auto;
+  right: 0.75rem;
+}
+
+[dir="rtl"] .left-4:not(.right-0):not(.right-4) {
+  left: auto;
+  right: 1rem;
+}
+
+[dir="rtl"] .right-0:not(.left-0) {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .right-2:not(.left-0):not(.left-2) {
+  right: auto;
+  left: 0.5rem;
+}
+
+[dir="rtl"] .right-3:not(.left-0):not(.left-3) {
+  right: auto;
+  left: 0.75rem;
+}
+
+[dir="rtl"] .right-4:not(.left-0):not(.left-4) {
+  right: auto;
+  left: 1rem;
+}
 
 /* Mirror border radius for RTL */
-[dir="rtl"] .rounded-l-none { border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; border-top-right-radius: 0; border-bottom-right-radius: 0; }
-[dir="rtl"] .rounded-r-none { border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-top-left-radius: 0; border-bottom-left-radius: 0; }
-[dir="rtl"] .rounded-l-lg { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
-[dir="rtl"] .rounded-r-lg { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; }
-[dir="rtl"] .rounded-l-xl { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
-[dir="rtl"] .rounded-r-xl { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.75rem; border-bottom-left-radius: 0.75rem; }
+[dir="rtl"] .rounded-l-none {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+[dir="rtl"] .rounded-r-none {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+[dir="rtl"] .rounded-l-lg {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+[dir="rtl"] .rounded-r-lg {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+[dir="rtl"] .rounded-l-xl {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+[dir="rtl"] .rounded-r-xl {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
 
 /* Mirror borders for RTL */
-[dir="rtl"] .border-l { border-left: none; border-right: 1px solid hsl(var(--border)); }
-[dir="rtl"] .border-r { border-right: none; border-left: 1px solid hsl(var(--border)); }
-[dir="rtl"] .border-l-2 { border-left: none; border-right: 2px solid hsl(var(--border)); }
-[dir="rtl"] .border-r-2 { border-right: none; border-left: 2px solid hsl(var(--border)); }
+[dir="rtl"] .border-l {
+  border-left: none;
+  border-right: 1px solid hsl(var(--border));
+}
+
+[dir="rtl"] .border-r {
+  border-right: none;
+  border-left: 1px solid hsl(var(--border));
+}
+
+[dir="rtl"] .border-l-2 {
+  border-left: none;
+  border-right: 2px solid hsl(var(--border));
+}
+
+[dir="rtl"] .border-r-2 {
+  border-right: none;
+  border-left: 2px solid hsl(var(--border));
+}
 
 /* Mirror flex direction for RTL - REMOVED: causes issues with justify-between */
 /* Use explicit rtl:flex-row-reverse when needed instead */
@@ -491,70 +826,145 @@ h1, h2, h3, h4, h5, h6 {
 /* [dir="rtl"] .flex-row-reverse { flex-direction: row; } */
 
 /* RTL-aware flex utilities - use these for explicit RTL control */
-[dir="rtl"] .rtl\:flex-row-reverse { flex-direction: row-reverse; }
-[dir="rtl"] .rtl\:flex-row { flex-direction: row; }
+[dir="rtl"] .rtl\:flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .rtl\:flex-row {
+  flex-direction: row;
+}
 
 /* Mirror text alignment for RTL */
-[dir="rtl"] .text-left { text-align: right; }
-[dir="rtl"] .text-right { text-align: left; }
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
 
 /* RTL-aware text alignment - use these for explicit RTL control */
-[dir="rtl"] .rtl\:text-right { text-align: right; }
-[dir="rtl"] .rtl\:text-left { text-align: left; }
+[dir="rtl"] .rtl\:text-right {
+  text-align: right;
+}
+
+[dir="rtl"] .rtl\:text-left {
+  text-align: left;
+}
 
 /* Mirror transform for icons and arrows in RTL */
-[dir="rtl"] .rtl\:rotate-180 { transform: rotate(180deg); }
-[dir="rtl"] .rtl\:scale-x-\[-1\] { transform: scaleX(-1); }
+[dir="rtl"] .rtl\:rotate-180 {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .rtl\:scale-x-\[-1\] {
+  transform: scaleX(-1);
+}
 
 /* Note: Gradient direction mirroring for RTL removed - causes issues with buttons and bg-clip-text */
 /* If specific gradient mirroring is needed, use explicit RTL classes like rtl:bg-gradient-to-l */
 
 /* Mirror slide animations for RTL */
-[dir="rtl"] .slide-in-from-right { animation-name: rtl-slide-in-from-left; }
-[dir="rtl"] .slide-in-from-left { animation-name: rtl-slide-in-from-right; }
+[dir="rtl"] .slide-in-from-right {
+  animation-name: rtl-slide-in-from-left;
+}
+
+[dir="rtl"] .slide-in-from-left {
+  animation-name: rtl-slide-in-from-right;
+}
 
 @keyframes rtl-slide-in-from-left {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes rtl-slide-in-from-right {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Mirror translate animations for RTL */
-[dir="rtl"] .translate-x-full { transform: translateX(-100%); }
-[dir="rtl"] .-translate-x-full { transform: translateX(100%); }
+[dir="rtl"] .translate-x-full {
+  transform: translateX(-100%);
+}
+
+[dir="rtl"] .-translate-x-full {
+  transform: translateX(100%);
+}
 
 /* RTL-specific spacing utilities */
-[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+[dir="rtl"] .space-x-2> :not([hidden])~ :not([hidden]) {
   --tw-space-x-reverse: 1;
 }
-[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+
+[dir="rtl"] .space-x-3> :not([hidden])~ :not([hidden]) {
   --tw-space-x-reverse: 1;
 }
-[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+
+[dir="rtl"] .space-x-4> :not([hidden])~ :not([hidden]) {
   --tw-space-x-reverse: 1;
 }
 
 /* RTL-aware gap utilities - these work automatically with flexbox */
-[dir="rtl"] .gap-x-2 { column-gap: 0.5rem; }
-[dir="rtl"] .gap-x-3 { column-gap: 0.75rem; }
-[dir="rtl"] .gap-x-4 { column-gap: 1rem; }
+[dir="rtl"] .gap-x-2 {
+  column-gap: 0.5rem;
+}
+
+[dir="rtl"] .gap-x-3 {
+  column-gap: 0.75rem;
+}
+
+[dir="rtl"] .gap-x-4 {
+  column-gap: 1rem;
+}
 
 /* Mirror icon positioning in buttons and inputs */
-[dir="rtl"] .icon-left { margin-right: 0; margin-left: 0.5rem; }
-[dir="rtl"] .icon-right { margin-left: 0; margin-right: 0.5rem; }
+[dir="rtl"] .icon-left {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .icon-right {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
 
 /* RTL-aware absolute positioning for badges and indicators */
-[dir="rtl"] .absolute.top-2.right-2 { right: auto; left: 0.5rem; }
-[dir="rtl"] .absolute.top-0.right-0 { right: auto; left: 0; }
-[dir="rtl"] .absolute.-top-1.-right-1 { right: auto; left: -0.25rem; }
+[dir="rtl"] .absolute.top-2.right-2 {
+  right: auto;
+  left: 0.5rem;
+}
+
+[dir="rtl"] .absolute.top-0.right-0 {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .absolute.-top-1.-right-1 {
+  right: auto;
+  left: -0.25rem;
+}
 
 /* Mirror sidebar positioning for RTL */
-[dir="rtl"] .sidebar-left { left: auto; right: 0; }
-[dir="rtl"] .sidebar-right { right: auto; left: 0; }
+[dir="rtl"] .sidebar-left {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .sidebar-right {
+  right: auto;
+  left: 0;
+}
 
 /* RTL-aware scrollbar positioning */
 [dir="rtl"]::-webkit-scrollbar {
@@ -599,14 +1009,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* RTL-aware dropdown and popover positioning */
-[dir="rtl"] [data-side="left"] { --radix-popper-transform-origin: right center; }
-[dir="rtl"] [data-side="right"] { --radix-popper-transform-origin: left center; }
+[dir="rtl"] [data-side="left"] {
+  --radix-popper-transform-origin: right center;
+}
+
+[dir="rtl"] [data-side="right"] {
+  --radix-popper-transform-origin: left center;
+}
 
 /* RTL-aware chevron/arrow icons */
-[dir="rtl"] .chevron-right { transform: rotate(180deg); }
-[dir="rtl"] .chevron-left { transform: rotate(180deg); }
-[dir="rtl"] .arrow-right { transform: rotate(180deg); }
-[dir="rtl"] .arrow-left { transform: rotate(180deg); }
+[dir="rtl"] .chevron-right {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .chevron-left {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .arrow-right {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .arrow-left {
+  transform: rotate(180deg);
+}
 
 /* Utility classes for explicit LTR content in RTL context */
 [dir="rtl"] .ltr {

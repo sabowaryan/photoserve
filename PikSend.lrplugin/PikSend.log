@@ -3,3 +3,10 @@
 [2026-02-04 13:46:56] [INFO] PikSend: PikSend plugin initialized
 [2026-02-04 13:49:10] [INFO] PikSend: PikSend plugin initialized
 [2026-02-05 09:39:18] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:13:52] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:14:27] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:15:16] [ERROR] PikSendAPI: Security violation: Invalid URL attempted: http://localhost:3000/api/plugin/auth/validate
+[2026-02-05 10:21:14] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:21:33] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:22:29] [INFO] PikSend: PikSend plugin initialized
+[2026-02-05 10:22:59] [INFO] PikSend: PikSend plugin initialized

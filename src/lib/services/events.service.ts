@@ -22,7 +22,26 @@ export type EventType =
   | 'slideshow_start'
   | 'slideshow_end'
   | 'session_start'
-  | 'session_end';
+  | 'session_end'
+  // Funnel events
+  | 'page_view'
+  | 'quiz_started'
+  | 'quiz_completed'
+  | 'quiz_skipped'
+  | 'guest_upload_started'
+  | 'guest_upload_completed'
+  | 'signup_started'
+  | 'signup_step_completed'
+  | 'signup_completed'
+  | 'onboarding_started'
+  | 'onboarding_step_completed'
+  | 'first_gallery_created'
+  | 'upgrade_modal_shown'
+  | 'upgrade_modal_dismissed'
+  | 'upgrade_completed'
+  | 'roi_calculator_used'
+  | 'comparison_table_viewed'
+  | 'testimonial_video_played';
 
 export interface EventData {
   imageId?: string;
@@ -39,11 +58,23 @@ export interface EventData {
   referrer?: string;
   userAgent?: string;
   eventsCount?: number;
+  // Funnel event data
+  persona?: string;
+  quizAnswers?: Record<string, string>;
+  signupStep?: number;
+  onboardingStep?: string;
+  triggerType?: string;
+  planSelected?: string;
+  roiInputs?: Record<string, number>;
+  roiResults?: Record<string, number>;
+  videoId?: string;
+  pagePath?: string;
+  pageTitle?: string;
   [key: string]: unknown;
 }
 
 export interface TrackEventInput {
-  galleryId: string;
+  galleryId: string | null; // NULL for funnel events
   visitorId?: string;
   visitorIp?: string;
   eventType: EventType;
@@ -94,11 +125,7 @@ export class EventsService implements IEventsService {
   async trackEvent(input: TrackEventInput): Promise<void> {
     const { galleryId, visitorId, visitorIp, eventType, eventData } = input;
 
-    // Validate inputs
-    if (!galleryId) {
-      throw new ValidationError('Gallery ID is required');
-    }
-
+    // Validate inputs (galleryId can be null for funnel events)
     if (!eventType) {
       throw new ValidationError('Event type is required');
     }
@@ -115,8 +142,16 @@ export class EventsService implements IEventsService {
       });
 
     if (error) {
-      console.error('Failed to track event:', error);
+      // Only log error in development mode to avoid console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[EventsService] Failed to track event (non-critical):', {
+          eventType,
+          errorCode: error.code,
+          errorMessage: error.message,
+        });
+      }
       // Don't throw - event tracking shouldn't break user experience
+      return;
     }
   }
 

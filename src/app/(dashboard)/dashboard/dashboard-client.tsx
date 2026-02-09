@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Plus,
   Search,
@@ -20,15 +21,21 @@ import {
   TrendingUp,
   Sparkles,
   RefreshCw,
+  Rocket,
 } from "lucide-react";
 import { GalleryCard } from "@/components/dashboard/gallery-card";
 import { SidebarSection } from "@/components/dashboard/sidebar-section";
 import { OnboardingGuide } from "@/components/dashboard/onboarding-guide";
+import { SupportWidget } from "@/components/dashboard/support-widget";
 import { DashboardSkeleton } from "@/components/skeletons/dashboard-skeleton";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { ContextualTooltip } from "@/components/ui/contextual-tooltip";
+import { FirstGalleryCelebration } from "@/components/dashboard/first-gallery-celebration";
 import { useTranslation } from "@/lib/i18n/context";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { PLAN_LIMITS } from "@/config/plans";
+import { createClient } from "@/lib/supabase/client";
+import { createAnalyticsService } from "@/lib/services/analytics.service";
 
 interface DashboardClientProps {
   userEmail: string;
@@ -66,18 +73,77 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [showFirstGalleryCelebration, setShowFirstGalleryCelebration] = useState(false);
+  const [showTooltips, setShowTooltips] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Derive userName from profile or email
   const userName = profile?.name || userEmail.split("@")[0] || "";
 
+  // Fetch completed onboarding tasks
   useEffect(() => {
+    const fetchCompletedTasks = async () => {
+      if (!profile?.id) return;
+      
+      try {
+        const response = await fetch("/api/onboarding/tasks");
+        if (response.ok) {
+          const data = await response.json();
+          const completed = data.tasks
+            ?.filter((t: any) => t.completed)
+            .map((t: any) => t.step_id) || [];
+          setCompletedTasks(completed);
+        }
+      } catch (error) {
+        console.error("Failed to fetch onboarding tasks:", error);
+      }
+    };
+
+    fetchCompletedTasks();
+  }, [profile?.id]);
+
+  // Check for first gallery creation celebration
+  useEffect(() => {
+    if (!profile?.id || isLoading) return;
+
+    // Check if we should show the celebration
+    const hasSeenCelebration = localStorage.getItem(`first_gallery_celebration_${profile.id}`) === "true";
+    
+    // Show celebration if:
+    // 1. User has exactly 1 gallery (just created their first)
+    // 2. Haven't seen the celebration before
+    // 3. The create_first_gallery task is completed
+    if (
+      galleries.length === 1 && 
+      !hasSeenCelebration && 
+      completedTasks.includes("create_first_gallery")
+    ) {
+      setShowFirstGalleryCelebration(true);
+      localStorage.setItem(`first_gallery_celebration_${profile.id}`, "true");
+    }
+  }, [profile?.id, galleries.length, completedTasks, isLoading]);
+
+  useEffect(() => {
+    // Check if onboarding should be shown
+    // Show if: not completed AND not dismissed AND not loading
+    const isDismissed = typeof window !== "undefined" && profile?.id
+      ? localStorage.getItem(`onboarding_dismissed_${profile.id}`) === "true"
+      : false;
+    
     const shouldShowOnboarding = 
       !profile?.onboarding_completed && 
-      galleries.length === 0 &&
+      !isDismissed &&
       !isLoading;
     setShowOnboarding(shouldShowOnboarding);
-  }, [profile?.onboarding_completed, galleries.length, isLoading]);
+
+    // Check if tooltips should be shown (first time user)
+    if (profile?.id && !isLoading) {
+      const hasSeenTooltips = localStorage.getItem(`tooltips_seen_${profile.id}`) === "true";
+      const isNewUser = galleries.length === 0 && !profile?.onboarding_completed;
+      setShowTooltips(isNewUser && !hasSeenTooltips);
+    }
+  }, [profile?.onboarding_completed, profile?.id, isLoading, galleries.length]);
 
   const handleOnboardingComplete = async () => {
     setShowOnboarding(false);
@@ -94,16 +160,54 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
   };
 
   const handleOnboardingDismiss = async () => {
+    // Just hide the onboarding guide, don't mark as completed
+    // This allows users to re-show it later from a help menu
     setShowOnboarding(false);
+    
+    // Store dismissed state in localStorage (not in database)
+    if (typeof window !== "undefined" && profile?.id) {
+      localStorage.setItem(`onboarding_dismissed_${profile.id}`, "true");
+    }
+  };
+
+  // Handle onboarding task completion with analytics tracking
+  const handleTaskComplete = async (taskId: string) => {
+    // Track task completion in analytics
     try {
-      await fetch("/api/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ onboarding_completed: true }),
-      });
-      mutate(); // Revalidate data after update
+      const supabase = createClient();
+      const analyticsService = createAnalyticsService(supabase);
+      
+      await analyticsService.trackFunnelEvent(
+        "onboarding_task_completed",
+        {
+          taskId,
+          userId: profile?.id,
+          timestamp: new Date().toISOString(),
+        }
+      );
+
+      // If this is the first gallery creation, show celebration
+      if (taskId === "create_first_gallery" && galleries.length === 1) {
+        setShowFirstGalleryCelebration(true);
+        
+        // Track first gallery creation event
+        await analyticsService.trackFunnelEvent(
+          "first_gallery_created",
+          {
+            userId: profile?.id,
+            timestamp: new Date().toISOString(),
+          }
+        );
+      }
     } catch (error) {
-      console.error("Failed to update onboarding status:", error);
+      console.error("Failed to track task completion:", error);
+    }
+  };
+
+  const handleTooltipsDismiss = () => {
+    if (profile?.id) {
+      localStorage.setItem(`tooltips_seen_${profile.id}`, "true");
+      setShowTooltips(false);
     }
   };
 
@@ -280,6 +384,28 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 pt-18 pb-10 font-['Plus_Jakarta_Sans']">
+      {/* First Gallery Celebration Modal */}
+      {showFirstGalleryCelebration && (
+        <FirstGalleryCelebration
+          onClose={() => setShowFirstGalleryCelebration(false)}
+          userName={userName}
+        />
+      )}
+
+      {/* Contextual Tooltips for First-Time Users */}
+      {showTooltips && profile?.id && (
+        <>
+          <ContextualTooltip
+            id="new-gallery-button"
+            title="Créez votre première galerie"
+            description="Cliquez ici pour commencer à uploader vos photos et créer votre première galerie professionnelle."
+            position="bottom"
+            userId={profile.id}
+            onDismiss={handleTooltipsDismiss}
+          />
+        </>
+      )}
+
       {/* Decorative background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-indigo-100/40 rounded-full blur-[120px]" />
@@ -292,6 +418,15 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
             <OnboardingGuide
               onComplete={handleOnboardingComplete}
               onDismiss={handleOnboardingDismiss}
+              completedTasks={completedTasks}
+              userId={profile?.id}
+              onTaskCompleteHandler={(handler) => {
+                // Wrap the handler to add analytics tracking
+                return async (taskId: string) => {
+                  await handler(taskId);
+                  await handleTaskComplete(taskId);
+                };
+              }}
             />
           </div>
         )}
@@ -315,22 +450,41 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                   </p>
                 </div>
 
-                <LoadingButton
-                  onClick={handleNavigateToNewGallery}
-                  disabled={isGalleryLimitReached}
-                  isLoading={isNavigating}
-                  className={`group flex items-center gap-1.5 px-4 py-2.5 font-bold text-xs rounded-xl transition-all ${
-                    isGalleryLimitReached
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5'
-                  }`}
-                >
-                  <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-                  <span>{t('dashboard.newGallery')}</span>
-                  {!isGalleryLimitReached && (
-                    <kbd className="hidden sm:inline px-1 py-0.5 bg-white/20 rounded text-[9px] font-mono">N</kbd>
+                <div className="flex items-center gap-2">
+                  {/* Re-show onboarding button */}
+                  {!showOnboarding && !profile?.onboarding_completed && (
+                    <button
+                      onClick={() => {
+                        if (profile?.id) {
+                          localStorage.removeItem(`onboarding_dismissed_${profile.id}`);
+                          setShowOnboarding(true);
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-xl transition-all border border-indigo-200"
+                      title={t('dashboard.showOnboarding') || "Afficher le guide"}
+                    >
+                      <Rocket size={14} />
+                      <span className="hidden sm:inline">{t('dashboard.showOnboarding') || "Guide"}</span>
+                    </button>
                   )}
-                </LoadingButton>
+
+                  <LoadingButton
+                    onClick={handleNavigateToNewGallery}
+                    disabled={isGalleryLimitReached}
+                    isLoading={isNavigating}
+                    className={`group flex items-center gap-1.5 px-4 py-2.5 font-bold text-xs rounded-xl transition-all ${
+                      isGalleryLimitReached
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+                    <span>{t('dashboard.newGallery')}</span>
+                    {!isGalleryLimitReached && (
+                      <kbd className="hidden sm:inline px-1 py-0.5 bg-white/20 rounded text-[9px] font-mono">N</kbd>
+                    )}
+                  </LoadingButton>
+                </div>
               </div>
 
               {isGalleryLimitReached && (
@@ -401,6 +555,12 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                     style={{ width: `${stats.maxGalleries >= 9999 ? 0 : Math.min(100, galleriesPercent)}%` }}
                   />
                 </div>
+                {/* Gallery usage indicator for Free users - Requirement 13.4 */}
+                {userPlan === 'free' && (
+                  <div className="mt-2 text-[9px] font-medium text-slate-500">
+                    {stats.totalGalleries}/{stats.maxGalleries} galeries utilisées
+                  </div>
+                )}
               </div>
 
               {/* Views Card */}
@@ -424,6 +584,36 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
                 </div>
               </div>
             </div>
+
+            {/* Non-intrusive upgrade trigger for Free users - Requirements 13.5 */}
+            {userPlan === 'free' && stats.totalGalleries >= 1 && (
+              <div className="bg-gradient-to-r from-indigo-50 via-violet-50 to-purple-50 rounded-2xl p-4 border border-indigo-100/50 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-md flex-shrink-0">
+                    <Sparkles size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-slate-900 mb-1">
+                      {stats.totalGalleries >= stats.maxGalleries 
+                        ? "Limite de galeries atteinte" 
+                        : "Débloquez plus de galeries"}
+                    </h3>
+                    <p className="text-xs text-slate-600 mb-3">
+                      {stats.totalGalleries >= stats.maxGalleries
+                        ? "Passez à Premium pour créer jusqu'à 100 galeries et débloquer le téléchargement ZIP."
+                        : "Avec Premium, créez jusqu'à 100 galeries, téléchargez en ZIP et profitez de 100 Go de stockage."}
+                    </p>
+                    <Link
+                      href="/settings?upgrade=true"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-bold rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <span>Voir les plans</span>
+                      <ArrowUpDown size={12} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Galleries Section */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
@@ -556,6 +746,9 @@ export function DashboardClient({ userEmail }: DashboardClientProps) {
           </div>
         </div>
       </div>
+
+      {/* Support Widget - Requirement 13.7 */}
+      <SupportWidget userEmail={userEmail} />
     </div>
   );
 }

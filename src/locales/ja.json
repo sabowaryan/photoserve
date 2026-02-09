@@ -308,6 +308,19 @@
       "signIn": "ログイン",
       "signUp": "新規登録"
     },
+    "signup": {
+      "step": "ステップ",
+      "stepEmail": "メールアドレス",
+      "stepPassword": "セキュリティ",
+      "stepProfile": "プロフィール（任意）",
+      "noCreditCard": "クレジットカード不要",
+      "continue": "続ける",
+      "continueWithGoogle": "Googleで続ける",
+      "profileTitle": "プロフィールを完成させる",
+      "profileSubtitle": "体験をパーソナライズするためにご協力ください（後で設定できます）",
+      "completeProfile": "完了",
+      "skipForNow": "後で設定する"
+    },
     "form": {
       "name": "氏名",
       "namePlaceholder": "山田太郎",
@@ -363,13 +376,22 @@
       "subtitle": "リセットリンクを受け取るためにメールアドレスを入力",
       "sendLink": "リセットリンクを送信",
       "emailSentTo": "メール送信先：",
-      "backToLogin": "ログインに戻る"
+      "backToLogin": "ログインに戻る",
+      "checkYourEmail": "メールを確認してください！",
+      "clickLinkToReset": "メール内のリンクをクリックしてパスワードをリセットしてください。リンクは1時間後に期限切れになります。",
+      "didntReceiveEmail": "メールが届きませんでしたか？迷惑メールフォルダを確認するか、もう一度お試しください。",
+      "weWillEmailYou": "リセットリンクをメールで送信します"
     },
     "resetPassword": {
       "title": "パスワードをリセット",
       "subtitle": "新しいパスワードを入力",
       "newPassword": "新しいパスワード",
       "confirmPassword": "パスワード確認",
+      "resetButton": "パスワードをリセット",
+      "createStrongPassword": "強力なパスワードを作成",
+      "passwordResetSuccessful": "パスワードがリセットされました！",
+      "canNowSignIn": "新しいパスワードでログインできます。"
+    },
       "resetButton": "パスワードをリセット"
     }
   },

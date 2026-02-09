@@ -28,3 +28,19 @@ export type { DisputeAlertEmailProps, DisputeReason } from './dispute-alert';
 // Refund Confirmation Email
 export { RefundConfirmationEmail } from './refund-confirmation';
 export type { RefundConfirmationEmailProps, RefundType } from './refund-confirmation';
+
+// Verification Email
+export { VerificationEmail } from './verification-email';
+export type { VerificationEmailProps } from './verification-email';
+
+// Password Reset Email
+export { PasswordResetEmail } from './password-reset-email';
+export type { PasswordResetEmailProps } from './password-reset-email';
+
+// Password Changed Email
+export { PasswordChangedEmail } from './password-changed-email';
+export type { PasswordChangedEmailProps } from './password-changed-email';
+
+// I18n Verification Email
+export { I18nVerificationEmail } from './i18n-verification-email';
+export type { I18nVerificationEmailProps } from './i18n-verification-email';

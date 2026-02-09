@@ -12,3 +12,4 @@ export { AudioPlayer } from './audio-player';
 export { TestimonialModal } from './testimonial-modal';
 export { GalleryPaywall } from './gallery-paywall';
 export { UnlockBanner } from './unlock-banner';
+export { GuestGalleryBanner } from './guest-gallery-banner';

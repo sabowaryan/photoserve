@@ -50,3 +50,19 @@ export {
   createProfileViewsRepository,
   type IProfileViewsRepository,
 } from './profile-views.repository'
+
+// Sender Address Repository
+export {
+  SenderAddressRepository,
+  createSenderAddressRepository,
+  type ISenderAddressRepository,
+  type DomainRecords,
+} from './sender-address.repository'
+
+// Template Repository
+export {
+  TemplateRepository,
+  createTemplateRepository,
+  type ITemplateRepository,
+  type TemplateFilters,
+} from './template.repository'

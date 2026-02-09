@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,13 +18,6 @@ serve(async (req) => {
 
   try {
     logStep("Starting expiration notification job");
-
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      throw new Error("RESEND_API_KEY is not configured");
-    }
-
-    const resend = new Resend(resendApiKey);
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -88,10 +80,10 @@ serve(async (req) => {
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
 
-    let emailsSent = 0;
+    let emailsQueued = 0;
     let emailErrors = 0;
 
-    // Send notification emails
+    // Queue notification emails using the new email management system
     for (const gallery of expiringGalleries) {
       const profile = profileMap.get(gallery.user_id);
       
@@ -111,70 +103,78 @@ serve(async (req) => {
       });
 
       try {
-        const { error: emailError } = await resend.emails.send({
-          from: "SharePics <onboarding@resend.dev>",
-          to: [profile.email],
-          subject: `⏰ Votre galerie "${gallery.title}" expire dans 24 heures`,
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-                <h1 style="color: white; margin: 0; font-size: 24px;">📸 SharePics</h1>
-              </div>
-              
-              <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 12px 12px;">
-                <h2 style="color: #333; margin-top: 0;">Bonjour ${profile.name || 'cher utilisateur'},</h2>
+        // Queue email using the email management system
+        // This will use the configured provider (Resend or AWS SES) and handle retries
+        const { error: queueError } = await supabase
+          .from("email_queue")
+          .insert({
+            from_address: "SharePics <onboarding@resend.dev>",
+            to_address: profile.email,
+            subject: `⏰ Votre galerie "${gallery.title}" expire dans 24 heures`,
+            html_content: `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              </head>
+              <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                  <h1 style="color: white; margin: 0; font-size: 24px;">📸 SharePics</h1>
+                </div>
                 
-                <p style="color: #555;">Votre galerie photo est sur le point d'expirer !</p>
-                
-                <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; margin: 20px 0;">
-                  <p style="margin: 0; font-weight: bold; color: #333;">📁 ${gallery.title}</p>
-                  <p style="margin: 10px 0 0; color: #888; font-size: 14px;">
-                    Expiration : ${formattedDate}
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 12px 12px;">
+                  <h2 style="color: #333; margin-top: 0;">Bonjour ${profile.name || 'cher utilisateur'},</h2>
+                  
+                  <p style="color: #555;">Votre galerie photo est sur le point d'expirer !</p>
+                  
+                  <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; margin: 20px 0;">
+                    <p style="margin: 0; font-weight: bold; color: #333;">📁 ${gallery.title}</p>
+                    <p style="margin: 10px 0 0; color: #888; font-size: 14px;">
+                      Expiration : ${formattedDate}
+                    </p>
+                  </div>
+                  
+                  <p style="color: #555;">
+                    Une fois la galerie expirée, les images seront automatiquement supprimées et ne seront plus accessibles.
+                  </p>
+                  
+                  <p style="color: #555;">
+                    <strong>💡 Conseil :</strong> Si vous souhaitez conserver vos images plus longtemps, vous pouvez créer une nouvelle galerie avec une durée d'expiration plus longue ou passer à un abonnement supérieur.
+                  </p>
+                  
+                  <div style="text-align: center; margin-top: 30px;">
+                    <a href="${supabaseUrl?.replace('.supabase.co', '.lovable.app')}/gallery/${gallery.unique_slug}" 
+                       style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                      Voir ma galerie
+                    </a>
+                  </div>
+                  
+                  <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                  
+                  <p style="color: #888; font-size: 12px; text-align: center; margin: 0;">
+                    Cet email a été envoyé automatiquement par SharePics.<br>
+                    Vous recevez cet email car vous avez créé une galerie sur notre plateforme.
                   </p>
                 </div>
-                
-                <p style="color: #555;">
-                  Une fois la galerie expirée, les images seront automatiquement supprimées et ne seront plus accessibles.
-                </p>
-                
-                <p style="color: #555;">
-                  <strong>💡 Conseil :</strong> Si vous souhaitez conserver vos images plus longtemps, vous pouvez créer une nouvelle galerie avec une durée d'expiration plus longue ou passer à un abonnement supérieur.
-                </p>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/gallery/${gallery.unique_slug}" 
-                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                    Voir ma galerie
-                  </a>
-                </div>
-                
-                <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                
-                <p style="color: #888; font-size: 12px; text-align: center; margin: 0;">
-                  Cet email a été envoyé automatiquement par SharePics.<br>
-                  Vous recevez cet email car vous avez créé une galerie sur notre plateforme.
-                </p>
-              </div>
-            </body>
-            </html>
-          `,
-        });
+              </body>
+              </html>
+            `,
+            priority: "normal",
+            type: "transactional",
+            status: "pending",
+            max_retries: 3,
+          });
 
-        if (emailError) {
-          logStep("Failed to send email", { galleryId: gallery.id, error: emailError });
+        if (queueError) {
+          logStep("Failed to queue email", { galleryId: gallery.id, error: queueError });
           emailErrors++;
         } else {
-          logStep("Email sent successfully", { galleryId: gallery.id, email: profile.email });
-          emailsSent++;
+          logStep("Email queued successfully", { galleryId: gallery.id, email: profile.email });
+          emailsQueued++;
         }
       } catch (emailErr) {
-        logStep("Email sending error", { galleryId: gallery.id, error: String(emailErr) });
+        logStep("Email queueing error", { galleryId: gallery.id, error: String(emailErr) });
         emailErrors++;
       }
     }
@@ -182,7 +182,7 @@ serve(async (req) => {
     const result = {
       message: "Expiration notification job completed",
       galleriesProcessed: expiringGalleries.length,
-      emailsSent,
+      emailsQueued,
       emailErrors,
     };
 

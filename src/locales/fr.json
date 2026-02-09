@@ -76,6 +76,7 @@
     "galleryLimitReached": "Limite de galeries atteinte",
     "insufficientStorage": "Espace de stockage insuffisant",
     "upgradeToHigherPlan": "Passez à un plan supérieur pour continuer",
+    "complete": "complété",
     "dashboard": "Tableau de bord",
     "settings": "Paramètres",
     "signIn": "Connexion",
@@ -97,6 +98,9 @@
     "responseTime": "Temps de réponse",
     "businessHours24to48": "24 à 48 heures ouvrées",
     "location": "Localisation",
+    "backToHome": "Retour à l'accueil",
+    "backToPreviousStep": "Retour à l'étape précédente",
+    "google": "Se connecter avec Google",
     "contactUs": "Contactez-nous",
     "generalQuestions": "Questions générales",
     "technicalIssues": "Problèmes techniques",
@@ -307,7 +311,21 @@
     "subtitle": "La plateforme de partage de photos préférée des créatifs.",
     "tabs": {
       "signIn": "Connexion",
-      "signUp": "Inscription"
+      "signUp": "Inscription",
+      "navigation": "Onglets d'authentification"
+    },
+    "signup": {
+      "step": "Étape",
+      "stepEmail": "Votre email",
+      "stepPassword": "Sécurité",
+      "stepProfile": "Profil (optionnel)",
+      "noCreditCard": "Pas de carte bancaire requise",
+      "continue": "Continuer",
+      "continueWithGoogle": "Continuer avec Google",
+      "profileTitle": "Complétez votre profil",
+      "profileSubtitle": "Aidez-nous à personnaliser votre expérience (vous pouvez le faire plus tard)",
+      "completeProfile": "Terminer",
+      "skipForNow": "Je ferai ça plus tard"
     },
     "form": {
       "name": "Nom Complet",
@@ -322,7 +340,9 @@
       "agreeTerms": "J'accepte les",
       "termsLink": "Conditions d'utilisation",
       "andThe": "et la",
-      "privacyLink": "Politique de confidentialité"
+      "privacyLink": "Politique de confidentialité",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe"
     },
     "passwordStrength": {
       "label": "Sécurité",
@@ -334,7 +354,8 @@
     "buttons": {
       "signIn": "Se connecter",
       "signUp": "Créer mon compte",
-      "google": "Se connecter avec Google"
+      "google": "Se connecter avec Google",
+      "goToSignIn": "Aller à la connexion"
     },
     "divider": "Accès rapide",
     "errors": {
@@ -357,21 +378,58 @@
     },
     "success": {
       "accountCreated": "Compte créé ! Vous pouvez maintenant vous connecter.",
-      "passwordReset": "Mot de passe réinitialisé avec succès !"
+      "passwordReset": "Mot de passe réinitialisé avec succès !",
+      "verificationEmailSent": "Compte créé ! Veuillez vérifier votre email pour activer votre compte."
     },
     "forgotPassword": {
       "title": "Mot de passe oublié",
       "subtitle": "Entrez votre email pour recevoir un lien de réinitialisation",
       "sendLink": "Envoyer le lien",
       "emailSentTo": "Email envoyé à :",
-      "backToLogin": "Retour à la connexion"
+      "backToLogin": "Retour à la connexion",
+      "checkYourEmail": "Vérifiez votre email !",
+      "clickLinkToReset": "Cliquez sur le lien dans l'email pour réinitialiser votre mot de passe. Le lien expirera dans 1 heure.",
+      "didntReceiveEmail": "Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou réessayez.",
+      "weWillEmailYou": "Nous vous enverrons un lien de réinitialisation"
     },
     "resetPassword": {
       "title": "Réinitialiser le mot de passe",
       "subtitle": "Entrez votre nouveau mot de passe",
       "newPassword": "Nouveau mot de passe",
       "confirmPassword": "Confirmer le mot de passe",
-      "resetButton": "Réinitialiser le mot de passe"
+      "resetButton": "Réinitialiser le mot de passe",
+      "createStrongPassword": "Créez un mot de passe fort",
+      "passwordResetSuccessful": "Mot de passe réinitialisé avec succès !",
+      "canNowSignIn": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+    },
+    "verification": {
+      "title": "Vérifiez votre email",
+      "subtitle": "Nous avons envoyé un email de vérification à votre boîte de réception",
+      "emailSentTo": "Email envoyé à",
+      "checkEmail": "Vérifiez votre email",
+      "emailSent": "Nous avons envoyé un email de vérification à",
+      "clickLink": "Cliquez sur le lien dans l'email pour vérifier votre compte et commencer.",
+      "checkEmailCorrect": "Assurez-vous d'avoir entré la bonne adresse email",
+      "didntReceive": "Vous n'avez pas reçu l'email ?",
+      "checkSpam": "Vérifiez votre dossier spam ou courrier indésirable",
+      "waitFewMinutes": "Attendez quelques minutes et réessayez d'envoyer"
+    },
+    "sidebar": {
+      "headline": "Livrez vos photos en 5 minutes. Vendez vos galeries. Gardez 90%.",
+      "subheadline": "Rejoignez 500+ photographes qui livrent en qualité originale à leurs clients.",
+      "benefit1Title": "Plugin Lightroom Unique",
+      "benefit1Desc": "Exportez et partagez directement depuis Lightroom en un clic",
+      "benefit2Title": "Commission la plus basse",
+      "benefit2Desc": "Gardez 90% de vos ventes. Seulement 10% de commission",
+      "benefit3Title": "Support 2h",
+      "benefit3Desc": "Réponse garantie en moins de 2 heures ouvrées",
+      "trustUsers": "500+ photographes",
+      "trustUsersDesc": "Nous font confiance",
+      "trustRating": "4,8/5 étoiles",
+      "trustRatingDesc": "Note moyenne",
+      "testimonialQuote": "PikSend a transformé ma façon de livrer mes photos. Mes clients adorent la qualité et la simplicité.",
+      "testimonialAuthor": "Marie Dubois",
+      "testimonialRole": "Photographe de mariage"
     }
   },
   "dashboard": {
@@ -992,6 +1050,37 @@
     "copyright": "© {{year}} PikSend. Tous droits réservés."
   },
   "onboarding": {
+    "title": "Guide de démarrage",
+    "tasksCompleted": "tâches complétées",
+    "taskCompleted": "Terminé",
+    "dismissWithReshow": "Fermer (réafficher plus tard)",
+    "finish": "Terminer",
+    "celebration": {
+      "title": "Félicitations ! 🎉",
+      "description": "Vous avez terminé toutes les tâches d'onboarding !"
+    },
+    "tasks": {
+      "createGallery": {
+        "title": "Créer votre première galerie",
+        "description": "Téléversez des photos et créez votre première galerie à partager avec vos clients.",
+        "action": "Créer une galerie"
+      },
+      "customizeProfile": {
+        "title": "Personnaliser votre profil",
+        "description": "Ajoutez votre nom, les informations de votre entreprise et personnalisez votre compte.",
+        "action": "Modifier le profil"
+      },
+      "addLogo": {
+        "title": "Ajouter votre logo",
+        "description": "Téléversez votre logo pour personnaliser vos galeries de manière professionnelle.",
+        "action": "Téléverser le logo"
+      },
+      "inviteClient": {
+        "title": "Inviter un client test",
+        "description": "Partagez un lien de galerie avec un client pour tester l'expérience.",
+        "action": "Partager la galerie"
+      }
+    },
     "welcome": {
       "title": "Bienvenue sur PikSend",
       "description": "Le moyen le plus simple de partager vos photos en qualité originale."

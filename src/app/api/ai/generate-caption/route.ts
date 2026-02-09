@@ -6,7 +6,7 @@
  * Requirements: 10.2.1, 10.2.2
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireSupabaseClient } from '@/lib/auth';
 import { createAIService } from '@/lib/services';
 import { ValidationError, NotFoundError } from '@/lib/errors';
 
@@ -19,9 +19,10 @@ import { ValidationError, NotFoundError } from '@/lib/errors';
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    // Get authenticated Supabase client (uses NextAuth session)
+    const { supabase, userId } = await requireSupabaseClient();
+    
     const body = await request.json();
-
     const { imageId, imageUrl } = body;
 
     // Validate inputs
@@ -61,17 +62,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user owns the gallery
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
     // @ts-ignore - galleries is joined
-    if (image.galleries?.user_id !== user.id) {
+    if (image.galleries?.user_id !== userId) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }
@@ -98,6 +90,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Caption generation error:', error);
+
+    // requireSupabaseClient throws if not authenticated
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
     if (error instanceof ValidationError) {
       return NextResponse.json(
@@ -128,9 +128,10 @@ export async function POST(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    // Get authenticated Supabase client (uses NextAuth session)
+    const { supabase, userId } = await requireSupabaseClient();
+    
     const body = await request.json();
-
     const { imageId, altText } = body;
 
     // Validate inputs
@@ -156,17 +157,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Check if user owns the gallery
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
     // @ts-ignore - galleries is joined
-    if (image.galleries?.user_id !== user.id) {
+    if (image.galleries?.user_id !== userId) {
       return NextResponse.json(
         { error: 'Permission denied' },
         { status: 403 }
@@ -189,6 +181,14 @@ export async function PATCH(request: NextRequest) {
     });
   } catch (error) {
     console.error('Alt text update error:', error);
+
+    // requireSupabaseClient throws if not authenticated
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
     if (error instanceof ValidationError) {
       return NextResponse.json(

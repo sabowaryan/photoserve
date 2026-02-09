@@ -9,7 +9,7 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { getRouteProtectionAction, isAuthRoute } from '@/lib/middleware/route-protection';
 import * as domainCache from '@/lib/cache/domain-cache';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 
 // Primary domain configuration
 const PRIMARY_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || 'piksend.com';
@@ -35,8 +35,9 @@ export async function proxy(request: NextRequest) {
   // If not primary domain, handle custom domain routing
   if (!isPrimaryDomain && cleanHostname) {
     try {
-      // Create Supabase client for custom domain queries
-      const supabase = await createClient();
+      // Create Supabase admin client for custom domain queries
+      // Using admin client to bypass RLS since we're just checking domain configuration
+      const supabase = createAdminClient();
       
       // Lookup photographer by custom domain with caching (Requirement 3.3)
       let photographerData = domainCache.get(cleanHostname);
@@ -286,6 +287,123 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // ============================================
+  // Email Verification Access Control
+  // Requirements: 21.3, 6.1, 6.2, 6.5, 6.6
+  // ============================================
+
+  // If user is authenticated, check email verification status
+  if (token) {
+    const isEmailVerified = token.emailVerified === true;
+
+    // Routes that are part of the email verification flow
+    const VERIFICATION_ROUTES = [
+      '/verify-email',
+      '/verify-email/success',
+      '/verify-email/error',
+    ];
+
+    // API routes that are part of the email verification flow
+    const VERIFICATION_API_ROUTES = [
+      '/api/auth/verify-email',
+      '/api/auth/resend-verification',
+    ];
+
+    // Auth-related API routes that should always be accessible
+    // Including sign-out for unverified users (Requirement 6.5)
+    const AUTH_API_ROUTES = [
+      '/api/auth/signout',
+      '/api/auth/signin',
+      '/api/auth/signup',
+      '/api/auth/session',
+      '/api/auth/csrf',
+      '/api/auth/providers',
+      '/api/auth/callback',
+    ];
+
+    // Public routes that don't require verification
+    const PUBLIC_ROUTES = [
+      '/auth',
+      '/pricing',
+      '/features',
+      '/contact',
+      '/forgot-password',
+      '/reset-password',
+    ];
+
+    // Public route prefixes (use startsWith)
+    const PUBLIC_ROUTE_PREFIXES = [
+      '/p/', // Public photographer profiles
+      '/g/', // Public galleries
+      '/galerie/', // Public galleries (French)
+    ];
+
+    // Helper function to check if pathname matches any route
+    const matchesRoute = (routes: string[]) =>
+      routes.some((route) => pathname === route || pathname.startsWith(route));
+
+    // Helper function to check if pathname is public
+    const isPublicRoute = () => {
+      // Exact match for root
+      if (pathname === '/') return true;
+      // Exact or prefix match for public routes
+      if (matchesRoute(PUBLIC_ROUTES)) return true;
+      // Prefix match for public route prefixes
+      if (PUBLIC_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return true;
+      return false;
+    };
+
+    // If user is verified
+    if (isEmailVerified) {
+      // Redirect verified users away from the main verification page to dashboard
+      if (pathname === '/verify-email') {
+        return NextResponse.redirect(new URL('/dashboard', request.url), 307);
+      }
+      // Allow access to all other routes
+      return NextResponse.next();
+    }
+
+    // User is NOT verified - apply restrictions
+
+    // Allow access to verification flow routes (Requirement 6.1)
+    if (matchesRoute(VERIFICATION_ROUTES)) {
+      return NextResponse.next();
+    }
+
+    // Allow access to verification API routes
+    if (matchesRoute(VERIFICATION_API_ROUTES)) {
+      return NextResponse.next();
+    }
+
+    // Allow access to auth API routes (including sign-out - Requirement 6.5)
+    if (matchesRoute(AUTH_API_ROUTES)) {
+      return NextResponse.next();
+    }
+
+    // Allow access to public routes
+    if (isPublicRoute()) {
+      return NextResponse.next();
+    }
+
+    // Block API access for unverified users (Requirement 6.2)
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json(
+        {
+          error: 'Email verification required',
+          code: 'EMAIL_NOT_VERIFIED',
+          message: 'You must verify your email address before accessing this resource.',
+        },
+        { status: 403 }
+      );
+    }
+
+    // Block protected routes - redirect to verification page (Requirement 6.1)
+    const PROTECTED_ROUTES = ['/dashboard', '/settings', '/revenue', '/admin'];
+    if (matchesRoute(PROTECTED_ROUTES)) {
+      return NextResponse.redirect(new URL('/verify-email', request.url), 307);
+    }
+  }
+
   return NextResponse.next();
 }
 
@@ -293,7 +411,6 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - _next/webpack-hmr (hot module replacement)
@@ -302,10 +419,10 @@ export const config = {
      * - files with extensions (e.g., .png, .jpg, .css, .js)
      * 
      * This matcher is configured to support custom domain routing
-     * while excluding internal Next.js routes and static assets.
+     * and email verification checks on API routes.
      * 
-     * Requirement 3.10: Exclude API routes, static files, Next.js internals
+     * Note: API routes are now included to enforce email verification
      */
-    '/((?!api|_next/static|_next/image|_next/webpack-hmr|favicon.ico|.*\\..*).*)',
+    '/((?!_next/static|_next/image|_next/webpack-hmr|favicon.ico|.*\\..*).*)',
   ],
 };

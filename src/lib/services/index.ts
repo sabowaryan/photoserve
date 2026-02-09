@@ -233,3 +233,15 @@ export {
   createAPIKeySchema,
   apiKeySchema,
 } from './api-key.service';
+
+// Token Service
+export {
+  TokenService,
+  createTokenService,
+  tokenService,
+  TokenError,
+  type ITokenService,
+  type TokenType,
+  type TokenValidationResult,
+  type TokenGenerationResult,
+} from './token.service';

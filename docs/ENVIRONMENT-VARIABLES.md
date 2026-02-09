@@ -71,11 +71,20 @@ nano .env
 
 **Note:** Required only if enabling custom domain feature for Pro plan users.
 
-### Email (Resend)
+### Email Management System
 
 | Variable | Description | Example | Required |
 |----------|-------------|---------|----------|
-| `RESEND_API_KEY` | Resend API key | `re_xxx` | ✅ |
+| `RESEND_API_KEY` | Resend API key | `re_xxx` | ✅ (if using Resend) |
+| `AWS_ACCESS_KEY_ID` | AWS access key for SES | `AKIAIOSFODNN7EXAMPLE` | ✅ (if using AWS SES) |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key for SES | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` | ✅ (if using AWS SES) |
+| `AWS_REGION` | AWS region for SES | `us-east-1` | ✅ (if using AWS SES) |
+| `EMAIL_PROVIDER_DEFAULT` | Default email provider | `resend` or `ses` | ✅ |
+| `EMAIL_QUEUE_BATCH_SIZE` | Number of emails to process per batch | `10` | ⚠️ Optional (default: 10) |
+| `EMAIL_RETRY_MAX_ATTEMPTS` | Maximum retry attempts for failed emails | `5` | ⚠️ Optional (default: 5) |
+| `EMAIL_PROVIDER_ENCRYPTION_KEY` | Encryption key for provider credentials | `base64_string` | ✅ |
+
+**Note:** You must configure either Resend OR AWS SES. Both providers are supported, but only one needs to be active at a time.
 
 ### AI Translation (Gemini)
 
@@ -142,6 +151,30 @@ openssl rand -base64 32
 1. [resend.com](https://resend.com)
 2. Dashboard > API Keys
 3. Create new key
+
+### AWS SES (Alternative to Resend)
+
+1. [AWS Console](https://console.aws.amazon.com/ses/)
+2. Navigate to Amazon SES
+3. Create IAM user with SES permissions:
+   - Go to IAM > Users > Create User
+   - Attach policy: `AmazonSESFullAccess`
+   - Create access key (Access Key ID and Secret Access Key)
+4. Verify your domain or email address in SES
+5. Request production access (if needed) to remove sending limits
+6. Choose your AWS region (e.g., `us-east-1`, `eu-west-1`)
+
+**Note:** AWS SES requires domain verification and may start in sandbox mode with sending limits.
+
+### Email Provider Encryption Key
+
+Generate a secure encryption key for storing provider credentials:
+
+```bash
+openssl rand -base64 32
+```
+
+This key is used to encrypt sensitive email provider credentials (API keys, AWS secrets) in the database.
 
 ### Gemini AI
 
@@ -213,8 +246,18 @@ const required = [
   'SUPABASE_SERVICE_ROLE_KEY',
   'NEXTAUTH_SECRET',
   'STRIPE_SECRET_KEY',
-  // ... add all required variables
+  'EMAIL_PROVIDER_DEFAULT',
+  'EMAIL_PROVIDER_ENCRYPTION_KEY',
+  // Add provider-specific requirements based on EMAIL_PROVIDER_DEFAULT
 ];
+
+// Check provider-specific requirements
+const provider = process.env.EMAIL_PROVIDER_DEFAULT;
+if (provider === 'resend') {
+  required.push('RESEND_API_KEY');
+} else if (provider === 'ses') {
+  required.push('AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION');
+}
 
 const missing = required.filter(key => !process.env[key]);
 
@@ -225,6 +268,7 @@ if (missing.length > 0) {
 }
 
 console.log('✅ All required environment variables are set');
+console.log(`📧 Email provider: ${provider}`);
 ```
 
 ## Troubleshooting
@@ -260,7 +304,160 @@ Add variables in Vercel dashboard:
 
 - [DEPLOYMENT.md](./DEPLOYMENT.md) - Complete deployment guide
 - [custom-domain-implementation.md](./custom-domain-implementation.md) - Custom domain setup
+- [email-integration.md](./development/email-integration.md) - Email system integration guide
+- [resend-setup.md](./deployment/resend-setup.md) - Resend provider setup
+- [aws-ses-setup.md](./deployment/aws-ses-setup.md) - AWS SES provider setup
 - [.env.example](../.env.example) - Template file
+
+## Email Management System Configuration
+
+### Overview
+
+The email management system supports two providers:
+- **Resend** (recommended for simplicity)
+- **AWS SES** (recommended for high volume and cost optimization)
+
+You only need to configure ONE provider, though both can be configured for flexibility.
+
+### Provider Selection
+
+Set `EMAIL_PROVIDER_DEFAULT` to choose your active provider:
+- `resend` - Use Resend as the email provider
+- `ses` - Use AWS SES as the email provider
+
+### Resend Configuration (Recommended)
+
+**Pros:**
+- Simple setup (just API key)
+- No domain verification required initially
+- Great developer experience
+- Built-in analytics
+
+**Cons:**
+- Higher cost at scale
+- Less control over infrastructure
+
+**Setup:**
+1. Sign up at [resend.com](https://resend.com)
+2. Create API key in dashboard
+3. Set `RESEND_API_KEY` in your environment
+4. Set `EMAIL_PROVIDER_DEFAULT=resend`
+
+### AWS SES Configuration (For Scale)
+
+**Pros:**
+- Very cost-effective at scale
+- High sending limits
+- Full control over infrastructure
+- Integrates with AWS ecosystem
+
+**Cons:**
+- More complex setup
+- Requires domain verification
+- Starts in sandbox mode (requires production access request)
+- Manual webhook setup via SNS
+
+**Setup:**
+1. Create AWS account
+2. Navigate to Amazon SES
+3. Verify your domain (add DNS records)
+4. Create IAM user with SES permissions
+5. Generate access keys
+6. Request production access (to remove sandbox limits)
+7. Set environment variables:
+   ```env
+   AWS_ACCESS_KEY_ID=your_access_key
+   AWS_SECRET_ACCESS_KEY=your_secret_key
+   AWS_REGION=us-east-1
+   EMAIL_PROVIDER_DEFAULT=ses
+   ```
+
+### Queue Configuration
+
+**EMAIL_QUEUE_BATCH_SIZE**
+- Controls how many emails are processed in each batch
+- Default: `10`
+- Increase for higher throughput (e.g., `50` or `100`)
+- Decrease if experiencing rate limits
+
+**EMAIL_RETRY_MAX_ATTEMPTS**
+- Maximum number of retry attempts for failed emails
+- Default: `5`
+- Retries use exponential backoff (1min, 5min, 15min, 30min, 60min)
+- Set to `3` for faster failure detection
+- Set to `10` for maximum resilience
+
+### Security Best Practices
+
+1. **Encryption Key**
+   - Generate unique key: `openssl rand -base64 32`
+   - Never commit to version control
+   - Rotate periodically (requires re-encrypting stored credentials)
+
+2. **Provider Credentials**
+   - Use separate keys for development and production
+   - Restrict IAM permissions (AWS) to minimum required
+   - Monitor API usage for anomalies
+   - Rotate keys regularly
+
+3. **Access Control**
+   - Email management UI is admin-only
+   - API routes require authentication
+   - Rate limiting prevents abuse
+
+### Testing Your Configuration
+
+After setting up environment variables, test your email configuration:
+
+```bash
+# Start development server
+npm run dev
+
+# Navigate to admin panel
+# http://localhost:3000/admin/emails/providers
+
+# Test provider connection
+# Click "Test Connection" button for your configured provider
+```
+
+### Switching Providers
+
+You can switch between providers without losing data:
+
+1. Configure both providers in environment variables
+2. Go to Admin > Emails > Providers
+3. Select the provider you want to use
+4. Click "Set as Active"
+5. Test the connection
+
+All email templates, logs, and queue items are provider-agnostic.
+
+### Troubleshooting
+
+**Resend Issues:**
+- Verify API key is correct
+- Check API key permissions
+- Ensure domain is verified (for production sending)
+- Check Resend dashboard for errors
+
+**AWS SES Issues:**
+- Verify IAM permissions include SES access
+- Check if account is in sandbox mode
+- Verify domain/email addresses in SES console
+- Ensure region matches your SES setup
+- Check AWS CloudWatch logs for errors
+
+**Queue Issues:**
+- Check Supabase Edge Function logs
+- Verify cron trigger is enabled
+- Check database for queued emails: `SELECT * FROM email_queue WHERE status = 'pending'`
+- Monitor queue depth in admin dashboard
+
+**General Issues:**
+- Restart development server after changing environment variables
+- Clear Next.js cache: `rm -rf .next`
+- Check application logs for detailed error messages
+- Verify all required environment variables are set
 
 ---
 

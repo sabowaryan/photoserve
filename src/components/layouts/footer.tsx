@@ -6,10 +6,10 @@ import { useTranslation } from '@/lib/i18n/context';
 
 // Custom X (formerly Twitter) icon
 const XIcon = ({ size = 24 }: { size?: number }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
     fill="currentColor"
   >
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -30,28 +30,28 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white py-8 px-4 border-t border-slate-100 font-sans">
-      <div className="max-w-5xl mx-auto">
+    <footer className="bg-background py-16 px-4 border-t border-border/50 font-sans">
+      <div className="max-w-6xl mx-auto">
         {/* Main Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-1.5 mb-3">
-              <div className="p-1 bg-indigo-50 rounded-lg">
-                <img src="/icons/logo.svg" alt="PikSend" className="h-5 w-auto" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="logo-wrapper p-1 rounded-lg bg-primary/5">
+                <img src="/icons/logo.svg" alt="PikSend" className="h-6 w-auto" />
               </div>
-              <span className="font-bold text-sm text-slate-900" dir="ltr">PikSend</span>
+              <span className="font-display font-extrabold text-lg text-foreground tracking-tight" dir="ltr">PikSend</span>
             </div>
-            <p className="text-slate-500 text-xs leading-relaxed mb-3 max-w-[200px]">
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-[240px]">
               {t('footer.tagline')}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {[Instagram, XIcon, Facebook].map((Icon, i) => (
-                <button 
-                  key={i} 
-                  className="p-1.5 bg-slate-50 text-slate-400 rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-slate-100"
+                <button
+                  key={i}
+                  className="p-2 bg-muted/50 text-muted-foreground rounded-xl hover:bg-primary hover:text-primary-foreground transition-all border border-border/30 shadow-sm"
                 >
-                  <Icon size={12} />
+                  <Icon size={16} />
                 </button>
               ))}
             </div>
@@ -59,46 +59,46 @@ export function Footer() {
 
           {/* Platform Links */}
           <div>
-            <h4 className="font-bold text-slate-900 text-[10px] uppercase tracking-wider mb-3">
+            <h4 className="font-bold text-foreground text-xs uppercase tracking-widest mb-5">
               {t('footer.platform')}
             </h4>
-            <ul className="space-y-2 text-slate-500 text-xs">
+            <ul className="space-y-3 text-muted-foreground text-sm">
               <li>
-                <Link href="/features" className="hover:text-indigo-600 transition-colors">
+                <Link href="/features" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.features')}
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="hover:text-indigo-600 transition-colors">
+                <Link href="/pricing" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.pricing')}
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="hover:text-indigo-600 transition-colors">
+                <Link href="/help" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.help')}
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           {/* Legal Links */}
           <div>
-            <h4 className="font-bold text-slate-900 text-[10px] uppercase tracking-wider mb-3">
+            <h4 className="font-bold text-foreground text-xs uppercase tracking-widest mb-5">
               {t('footer.legal')}
             </h4>
-            <ul className="space-y-2 text-slate-500 text-xs">
+            <ul className="space-y-3 text-muted-foreground text-sm">
               <li>
-                <Link href="/legal/privacy" className="hover:text-indigo-600 transition-colors">
+                <Link href="/legal/privacy" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.privacy')}
                 </Link>
               </li>
               <li>
-                <Link href="/legal/terms" className="hover:text-indigo-600 transition-colors">
+                <Link href="/legal/terms" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.terms')}
                 </Link>
               </li>
               <li>
-                <Link href="/legal/mentions" className="hover:text-indigo-600 transition-colors">
+                <Link href="/legal/mentions" className="hover:text-primary transition-colors font-medium">
                   {t('footer.links.mentions')}
                 </Link>
               </li>
@@ -107,51 +107,51 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-slate-900 text-[10px] uppercase tracking-wider mb-3">
+            <h4 className="font-bold text-foreground text-xs uppercase tracking-widest mb-5">
               {t('footer.officialContact')}
             </h4>
-            <div className="space-y-2">
-              <a href={`mailto:${companyInfo.email}`} className="flex items-center gap-2 group">
-                <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                  <Mail size={12} />
+            <div className="space-y-3">
+              <a href={`mailto:${companyInfo.email}`} className="flex items-center gap-3 group">
+                <div className="p-2 bg-primary/5 text-primary rounded-xl group-hover:bg-primary group-hover:text-primary-foreground transition-all border border-primary/10 shadow-sm">
+                  <Mail size={16} />
                 </div>
-                <span className="text-xs text-slate-600">{companyInfo.email}</span>
+                <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors font-medium">{companyInfo.email}</span>
               </a>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-slate-50 text-slate-400 rounded-lg">
-                  <MapPin size={12} />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-muted/50 text-muted-foreground rounded-xl border border-border/30">
+                  <MapPin size={16} />
                 </div>
-                <span className="text-xs text-slate-600">{companyInfo.location}</span>
+                <span className="text-sm text-muted-foreground font-medium">{companyInfo.location}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Identifiers */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="text-[9px] font-bold text-slate-400 uppercase">RCCM</span>
-            <span className="text-[10px] font-medium text-slate-600">{companyInfo.rccm}</span>
+        <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 border border-border/40 rounded-xl shadow-sm">
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">RCCM</span>
+            <span className="text-xs font-semibold text-foreground">{companyInfo.rccm}</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="text-[9px] font-bold text-slate-400 uppercase">ID Nat</span>
-            <span className="text-[10px] font-medium text-slate-600">{companyInfo.nationalId}</span>
+          <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 border border-border/40 rounded-xl shadow-sm">
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">ID Nat</span>
+            <span className="text-xs font-semibold text-foreground">{companyInfo.nationalId}</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="text-[9px] font-bold text-slate-400 uppercase">NIF</span>
-            <span className="text-[10px] font-medium text-slate-600">{companyInfo.taxNumber}</span>
+          <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 border border-border/40 rounded-xl shadow-sm">
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">NIF</span>
+            <span className="text-xs font-semibold text-foreground">{companyInfo.taxNumber}</span>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t border-slate-100">
-          <div className="flex items-center gap-2 text-[10px] text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border/60">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span>© {currentYear} PikSend</span>
-            <span>•</span>
-            <span className="font-medium text-slate-500">{companyInfo.name}</span>
+            <span className="text-muted-foreground/30">•</span>
+            <span className="font-bold text-foreground uppercase tracking-tighter">{companyInfo.name}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-            <Globe size={10} className="text-indigo-500" />
+          <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
+            <Globe size={14} className="text-primary" />
             <span>{t('footer.country')}</span>
           </div>
         </div>

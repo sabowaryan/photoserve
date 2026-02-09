@@ -23,7 +23,8 @@ import { ErrorDisplay, type ErrorCode, getErrorCodeFromResponse } from '@/compon
 
 // Guest upload limits (matching backend)
 const GUEST_UPLOAD_LIMITS = {
-  maxFiles: 5,
+  minFiles: 3, // Requirement 5.1: minimum 3 photos
+  maxFiles: 5, // Requirement 5.1: maximum 5 photos
   maxFileSizeMB: 50,
   allowedTypes: ['image/jpeg', 'image/png', 'image/webp'] as const,
 };
@@ -48,6 +49,7 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
   const { data: session, status } = useCachedSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadStartTracked = useRef(false);
   
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [galleryTitle, setGalleryTitle] = useState('');
@@ -117,6 +119,20 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
 
     setFiles(prev => [...prev, ...newFiles]);
     setError(null);
+    
+    // Track guest upload started (only once)
+    // Requirement 5.7: Track guest upload events
+    if (!uploadStartTracked.current && newFiles.length > 0) {
+      uploadStartTracked.current = true;
+      fetch('/api/analytics/funnel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'guest_upload_started',
+          eventData: { fileCount: newFiles.length },
+        }),
+      }).catch(console.error);
+    }
   }, [files.length, validateFile, t]);
 
   /**
@@ -179,10 +195,18 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
    * Creates gallery and uploads all files
    */
   const handleSubmit = useCallback(async () => {
-    // Validate at least one file (Requirement 1.5)
+    // Validate at least minimum files (Requirement 5.1)
     const validFiles = files.filter(f => f.status !== 'error');
     if (validFiles.length === 0) {
       setError({ code: 'NO_FILES' });
+      return;
+    }
+    
+    if (validFiles.length < GUEST_UPLOAD_LIMITS.minFiles) {
+      setError({ 
+        code: 'TOO_FEW_FILES' as ErrorCode, 
+        params: { count: String(GUEST_UPLOAD_LIMITS.minFiles) } 
+      });
       return;
     }
 
@@ -271,6 +295,20 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
 
       // Check if at least one file was uploaded successfully
       if (uploadedCount > 0) {
+        // Track guest upload completed
+        // Requirement 5.7: Track guest upload → signup conversion
+        fetch('/api/analytics/funnel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'guest_upload_completed',
+            eventData: { 
+              fileCount: uploadedCount,
+              gallerySlug: gallery.unique_slug,
+            },
+          }),
+        }).catch(console.error);
+        
         onUploadComplete(gallery.unique_slug);
       } else {
         throw { code: 'NETWORK_ERROR' as ErrorCode };
@@ -387,7 +425,7 @@ export function GuestUploadForm({ onUploadComplete, onError, className }: GuestU
         {/* Upload limits info */}
         <div className="flex flex-wrap justify-center gap-3 text-xs font-bold text-slate-400">
           <span className="px-3 py-1 bg-slate-100 rounded-full">
-            {t('gallery.create.maxFiles', { count: String(GUEST_UPLOAD_LIMITS.maxFiles) })}
+            {GUEST_UPLOAD_LIMITS.minFiles}-{GUEST_UPLOAD_LIMITS.maxFiles} photos
           </span>
           <span className="px-3 py-1 bg-slate-100 rounded-full">
             {t('gallery.create.maxSize', { size: String(GUEST_UPLOAD_LIMITS.maxFileSizeMB) })}

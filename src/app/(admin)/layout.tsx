@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession, requireSupabaseClient } from "@/lib/auth";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminNavWrapper } from "@/components/admin/admin-nav-wrapper";
 import { AdminSessionMarker } from "@/components/admin/admin-session-marker";
 
 /**
@@ -60,7 +60,7 @@ export default async function AdminLayout({
       <AdminSessionMarker />
       <AdminHeader adminName={adminName} adminEmail={adminEmail} />
       <div className="flex pt-16">
-        <AdminNav />
+        <AdminNavWrapper />
         <main className="flex-1 min-w-0 lg:ml-56 p-3 sm:p-4 lg:p-6">
           <div className="max-w-full overflow-x-auto">
             {children}

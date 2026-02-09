@@ -56,10 +56,24 @@ export interface GalleryStats {
   };
 }
 
+export interface FunnelMetrics {
+  totalVisitors: number;
+  quizCompletionRate: number;
+  signupRate: number;
+  activationRate: number;
+  upgradeRate: number;
+  conversionRate: number;
+  eventsByType: Record<string, number>;
+  personaDistribution: Record<string, number>;
+}
+
 export interface IAnalyticsService {
   trackView(galleryId: string, metadata: ViewMetadata): Promise<void>;
   getGalleryStats(galleryId: string): Promise<GalleryStats>;
   trackCTAClick(galleryId: string): Promise<void>;
+  // Funnel tracking methods
+  trackFunnelEvent(eventType: string, eventData?: Record<string, any>, visitorId?: string): Promise<void>;
+  getFunnelMetrics(dateFrom?: Date, dateTo?: Date): Promise<FunnelMetrics>;
 }
 
 export class AnalyticsService implements IAnalyticsService {
@@ -300,6 +314,132 @@ export class AnalyticsService implements IAnalyticsService {
     }
 
     return count || 0;
+  }
+
+  /**
+   * Track a funnel event (quiz, signup, onboarding, upgrade, etc.)
+   * 
+   * Requirement 16.1: THE System SHALL tracker tous les événements clés du funnel
+   * Requirement 16.2: THE System SHALL créer un Analytics_Dashboard affichant les métriques en temps réel
+   */
+  async trackFunnelEvent(
+    eventType: string,
+    eventData?: Record<string, any>,
+    visitorId?: string
+  ): Promise<void> {
+    try {
+      // Use EventsService to track funnel events with NULL gallery ID
+      const eventsService = createEventsService(this.supabase);
+      await eventsService.trackEvent({
+        galleryId: null as any, // NULL for funnel events (not tied to a specific gallery)
+        visitorId: visitorId || undefined,
+        eventType: eventType as any,
+        eventData: eventData as any,
+      });
+    } catch (error) {
+      // Only log in development mode to avoid console noise
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[AnalyticsService] Failed to track funnel event (non-critical):', {
+          eventType,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
+      // Don't throw - tracking shouldn't break user experience
+    }
+  }
+
+  /**
+   * Get funnel metrics for conversion analysis
+   * 
+   * Requirement 16.3: THE System SHALL calculer et afficher le conversion rate global
+   * Requirement 16.4: THE System SHALL tracker le conversion rate par persona
+   */
+  async getFunnelMetrics(dateFrom?: Date, dateTo?: Date): Promise<FunnelMetrics> {
+    try {
+      // Build query for funnel events
+      let query = this.supabase
+        .from('gallery_events')
+        .select('*')
+        .eq('gallery_id', 'funnel');
+
+      if (dateFrom) {
+        query = query.gte('created_at', dateFrom.toISOString());
+      }
+
+      if (dateTo) {
+        query = query.lte('created_at', dateTo.toISOString());
+      }
+
+      const { data: events, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      const eventsData = events || [];
+
+      // Count unique visitors
+      const uniqueVisitors = new Set(
+        eventsData
+          .filter(e => e.visitor_id)
+          .map(e => e.visitor_id)
+      ).size;
+
+      // Count events by type
+      const eventsByType: Record<string, number> = {};
+      eventsData.forEach(event => {
+        eventsByType[event.event_type] = (eventsByType[event.event_type] || 0) + 1;
+      });
+
+      // Calculate conversion rates
+      const pageViews = eventsByType.page_view || 0;
+      const quizCompleted = eventsByType.quiz_completed || 0;
+      const signupCompleted = eventsByType.signup_completed || 0;
+      const firstGalleryCreated = eventsByType.first_gallery_created || 0;
+      const upgradeCompleted = eventsByType.upgrade_completed || 0;
+
+      const quizCompletionRate = pageViews > 0 ? (quizCompleted / pageViews) * 100 : 0;
+      const signupRate = pageViews > 0 ? (signupCompleted / pageViews) * 100 : 0;
+      const activationRate = signupCompleted > 0 ? (firstGalleryCreated / signupCompleted) * 100 : 0;
+      const upgradeRate = signupCompleted > 0 ? (upgradeCompleted / signupCompleted) * 100 : 0;
+      const conversionRate = pageViews > 0 ? (upgradeCompleted / pageViews) * 100 : 0;
+
+      // Calculate persona distribution
+      const personaDistribution: Record<string, number> = {};
+      eventsData
+        .filter(e => e.event_type === 'quiz_completed' && e.event_data)
+        .forEach(e => {
+          const data = e.event_data as any;
+          if (data?.persona) {
+            const persona = data.persona as string;
+            personaDistribution[persona] = (personaDistribution[persona] || 0) + 1;
+          }
+        });
+
+      return {
+        totalVisitors: uniqueVisitors || pageViews,
+        quizCompletionRate,
+        signupRate,
+        activationRate,
+        upgradeRate,
+        conversionRate,
+        eventsByType,
+        personaDistribution,
+      };
+    } catch (error) {
+      console.error('Failed to get funnel metrics:', error);
+      // Return empty metrics on error
+      return {
+        totalVisitors: 0,
+        quizCompletionRate: 0,
+        signupRate: 0,
+        activationRate: 0,
+        upgradeRate: 0,
+        conversionRate: 0,
+        eventsByType: {},
+        personaDistribution: {},
+      };
+    }
   }
 }
 

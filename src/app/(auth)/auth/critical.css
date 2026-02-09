@@ -1,0 +1,82 @@
+/* Critical CSS for Auth Pages - Inlined for faster initial render */
+/* This file contains only the essential styles needed for above-the-fold content */
+
+/* Prevent layout shift with fixed dimensions */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent FOIT (Flash of Invisible Text) */
+.font-sans {
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-display: swap;
+}
+
+/* Critical gradient background - prevents white flash */
+.auth-bg {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eef2ff 100%);
+}
+
+/* Logo container - fixed size to prevent CLS */
+.logo-container {
+  width: 3rem;
+  height: 3rem;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+/* Form container - fixed max-width to prevent CLS */
+.form-container {
+  max-width: 28rem;
+  width: 100%;
+}
+
+/* Button loading state - prevent layout shift */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Decorative orbs - fixed dimensions */
+.decorative-orb-1 {
+  width: 12rem;
+  height: 12rem;
+  position: absolute;
+  top: 5rem;
+  left: 2.5rem;
+  background: rgba(199, 210, 254, 0.3);
+  border-radius: 9999px;
+  filter: blur(3rem);
+  will-change: transform;
+}
+
+.decorative-orb-2 {
+  width: 10rem;
+  height: 10rem;
+  position: absolute;
+  bottom: 5rem;
+  right: 2.5rem;
+  background: rgba(221, 214, 254, 0.3);
+  border-radius: 9999px;
+  filter: blur(3rem);
+  will-change: transform;
+}
+
+/* Prevent cumulative layout shift for form inputs */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  height: 2.75rem;
+}
+
+/* Loading spinner container - fixed size */
+.spinner-container {
+  min-height: 7.5rem;
+  min-width: 7.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

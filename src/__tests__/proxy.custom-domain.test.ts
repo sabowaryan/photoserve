@@ -33,12 +33,13 @@ vi.mock('@/lib/cache/domain-cache', () => ({
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(),
+  createAdminClient: vi.fn(),
 }));
 
 // Import after mocks are set up
 import { proxy } from '../proxy';
 import * as domainCache from '@/lib/cache/domain-cache';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 
 describe('Custom Domain Routing - Unit Tests', () => {
   let mockSupabase: any;
@@ -51,7 +52,7 @@ describe('Custom Domain Routing - Unit Tests', () => {
       from: vi.fn(),
     };
     
-    vi.mocked(createClient).mockResolvedValue(mockSupabase);
+    vi.mocked(createAdminClient).mockReturnValue(mockSupabase);
     
     // Clear domain cache before each test
     vi.mocked(domainCache.get).mockReturnValue(null);
@@ -230,7 +231,15 @@ describe('Custom Domain Routing - Unit Tests', () => {
         return { select: vi.fn() };
       });
 
+      // Create request with custom domain
+      const request = new NextRequest(`https://${customDomain}/`, {
+        headers: {
+          host: customDomain,
+        },
+      });
 
+      // Execute: Call proxy with cached domain
+      const response = await proxy(request);
 
       // Verify: Should use cache (not query profiles table)
       expect(domainCache.get).toHaveBeenCalledWith(customDomain);

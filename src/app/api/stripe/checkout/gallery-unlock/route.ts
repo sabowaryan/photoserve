@@ -8,7 +8,8 @@
 import { NextRequest } from 'next/server';
 import { handleApiError, createApiResponse } from '@/lib/api/error-handler';
 import { getStripe } from '@/lib/stripe/client';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseClient } from '@/lib/auth';
+import { createAdminClient } from '@/lib/supabase/server';
 import { getTokenFromCookies, isValidUUID } from '@/lib/guest/session';
 import { ValidationError, NotFoundError } from '@/lib/errors';
 import { z } from 'zod';
@@ -50,8 +51,11 @@ export async function POST(request: NextRequest) {
       throw new ValidationError('Invalid guest session token');
     }
 
-    // Create Supabase client
-    const supabase = await createClient();
+    // Get Supabase client (may be authenticated or anonymous)
+    const { userId } = await getSupabaseClient();
+    
+    // Use admin client for database operations (bypasses RLS)
+    const supabase = createAdminClient();
 
     // Verify gallery exists and belongs to guest session (if guest)
     const { data: gallery, error: galleryError } = await supabase
@@ -76,9 +80,8 @@ export async function POST(request: NextRequest) {
         throw new NotFoundError('Gallery');
       }
     } else if (gallery.user_id) {
-      // User gallery - verify user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || user.id !== gallery.user_id) {
+      // User gallery - verify user is authenticated and owns the gallery
+      if (!userId || userId !== gallery.user_id) {
         throw new NotFoundError('Gallery');
       }
     } else {

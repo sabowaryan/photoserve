@@ -308,6 +308,19 @@
       "signIn": "Logg inn",
       "signUp": "Registrer"
     },
+    "signup": {
+      "step": "Trinn",
+      "stepEmail": "Din e-post",
+      "stepPassword": "Sikkerhet",
+      "stepProfile": "Profil (valgfritt)",
+      "noCreditCard": "Ingen kredittkort påkrevd",
+      "continue": "Fortsett",
+      "continueWithGoogle": "Fortsett med Google",
+      "profileTitle": "Fullfør profilen din",
+      "profileSubtitle": "Hjelp oss å tilpasse opplevelsen din (du kan gjøre dette senere)",
+      "completeProfile": "Fullfør",
+      "skipForNow": "Jeg gjør dette senere"
+    },
     "form": {
       "name": "Fullt navn",
       "namePlaceholder": "Johan Hansen",
@@ -363,13 +376,22 @@
       "subtitle": "Skriv inn e-posten din for å motta en tilbakestillingslenke",
       "sendLink": "Send tilbakestillingslenke",
       "emailSentTo": "E-post sendt til:",
-      "backToLogin": "Tilbake til innlogging"
+      "backToLogin": "Tilbake til innlogging",
+      "checkYourEmail": "Sjekk e-posten din!",
+      "clickLinkToReset": "Klikk på lenken i e-posten for å tilbakestille passordet ditt. Lenken utløper om 1 time.",
+      "didntReceiveEmail": "Fikk du ikke e-posten? Sjekk søppelpostmappen din eller prøv igjen.",
+      "weWillEmailYou": "Vi sender deg en tilbakestillingslenke"
     },
     "resetPassword": {
       "title": "Tilbakestill passord",
       "subtitle": "Skriv inn ditt nye passord",
       "newPassword": "Nytt passord",
       "confirmPassword": "Bekreft passord",
+      "resetButton": "Tilbakestill passord",
+      "createStrongPassword": "Lag et sterkt passord",
+      "passwordResetSuccessful": "Passordet er tilbakestilt!",
+      "canNowSignIn": "Du kan nå logge inn med ditt nye passord."
+    },
       "resetButton": "Tilbakestill passord"
     }
   },

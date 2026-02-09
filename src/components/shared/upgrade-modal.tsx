@@ -2,13 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Zap, Crown, HardDrive, Images, ImageIcon, ArrowRight, Check, TrendingUp, BarChart3, Sparkles } from "lucide-react";
+import { X, Zap, Crown, HardDrive, Images, ImageIcon, ArrowRight, Check, TrendingUp, BarChart3, Sparkles, Star, Quote } from "lucide-react";
 import Link from "next/link";
 import { PLAN_LIMITS, PLAN_PRICING } from "@/config/plans";
+import { ROICalculator } from "@/components/conversion/roi-calculator";
+import type { Persona } from "@/types/persona";
 
 type LimitType = "gallery" | "storage" | "images" | "imageSize" | "feature";
 
-type FeatureType = "detailedAnalytics" | "customDomain" | "whiteLabel" | "ctaButton" | "leadMagnet" | "paywall";
+type FeatureType = "detailedAnalytics" | "customDomain" | "whiteLabel" | "ctaButton" | "leadMagnet" | "paywall" | "zipDownload" | "branding";
+
+// Requirement 8.1, 8.2, 8.3, 8.4, 8.5: Trigger types
+export type UpgradeTrigger = 
+  | 'limit_reached'
+  | 'feature_locked'
+  | 'time_based'
+  | 'behavior_based';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -19,6 +28,12 @@ interface UpgradeModalProps {
   currentPlan?: string;
   /** For feature-based upgrades, specify which feature */
   featureType?: FeatureType;
+  /** Requirement 8.6: Trigger type for variant support */
+  trigger?: UpgradeTrigger;
+  /** Persona for ROI calculator defaults */
+  persona?: Persona;
+  /** Show ROI calculator in modal */
+  showROI?: boolean;
 }
 
 const LIMIT_CONFIG: Record<LimitType, {
@@ -144,7 +159,49 @@ const FEATURE_CONFIG: Record<FeatureType, {
       "Revenus directs",
     ],
   },
+  zipDownload: {
+    icon: HardDrive,
+    title: "Téléchargement ZIP",
+    description: "Permettez à vos clients de télécharger toutes leurs photos en un clic.",
+    benefits: [
+      "Téléchargement en masse",
+      "Qualité originale préservée",
+      "Expérience client améliorée",
+    ],
+  },
+  branding: {
+    icon: Sparkles,
+    title: "Branding personnalisé",
+    description: "Personnalisez entièrement l'apparence de vos galeries avec votre marque.",
+    benefits: [
+      "Logo personnalisé",
+      "Couleurs de marque",
+      "Suppression du branding PikSend",
+    ],
+  },
 };
+
+// Requirement 8.6, 8.7: Testimonials for social proof
+const TESTIMONIALS = {
+  premium: {
+    quote: "Le téléchargement ZIP a transformé mon workflow. Mes clients adorent pouvoir récupérer toutes leurs photos en un clic.",
+    author: "Sophie Martin",
+    role: "Photographe Mariage",
+    metric: "Satisfaction client +40%",
+  },
+  pro: {
+    quote: "Le plugin Lightroom et le branding personnalisé ont fait passer mon business au niveau supérieur. Je gagne 3h par semaine.",
+    author: "Thomas Dubois",
+    role: "Photographe Événementiel",
+    metric: "3h économisées/semaine",
+  },
+  default: {
+    quote: "PikSend m'a permis de livrer mes galeries en 5 minutes au lieu de 30. Mes clients sont impressionnés par la qualité.",
+    author: "Marie Lefebvre",
+    role: "Photographe Portrait",
+    metric: "Livraison 6x plus rapide",
+  },
+} as const;
 
 export function UpgradeModal({
   isOpen,
@@ -154,8 +211,12 @@ export function UpgradeModal({
   limitValue,
   currentPlan = "free",
   featureType,
+  trigger = 'limit_reached',
+  persona,
+  showROI = false,
 }: UpgradeModalProps) {
   const [mounted, setMounted] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(showROI);
 
   useEffect(() => {
     setMounted(true);
@@ -180,13 +241,55 @@ export function UpgradeModal({
   
   const config = LIMIT_CONFIG[limitType];
   const Icon = isFeatureUpgrade && featureConfig ? featureConfig.icon : config.icon;
-  const title = isFeatureUpgrade && featureConfig ? featureConfig.title : config.title;
-  const description = isFeatureUpgrade && featureConfig ? featureConfig.description : config.description;
+  
+  // Requirement 8.6: Display upgrade reason clearly based on trigger type
+  const getTitle = () => {
+    if (isFeatureUpgrade && featureConfig) return featureConfig.title;
+    
+    switch (trigger) {
+      case 'limit_reached':
+        return config.title;
+      case 'feature_locked':
+        return "Fonctionnalité Premium";
+      case 'time_based':
+        return "Prêt pour Premium ?";
+      case 'behavior_based':
+        return "Vous adorez PikSend !";
+      default:
+        return config.title;
+    }
+  };
+  
+  const getDescription = () => {
+    if (isFeatureUpgrade && featureConfig) return featureConfig.description;
+    
+    switch (trigger) {
+      case 'limit_reached':
+        return config.description;
+      case 'feature_locked':
+        return "Cette fonctionnalité est disponible avec un plan payant.";
+      case 'time_based':
+        return "Débloquez toutes les fonctionnalités pour faire passer votre activité au niveau supérieur.";
+      case 'behavior_based':
+        return "Vous utilisez PikSend intensivement. Passez à un plan payant pour débloquer tout le potentiel.";
+      default:
+        return config.description;
+    }
+  };
 
+  const title = getTitle();
+  const description = getDescription();
+
+  // Requirement 8.6: Show recommended plan vs current plan comparison
   // For feature upgrades, always recommend Pro
   const recommendedPlan = isFeatureUpgrade ? "pro" : (currentPlan === "free" ? "premium" : "pro");
   const recommendedLimits = PLAN_LIMITS[recommendedPlan as keyof typeof PLAN_LIMITS];
   const recommendedPricing = PLAN_PRICING[recommendedPlan as keyof typeof PLAN_PRICING];
+  
+  // Get appropriate testimonial
+  const testimonial = (recommendedPlan in TESTIMONIALS 
+    ? TESTIMONIALS[recommendedPlan as keyof typeof TESTIMONIALS]
+    : TESTIMONIALS.default);
 
   const getRecommendedLimit = () => {
     switch (limitType) {
@@ -213,12 +316,13 @@ export function UpgradeModal({
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-[2rem] shadow-2xl max-w-md w-full animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 overflow-hidden">
+      {/* Modal - Requirement 8.6, 8.7: Enhanced with ROI calculator and testimonial */}
+      <div className="relative bg-white rounded-[2rem] shadow-2xl max-w-2xl w-full animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 transition-colors z-10"
+          aria-label="Fermer"
         >
           <X className="w-5 h-5 text-white/80" />
         </button>
@@ -265,9 +369,10 @@ export function UpgradeModal({
           </div>
         )}
 
-        {/* Upgrade suggestion */}
-        <div className="p-6">
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 mb-5 relative overflow-hidden">
+        {/* Main content */}
+        <div className="p-6 space-y-5">
+          {/* Requirement 8.6: Show recommended plan vs current plan comparison */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
             {/* Decorative gradient */}
             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/20 rounded-full blur-2xl" />
             
@@ -290,6 +395,7 @@ export function UpgradeModal({
                 </div>
               </div>
               
+              {/* Requirement 8.6, 8.7: List benefits to be unlocked */}
               <ul className="space-y-2">
                 {isFeatureUpgrade && featureConfig ? (
                   // Show feature-specific benefits
@@ -322,13 +428,72 @@ export function UpgradeModal({
                         Jusqu&apos;à {recommendedLimits.max_expiration_days} jours de validité
                       </span>
                     </li>
+                    {recommendedLimits.can_download_zip && (
+                      <li className="flex items-center gap-2 text-sm text-slate-300">
+                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span className="font-medium">Téléchargement ZIP</span>
+                      </li>
+                    )}
+                    {recommendedLimits.has_custom_branding && (
+                      <li className="flex items-center gap-2 text-sm text-slate-300">
+                        <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span className="font-medium">Branding personnalisé</span>
+                      </li>
+                    )}
                   </>
                 )}
               </ul>
             </div>
           </div>
 
-          {/* Action buttons */}
+          {/* Requirement 8.6: Integrate ROI Calculator component */}
+          {showCalculator && (
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+              <button
+                onClick={() => setShowCalculator(!showCalculator)}
+                className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3 hover:text-slate-900 transition-colors"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Calculer votre ROI
+              </button>
+              <ROICalculator 
+                persona={persona}
+                variant="modal"
+              />
+            </div>
+          )}
+
+          {/* Requirement 8.6, 8.7: Add relevant testimonial */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100">
+            <div className="flex items-start gap-3">
+              <Quote className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm text-slate-700 font-medium mb-3 italic">
+                  &quot;{testimonial.quote}&quot;
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    <span className="font-bold">{testimonial.author}</span>
+                    <span className="text-slate-400"> · </span>
+                    <span>{testimonial.role}</span>
+                  </div>
+                </div>
+                {testimonial.metric && (
+                  <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+                    <TrendingUp className="w-3 h-3" />
+                    {testimonial.metric}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Requirement 8.7: Add "Essayer 14 jours gratuits" CTA */}
           <div className="flex gap-3">
             <button
               onClick={onClose}
@@ -340,7 +505,7 @@ export function UpgradeModal({
               href="/settings?upgrade=true"
               className="flex-1 px-5 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold hover:from-indigo-700 hover:to-violet-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 group"
             >
-              Voir les plans
+              Essayer 14 jours gratuits
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

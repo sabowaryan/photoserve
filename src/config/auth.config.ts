@@ -27,6 +27,7 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       isAdmin?: boolean;
+      emailVerified?: boolean;
     };
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
@@ -39,6 +40,7 @@ declare module "next-auth" {
     name?: string | null;
     image?: string | null;
     isAdmin?: boolean;
+    emailVerified?: boolean;
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
   }
@@ -49,6 +51,7 @@ declare module "next-auth/jwt" {
     id?: string;
     email?: string;
     isAdmin?: boolean;
+    emailVerified?: boolean;
     supabaseAccessToken?: string;
     supabaseRefreshToken?: string;
     supabaseAccessTokenExpires?: number;
@@ -184,17 +187,32 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials): Promise<User | null> {
         const parsed = signInSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+        if (!parsed.success) {
+          console.log('[Auth] Invalid credentials format');
+          return null;
+        }
 
         const supabase = createAdminClient();
         const { email, password } = parsed.data;
+
+        console.log('[Auth] Attempting sign in for:', email.toLowerCase());
 
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email.toLowerCase(),
           password,
         });
 
-        if (error || !data.user || !data.session) return null;
+        if (error) {
+          console.error('[Auth] Sign in error:', error.message);
+          return null;
+        }
+
+        if (!data.user || !data.session) {
+          console.error('[Auth] No user or session returned');
+          return null;
+        }
+
+        console.log('[Auth] Sign in successful for user:', data.user.id);
 
         await updateUserSignIn(supabase, data.user.id, "email");
 
@@ -204,7 +222,12 @@ export const authOptions: NextAuthOptions = {
           .eq("id", data.user.id)
           .single();
 
-        if (!profile) return null;
+        if (!profile) {
+          console.error('[Auth] Profile not found for user:', data.user.id);
+          return null;
+        }
+
+        console.log('[Auth] Profile found, email_verified:', profile.email_verified);
 
         return {
           id: profile.id,
@@ -212,6 +235,7 @@ export const authOptions: NextAuthOptions = {
           name: profile.name,
           image: profile.avatar_url,
           isAdmin: profile.is_admin === true,
+          emailVerified: profile.email_verified === true,
           supabaseAccessToken: data.session.access_token,
           supabaseRefreshToken: data.session.refresh_token,
         };
@@ -282,14 +306,15 @@ const existing = data?.users?.find(
       await updateUserSignIn(supabase, userId, "google");
       user.id = userId;
 
-      // Check if user is admin
+      // Check if user is admin and email verified
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_admin")
+        .select("is_admin, email_verified")
         .eq("id", userId)
         .single();
       
       user.isAdmin = profile?.is_admin === true;
+      user.emailVerified = profile?.email_verified === true;
 
       return true;
     },
@@ -299,6 +324,7 @@ const existing = data?.users?.find(
         token.id = user.id;
         token.email = user.email;
         token.isAdmin = user.isAdmin;
+        token.emailVerified = user.emailVerified;
         token.supabaseAccessToken = user.supabaseAccessToken;
         token.supabaseRefreshToken = user.supabaseRefreshToken;
         token.supabaseAccessTokenExpires = getTokenExpiry(
@@ -332,6 +358,7 @@ const existing = data?.users?.find(
         session.user.id = token.id;
         session.user.email = token.email;
         session.user.isAdmin = token.isAdmin;
+        session.user.emailVerified = token.emailVerified;
         session.supabaseAccessToken = token.supabaseAccessToken;
         session.supabaseRefreshToken = token.supabaseRefreshToken;
         session.adminSessionLogged = token.adminSessionLogged;
@@ -391,5 +418,5 @@ const existing = data?.users?.find(
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NEXTAUTH_DEBUG === "true",
 };

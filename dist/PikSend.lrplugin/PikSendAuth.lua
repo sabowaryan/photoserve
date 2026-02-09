@@ -333,8 +333,22 @@ function PikSendAuth.showLoginDialog()
       actionVerb = LOC('authLogin'),
     }
     
+    -- Log dialog result
+    local logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+    if logFile then
+      logFile:write(string.format('[%s] [DEBUG] Dialog result: %s\n', os.date('%Y-%m-%d %H:%M:%S'), tostring(result)))
+      logFile:close()
+    end
+    
     if result == 'ok' then
       local token = properties.apiToken
+      
+      -- Log token check
+      logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+      if logFile then
+        logFile:write(string.format('[%s] [DEBUG] Token length: %d\n', os.date('%Y-%m-%d %H:%M:%S'), #token))
+        logFile:close()
+      end
       
       if not token or token == '' then
         LrDialogs.message(
@@ -345,8 +359,22 @@ function PikSendAuth.showLoginDialog()
         return false
       end
       
+      -- Log before validation
+      logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+      if logFile then
+        logFile:write(string.format('[%s] [DEBUG] Calling validateToken\n', os.date('%Y-%m-%d %H:%M:%S')))
+        logFile:close()
+      end
+      
       -- Validate the token
       local valid, user = PikSendAPI.validateToken(token)
+      
+      -- Log validation result
+      logFile = io.open(_PLUGIN.path .. '/PikSend.log', 'a')
+      if logFile then
+        logFile:write(string.format('[%s] [DEBUG] Validation result: valid=%s, user=%s\n', os.date('%Y-%m-%d %H:%M:%S'), tostring(valid), tostring(user ~= nil)))
+        logFile:close()
+      end
       
       if valid and user then
         -- Check for Pro plan

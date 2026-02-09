@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
-import { Mail, Loader2, ArrowLeft, CheckCircle2, AlertCircle, ArrowRight, KeyRound } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle2, ArrowRight } from 'lucide-react';
 import { LogoIcon } from '@/components/shared/logo';
 import { useTranslation } from '@/lib/i18n/context';
 import { z } from 'zod';
+import { AuthButton } from '@/components/auth/AuthButton';
+import { FormInput } from '@/components/auth/FormInput';
+import { ErrorMessage } from '@/components/auth/ErrorMessage';
+
+// Lazy load non-critical icon
+const KeyRound = lazy(() => import('lucide-react').then(mod => ({ default: mod.KeyRound })));
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation();
@@ -63,11 +69,11 @@ export default function ForgotPasswordPage() {
         <ArrowLeft className="h-5 w-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
       </Link>
 
-      {/* Background Decorative Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-64 h-64 bg-violet-200/40 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" />
+      {/* Background Decorative Orbs - Fixed dimensions to prevent CLS */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-violet-200/40 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl" style={{ willChange: 'transform' }} />
       </div>
 
       <div className="w-full max-w-sm z-10 animate-in slide-in-from-bottom-4 duration-500">
@@ -79,7 +85,7 @@ export default function ForgotPasswordPage() {
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-400/20 rounded-full blur-2xl translate-x-1/3 translate-y-1/3" />
             
             <div className="relative flex flex-col items-center text-center">
-              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3">
+              <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg mb-3" style={{ minWidth: '3.5rem', minHeight: '3.5rem' }}>
                 <LogoIcon size={28} />
               </div>
               <h1 className="text-lg font-bold text-white mb-1">
@@ -95,23 +101,31 @@ export default function ForgotPasswordPage() {
           <div className="p-5">
             {/* Error Message */}
             {error && (
-              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl animate-in slide-in-from-top-2 flex items-center gap-2">
-                <AlertCircle size={16} className="text-rose-500 flex-shrink-0" />
-                <span className="text-xs text-rose-600 font-medium">{error}</span>
-              </div>
+              <ErrorMessage
+                message={error}
+                dismissible
+                onDismiss={() => setError(null)}
+                className="mb-4"
+              />
             )}
 
             {emailSent ? (
               <div className="text-center space-y-4">
-                <div className="w-14 h-14 mx-auto bg-emerald-100 rounded-2xl flex items-center justify-center">
-                  <CheckCircle2 size={28} className="text-emerald-600" />
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center shadow-sm">
+                  <CheckCircle2 size={32} className="text-emerald-600" />
                 </div>
                 <div>
+                  <h3 className="text-base font-bold text-slate-800 mb-2">{t('auth.forgotPassword.checkYourEmail')}</h3>
                   <p className="text-sm text-slate-600 mb-1">{t('auth.forgotPassword.emailSentTo')}</p>
-                  <p className="text-sm font-bold text-indigo-600">{email}</p>
+                  <p className="text-sm font-bold text-indigo-600 break-all">{email}</p>
                 </div>
-                <p className="text-xs text-slate-500">
-                  {t('auth.resetPassword.subtitle')}
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {t('auth.forgotPassword.clickLinkToReset')}
+                  </p>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  {t('auth.forgotPassword.didntReceiveEmail')}
                 </p>
                 <Link 
                   href="/auth"
@@ -124,48 +138,43 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Info */}
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-start gap-2">
-                  <KeyRound size={16} className="text-indigo-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-indigo-700">
-                    {t('auth.forgotPassword.subtitle')}
-                  </p>
-                </div>
-
-                {/* Email Input */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-0.5">
-                    {t('auth.form.email')}
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 p-1 bg-slate-100 rounded group-focus-within:bg-indigo-100 transition-colors">
-                      <Mail className="text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={14} />
-                    </div>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-11 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white outline-none transition-all font-medium"
-                      placeholder={t('auth.form.emailPlaceholder')}
-                      required
-                    />
+                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-start gap-2.5">
+                  <Suspense fallback={<div className="w-4.5 h-4.5 flex-shrink-0 mt-0.5" />}>
+                    <KeyRound size={18} className="text-indigo-500 flex-shrink-0 mt-0.5" />
+                  </Suspense>
+                  <div>
+                    <p className="text-xs font-semibold text-indigo-900 mb-1">
+                      {t('auth.forgotPassword.weWillEmailYou')}
+                    </p>
+                    <p className="text-[11px] text-indigo-700 leading-relaxed">
+                      {t('auth.forgotPassword.subtitle')}
+                    </p>
                   </div>
                 </div>
 
+                {/* Email Input */}
+                <FormInput
+                  id="email-input"
+                  type="email"
+                  label={t('auth.form.email')}
+                  placeholder={t('auth.form.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  icon={<Mail size={14} />}
+                  required
+                />
+
                 {/* Submit Button */}
-                <button
+                <AuthButton
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50"
+                  loading={isLoading}
+                  fullWidth
+                  size="md"
+                  variant="primary"
+                  icon={<ArrowRight size={14} />}
                 >
-                  {isLoading ? (
-                    <Loader2 className="animate-spin" size={16} />
-                  ) : (
-                    <>
-                      <span>{t('auth.forgotPassword.sendLink')}</span>
-                      <ArrowRight size={14} />
-                    </>
-                  )}
-                </button>
+                  {t('auth.forgotPassword.sendLink')}
+                </AuthButton>
 
                 {/* Back Link */}
                 <Link 

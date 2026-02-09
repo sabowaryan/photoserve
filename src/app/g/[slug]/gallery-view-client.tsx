@@ -14,6 +14,7 @@ import {
   GalleryHeader,
   Lightbox,
   DownloadModal,
+  GuestGalleryBanner,
 } from "@/components/gallery-view";
 import { DeadlineTimer } from "@/components/gallery-view/deadline-timer";
 import { LeadMagnetModal } from "@/components/gallery-view/lead-magnet-modal";
@@ -22,6 +23,7 @@ import { VideoCover } from "@/components/gallery-view/video-cover";
 import { AudioPlayer } from "@/components/gallery-view/audio-player";
 import { PricingModal } from "@/components/guest/pricing-modal";
 import { UnlockSuccessModal } from "@/components/guest/unlock-success-modal";
+import { SoftSignupModal } from "@/components/conversion/soft-signup-modal";
 import { clearPreservedUploadState } from "@/lib/guest/file-preservation";
 import { GuestSessionManager } from "@/lib/guest/session";
 import { useTranslation } from "@/lib/i18n/context";
@@ -30,6 +32,7 @@ import { getDisplayDomain, getDomainUrl, getBrandName } from "@/lib/utils/domain
 import { useGalleryTheme } from "@/hooks/use-gallery-theme";
 import { useVisitorFingerprint } from "@/hooks/use-visitor-fingerprint";
 import { useEventTracker } from "@/hooks/use-event-tracker";
+import { useSignupTrigger } from "@/hooks/use-signup-trigger";
 import type { PaymentType, GallerySettings, SubscriptionPlan } from "@/types";
 
 // Storage key for tracking pricing choices
@@ -160,6 +163,15 @@ export function GalleryViewClient({
   const eventTracker = useEventTracker({
     galleryId: initialGallery.id,
     visitorId,
+  });
+
+  // Progressive signup trigger - Requirements: 5.6, 6.8
+  // Enable time-based trigger (2 minutes) for guest galleries viewed by non-owners
+  const isGuestViewer = !!initialGallery.guest_session_id && !isGalleryOwner;
+  const signupTrigger = useSignupTrigger({
+    isAuthenticated: false, // Will be updated based on session
+    enableTimeTrigger: isGuestViewer && isAuthenticated,
+    triggerDelay: 2 * 60 * 1000, // 2 minutes
   });
 
   // Extract gallery settings and owner plan
@@ -1140,6 +1152,23 @@ export function GalleryViewClient({
           </div>
         </footer>
       </main>
+
+      {/* Guest Gallery Banner - Requirements: 5.4, 5.5 */}
+      <GuestGalleryBanner
+        isGuestGallery={!!initialGallery.guest_session_id && !isGalleryOwner}
+        isUnlocked={initialGallery.is_unlocked}
+        gallerySlug={slug}
+        onFeatureLocked={(feature) => signupTrigger.triggerSignup('feature_locked', feature)}
+      />
+
+      {/* Soft Signup Modal - Requirements: 5.6, 6.8 */}
+      <SoftSignupModal
+        isOpen={signupTrigger.isOpen}
+        onClose={signupTrigger.closeModal}
+        trigger={signupTrigger.trigger || 'guest_upload'}
+        lockedFeature={signupTrigger.lockedFeature}
+        callbackUrl={`/g/${slug}`}
+      />
     </div>
   );
 }
